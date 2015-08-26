@@ -1,0 +1,99 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <view
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        class="android.support.v4.view.ViewPager"
+        android:id="@+id/view_pager"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="70dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/offers"
+            android:contentDescription="@string/offers"
+            android:src="@mipmap/offers"
+            android:background="@drawable/button_flat_large_background"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/for_1"
+            android:contentDescription="@string/for_1"
+            android:src="@mipmap/person_1"
+            android:background="@drawable/button_flat_large_background"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/for_2"
+            android:contentDescription="@string/for_2"
+            android:src="@mipmap/person_2"
+            android:background="@drawable/button_flat_large_background"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/for_3"
+            android:contentDescription="@string/for_3"
+            android:src="@mipmap/person_3"
+            android:background="@drawable/button_flat_large_background"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@color/button_large_flat_background">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/offers_focus"
+            android:layout_weight="1"
+            android:contentDescription="@string/offers_focus"
+            android:background="@color/color_accent" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/for_1_focus"
+            android:layout_weight="1"
+            android:contentDescription="@string/for_1_focus"
+            android:background="@color/color_accent"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/for_2_focus"
+            android:layout_weight="1"
+            android:contentDescription="@string/for_2_focus"
+            android:background="@color/color_accent"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/for_3_focus"
+            android:layout_weight="1"
+            android:contentDescription="@string/for_3_focus"
+            android:background="@color/color_accent"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+</LinearLayout>

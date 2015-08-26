@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:padding="10dp"
+    android:background="@drawable/rounded_corners_light_background"
+    android:layout_marginTop="5dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <in.foodmash.app.TouchableImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/selected"
+            android:contentDescription="@string/edit"
+            android:background="@color/transparent"
+            android:src="@mipmap/tick"
+            android:tint="@color/okay_green"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
+
+        <in.foodmash.app.TouchableImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/edit"
+            android:contentDescription="@string/edit"
+            android:background="@color/transparent"
+            android:src="@mipmap/edit"
+            android:tint="@color/abc_primary_text_material_light"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp" />
+
+        <in.foodmash.app.TouchableImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/delete"
+            android:contentDescription="@string/delete"
+            android:src="@mipmap/bin"
+            android:background="@color/transparent"
+            android:tint="@color/abc_primary_text_material_light"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/name_lorem_ipsum"
+            android:id="@+id/name"
+            android:textSize="16sp"
+            android:padding="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/address_lorem_ipsum"
+            android:id="@+id/address"
+            android:padding="5dp"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/phone_lorem_ipsum"
+            android:id="@+id/phone"
+            android:textSize="14sp"
+            android:padding="5dp" />
+    </LinearLayout>
+
+</LinearLayout>

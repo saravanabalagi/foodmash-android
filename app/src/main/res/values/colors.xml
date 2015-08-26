@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_accent">#ffd70d00</color>
+    <color name="color_accent_white_bg">#ffcd0c00</color>
+
+    <color name="transparent">#00000000</color>
+    <color name="black">#ff000000</color>
+    <color name="black_111">#ff111111</color>
+    <color name="black_222">#ff222222</color>
+
+    <color name="button_large_flat_background">#ff111111</color>
+    <color name="button_large_flat_background_focused_pressed">#ff333333</color>
+
+    <color name="focus_foreground">#ffffffff</color>
+    <color name="combo_background">#ffffffff</color>
+    <color name="combo_food_background">#ffffffff</color>
+    <color name="combo_overlay">#ccde0000</color>
+
+    <color name="okay_green">#00a50e</color>
+
+</resources>

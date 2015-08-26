@@ -1,0 +1,32 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="MyActionBar"
+        parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:background">@color/black_222</item>
+        <item name="android:icon">@drawable/logo_text</item>
+        <item name="android:displayOptions">showHome</item>
+        <!--&lt;!&ndash;<item name="android:icon">@drawable/logo_text</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item name="android:titleTextStyle">@style/MyTitleTextStyle</item>&ndash;&gt;-->
+        <!--<item name="android:displayOptions">showHome|showTitle</item>-->
+
+        <!-- Support library compatibility -->
+        <item name="background">@color/black_222</item>
+        <item name="icon">@drawable/logo_text</item>
+        <item name="displayOptions">showHome</item>
+        <!--<item name="background">#ff000000</item>-->
+        <!--&lt;!&ndash;<item name="icon">@drawable/logo_text</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item name="titleTextStyle">@style/MyTitleTextStyle</item>&ndash;&gt;-->
+        <!--<item name="displayOptions">showHome|showTitle</item>-->
+
+    </style>
+
+</resources>

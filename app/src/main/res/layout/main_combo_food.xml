@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/combo_food_background"
+    android:paddingTop="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
+
+
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:id="@+id/image"
+            android:contentDescription="@string/food_image"
+            android:src="@drawable/image_default" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/food_name_lorem_ipsum"
+                android:id="@+id/name"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="0dp"
+                android:textSize="14sp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="1dp"
+                android:singleLine="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/food_description_lorem_ipsum"
+                android:id="@+id/description"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="0dp"
+                android:textSize="11sp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:paddingLeft="5dp"
+                android:paddingTop="1dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="5dp" />
+        </LinearLayout>
+
+</LinearLayout>

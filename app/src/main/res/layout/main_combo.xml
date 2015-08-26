@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/combo_overlay_background"
+        android:elevation="1dp"
+        android:visibility="gone"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@+id/combo_layout">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:id="@+id/minus"
+            android:layout_weight="1"
+            android:tint="@color/abc_primary_text_material_dark"
+            android:src="@mipmap/subtract"
+            android:paddingTop="25dp"
+            android:paddingBottom="25dp"
+            android:contentDescription="@string/decrement" />
+
+        <FrameLayout
+            android:layout_width="60dp"
+            android:layout_height="60dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:id="@+id/count"
+                android:layout_gravity="center"
+                android:textSize="30sp" />
+        </FrameLayout>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:id="@+id/plus"
+            android:layout_weight="1"
+            android:src="@mipmap/add"
+            android:tint="@color/abc_primary_text_material_dark"
+            android:paddingTop="25dp"
+            android:paddingBottom="25dp"
+            android:contentDescription="@string/increment" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:layout_alignParentRight="true"
+        android:id="@+id/combo_layout"
+        android:background="@drawable/rounded_corners_light_background"
+        android:layout_marginRight="0dp">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:baselineAligned="false">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:id="@+id/image"
+                    android:layout_margin="5dp"
+                    android:contentDescription="@string/combo_image"
+                    android:src="@drawable/image_default" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/combo_name_lorem_ipsum"
+                        android:textSize="17sp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="0dp"
+                        android:id="@+id/name"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="5dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/combo_description_lorem_ipsum"
+                        android:id="@+id/description"
+                        android:maxLines="2"
+                        android:ellipsize="end" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:background="@drawable/add_to_cart_background"
+                android:padding="5dp"
+                android:layout_marginRight="5dp">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/cartButton"
+                    android:src="@mipmap/cart"
+                    android:background="@color/transparent"
+                    android:visibility="visible"
+                    android:tint="@color/color_accent"
+                    android:cropToPadding="true"
+                    android:scaleType="centerCrop"
+                    android:layout_marginRight="3dp" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rupee"
+                        android:textColor="@color/abc_primary_text_material_dark"
+                        android:fontFamily="sans-serif-light"
+                        android:layout_marginRight="2dp"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/price_lorem_ipsum"
+                        android:textSize="13sp"
+                        android:id="@+id/price"
+                        android:textColor="@color/abc_primary_text_material_dark"
+                        android:fontFamily="sans-serif-light" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/food_items_layout"
+            android:layout_marginLeft="2dp"
+            android:paddingBottom="10dp"
+            android:animateLayoutChanges="true">
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
