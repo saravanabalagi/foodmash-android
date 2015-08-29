@@ -98,17 +98,6 @@
                         android:id="@+id/area"
                         android:layout_weight="1" />
 
-                    <EditText
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:id="@+id/pincode"
-                        android:layout_margin="5dp"
-                        android:hint="PIN Code"
-                        android:singleLine="true"
-                        android:inputType="number"
-                        android:numeric="integer"
-                        android:layout_weight="1" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -135,17 +124,44 @@
                     <EditText
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:inputType="textPersonName"
                         android:ems="10"
-                        android:id="@+id/country"
+                        android:id="@+id/pincode"
                         android:layout_margin="5dp"
-                        android:hint="Country"
+                        android:hint="PIN Code"
                         android:singleLine="true"
-                        android:layout_weight="1"
-                        android:editable="false"
+                        android:inputType="number"
+                        android:numeric="integer"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical" >
+
+                    <EditText
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:ems="10"
+                        android:text="@string/phone_prefix_edit_text_hint"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
-                        android:text="India" />
+                        android:editable="false"
+                        android:gravity="center_horizontal"
+                        android:singleLine="true" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="phone"
+                        android:ems="10"
+                        android:id="@+id/phone"
+                        android:layout_margin="5dp"
+                        android:hint="@string/phone_edit_text_hint"
+                        android:singleLine="true" />
                 </LinearLayout>
 
                 <Switch
@@ -203,7 +219,7 @@
             android:gravity="center_vertical|center_horizontal"
             android:paddingRight="20dp"
             android:background="@drawable/button_flat_large_background"
-            android:id="@+id/register">
+            android:id="@+id/save">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

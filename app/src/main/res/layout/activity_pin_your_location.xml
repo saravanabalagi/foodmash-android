@@ -36,12 +36,33 @@
             android:background="@color/transparent" />
     </RelativeLayout>
 
-    <fragment
-        android:id="@+id/map"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        class="com.google.android.gms.maps.MapFragment"
-        android:layout_weight="1" />
+        android:layout_weight="1" >
+
+        <fragment
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            class="com.google.android.gms.maps.MapFragment"
+            />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:paddingBottom="60dp">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@mipmap/marker"
+                android:scaleType="centerCrop"
+                android:tint="@color/color_accent_white_bg" />
+        </FrameLayout>
+
+    </RelativeLayout>
 
     <LinearLayout
         android:orientation="horizontal"

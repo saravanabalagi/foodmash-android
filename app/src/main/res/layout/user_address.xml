@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:baselineAligned="false"
     android:padding="10dp"
-    android:background="@drawable/rounded_corners_light_background"
+    android:background="@color/combo_background"
     android:layout_marginTop="5dp"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp">

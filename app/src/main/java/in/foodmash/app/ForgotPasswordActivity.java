@@ -22,27 +22,13 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
 
     LinearLayout back;
     LinearLayout forgot;
-    LinearLayout chooseMethodLayout;
-    LinearLayout otpLayout;
-    LinearLayout otpInfoLayout;
     LinearLayout phoneLayout;
     LinearLayout emailLayout;
-    LinearLayout otpTimeLayout;
-    LinearLayout otpExpiredLayout;
 
-    EditText otp;
     EditText phone;
     EditText email;
-    TextView otpTime;
-
-    Handler handler=new Handler();
-    int timerMinutes=3;
-    int timerSeconds=0;
-    boolean otpExpired = false;
 
     RadioGroup otpMethodRadioGroup;
-    boolean forgotClicked = false;
-
     TouchableImageButton clearAllFields;
     Intent intent;
 
@@ -74,18 +60,11 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
 
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         forgot = (LinearLayout) findViewById(R.id.forgot); forgot.setOnClickListener(this);
-        chooseMethodLayout = (LinearLayout) findViewById(R.id.choose_method_layout);
-        otpInfoLayout = (LinearLayout) findViewById(R.id.otp_info_layout);
-        otpLayout = (LinearLayout) findViewById(R.id.otp_layout);
         phoneLayout = (LinearLayout) findViewById(R.id.phone_layout);
         emailLayout = (LinearLayout) findViewById(R.id.email_layout);
-        otpTimeLayout = (LinearLayout) findViewById(R.id.otp_time_layout);
-        otpExpiredLayout = (LinearLayout) findViewById(R.id.otp_expired_layout);
 
-        otp = (EditText) findViewById(R.id.otp);
         phone = (EditText) findViewById(R.id.phone);
         email = (EditText) findViewById(R.id.email);
-        otpTime = (TextView) findViewById(R.id.otp_time);
 
         clearAllFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearAllFields.setOnClickListener(this);
 
@@ -106,39 +85,14 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
             case R.id.clear_fields: email.setText(null); phone.setText(null); break;
             case R.id.back: intent = new Intent(this, LoginActivity.class); startActivity(intent); break;
             case R.id.forgot:
-                if(!forgotClicked) {
-                    setOtpLayout();
-                    forgotClicked = true;
-                } else {
-                    intent = new Intent(this, ChangePasswordActivity.class);
-                    intent.putExtra("forgot",true); startActivity(intent);
+                intent = new Intent(this, ForgotPasswordOtpActivity.class);
+                switch (otpMethodRadioGroup.getCheckedRadioButtonId()){
+                    case R.id.phone_radio: intent.putExtra("type","phone"); intent.putExtra("value",phone.getText().toString()); break;
+                    case R.id.email_radio: intent.putExtra("type","email"); intent.putExtra("value",email.getText().toString()); break;
                 }
+                startActivity(intent);
                 break;
         }
     }
 
-    private void setOtpLayout() {
-        ((TextView) forgot.findViewById(R.id.done)).setText("proceed");
-        Animations.fadeOutAndFadeIn(chooseMethodLayout,otpInfoLayout,500);
-        Animations.fadeIn(otpLayout, 500);
-        handler.removeCallbacks(initiateOtpTimer);
-        handler.postDelayed(initiateOtpTimer, 1000);
-    }
-
-    private Runnable initiateOtpTimer= new Runnable() {
-        @Override
-        public void run() {
-            if(timerSeconds==0)
-                if(timerMinutes==0) {
-                    if(!otpExpired) {
-                        otpExpired=true;
-                        Animations.fadeOutAndFadeIn(otpTimeLayout,otpExpiredLayout,500);
-                        return;
-                    } return; }
-                else { timerMinutes--; timerSeconds=59; }
-            else timerSeconds--;
-            otpTime.setText(timerMinutes+":"+String.format("%02d",timerSeconds));
-            handler.postDelayed(initiateOtpTimer, 1000);
-        }
-    };
 }

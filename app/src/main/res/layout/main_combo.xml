@@ -1,89 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
     android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="0dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="0dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:background="@drawable/combo_overlay_background"
-        android:elevation="1dp"
-        android:visibility="gone"
-        android:layout_alignParentRight="true"
-        android:layout_alignBottom="@+id/combo_layout">
-
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:id="@+id/minus"
-            android:layout_weight="1"
-            android:tint="@color/abc_primary_text_material_dark"
-            android:src="@mipmap/subtract"
-            android:paddingTop="25dp"
-            android:paddingBottom="25dp"
-            android:contentDescription="@string/decrement" />
-
-        <FrameLayout
-            android:layout_width="60dp"
-            android:layout_height="60dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1"
-                android:id="@+id/count"
-                android:layout_gravity="center"
-                android:textSize="30sp" />
-        </FrameLayout>
-
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:id="@+id/plus"
-            android:layout_weight="1"
-            android:src="@mipmap/add"
-            android:tint="@color/abc_primary_text_material_dark"
-            android:paddingTop="25dp"
-            android:paddingBottom="25dp"
-            android:contentDescription="@string/increment" />
-
-    </LinearLayout>
+    android:layout_marginRight="5dp"
+    android:animateLayoutChanges="true">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="0dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="0dp"
         android:layout_alignParentRight="true"
         android:id="@+id/combo_layout"
-        android:background="@drawable/rounded_corners_light_background"
+        android:background="@color/combo_background"
         android:layout_marginRight="0dp">
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
             android:baselineAligned="false">
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
 
                 <ImageView
                     android:layout_width="60dp"
@@ -116,55 +67,51 @@
                         android:text="@string/combo_description_lorem_ipsum"
                         android:id="@+id/description"
                         android:maxLines="2"
-                        android:ellipsize="end" />
+                        android:ellipsize="end"
+                        android:minLines="1" />
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:background="@drawable/add_to_cart_background"
-                android:padding="5dp"
-                android:layout_marginRight="5dp">
-
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:id="@+id/cartButton"
-                    android:src="@mipmap/cart"
-                    android:background="@color/transparent"
-                    android:visibility="visible"
-                    android:tint="@color/color_accent"
-                    android:cropToPadding="true"
-                    android:scaleType="centerCrop"
-                    android:layout_marginRight="3dp" />
+                android:id="@+id/add_to_cart"
+                android:gravity="center_vertical|center_horizontal">
 
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp">
+                    android:background="@drawable/add_to_cart_background"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="5dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/rupee"
                         android:textColor="@color/abc_primary_text_material_dark"
-                        android:fontFamily="sans-serif-light"
-                        android:layout_marginRight="2dp"
-                        android:textSize="13sp" />
+                        android:layout_marginRight="1dp"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/price_lorem_ipsum"
-                        android:textSize="13sp"
+                        android:textSize="15sp"
                         android:id="@+id/price"
-                        android:textColor="@color/abc_primary_text_material_dark"
-                        android:fontFamily="sans-serif-light" />
+                        android:textColor="@color/abc_primary_text_material_dark" />
                 </LinearLayout>
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@mipmap/cart"
+                    android:tint="@color/color_accent_white_bg"
+                    android:layout_margin="10dp" />
 
             </LinearLayout>
 
@@ -176,11 +123,100 @@
             android:layout_height="wrap_content"
             android:id="@+id/food_items_layout"
             android:layout_marginLeft="2dp"
-            android:paddingBottom="10dp"
             android:animateLayoutChanges="true">
 
         </LinearLayout>
 
     </LinearLayout>
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/black_222"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@+id/combo_layout"
+        android:id="@+id/added_to_cart_layout"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/cart"
+                android:scaleType="centerCrop"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_marginBottom="1dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ADDED TO CART"
+                android:textColor="@color/abc_primary_text_material_dark"
+                android:textSize="11sp"
+                android:fontFamily="sans-serif-light" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quantity"
+                android:textColor="@color/abc_primary_text_material_dark"
+                android:textSize="11sp"
+                android:fontFamily="sans-serif-light" />
+
+            <in.foodmash.app.TouchableImageButton
+                android:layout_width="40dp"
+                android:layout_height="fill_parent"
+                android:id="@+id/minus"
+                android:tint="@color/color_accent_dark_bg"
+                android:src="@mipmap/subtract"
+                android:contentDescription="@string/decrement"
+                android:scaleType="centerInside"
+                android:background="@color/transparent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:id="@+id/count"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:textColor="@color/abc_primary_text_material_dark" />
+
+            <in.foodmash.app.TouchableImageButton
+                android:layout_width="40dp"
+                android:layout_height="fill_parent"
+                android:id="@+id/plus"
+                android:src="@mipmap/add"
+                android:tint="@color/color_accent_dark_bg"
+                android:contentDescription="@string/increment"
+                android:scaleType="centerInside"
+                android:background="@color/transparent" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

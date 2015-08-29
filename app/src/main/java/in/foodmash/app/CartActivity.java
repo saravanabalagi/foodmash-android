@@ -16,10 +16,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.wallet.Cart;
 
 import org.w3c.dom.Text;
+
+import java.util.logging.Handler;
 
 /**
  * Created by Zeke on Jul 19 2015.
@@ -27,6 +30,7 @@ import org.w3c.dom.Text;
 public class CartActivity extends AppCompatActivity implements View.OnClickListener {
 
     Intent intent;
+    android.os.Handler handler=new android.os.Handler();
 
     LinearLayout back;
     LinearLayout buy;
@@ -96,7 +100,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                                     .setMessage("You set the quantity to zero. Do you want to delete it?")
                                     .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                                         @Override public void onClick(DialogInterface dialog, int which) { fillLayout.removeView(comboLayout); }
-                                    }).setNegativeButton("No, I just tried it", new DialogInterface.OnClickListener() {
+                                    }).setNegativeButton("No, don't delete", new DialogInterface.OnClickListener() {
                                 @Override public void onClick(DialogInterface dialog, int which) { quantity.setText("1"); }
                             }).show();
                         }
@@ -108,6 +112,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onClick(View v) {
                     fillLayout.removeView(comboLayout);
+                    updateCartValue();
                 }
             });
             fillLayout.addView(comboLayout);
@@ -119,7 +124,22 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear_cart: break;
+            case R.id.clear_cart:
+                new AlertDialog.Builder(CartActivity.this)
+                        .setIconAttribute(android.R.attr.alertDialogIcon)
+                        .setTitle("Remove all from cart ?")
+                        .setMessage("Do you want to remove all combos added to the cart?")
+                        .setPositiveButton("Remove All", new DialogInterface.OnClickListener() {
+                            @Override public void onClick(DialogInterface dialog, int which) {
+                                for (int i = 0; i < fillLayout.getChildCount(); i++) {
+                                    handler.postDelayed(new Runnable() {
+                                        @Override public void run() {
+                                            fillLayout.removeViewAt(0); updateCartValue(); } }, i*500);
+                                }
+                            }
+                        }).setNegativeButton("No, don't remove", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) { }
+                }).show(); break;
             case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
             case R.id.buy: intent = new Intent(this, CheckoutAddressActivity.class); startActivity(intent); break;
         }

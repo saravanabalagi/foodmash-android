@@ -1,8 +1,13 @@
 package in.foodmash.app;
 
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +23,8 @@ import com.google.android.gms.maps.model.*;
 public class PinYourLocationActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback {
 
     Intent intent;
+    LocationManager locationManager;
+    LocationListener locationListener;
 
     LinearLayout back;
     LinearLayout proceed;
@@ -52,8 +59,10 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_your_location);
 
-        mapFragment = (MapFragment) getFragmentManager()
-                .findFragmentById(R.id.map);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) enableGpsAlert();
+
+        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
@@ -63,22 +72,46 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.reset_map: mapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation,13));break;
+            case R.id.reset_map: mapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation,15));break;
             case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
-            case R.id.proceed: intent = new Intent(this, AddEditAddressActivity.class); startActivity(intent); break;
+            case R.id.proceed:
+                locationManager.removeUpdates(locationListener);
+                intent = new Intent(this, AddEditAddressActivity.class);
+                CameraPosition cameraPosition = mapFragment.getMap().getCameraPosition();
+                LatLng latLng = cameraPosition.target;
+                intent.putExtra("latitude",latLng.latitude);
+                intent.putExtra("longitude",latLng.longitude);
+                startActivity(intent); break;
         }
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
-
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 13));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 14));
+        locationListener = new LocationListener() {
+            @Override public void onLocationChanged(Location location) {
+                initialLocation = new LatLng(location.getLatitude(),location.getLongitude());
+                mapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation,15));
+            }
+            @Override public void onStatusChanged(String provider, int status, Bundle extras) {  }
+            @Override public void onProviderEnabled(String provider) {}
+            @Override public void onProviderDisabled(String provider) { enableGpsAlert(); }
+        };
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+    }
 
-        map.addMarker(new MarkerOptions()
-                .draggable(true)
-                .title("Kottur & RA Puram")
-                .snippet("Pin your location and we'll be right there, at your doorstep...")
-                .position(initialLocation));
+    private void enableGpsAlert() {
+        new AlertDialog.Builder(PinYourLocationActivity.this)
+                .setIconAttribute(android.R.attr.alertDialogIcon)
+                .setTitle("GPS Turned Off")
+                .setMessage("Enabling GPS helps pinpoint your location on map. Enable GPS from Settings.")
+                .setPositiveButton("Enable GPS", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                    }
+                }).show();
     }
 }

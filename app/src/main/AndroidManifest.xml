@@ -61,6 +61,11 @@
             android:windowSoftInputMode="stateHidden">
         </activity>
         <activity
+            android:name="in.foodmash.app.ForgotPasswordOtpActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity
             android:name="in.foodmash.app.LoginActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden">

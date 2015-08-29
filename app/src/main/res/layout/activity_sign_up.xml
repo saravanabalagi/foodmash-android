@@ -111,7 +111,17 @@
                     android:ems="10"
                     android:id="@+id/password"
                     android:layout_margin="5dp"
-                    android:hint="@string/password_edit_text_hint"
+                    android:hint="password (min 8 chars)"
+                    android:singleLine="true" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:ems="10"
+                    android:id="@+id/password_confirmation"
+                    android:layout_margin="5dp"
+                    android:hint="confirm password"
                     android:singleLine="true" />
 
                 <Switch
@@ -121,7 +131,7 @@
                     android:id="@+id/accept_terms"
                     android:padding="15dp"
                     android:switchPadding="30dp"
-                    android:textSize="13sp"
+                    android:textSize="16sp"
                     android:singleLine="true" />
 
             </LinearLayout>
