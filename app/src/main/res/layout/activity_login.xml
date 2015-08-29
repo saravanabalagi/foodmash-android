@@ -177,28 +177,12 @@
             android:background="@drawable/button_flat_large_background"
             android:id="@+id/register">
 
-            <RelativeLayout
+            <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/person_1"
-                    android:contentDescription="@string/back_icon"
-                    android:tint="@color/color_accent"
-                    android:id="@+id/register_icon" />
-
-                <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:src="@mipmap/add"
-                    android:contentDescription="@string/back_icon"
-                    android:tint="@color/color_accent"
-                    android:layout_alignRight="@+id/register_icon"
-                    android:layout_margin="5dp" />
-
-            </RelativeLayout>
+                android:layout_height="wrap_content"
+                android:src="@mipmap/person_1"
+                android:contentDescription="@string/back_icon"
+                android:tint="@color/color_accent" />
 
             <TextView
                 android:layout_width="wrap_content"

@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         minus.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { count.setText(String.valueOf(Integer.parseInt(count.getText().toString())-1)); if(Integer.parseInt(count.getText().toString())==0) Animations.fadeOut(addedToCartLayout,500); } });
                         addToCart.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) {
                             comboFoodLayout.removeAllViews();
-                            Animations.fadeIn(addedToCartLayout,500);
+                            if(addedToCartLayout.getVisibility()==View.GONE) Animations.fadeIn(addedToCartLayout,500);
                             count.setText(String.valueOf(Integer.parseInt(count.getText().toString())+1));} });
                     } catch (JSONException e) { e.printStackTrace(); }
                     linearLayout.addView(comboLayout);
