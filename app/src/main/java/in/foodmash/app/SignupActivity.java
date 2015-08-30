@@ -81,7 +81,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
-            case R.id.menu_email_phone: intent = new Intent(this,EmailPhoneActivity.class); startActivity(intent); return true;
             case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
             case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
             case R.id.menu_wallet_cash: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
@@ -179,7 +178,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         editor.putString("user_token", userToken);
                         editor.putString("session_token", sessionToken);
                         editor.putString("android_token", Cryptography.encrypt(androidId, sessionToken));
-                        editor.commit();
+                        editor.apply();
                         startActivity(intent);
                     } else {
                         new AlertDialog.Builder(SignupActivity.this)
@@ -199,8 +198,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError) showInternetConnectionError();
-                else showUnknownError();
+                if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(SignupActivity.this);
+                else Alerts.showUnknownError(SignupActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
@@ -244,8 +243,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(error instanceof NoConnectionError) showInternetConnectionError();
-                        else showUnknownError();
+                        if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(SignupActivity.this);
+                        else Alerts.showUnknownError(SignupActivity.this);
                         System.out.println("Email response error: "+error);
                         isEmailValidationInProgress = false;
                         setCancelOnImageView(emailValidate);
@@ -283,8 +282,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(error instanceof NoConnectionError) showInternetConnectionError();
-                        else showUnknownError();
+                        if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(SignupActivity.this);
+                        else Alerts.showUnknownError(SignupActivity.this);
                         System.out.println("Phone response error: "+error);
                         isPhoneValidationInProgress = false;
                         setCancelOnImageView(phoneValidate);
@@ -309,30 +308,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             else setOkayOnImageView(passwordConfirmationValidate);
             Animations.fadeIn(passwordConfirmationValidate,500);
         }
-    }
-
-    private void showInternetConnectionError() {
-        new AlertDialog.Builder(SignupActivity.this)
-                .setIconAttribute(android.R.attr.alertDialogIcon)
-                .setTitle("Network Error")
-                .setMessage("Sometimes the internet gets a bit sleepy and takes a nap. Make sure its up and running then we'll give it another go.")
-                .setPositiveButton("Alright", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).show();
-    }
-
-    private void showUnknownError() {
-        new AlertDialog.Builder(SignupActivity.this)
-                .setIconAttribute(android.R.attr.alertDialogIcon)
-                .setTitle("Server Error")
-                .setMessage("We all have bad days! We'll fix this soon...")
-                .setPositiveButton("Hmm, I understand", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).show();
     }
 
 }

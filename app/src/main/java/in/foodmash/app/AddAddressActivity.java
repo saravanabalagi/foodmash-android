@@ -45,6 +45,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     EditText phone;
     Spinner area;
     Switch primaryAddress;
+    int id;
 
     ArrayList<String> areaList;
     TouchableImageButton clearFields;
@@ -62,7 +63,6 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_email_phone) { intent = new Intent(this,EmailPhoneActivity.class); startActivity(intent); return true; }
         if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); return true; }
         if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true; }
         if (id == R.id.menu_wallet_cash) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true; }
@@ -108,6 +108,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
 
         if(edit) {
             try {
+                id = jsonObject.getInt("id");
                 JSONObject addressJson = jsonObject.getJSONObject("address");
                 name.setText(jsonObject.getString("name"));
                 pincode.setText(addressJson.getString("pincode"));
@@ -165,6 +166,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
             dataJson.put("geolocation", geolocationJson);
             dataJson.put("phone", phoneVal);
             dataJson.put("primary", primaryAddressVal);
+            if(edit) dataJson.put("id",id);
 
             SharedPreferences sharedPreferences = getSharedPreferences("session",0);
             requestJson.put("auth_user_token", sharedPreferences.getString("user_token",null));
@@ -173,11 +175,12 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
             requestJson.put("data",dataJson);
 
         } catch (JSONException e) { e.printStackTrace(); }
+        System.out.println(jsonObject);
         return jsonObject;
     }
 
     private void makeJsonRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/address", getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {

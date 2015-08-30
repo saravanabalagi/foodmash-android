@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
-            case R.id.menu_email_phone: intent = new Intent(this,EmailPhoneActivity.class); startActivity(intent); return true;
             case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
             case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
             case R.id.menu_wallet_cash: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
@@ -135,10 +134,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         ImageView plus = (ImageView) addedToCartLayout.findViewById(R.id.plus);
                         ImageView minus = (ImageView) addedToCartLayout.findViewById(R.id.minus);
                         plus.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { count.setText(String.valueOf(Integer.parseInt(count.getText().toString())+1)); } });
-                        minus.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { count.setText(String.valueOf(Integer.parseInt(count.getText().toString())-1)); if(Integer.parseInt(count.getText().toString())==0) Animations.fadeOut(addedToCartLayout,500); } });
+                        minus.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { count.setText(String.valueOf(Integer.parseInt(count.getText().toString())-1)); if(Integer.parseInt(count.getText().toString())==0) Animations.fadeOut(addedToCartLayout,200); } });
                         addToCart.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) {
                             comboFoodLayout.removeAllViews();
-                            if(addedToCartLayout.getVisibility()==View.GONE) Animations.fadeIn(addedToCartLayout,500);
+                            if(addedToCartLayout.getVisibility()==View.GONE) Animations.fadeIn(addedToCartLayout,200);
                             count.setText(String.valueOf(Integer.parseInt(count.getText().toString())+1));} });
                     } catch (JSONException e) { e.printStackTrace(); }
                     linearLayout.addView(comboLayout);
@@ -207,11 +206,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void logout() {
         HashMap<String,String> hashMap = new HashMap<>();
-        SharedPreferences sharedPreferences = getSharedPreferences("session",0);
+        SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
         hashMap.put("auth_user_token", sharedPreferences.getString("user_token",null));
         hashMap.put("auth_session_token", sharedPreferences.getString("session_token",null));
         hashMap.put("auth_android_token", sharedPreferences.getString("android_token",null));
-
         JSONObject requestJson = new JSONObject(hashMap);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, getString(R.string.api_root_path) + "/sessions", requestJson, new Response.Listener<JSONObject>() {
             @Override
@@ -229,8 +227,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError) Toast.makeText(MainActivity.this, "Network Error!", Toast.LENGTH_SHORT).show();
-                else Toast.makeText(MainActivity.this, "Error: "+error.getMessage(), Toast.LENGTH_SHORT).show();
+                if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(MainActivity.this);
+                else Alerts.showInternetConnectionError(MainActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
