@@ -1,9 +1,12 @@
 package in.foodmash.app;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -121,7 +124,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         intent.putExtra("user_token", userToken);
                         startActivity(intent);
                     } else {
-                        Toast.makeText(LoginActivity.this, "Login failed!", Toast.LENGTH_SHORT).show();
+                        new AlertDialog.Builder(LoginActivity.this)
+                                .setIconAttribute(android.R.attr.alertDialogIcon)
+                                .setTitle("Invalid username or password")
+                                .setMessage("We are unable to log you in with the entered credentials. Please try again!")
+                                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                }).show();
                         System.out.println("Error Details: "+response.getString("info"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -129,11 +141,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError) Toast.makeText(LoginActivity.this, "Network Error!", Toast.LENGTH_SHORT).show();
-                else Toast.makeText(LoginActivity.this, "Error: "+error.getMessage(), Toast.LENGTH_SHORT).show();
+                if(error instanceof NoConnectionError) showInternetConnectionError();
+                else showUnknownError();
                 System.out.println("Response Error: " + error);
             }
         });
         Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
+    }
+
+    private void showInternetConnectionError() {
+        new AlertDialog.Builder(LoginActivity.this)
+                .setIconAttribute(android.R.attr.alertDialogIcon)
+                .setTitle("Network Error")
+                .setMessage("Sometimes the internet gets a bit sleepy and takes a nap. Make sure its up and running then we'll give it another go.")
+                .setPositiveButton("Alright", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
+    }
+
+    private void showUnknownError() {
+        new AlertDialog.Builder(LoginActivity.this)
+                .setIconAttribute(android.R.attr.alertDialogIcon)
+                .setTitle("Server Error")
+                .setMessage("We all have bad days! We'll fix this soon...")
+                .setPositiveButton("Hmm, I understand", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
     }
 }

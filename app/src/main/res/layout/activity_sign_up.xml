@@ -55,25 +55,70 @@
                 android:gravity="center_horizontal"
                 android:padding="20dp">
 
-                <EditText
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:ems="10"
-                    android:id="@+id/name"
-                    android:layout_margin="5dp"
-                    android:hint="@string/name_edit_text_hint"
-                    android:singleLine="true" />
+                    android:layout_height="match_parent">
 
-                <EditText
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/name"
+                        android:layout_margin="5dp"
+                        android:hint="@string/name_edit_text_hint"
+                        android:singleLine="true"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/name_validate"
+                        android:src="@mipmap/tick"
+                        android:tint="@color/okay_green"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:ems="10"
-                    android:id="@+id/email"
-                    android:layout_margin="5dp"
-                    android:hint="@string/email_edit_text_hint"
-                    android:singleLine="true" />
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:ems="10"
+                        android:id="@+id/email"
+                        android:layout_margin="5dp"
+                        android:hint="@string/email_edit_text_hint"
+                        android:singleLine="true"
+                        android:layout_weight="1" />
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/email_loader"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:indeterminate="true"
+                        android:indeterminateTint="@color/color_accent_white_bg"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/email_validate"
+                        android:src="@mipmap/tick"
+                        android:tint="@color/okay_green"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -101,28 +146,84 @@
                         android:id="@+id/phone"
                         android:layout_margin="5dp"
                         android:hint="@string/phone_edit_text_hint"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:layout_weight="1" />
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/phone_loader"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:indeterminate="true"
+                        android:indeterminateTint="@color/color_accent_white_bg"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/phone_validate"
+                        android:src="@mipmap/tick"
+                        android:tint="@color/okay_green"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
                 </LinearLayout>
 
-                <EditText
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPassword"
-                    android:ems="10"
-                    android:id="@+id/password"
-                    android:layout_margin="5dp"
-                    android:hint="password (min 8 chars)"
-                    android:singleLine="true" />
+                    android:layout_height="match_parent">
 
-                <EditText
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:ems="10"
+                        android:id="@+id/password"
+                        android:layout_margin="5dp"
+                        android:hint="password (min 8 chars)"
+                        android:singleLine="true"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/password_validate"
+                        android:src="@mipmap/tick"
+                        android:tint="@color/okay_green"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPassword"
-                    android:ems="10"
-                    android:id="@+id/password_confirmation"
-                    android:layout_margin="5dp"
-                    android:hint="confirm password"
-                    android:singleLine="true" />
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:ems="10"
+                        android:id="@+id/password_confirmation"
+                        android:layout_margin="5dp"
+                        android:hint="confirm password"
+                        android:singleLine="true"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/password_confirmation_validate"
+                        android:src="@mipmap/tick"
+                        android:tint="@color/okay_green"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
+                </LinearLayout>
 
                 <Switch
                     android:layout_width="wrap_content"

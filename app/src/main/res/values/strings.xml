@@ -17,7 +17,7 @@
     <string name="email_edit_text_hint">someone@mailbox.com</string>
     <string name="phone_prefix_edit_text_hint">+91</string>
     <string name="phone_edit_text_hint">10 digit phone number</string>
-    <string name="password_edit_text_hint">∙∙∙∙∙∙∙∙∙∙</string>
+    <string name="password_edit_text_hint">password</string>
     <string name="keep_me_logged_in">Keep me logged in</string>
     <string name="create_account">Create Account</string>
     <string name="forgot_password">Forgot Password</string>

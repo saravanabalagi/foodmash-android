@@ -85,6 +85,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
             case R.id.clear_fields: email.setText(null); phone.setText(null); break;
             case R.id.back: intent = new Intent(this, LoginActivity.class); startActivity(intent); break;
             case R.id.forgot:
+
                 intent = new Intent(this, ForgotPasswordOtpActivity.class);
                 switch (otpMethodRadioGroup.getCheckedRadioButtonId()){
                     case R.id.phone_radio: intent.putExtra("type","phone"); intent.putExtra("value",phone.getText().toString()); break;
