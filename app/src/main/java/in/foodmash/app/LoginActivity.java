@@ -3,6 +3,7 @@ package in.foodmash.app;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
@@ -118,10 +119,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 try {
                     if (response.getBoolean("success")) {
                         String userToken = response.getString("user_token");
-                        String mobileToken = response.getString("mobile_token");
-                        intent.putExtra("logged_in",true);
-                        intent.putExtra("mobile_token", mobileToken);
-                        intent.putExtra("user_token", userToken);
+                        String sessionToken = response.getString("session_token");
+                        String androidId = Settings.Secure.getString(LoginActivity.this.getContentResolver(),Settings.Secure.ANDROID_ID);
+                        SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("logged_in",true);
+                        editor.putString("user_token", userToken);
+                        editor.putString("session_token", sessionToken);
+                        editor.putString("android_token", Cryptography.encrypt(androidId, sessionToken));
+                        editor.commit();
                         startActivity(intent);
                     } else {
                         new AlertDialog.Builder(LoginActivity.this)

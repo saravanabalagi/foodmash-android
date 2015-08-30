@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -58,7 +57,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
             ((TextView) addressLayout.findViewById(R.id.phone)).setText("989876"+((i*345855)%100));
             if(i==0) addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
             addressLayout.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) { Intent intent = new Intent(CheckoutAddressActivity.this, AddEditAddressActivity.class); startActivity(intent); }
+                @Override public void onClick(View v) { Intent intent = new Intent(CheckoutAddressActivity.this, AddAddressActivity.class); startActivity(intent); }
             });
             addressLayout.setOnClickListener(new View.OnClickListener() {
                 @Override

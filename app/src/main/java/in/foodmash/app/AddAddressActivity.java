@@ -1,10 +1,9 @@
 package in.foodmash.app;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.method.Touch;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -32,10 +30,12 @@ import java.util.HashMap;
 /**
  * Created by sarav on Aug 08 2015.
  */
-public class AddEditAddressActivity extends AppCompatActivity implements View.OnClickListener {
+public class AddAddressActivity extends AppCompatActivity implements View.OnClickListener {
 
     Intent intent;
     LatLng latLng;
+    boolean edit = false;
+    JSONObject jsonObject;
 
     EditText name;
     EditText addressLine1;
@@ -76,6 +76,11 @@ public class AddEditAddressActivity extends AppCompatActivity implements View.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_address);
 
+        if(getIntent().getBooleanExtra("edit",false)) {
+            try { jsonObject = new JSONObject(getIntent().getStringExtra("json")); edit = true; }
+            catch (JSONException e) { e.printStackTrace(); }
+        }
+
         latLng = new LatLng(getIntent().getDoubleExtra("latitude", 0),getIntent().getDoubleExtra("longitude",0));
         System.out.println("Latitude: "+latLng.latitude);
         System.out.println("Longitude: "+latLng.longitude);
@@ -101,6 +106,19 @@ public class AddEditAddressActivity extends AppCompatActivity implements View.On
         phone = (EditText) findViewById(R.id.phone);
         primaryAddress = (Switch) findViewById(R.id.primary_address);
 
+        if(edit) {
+            try {
+                JSONObject addressJson = jsonObject.getJSONObject("address");
+                name.setText(jsonObject.getString("name"));
+                pincode.setText(addressJson.getString("pincode"));
+                addressLine1.setText(addressJson.getString("line1"));
+                addressLine2.setText(addressJson.getString("line2"));
+                city.setText(addressJson.getString("city"));
+                area.setSelection(areaList.indexOf(addressJson.getString("area")));
+                primaryAddress.setChecked(jsonObject.getBoolean("primary"));
+            } catch (JSONException e) { e.printStackTrace(); }
+        }
+
         clearFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
     }
 
@@ -114,7 +132,7 @@ public class AddEditAddressActivity extends AppCompatActivity implements View.On
 
     public JSONObject getRequestJson() {
 
-        JSONObject jsonObject = new JSONObject();
+        JSONObject requestJson = new JSONObject();
         String nameVal = name.getText().toString().trim();
         String addressLine1Temp = addressLine1.getText().toString().trim();
         if(addressLine1Temp.charAt(addressLine1Temp.length()-1)==',')
@@ -123,8 +141,8 @@ public class AddEditAddressActivity extends AppCompatActivity implements View.On
         String addressVal2 = addressLine2.getText().toString().trim();
         String areaVal = area.getSelectedItem().toString().trim();
         String cityVal = city.getText().toString().trim();
-        int pincodeVal = Integer.parseInt(pincode.getText().toString().trim());
-        int phoneVal = Integer.parseInt(phone.getText().toString().trim());
+        String pincodeVal = pincode.getText().toString().trim();
+        String phoneVal = phone.getText().toString().trim();
         boolean primaryAddressVal = primaryAddress.isChecked();
         try {
 
@@ -133,19 +151,26 @@ public class AddEditAddressActivity extends AppCompatActivity implements View.On
             addressHashMap.put("line2", addressVal2);
             addressHashMap.put("area", areaVal);
             addressHashMap.put("city", cityVal);
+            addressHashMap.put("pincode", pincodeVal);
             JSONObject addressJson = new JSONObject(addressHashMap);
-            addressJson.put("pincode",pincodeVal);
 
             HashMap<String,Double> geolocationHashMap = new HashMap<>();
             geolocationHashMap.put("latitude",latLng.latitude);
             geolocationHashMap.put("longitude",latLng.longitude);
             JSONObject geolocationJson = new JSONObject(geolocationHashMap);
 
-            jsonObject.put("name", nameVal);
-            jsonObject.put("address", addressJson);
-            jsonObject.put("geolocation",geolocationJson);
-            jsonObject.put("phone", phoneVal);
-            jsonObject.put("primaryAddress", primaryAddressVal);
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("name", nameVal);
+            dataJson.put("address", addressJson);
+            dataJson.put("geolocation", geolocationJson);
+            dataJson.put("phone", phoneVal);
+            dataJson.put("primary", primaryAddressVal);
+
+            SharedPreferences sharedPreferences = getSharedPreferences("session",0);
+            requestJson.put("auth_user_token", sharedPreferences.getString("user_token",null));
+            requestJson.put("auth_session_token", sharedPreferences.getString("session_token",null));
+            requestJson.put("auth_android_token", sharedPreferences.getString("android_token",null));
+            requestJson.put("data",dataJson);
 
         } catch (JSONException e) { e.printStackTrace(); }
         return jsonObject;
@@ -157,10 +182,10 @@ public class AddEditAddressActivity extends AppCompatActivity implements View.On
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
-                        intent = new Intent(AddEditAddressActivity.this, MainActivity.class);
+                        intent = new Intent(AddAddressActivity.this, MainActivity.class);
                         startActivity(intent);
                     } else if(!(response.getBoolean("success"))) {
-                        Toast.makeText(AddEditAddressActivity.this, "Save failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddAddressActivity.this, "Save failed!", Toast.LENGTH_SHORT).show();
                         System.out.println("Error: "+response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -168,8 +193,8 @@ public class AddEditAddressActivity extends AppCompatActivity implements View.On
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError) Toast.makeText(AddEditAddressActivity.this, "Network Error. Try again!", Toast.LENGTH_SHORT).show();
-                else Toast.makeText(AddEditAddressActivity.this, "Error: "+error.getMessage(), Toast.LENGTH_SHORT).show();
+                if(error instanceof NoConnectionError) Toast.makeText(AddAddressActivity.this, "Network Error. Try again!", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(AddAddressActivity.this, "Error: "+error.getMessage(), Toast.LENGTH_SHORT).show();
                 System.out.println("JSON Error: " + error);
             }
         });

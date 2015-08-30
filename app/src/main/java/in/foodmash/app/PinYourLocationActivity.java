@@ -13,8 +13,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -25,9 +29,11 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
     Intent intent;
     LocationManager locationManager;
     LocationListener locationListener;
+    JSONObject jsonObject;
 
     LinearLayout back;
     LinearLayout proceed;
+    boolean edit = false;
 
     MapFragment mapFragment;
     TouchableImageButton resetMap;
@@ -59,6 +65,15 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_your_location);
 
+        if(getIntent().getBooleanExtra("edit",false)) {
+            try {
+                jsonObject = new JSONObject(getIntent().getStringExtra("json"));
+                JSONObject geolocationJson = jsonObject.getJSONObject("geolocation");
+                initialLocation = new LatLng(geolocationJson.getDouble("latitude"),geolocationJson.getDouble("longitude"));
+                edit = true;
+            } catch (JSONException e) { e.printStackTrace(); }
+        }
+
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) enableGpsAlert();
 
@@ -76,11 +91,15 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
             case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
             case R.id.proceed:
                 locationManager.removeUpdates(locationListener);
-                intent = new Intent(this, AddEditAddressActivity.class);
+                intent = new Intent(this, AddAddressActivity.class);
                 CameraPosition cameraPosition = mapFragment.getMap().getCameraPosition();
                 LatLng latLng = cameraPosition.target;
                 intent.putExtra("latitude",latLng.latitude);
                 intent.putExtra("longitude",latLng.longitude);
+                if(edit) {
+                    intent.putExtra("edit",true);
+                    intent.putExtra("json",jsonObject.toString());
+                }
                 startActivity(intent); break;
         }
     }
@@ -112,6 +131,11 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
                         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivity(intent);
                     }
-                }).show();
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                locationManager.removeUpdates(locationListener);
+            }
+        }).show();
     }
 }

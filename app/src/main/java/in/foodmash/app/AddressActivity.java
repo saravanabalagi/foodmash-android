@@ -11,12 +11,28 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Serializable;
+
 /**
  * Created by sarav on Aug 08 2015.
  */
 public class AddressActivity extends AppCompatActivity implements View.OnClickListener {
 
+    String userToken;
+    String sessionToken;
+    String androidToken;
+
     Intent intent;
+    JSONArray jsonArray;
 
     LinearLayout back;
     LinearLayout addAddress;
@@ -46,33 +62,58 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addresses);
 
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, getString(R.string.api_root_path) + "/addresses", new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                jsonArray = response;
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        Swift.getInstance(this).addToRequestQueue(jsonArrayRequest);
+
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         addAddress = (LinearLayout) findViewById(R.id.add_address); addAddress.setOnClickListener(this);
 
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
-        for(int i=0;i<3;i++) {
-            final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.user_address,fillLayout,false);
-            ((TextView) addressLayout.findViewById(R.id.name)).setText("Name "+i);
-            ((TextView) addressLayout.findViewById(R.id.address)).setText("Room no "+i+"\nABC Street, \nKottur");
-            ((TextView) addressLayout.findViewById(R.id.phone)).setText("989876"+((i*345855)%100));
-            if(i==0) addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
-            addressLayout.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(AddressActivity.this, AddEditAddressActivity.class);
-                    startActivity(intent);
-                }
-            });
-            addressLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int childCount = ((LinearLayout) fillLayout).getChildCount();
-                    for (int i = 0; i < childCount; i++)
-                        fillLayout.getChildAt(i).findViewById(R.id.selected).setVisibility(View.GONE);
-                    addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
-                }
-            });
-            fillLayout.addView(addressLayout);
+        for(int i=0;i<jsonArray.length();i++) {
+            try {
+                final JSONObject jsonObject = jsonArray.getJSONObject(i);
+                JSONObject addressJson = jsonObject.getJSONObject("address");
+                final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.user_address, fillLayout, false);
+                String address = addressJson.getString("line1")+",\n"+
+                                    addressJson.getString("line2")+",\n"+
+                                    addressJson.getString("area")+",\n"+
+                                    addressJson.getString("city")+" - "+
+                                    addressJson.getString("pincode");
+                ((TextView) addressLayout.findViewById(R.id.name)).setText(jsonObject.getString("name"));
+                ((TextView) addressLayout.findViewById(R.id.address)).setText(address);
+                ((TextView) addressLayout.findViewById(R.id.phone)).setText(jsonObject.getString("phone"));
+                final JSONObject geolocationJson = jsonObject.getJSONObject("geolocation");
+                if(jsonObject.getBoolean("primary")) addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
+                addressLayout.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(AddressActivity.this, PinYourLocationActivity.class);
+                        intent.putExtra("json", jsonObject.toString());
+                        intent.putExtra("edit", true);
+                        startActivity(intent);
+                    }
+                });
+                addressLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int childCount = ((LinearLayout) fillLayout).getChildCount();
+                        for (int i = 0; i < childCount; i++)
+                            fillLayout.getChildAt(i).findViewById(R.id.selected).setVisibility(View.GONE);
+                        addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
+                    }
+                });
+                fillLayout.addView(addressLayout);
+            } catch (JSONException e) { e.printStackTrace(); }
         }
     }
 

@@ -1,6 +1,7 @@
 package in.foodmash.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -33,9 +34,6 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
     Intent intent;
-    String userToken;
-    String mobileToken;
-    String androidId;
 
     ImageView offers;
     ImageView for_1;
@@ -75,17 +73,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        androidId = Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID);
-        if(getIntent().getBooleanExtra("logged_in",false)) {
-            userToken = getIntent().getStringExtra("user_token");
-            mobileToken = getIntent().getStringExtra("mobile_token");
-            System.out.println("UserToken: "+ userToken);
-            System.out.println("MobileToken: "+ mobileToken);
-            System.out.println("Android ID: "+androidId);
-            System.out.println("Encrypted Android ID: "+Cryptography.encrypt(androidId,userToken));
-            System.out.println("Encrypted Android ID: "+Cryptography.encrypt(androidId,mobileToken));
-        }
 
         offers = (ImageView) findViewById(R.id.offers); offers.setOnClickListener(this);
         for_1 = (ImageView) findViewById(R.id.for_1); for_1.setOnClickListener(this);
@@ -162,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
-
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, getString(R.string.api_root_path) + "/combos", new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -221,9 +207,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void logout() {
         HashMap<String,String> hashMap = new HashMap<>();
-        hashMap.put("auth_user_token",userToken);
-        hashMap.put("auth_mobile_token", mobileToken);
-        hashMap.put("auth_android_id", androidId);
+        SharedPreferences sharedPreferences = getSharedPreferences("session",0);
+        hashMap.put("auth_user_token", sharedPreferences.getString("user_token",null));
+        hashMap.put("auth_session_token", sharedPreferences.getString("session_token",null));
+        hashMap.put("auth_android_token", sharedPreferences.getString("android_token",null));
 
         JSONObject requestJson = new JSONObject(hashMap);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, getString(R.string.api_root_path) + "/sessions", requestJson, new Response.Listener<JSONObject>() {

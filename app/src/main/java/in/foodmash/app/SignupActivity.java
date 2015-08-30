@@ -3,6 +3,7 @@ package in.foodmash.app;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -170,10 +171,15 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 try {
                     if (response.getBoolean("success")) {
                         String userToken = response.getString("user_token");
-                        String mobileToken = response.getString("mobile_token");
-                        intent.putExtra("logged_in",true);
-                        intent.putExtra("mobile_token", mobileToken);
-                        intent.putExtra("user_token", userToken);
+                        String sessionToken = response.getString("session_token");
+                        String androidId = Settings.Secure.getString(SignupActivity.this.getContentResolver(),Settings.Secure.ANDROID_ID);
+                        SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("logged_in",true);
+                        editor.putString("user_token", userToken);
+                        editor.putString("session_token", sessionToken);
+                        editor.putString("android_token", Cryptography.encrypt(androidId, sessionToken));
+                        editor.commit();
                         startActivity(intent);
                     } else {
                         new AlertDialog.Builder(SignupActivity.this)
@@ -218,7 +224,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 try{ requestJson.put("email",s.toString()); }
                 catch (JSONException e) { e.printStackTrace(); }
                 System.out.println("Request Json: "+requestJson);
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, getString(R.string.api_root_path) + "/registrations/checkEmail", requestJson, new Response.Listener<JSONObject>() {
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkEmail", requestJson, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
@@ -258,7 +264,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 try { requestJson.put("mobile_no", phone.getText().toString().trim()); }
                 catch (JSONException e) { e.printStackTrace(); }
                 catch (Exception e) { e.printStackTrace(); }
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, getString(R.string.api_root_path) + "/registrations/checkMobileNo", requestJson, new Response.Listener<JSONObject>() {
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkMobileNo", requestJson, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
