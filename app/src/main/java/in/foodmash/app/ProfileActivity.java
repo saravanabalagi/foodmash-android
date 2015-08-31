@@ -37,7 +37,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     EditText dob;
     EditText email;
     EditText phone;
-    EditText landline;
     Switch promotionOffers;
 
     LinearLayout cancel;
@@ -80,12 +79,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         dob = (EditText) findViewById(R.id.dob);
         email = (EditText) findViewById(R.id.email);
         phone = (EditText) findViewById(R.id.phone);
-        landline = (EditText) findViewById(R.id.landline);
     }
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear_fields: name.setText(null); dob.setText(null); email.setText(null); phone.setText(null); landline.setText(null); promotionOffers.setChecked(true); break;
+            case R.id.clear_fields: name.setText(null); dob.setText(null); email.setText(null); phone.setText(null); promotionOffers.setChecked(true); break;
             case R.id.change_password: intent = new Intent(this, ChangePasswordActivity.class); startActivity(intent); break;
             case R.id.cancel: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
             case R.id.save: makeJsonRequest(); break;
@@ -100,7 +98,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             profileHashMap.put("dob", dob.getText().toString().trim());
             profileHashMap.put("email", email.getText().toString().trim());
             profileHashMap.put("phone", phone.getText().toString().trim());
-            profileHashMap.put("landline", landline.getText().toString().trim());
             JSONObject dataJson = new JSONObject(profileHashMap);
             dataJson.put("offers", promotionOffers.isChecked());
 

@@ -113,34 +113,7 @@
                         android:singleLine="true" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical">
 
-                    <EditText
-                        android:layout_width="90dp"
-                        android:layout_height="wrap_content"
-                        android:inputType="none"
-                        android:ems="10"
-                        android:text="@string/landline_prefix_edit_text_hint"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:editable="false"
-                        android:gravity="center_horizontal"
-                        android:singleLine="true" />
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="phone"
-                        android:ems="10"
-                        android:id="@+id/landline"
-                        android:layout_margin="5dp"
-                        android:hint="@string/landline"
-                        android:singleLine="true" />
-                </LinearLayout>
 
                 <Switch
                     android:layout_width="wrap_content"

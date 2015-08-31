@@ -23,6 +23,7 @@ public class Cryptography {
             key = sha.digest(key);
             key = Arrays.copyOf(key, 16); // use only first 128 bit
             secretKey = new SecretKeySpec(key, "AES");
+            new String(key,"UTF-8");
         } catch (NoSuchAlgorithmException e) { e.printStackTrace(); }
     }
 

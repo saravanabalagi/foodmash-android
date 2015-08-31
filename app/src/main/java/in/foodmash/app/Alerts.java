@@ -47,4 +47,17 @@ public class Alerts {
                 }).show();
     }
 
+    public static void showValidityAlert(Context context) {
+        new AlertDialog.Builder(context)
+                .setIconAttribute(android.R.attr.alertDialogIcon)
+                .setTitle("Invalid Data Found")
+                .setMessage("One or more data you have entered is invalid. Correct them before procceding.")
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
+    }
+
 }

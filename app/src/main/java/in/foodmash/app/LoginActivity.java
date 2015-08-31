@@ -7,11 +7,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -22,15 +25,18 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import javax.xml.validation.Validator;
+
 /**
  * Created by Zeke on Jul 19 2015.
  */
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher{
 
     LinearLayout register;
     LinearLayout forgotPassword;
@@ -40,6 +46,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     TouchableImageButton clearAllFields;
     EditText email;
     EditText password;
+    ImageView emailValidate;
+    ImageView passwordValidate;
     Switch keepLoggedIn;
 
     Intent intent;
@@ -77,8 +85,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         login = (LinearLayout) findViewById(R.id.login); login.setOnClickListener(this);
 
         clearAllFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearAllFields.setOnClickListener(this);
-        email = (EditText) findViewById(R.id.email);
-        password = (EditText) findViewById(R.id.password);
+        emailValidate = (ImageView) findViewById(R.id.email_validate);
+        passwordValidate = (ImageView) findViewById(R.id.password_validate);
+        email = (EditText) findViewById(R.id.email); email.addTextChangedListener(this);
+        password = (EditText) findViewById(R.id.password); password.addTextChangedListener(this);
         keepLoggedIn = (Switch) findViewById(R.id.keep_logged_in);
 
     }
@@ -89,10 +99,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.clear_fields: email.setText(null); password.setText(null); keepLoggedIn.setChecked(false); break;
             case R.id.register: intent = new Intent(this, SignupActivity.class); startActivity(intent); break;
             case R.id.forgot_password: intent = new Intent(this, ForgotPasswordActivity.class); startActivity(intent); break;
-            case R.id.skip: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
-            case R.id.login:
-                makeJsonRequest();
-                break;
+            case R.id.login: if(isEverythingValid()) makeJsonRequest(); else Alerts.showValidityAlert(LoginActivity.this); break;
         }
     }
 
@@ -148,4 +155,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
+    private boolean isEverythingValid() {return (EmailValidator.getInstance().isValid(email.getText().toString().trim()) && password.getText().length()>=8); }
+    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+    @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+    @Override public void afterTextChanged(Editable s) {
+        if(s==email.getEditableText())
+            if(EmailValidator.getInstance().isValid(s.toString().trim())) { if(emailValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(emailValidate,500); }
+            else { if(emailValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(emailValidate,500); }
+        else if(s==password.getEditableText())
+            if(s.length()>=8)  { if(passwordValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(passwordValidate, 500); }
+            else { if(passwordValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(passwordValidate,500); }
+    }
 }

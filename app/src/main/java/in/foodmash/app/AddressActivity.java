@@ -93,15 +93,6 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                 startActivity(intent);
                             }
                         });
-                        addressLayout.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                int childCount = ((LinearLayout) fillLayout).getChildCount();
-                                for (int i = 0; i < childCount; i++)
-                                    fillLayout.getChildAt(i).findViewById(R.id.selected).setVisibility(View.GONE);
-                                addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
-                            }
-                        });
                         fillLayout.addView(addressLayout);
                     } catch (JSONException e) {
                         e.printStackTrace();

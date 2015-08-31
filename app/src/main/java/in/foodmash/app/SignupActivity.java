@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -108,17 +110,18 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
 
+        nameValidate = (ImageView) findViewById(R.id.name_validate);
+        emailValidate = (ImageView) findViewById(R.id.email_validate);
+        phoneValidate = (ImageView) findViewById(R.id.phone_validate);
+        passwordValidate = (ImageView) findViewById(R.id.password_validate);
+        passwordConfirmationValidate = (ImageView) findViewById(R.id.password_confirmation_validate);
+
         name = (EditText) findViewById(R.id.name); name.addTextChangedListener(this);
         email = (EditText) findViewById(R.id.email); email.addTextChangedListener(this);
         phone = (EditText) findViewById(R.id.phone); phone.addTextChangedListener(this);
         password = (EditText) findViewById(R.id.password); password.addTextChangedListener(this);
         passwordConfirmation = (EditText) findViewById(R.id.password_confirmation); passwordConfirmation.addTextChangedListener(this);
 
-        nameValidate = (ImageView) findViewById(R.id.name_validate);
-        emailValidate = (ImageView) findViewById(R.id.email_validate);
-        phoneValidate = (ImageView) findViewById(R.id.phone_validate);
-        passwordValidate = (ImageView) findViewById(R.id.password_validate);
-        passwordConfirmationValidate = (ImageView) findViewById(R.id.password_confirmation_validate);
 
         emailProgressBar = (ProgressBar) findViewById(R.id.email_loader);
         phoneProgressBar = (ProgressBar) findViewById(R.id.phone_loader);
@@ -130,8 +133,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.clear_fields: name.setText(null); email.setText(null); phone.setText(null); password.setText(null); passwordConfirmation.setText(null); acceptTerms.setChecked(false); break;
             case R.id.login: intent = new Intent(this, LoginActivity.class); startActivity(intent); break;
             case R.id.create:
-                if(termsAccepted) { makeJsonRequest(); }
-                else new AlertDialog.Builder(SignupActivity.this)
+                if(termsAccepted) {
+                    if(isEverythingValid()) makeJsonRequest();
+                    else Alerts.showValidityAlert(SignupActivity.this);
+                    break;
+                } else new AlertDialog.Builder(SignupActivity.this)
                         .setIconAttribute(android.R.attr.alertDialogIcon)
                         .setTitle("Accept Terms and Conditions")
                         .setMessage("You should accept all terms and conditions to sign up in Foodmash")
@@ -212,9 +218,9 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
     @Override public void afterTextChanged(Editable s) {
         if(s==name.getEditableText()) {
-            if(name.getText().toString().trim().length()<1) setCancelOnImageView(nameValidate);
+            if(name.getText().toString().trim().length()<2) setCancelOnImageView(nameValidate);
             else setOkayOnImageView(nameValidate);
-            Animations.fadeIn(nameValidate,500);
+            if(nameValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(nameValidate,500);
         }
         if(s==email.getEditableText()) {
             if(EmailValidator.getInstance().isValid(s.toString())) {
@@ -300,13 +306,21 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             else setOkayOnImageView(passwordValidate);
             if(!(passwordConfirmation.getText().toString().equals(password.getText().toString()))) setCancelOnImageView(passwordConfirmationValidate);
             else setOkayOnImageView(passwordConfirmationValidate);
-            Animations.fadeIn(passwordValidate,500);
+            if(passwordValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(passwordValidate, 500);
         }
         if(s==passwordConfirmation.getEditableText()) {
             if(!(passwordConfirmation.getText().toString().equals(password.getText().toString()))) setCancelOnImageView(passwordConfirmationValidate);
             else setOkayOnImageView(passwordConfirmationValidate);
-            Animations.fadeIn(passwordConfirmationValidate,500);
+            if(passwordConfirmationValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(passwordConfirmationValidate, 500);
         }
+    }
+
+    private boolean isEverythingValid() {
+        return isEmailAvailable &&
+                isPhoneAvailable &&
+                password.getText().length()>=8 &&
+                passwordConfirmation.getText().toString().equals(password.getText().toString()) &&
+                name.getText().toString().trim().length()>=2;
     }
 
 }

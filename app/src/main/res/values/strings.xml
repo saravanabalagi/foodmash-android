@@ -16,7 +16,7 @@
     <string name="name_edit_text_hint">Your name</string>
     <string name="email_edit_text_hint">someone@mailbox.com</string>
     <string name="phone_prefix_edit_text_hint">+91</string>
-    <string name="phone_edit_text_hint">10 digit phone number</string>
+    <string name="phone_edit_text_hint">10 digit mobile number</string>
     <string name="password_edit_text_hint">password</string>
     <string name="keep_me_logged_in">Keep me logged in</string>
     <string name="create_account">Create Account</string>
@@ -34,7 +34,7 @@
     <string name="for_1_focus">For 1 Focus</string>
     <string name="for_2_focus">For 2 Focus</string>
     <string name="for_3_focus">For 3 Focus</string>
-    <string name="shopping_cart">Shopping Cart</string>
+    <string name="cart_header">Cart</string>
     <string name="back">back</string>
     <string name="buy">buy</string>
     <string name="buy_icon">Buy Icon</string>
@@ -73,7 +73,7 @@
     <string name="save">save</string>
     <string name="saved_addresses">Saved Addresses</string>
     <string name="email_and_phone">Email and Phone</string>
-    <string name="landline_prefix_edit_text_hint">+91 424</string>
+    <string name="landline_prefix_edit_text_hint">44</string>
     <string name="landline">landline</string>
     <string name="receive_promotional_offers">Receive promotional offers</string>
     <string name="order_history">Order History</string>

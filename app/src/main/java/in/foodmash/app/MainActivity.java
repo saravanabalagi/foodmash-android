@@ -161,9 +161,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (error instanceof NoConnectionError) {
-                    show("Network Error. Reconnect and try again!");
-                } else show("Unknown error. Try again!");
+                if (error instanceof NoConnectionError) Alerts.showInternetConnectionError(MainActivity.this);
+                else Alerts.showUnknownError(MainActivity.this);
             }
         });
         Swift.getInstance(this).addToRequestQueue(jsonArrayRequest);
@@ -214,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hashMap.put("auth_android_token", sharedPreferences.getString("android_token", null));
         JSONObject requestJson = new JSONObject(hashMap);
         System.out.println(requestJson);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, getString(R.string.api_root_path) + "/sessions", requestJson, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/sessions/destroy", requestJson, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -222,8 +221,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         intent = new Intent(MainActivity.this,LoginActivity.class);
                         startActivity(intent);
                     } else if(!(response.getBoolean("success"))) {
+                        Alerts.showCommonErrorAlert(MainActivity.this,"Unable to Logout","We are unable to sign you out. Try again later!","Okay");
                         System.out.println(response.getString("error"));
-                        Toast.makeText(MainActivity.this, "Error occurred. Try again!", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -234,13 +233,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 else Alerts.showUnknownError(MainActivity.this);
                 System.out.println("Response Error: " + error);
             }
-        }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("content-type", "application/json");
-                return headers;
-            }};
+        });
         Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
