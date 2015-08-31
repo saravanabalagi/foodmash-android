@@ -74,7 +74,10 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         switch (v.getId()) {
             case R.id.cart: intent = new Intent(this, CartActivity.class); startActivity(intent); break;
             case R.id.confirm: intent = new Intent(this, CheckoutPaymentActivity.class); startActivity(intent); break;
-            case R.id.add_address: intent = new Intent(this, PinYourLocationActivity.class); startActivity(intent); break;
+            case R.id.add_address:
+                intent = new Intent(this, PinYourLocationActivity.class);
+                intent.putExtra("cart",true);
+                startActivity(intent); break;
         }
     }
 }

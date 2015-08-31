@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -22,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by sarav on Aug 08 2015.
@@ -85,7 +88,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.clear_fields: name.setText(null); dob.setText(null); email.setText(null); phone.setText(null); landline.setText(null); promotionOffers.setChecked(true); break;
             case R.id.change_password: intent = new Intent(this, ChangePasswordActivity.class); startActivity(intent); break;
             case R.id.cancel: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
-            case R.id.save: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
+            case R.id.save: makeJsonRequest(); break;
         }
     }
 
@@ -117,12 +120,25 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/profile", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-
+                try {
+                    if(response.getBoolean("success")) {
+                        intent = new Intent(ProfileActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    } else if(!(response.getBoolean("success"))) {
+                        Alerts.showCommonErrorAlert(ProfileActivity.this,
+                                "Invalid Details",
+                                "We are unable to save your profile details as they are invalid. Try again later!",
+                                "Okay");
+                        System.out.println("Response error: "+response.getString("error"));
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(ProfileActivity.this);
+                else Alerts.showUnknownError(ProfileActivity.this);
+                System.out.println("Response Error: " + error);
             }
         });
     }

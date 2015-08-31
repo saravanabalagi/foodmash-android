@@ -34,6 +34,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
     LinearLayout back;
     LinearLayout proceed;
     boolean edit = false;
+    boolean cart = false;
 
     MapFragment mapFragment;
     TouchableImageButton resetMap;
@@ -64,6 +65,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_your_location);
 
+        cart = getIntent().getBooleanExtra("cart",false);
         if(getIntent().getBooleanExtra("edit",false)) {
             try {
                 jsonObject = new JSONObject(getIntent().getStringExtra("json"));
@@ -74,7 +76,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
         }
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) enableGpsAlert();
+        if(!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) enableGpsAlert();
 
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -98,7 +100,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
                 if(edit) {
                     intent.putExtra("edit",true);
                     intent.putExtra("json",jsonObject.toString());
-                }
+                } if(cart) intent.putExtra("cart",true);
                 startActivity(intent); break;
         }
     }
@@ -114,7 +116,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
             }
             @Override public void onStatusChanged(String provider, int status, Bundle extras) {  }
             @Override public void onProviderEnabled(String provider) {}
-            @Override public void onProviderDisabled(String provider) { enableGpsAlert(); }
+            @Override public void onProviderDisabled(String provider) { }
         };
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
     }

@@ -35,6 +35,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     Intent intent;
     LatLng latLng;
     boolean edit = false;
+    boolean cart = false;
     JSONObject jsonObject;
 
     EditText name;
@@ -76,6 +77,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_address);
 
+        cart = getIntent().getBooleanExtra("cart",false);
         if(getIntent().getBooleanExtra("edit",false)) {
             try { jsonObject = new JSONObject(getIntent().getStringExtra("json")); edit = true; }
             catch (JSONException e) { e.printStackTrace(); }
@@ -175,21 +177,22 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
             requestJson.put("data",dataJson);
 
         } catch (JSONException e) { e.printStackTrace(); }
-        System.out.println(jsonObject);
-        return jsonObject;
+        System.out.println(requestJson);
+        return requestJson;
     }
 
     private void makeJsonRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses", getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest((edit)?Request.Method.PATCH:Request.Method.POST, getString(R.string.api_root_path) + ((edit)?"/delivery_addresses":"/delivery_addresses/create"), getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
-                        intent = new Intent(AddAddressActivity.this, MainActivity.class);
+                        if (cart) intent = new Intent(AddAddressActivity.this, CheckoutPaymentActivity.class);
+                        else intent = new Intent(AddAddressActivity.this, AddressActivity.class);
                         startActivity(intent);
                     } else if(!(response.getBoolean("success"))) {
-                        Toast.makeText(AddAddressActivity.this, "Save failed!", Toast.LENGTH_SHORT).show();
-                        System.out.println("Error: "+response.getString("error"));
+                        Alerts.showCommonErrorAlert(AddAddressActivity.this,"Address Invalid","We are unable to process your Address Details. Try Again!","Okay");
+                        System.out.println("Error: " + response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }

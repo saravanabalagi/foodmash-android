@@ -17,6 +17,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -29,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
@@ -208,9 +210,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         HashMap<String,String> hashMap = new HashMap<>();
         SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
         hashMap.put("auth_user_token", sharedPreferences.getString("user_token",null));
-        hashMap.put("auth_session_token", sharedPreferences.getString("session_token",null));
-        hashMap.put("auth_android_token", sharedPreferences.getString("android_token",null));
+        hashMap.put("auth_session_token", sharedPreferences.getString("session_token", null));
+        hashMap.put("auth_android_token", sharedPreferences.getString("android_token", null));
         JSONObject requestJson = new JSONObject(hashMap);
+        System.out.println(requestJson);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, getString(R.string.api_root_path) + "/sessions", requestJson, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -228,10 +231,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onErrorResponse(VolleyError error) {
                 if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(MainActivity.this);
-                else Alerts.showInternetConnectionError(MainActivity.this);
+                else Alerts.showUnknownError(MainActivity.this);
                 System.out.println("Response Error: " + error);
             }
-        });
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("content-type", "application/json");
+                return headers;
+            }};
         Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 

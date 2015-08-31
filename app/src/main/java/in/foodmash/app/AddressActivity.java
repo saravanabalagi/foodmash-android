@@ -2,6 +2,7 @@ package in.foodmash.app;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -21,15 +22,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * Created by sarav on Aug 08 2015.
  */
 public class AddressActivity extends AppCompatActivity implements View.OnClickListener {
-
-    String userToken;
-    String sessionToken;
-    String androidToken;
 
     Intent intent;
     JSONArray jsonArray;
@@ -61,10 +59,54 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addresses);
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, getString(R.string.api_root_path) + "/delivery_addresses", new Response.Listener<JSONArray>() {
+        back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
+        addAddress = (LinearLayout) findViewById(R.id.add_address); addAddress.setOnClickListener(this);
+
+        fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",getRequestJson(),new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 jsonArray = response;
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    try {
+                        final JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        JSONObject addressJson = jsonObject.getJSONObject("address");
+                        final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.user_address, fillLayout, false);
+                        String address = addressJson.getString("line1") + ",\n" +
+                                addressJson.getString("line2") + ",\n" +
+                                addressJson.getString("area") + ",\n" +
+                                addressJson.getString("city") + " - " +
+                                addressJson.getString("pincode");
+                        ((TextView) addressLayout.findViewById(R.id.name)).setText(jsonObject.getString("name"));
+                        ((TextView) addressLayout.findViewById(R.id.address)).setText(address);
+                        ((TextView) addressLayout.findViewById(R.id.phone)).setText(jsonObject.getString("phone"));
+                        final JSONObject geolocationJson = jsonObject.getJSONObject("geolocation");
+                        if (jsonObject.getBoolean("primary"))
+                            addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
+                        addressLayout.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(AddressActivity.this, PinYourLocationActivity.class);
+                                intent.putExtra("json", jsonObject.toString());
+                                intent.putExtra("edit", true);
+                                startActivity(intent);
+                            }
+                        });
+                        addressLayout.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                int childCount = ((LinearLayout) fillLayout).getChildCount();
+                                for (int i = 0; i < childCount; i++)
+                                    fillLayout.getChildAt(i).findViewById(R.id.selected).setVisibility(View.GONE);
+                                addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
+                            }
+                        });
+                        fillLayout.addView(addressLayout);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -73,47 +115,6 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
         Swift.getInstance(this).addToRequestQueue(jsonArrayRequest);
-
-        back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
-        addAddress = (LinearLayout) findViewById(R.id.add_address); addAddress.setOnClickListener(this);
-
-        fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
-        for(int i=0;i<jsonArray.length();i++) {
-            try {
-                final JSONObject jsonObject = jsonArray.getJSONObject(i);
-                JSONObject addressJson = jsonObject.getJSONObject("address");
-                final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.user_address, fillLayout, false);
-                String address = addressJson.getString("line1")+",\n"+
-                                    addressJson.getString("line2")+",\n"+
-                                    addressJson.getString("area")+",\n"+
-                                    addressJson.getString("city")+" - "+
-                                    addressJson.getString("pincode");
-                ((TextView) addressLayout.findViewById(R.id.name)).setText(jsonObject.getString("name"));
-                ((TextView) addressLayout.findViewById(R.id.address)).setText(address);
-                ((TextView) addressLayout.findViewById(R.id.phone)).setText(jsonObject.getString("phone"));
-                final JSONObject geolocationJson = jsonObject.getJSONObject("geolocation");
-                if(jsonObject.getBoolean("primary")) addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
-                addressLayout.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(AddressActivity.this, PinYourLocationActivity.class);
-                        intent.putExtra("json", jsonObject.toString());
-                        intent.putExtra("edit", true);
-                        startActivity(intent);
-                    }
-                });
-                addressLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int childCount = ((LinearLayout) fillLayout).getChildCount();
-                        for (int i = 0; i < childCount; i++)
-                            fillLayout.getChildAt(i).findViewById(R.id.selected).setVisibility(View.GONE);
-                        addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
-                    }
-                });
-                fillLayout.addView(addressLayout);
-            } catch (JSONException e) { e.printStackTrace(); }
-        }
     }
 
     public void onClick(View v) {
@@ -121,5 +122,15 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
             case R.id.add_address: intent = new Intent(this, PinYourLocationActivity.class); startActivity(intent); break;
         }
+    }
+
+    private JSONObject getRequestJson() {
+        HashMap<String,String> hashMap = new HashMap<>();
+        SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
+        hashMap.put("auth_user_token", sharedPreferences.getString("user_token",null));
+        hashMap.put("auth_session_token", sharedPreferences.getString("session_token", null));
+        hashMap.put("auth_android_token", sharedPreferences.getString("android_token", null));
+        JSONObject requestJson = new JSONObject(hashMap);
+        return requestJson;
     }
 }

@@ -164,7 +164,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations",getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Toast.makeText(SignupActivity.this, "Response received", Toast.LENGTH_SHORT).show();
                 System.out.println("JSON Response: "+response);
                 intent = new Intent(SignupActivity.this, MainActivity.class);
                 try {

@@ -34,4 +34,17 @@ public class Alerts {
                 }).show();
     }
 
+    public static void showCommonErrorAlert(Context context, String title, String message, String buttonName) {
+        new AlertDialog.Builder(context)
+                .setIconAttribute(android.R.attr.alertDialogIcon)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(buttonName, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
+    }
+
 }

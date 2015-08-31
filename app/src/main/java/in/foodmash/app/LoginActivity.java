@@ -128,18 +128,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         editor.putString("android_token", Cryptography.encrypt(androidId, sessionToken));
                         editor.apply();
                         startActivity(intent);
-                    } else {
-                        new AlertDialog.Builder(LoginActivity.this)
-                                .setIconAttribute(android.R.attr.alertDialogIcon)
-                                .setTitle("Invalid username or password")
-                                .setMessage("We are unable to log you in with the entered credentials. Please try again!")
-                                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                }).show();
-                        System.out.println("Error Details: "+response.getString("error"));
+                    } else if(!(response.getBoolean("success"))) {
+                        Alerts.showCommonErrorAlert(LoginActivity.this,
+                                "Invalid username or password",
+                                "We are unable to log you in with the entered credentials. Please try again!",
+                                "Okay");
+                        System.out.println("Error Details: " + response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
