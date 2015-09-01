@@ -1,7 +1,6 @@
 package in.foodmash.app;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -16,13 +15,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.android.volley.NoConnectionError;
+import com.android.volley.TimeoutError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -36,7 +33,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by sarav on Aug 08 2015.
@@ -138,7 +134,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         landline = (EditText) findViewById(R.id.landline); landline.addTextChangedListener(this);
         primaryAddress = (Switch) findViewById(R.id.primary_address);
         area = (AutoCompleteTextView) findViewById(R.id.area);
-        ArrayAdapter<String> areaAdapter = new ArrayAdapter<String>(this,android.R.layout.select_dialog_item,areaList);
+        ArrayAdapter<String> areaAdapter = new ArrayAdapter<>(this,android.R.layout.select_dialog_item,areaList);
         area.setAdapter(areaAdapter);
         area.setThreshold(1);
         area.addTextChangedListener(this);
@@ -266,7 +262,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(AddAddressActivity.this);
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(AddAddressActivity.this);
                 else Alerts.showUnknownError(AddAddressActivity.this);
                 System.out.println("JSON Error: " + error);
             }

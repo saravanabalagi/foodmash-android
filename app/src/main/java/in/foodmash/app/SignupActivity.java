@@ -4,10 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -21,9 +18,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.android.volley.NoConnectionError;
+import com.android.volley.TimeoutError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -42,7 +39,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
     Intent intent;
     String androidId;
-    Handler handler = new Handler();
 
     LinearLayout login;
     LinearLayout create;
@@ -105,8 +101,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         acceptTerms = (Switch) findViewById(R.id.accept_terms); acceptTerms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) termsAccepted = true;
-                else termsAccepted = false;
+                termsAccepted = isChecked;
             }
         });
 
@@ -203,7 +198,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(SignupActivity.this);
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(SignupActivity.this);
                 else Alerts.showUnknownError(SignupActivity.this);
                 System.out.println("Response Error: " + error);
             }
@@ -248,7 +243,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(SignupActivity.this);
+                        if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(SignupActivity.this);
                         else Alerts.showUnknownError(SignupActivity.this);
                         System.out.println("Email response error: "+error);
                         isEmailValidationInProgress = false;
@@ -267,7 +262,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 JSONObject requestJson = new JSONObject();
                 try { requestJson.put("mobile_no", phone.getText().toString().trim()); }
                 catch (JSONException e) { e.printStackTrace(); }
-                catch (Exception e) { e.printStackTrace(); }
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkMobileNo", requestJson, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -287,7 +281,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(SignupActivity.this);
+                        if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(SignupActivity.this);
                         else Alerts.showUnknownError(SignupActivity.this);
                         System.out.println("Phone response error: "+error);
                         isPhoneValidationInProgress = false;

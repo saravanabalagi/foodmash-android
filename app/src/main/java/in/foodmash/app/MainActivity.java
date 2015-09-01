@@ -2,7 +2,6 @@ package in.foodmash.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.provider.Settings;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
@@ -15,10 +14,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NoConnectionError;
+import com.android.volley.NoConnectionError; import com.android.volley.TimeoutError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -28,10 +25,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
-
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
@@ -88,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         final PagerAdapter pagerAdapter = new PagerAdapter() {
             @Override public int getCount() { return 4; }
-            @Override public boolean isViewFromObject(View view, Object object) { return view==((ScrollView) object); }
+            @Override public boolean isViewFromObject(View view, Object object) { return view==object; }
             @Override public void destroyItem(ViewGroup container, int position, Object object) { container.removeView((ScrollView) object); }
 
             @Override
@@ -112,21 +105,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onClick(View v) {
                                 if(comboFoodLayout.getChildCount()==0) {
-                                    JSONArray comboOptions = null;
-                                    try { comboOptions = comboJson.getJSONArray("combo_options"); }
-                                    catch (JSONException e) { e.printStackTrace(); }
-                                    for (int j=0;j<comboOptions.length();j++) {
-                                        JSONObject comboOptionsJson = null;
-                                        LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo_food, comboFoodLayout, false);
-                                        try {
-                                            comboOptionsJson = comboOptions.getJSONObject(j);
-                                            ((ImageView) currentComboFoodLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
-                                            ((TextView) currentComboFoodLayout.findViewById(R.id.name)).setText(comboOptionsJson.getString("name"));
-                                            ((TextView) currentComboFoodLayout.findViewById(R.id.description)).setText(comboOptionsJson.getString("description"));
+                                    JSONArray comboOptions;
+                                    try {
+                                        comboOptions = comboJson.getJSONArray("combo_options");
+                                        for (int j = 0; j < comboOptions.length(); j++) {
+                                            JSONObject comboOptionsJson;
+                                            LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo_food, comboFoodLayout, false);
+                                            try {
+                                                comboOptionsJson = comboOptions.getJSONObject(j);
+                                                ((ImageView) currentComboFoodLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
+                                                ((TextView) currentComboFoodLayout.findViewById(R.id.name)).setText(comboOptionsJson.getString("name"));
+                                                ((TextView) currentComboFoodLayout.findViewById(R.id.description)).setText(comboOptionsJson.getString("description"));
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                            comboFoodLayout.addView(currentComboFoodLayout, j);
                                         }
-                                        catch (JSONException e) { e.printStackTrace(); }
-                                        comboFoodLayout.addView(currentComboFoodLayout,j);
-                                    }
+                                    } catch (JSONException e) { e.printStackTrace(); }
                                 } else comboFoodLayout.removeAllViews();
                             }
                         });
@@ -161,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (error instanceof NoConnectionError) Alerts.showInternetConnectionError(MainActivity.this);
+                if (error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(MainActivity.this);
                 else Alerts.showUnknownError(MainActivity.this);
             }
         });
@@ -203,14 +198,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void show(String message) { Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
-
     private void logout() {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/sessions/destroy", JsonProvider.getStandartRequestJson(MainActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
+                        SharedPreferences sharedPreferences = getSharedPreferences("session",0);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("logged_in", false);
+                        editor.remove("user_token");
+                        editor.remove("session_token");
+                        editor.remove("android_token");
+                        editor.commit();
                         intent = new Intent(MainActivity.this,LoginActivity.class);
                         startActivity(intent);
                     } else if(!(response.getBoolean("success"))) {
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(MainActivity.this);
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(MainActivity.this);
                 else Alerts.showUnknownError(MainActivity.this);
                 System.out.println("Response Error: " + error);
             }

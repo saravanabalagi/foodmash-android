@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,17 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.wallet.Cart;
-
-import org.w3c.dom.Text;
-
-import java.util.logging.Handler;
 
 /**
  * Created by Zeke on Jul 19 2015.
@@ -107,7 +98,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
             ((TextView) comboLayout.findViewById(R.id.amount)).setText("" + (Integer.parseInt(quantity.getText().toString()) * Integer.parseInt(price.getText().toString())));
-            ((ImageButton) comboLayout.findViewById(R.id.remove)).setOnClickListener(new View.OnClickListener() {
+            comboLayout.findViewById(R.id.remove).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     fillLayout.removeView(comboLayout);
@@ -145,7 +136,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void updateCartValue() {
-        Float totalCartValue = new Float(0);
+        Float totalCartValue = (float) 0;
         for(int i=0; i<fillLayout.getChildCount();i++)
             totalCartValue+= Float.parseFloat(((TextView) fillLayout.getChildAt(i).findViewById(R.id.amount)).getText().toString());
         total.setText(String.format("%.2f",totalCartValue));

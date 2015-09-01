@@ -1,20 +1,18 @@
 package in.foodmash.app;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -22,9 +20,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.Serializable;
-import java.util.HashMap;
 
 /**
  * Created by sarav on Aug 08 2015.
@@ -116,7 +111,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                 }, new Response.ErrorListener() {
                                     @Override
                                     public void onErrorResponse(VolleyError error) {
-                                        if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(AddressActivity.this);
+                                        if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(AddressActivity.this);
                                         else Alerts.showUnknownError(AddressActivity.this);
                                         System.out.println("Response Error: " + error);
                                     }
@@ -133,7 +128,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(AddressActivity.this);
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(AddressActivity.this);
                 else Alerts.showUnknownError(AddressActivity.this);
                 System.out.println("Response Error: " + error);
             }

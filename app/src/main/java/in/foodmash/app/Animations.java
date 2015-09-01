@@ -111,7 +111,6 @@ public class Animations {
     }
 
     public static void leftMargin(View v, int leftMarginInDp, int duration) {
-        final View vf = v;
         final ViewGroup.MarginLayoutParams p;
         if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)
             p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
@@ -128,7 +127,6 @@ public class Animations {
     }
 
     public static void rightMargin(View v, int rightMarginInDp, int duration) {
-        final View vf = v;
         final ViewGroup.MarginLayoutParams p;
         if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)
             p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
@@ -145,7 +143,6 @@ public class Animations {
     }
 
     public static void topMargin(View v, int topMarginInDp, int duration) {
-        final View vf = v;
         final ViewGroup.MarginLayoutParams p;
         if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)
             p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
@@ -162,7 +159,6 @@ public class Animations {
     }
 
     public static void bottomMargin(View v, int bottomMarginInDp, int duration) {
-        final View vf = v;
         final ViewGroup.MarginLayoutParams p;
         if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)
             p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();

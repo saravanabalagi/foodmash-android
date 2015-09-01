@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -19,8 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NoConnectionError;
+import com.android.volley.NoConnectionError; import com.android.volley.TimeoutError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -33,6 +31,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -103,7 +102,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         calendar.set(Calendar.YEAR,year);
                         calendar.set(Calendar.MONTH,monthOfYear);
                         calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
-                        dob.setText(new SimpleDateFormat("dd/MM/yyyy").format(calendar.getTime()));
+                        dob.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.getTime()));
                     }
                 }, Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
             }
@@ -200,7 +199,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(ProfileActivity.this);
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(ProfileActivity.this);
                 else Alerts.showUnknownError(ProfileActivity.this);
                 System.out.println("Response Error: " + error);
             }

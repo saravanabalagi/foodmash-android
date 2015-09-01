@@ -61,7 +61,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
             addressLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int childCount = ((LinearLayout) fillLayout).getChildCount();
+                    int childCount = fillLayout.getChildCount();
                     for (int i=0; i<childCount; i++) fillLayout.getChildAt(i).findViewById(R.id.selected).setVisibility(View.GONE);
                     addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
                 }

@@ -1,26 +1,22 @@
 package in.foodmash.app;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
-import android.widget.Toast;
 
-import com.android.volley.NoConnectionError;
+import com.android.volley.NoConnectionError; import com.android.volley.TimeoutError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -31,8 +27,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-
-import javax.xml.validation.Validator;
 
 /**
  * Created by Zeke on Jul 19 2015.
@@ -77,6 +71,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
 
         androidId = Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID);
@@ -90,14 +85,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         passwordValidate = (ImageView) findViewById(R.id.password_validate);
         email = (EditText) findViewById(R.id.email); email.addTextChangedListener(this);
         password = (EditText) findViewById(R.id.password); password.addTextChangedListener(this);
-        keepLoggedIn = (Switch) findViewById(R.id.keep_logged_in);
+        keepLoggedIn = (Switch) findViewById(R.id.keep_logged_in); keepLoggedIn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(!isChecked) { keepMeLoggedIn(false); Alerts.showCommonErrorAlert(LoginActivity.this,"Logout on exit","You will be logged out once you close the app","Okay"); }
+                else keepMeLoggedIn(true);
+            }
+        });
+
+        keepMeLoggedIn(true);
 
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear_fields: email.setText(null); password.setText(null); keepLoggedIn.setChecked(false); break;
+            case R.id.clear_fields: email.setText(null); password.setText(null); keepLoggedIn.setChecked(true); break;
             case R.id.register: intent = new Intent(this, SignupActivity.class); startActivity(intent); break;
             case R.id.forgot_password: intent = new Intent(this, ForgotPasswordActivity.class); startActivity(intent); break;
             case R.id.login: if(isEverythingValid()) makeJsonRequest(); else Alerts.showValidityAlert(LoginActivity.this); break;
@@ -134,7 +137,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         editor.putString("user_token", userToken);
                         editor.putString("session_token", sessionToken);
                         editor.putString("android_token", Cryptography.encrypt(androidId, sessionToken));
-                        editor.apply();
+                        editor.commit();
                         startActivity(intent);
                     } else if(!(response.getBoolean("success"))) {
                         Alerts.showCommonErrorAlert(LoginActivity.this,
@@ -148,7 +151,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(LoginActivity.this);
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(LoginActivity.this);
                 else Alerts.showUnknownError(LoginActivity.this);
                 System.out.println("Response Error: " + error);
             }
@@ -167,4 +170,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if(s.length()>=8)  { if(passwordValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(passwordValidate, 500); }
             else { if(passwordValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(passwordValidate,500); }
     }
+
+    private void keepMeLoggedIn(boolean bool) {
+        SharedPreferences sharedPreferences = getSharedPreferences("preferences",0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("keep_me_logged_in",bool);
+        editor.apply();
+    }
+
+
 }
