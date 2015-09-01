@@ -12,10 +12,12 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,7 +66,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
 
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",getRequestJson(),new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",JsonProvider.getStandartRequestJson(AddressActivity.this),new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 jsonArray = response;
@@ -81,7 +83,6 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                         ((TextView) addressLayout.findViewById(R.id.name)).setText(jsonObject.getString("name"));
                         ((TextView) addressLayout.findViewById(R.id.address)).setText(address);
                         ((TextView) addressLayout.findViewById(R.id.phone)).setText(jsonObject.getString("phone"));
-                        final JSONObject geolocationJson = jsonObject.getJSONObject("geolocation");
                         if (jsonObject.getBoolean("primary"))
                             addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
                         addressLayout.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
@@ -93,6 +94,36 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                 startActivity(intent);
                             }
                         });
+                        addressLayout.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                JSONObject requestJson = JsonProvider.getStandartRequestJson(AddressActivity.this);
+                                JSONObject dataJson = new JSONObject();
+                                try {
+                                    dataJson.put("id", jsonObject.getString("id"));
+                                    requestJson.put("data", dataJson);
+                                } catch (JSONException e) { e.printStackTrace(); }
+                                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        try {
+                                            if(response.getBoolean("success"))
+                                            fillLayout.removeView(addressLayout);
+                                            else if(response.getBoolean("success"))
+                                                Alerts.showCommonErrorAlert(AddressActivity.this,"Could not delete !","The address that you want to remove could not be removed. Try again!","Okay");
+                                        } catch (JSONException e) { e.printStackTrace(); }
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(AddressActivity.this);
+                                        else Alerts.showUnknownError(AddressActivity.this);
+                                        System.out.println("Response Error: " + error);
+                                    }
+                                });
+                                Swift.getInstance(AddressActivity.this).addToRequestQueue(jsonObjectRequest);
+                            }
+                        });
                         fillLayout.addView(addressLayout);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -102,7 +133,9 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(AddressActivity.this);
+                else Alerts.showUnknownError(AddressActivity.this);
+                System.out.println("Response Error: " + error);
             }
         });
         Swift.getInstance(this).addToRequestQueue(jsonArrayRequest);
@@ -115,13 +148,4 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private JSONObject getRequestJson() {
-        HashMap<String,String> hashMap = new HashMap<>();
-        SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
-        hashMap.put("auth_user_token", sharedPreferences.getString("user_token",null));
-        hashMap.put("auth_session_token", sharedPreferences.getString("session_token", null));
-        hashMap.put("auth_android_token", sharedPreferences.getString("android_token", null));
-        JSONObject requestJson = new JSONObject(hashMap);
-        return requestJson;
-    }
 }

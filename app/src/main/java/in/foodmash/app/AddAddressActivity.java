@@ -176,6 +176,16 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
                     pincode.setText(addresses.get(0).getPostalCode());
                     addressLine2.setText(addresses.get(0).getAddressLine(0));
                 }
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/profile" + JsonProvider.getStandartRequestJson(AddAddressActivity.this), new Response.Listener<JSONObject>() {
+                    @Override public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject userJson = response.getJSONObject("user");
+                            phone.setText(userJson.getString("phone"));
+                            phoneRadioGroup.check(R.id.mobile_radio);
+                        } catch (JSONException e) { e.printStackTrace(); }
+                    }
+                }, new Response.ErrorListener() { @Override public void onErrorResponse(VolleyError error) { }
+                }); Swift.getInstance(AddAddressActivity.this).addToRequestQueue(jsonObjectRequest);
             } catch (IOException e) { e.printStackTrace(); }
         }
 
@@ -230,10 +240,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
             dataJson.put("primary", primaryAddressVal);
             if(edit) dataJson.put("id",id);
 
-            SharedPreferences sharedPreferences = getSharedPreferences("session",0);
-            requestJson.put("auth_user_token", sharedPreferences.getString("user_token",null));
-            requestJson.put("auth_session_token", sharedPreferences.getString("session_token",null));
-            requestJson.put("auth_android_token", sharedPreferences.getString("android_token",null));
+            requestJson = JsonProvider.getStandartRequestJson(AddAddressActivity.this);
             requestJson.put("data",dataJson);
 
         } catch (JSONException e) { e.printStackTrace(); }
@@ -259,8 +266,8 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError) Toast.makeText(AddAddressActivity.this, "Network Error. Try again!", Toast.LENGTH_SHORT).show();
-                else Toast.makeText(AddAddressActivity.this, "Error: "+error.getMessage(), Toast.LENGTH_SHORT).show();
+                if(error instanceof NoConnectionError) Alerts.showInternetConnectionError(AddAddressActivity.this);
+                else Alerts.showUnknownError(AddAddressActivity.this);
                 System.out.println("JSON Error: " + error);
             }
         });

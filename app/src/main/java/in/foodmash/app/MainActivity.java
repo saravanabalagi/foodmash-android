@@ -206,14 +206,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void show(String message) { Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
 
     private void logout() {
-        HashMap<String,String> hashMap = new HashMap<>();
-        SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
-        hashMap.put("auth_user_token", sharedPreferences.getString("user_token",null));
-        hashMap.put("auth_session_token", sharedPreferences.getString("session_token", null));
-        hashMap.put("auth_android_token", sharedPreferences.getString("android_token", null));
-        JSONObject requestJson = new JSONObject(hashMap);
-        System.out.println(requestJson);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/sessions/destroy", requestJson, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/sessions/destroy", JsonProvider.getStandartRequestJson(MainActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {

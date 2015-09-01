@@ -55,34 +55,78 @@
                 android:gravity="center_horizontal"
                 android:padding="20dp">
 
-                <EditText
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:ems="10"
-                    android:id="@+id/name"
-                    android:layout_margin="5dp"
-                    android:hint="@string/name"
-                    android:singleLine="true" />
+                    android:layout_height="match_parent">
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="date"
-                    android:ems="10"
-                    android:id="@+id/dob"
-                    android:layout_margin="5dp"
-                    android:hint="dob mm/dd/yyyy" />
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/name"
+                        android:layout_margin="5dp"
+                        android:hint="@string/name"
+                        android:singleLine="true"
+                        android:layout_weight="1" />
 
-                <EditText
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/name_validate"
+                        android:src="@mipmap/cancel"
+                        android:tint="@color/color_accent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:ems="10"
-                    android:id="@+id/email"
-                    android:layout_margin="5dp"
-                    android:hint="@string/email_edit_text_hint"
-                    android:singleLine="true" />
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:ems="10"
+                        android:id="@+id/dob"
+                        android:layout_margin="5dp"
+                        android:hint="dob mm/dd/yyyy"
+                        android:layout_weight="1"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:ems="10"
+                        android:id="@+id/email"
+                        android:layout_margin="5dp"
+                        android:hint="@string/email_edit_text_hint"
+                        android:singleLine="true"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/email_validate"
+                        android:src="@mipmap/cancel"
+                        android:tint="@color/color_accent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -110,7 +154,18 @@
                         android:id="@+id/phone"
                         android:layout_margin="5dp"
                         android:hint="@string/phone_edit_text_hint"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/phone_validate"
+                        android:src="@mipmap/cancel"
+                        android:tint="@color/color_accent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
                 </LinearLayout>
 
 

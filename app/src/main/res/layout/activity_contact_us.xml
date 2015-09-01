@@ -55,14 +55,11 @@
                 android:gravity="center_horizontal"
                 android:padding="20dp">
 
-                <Spinner
+                <AutoCompleteTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/issue"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="20dp"
-                    android:padding="10dp"
-                    android:background="@color/combo_background" />
+                    android:hint="@string/issue_feedback" />
 
                 <EditText
                     android:layout_width="match_parent"
@@ -70,7 +67,7 @@
                     android:inputType="textMultiLine"
                     android:ems="10"
                     android:id="@+id/description"
-                    android:hint="Description"
+                    android:hint="@string/description"
                     android:minLines="3"
                     android:gravity="top|left"
                     android:scrollbars="vertical"/>

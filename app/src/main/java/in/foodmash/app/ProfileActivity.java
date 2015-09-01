@@ -1,15 +1,21 @@
 package in.foodmash.app;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 
@@ -20,16 +26,19 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by sarav on Aug 08 2015.
  */
-public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
     Intent intent;
 
@@ -42,6 +51,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     LinearLayout cancel;
     LinearLayout save;
     LinearLayout changePassword;
+
+    ImageView nameValidate;
+    ImageView emailValidate;
+    ImageView phoneValidate;
 
     TouchableImageButton clearFields;
 
@@ -75,10 +88,69 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         changePassword = (LinearLayout) findViewById(R.id.change_password); changePassword.setOnClickListener(this);
         clearFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
 
-        name = (EditText) findViewById(R.id.name);
-        dob = (EditText) findViewById(R.id.dob);
-        email = (EditText) findViewById(R.id.email);
-        phone = (EditText) findViewById(R.id.phone);
+        nameValidate = (ImageView) findViewById(R.id.name_validate);
+        emailValidate = (ImageView) findViewById(R.id.email_validate);
+        phoneValidate = (ImageView) findViewById(R.id.phone_validate);
+
+        name = (EditText) findViewById(R.id.name); name.addTextChangedListener(this);
+        dob = (EditText) findViewById(R.id.dob); dob.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar calendar = Calendar.getInstance();
+                new DatePickerDialog(ProfileActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        calendar.set(Calendar.YEAR,year);
+                        calendar.set(Calendar.MONTH,monthOfYear);
+                        calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+                        dob.setText(new SimpleDateFormat("dd/MM/yyyy").format(calendar.getTime()));
+                    }
+                }, Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
+            }
+        });
+        email = (EditText) findViewById(R.id.email); email.addTextChangedListener(this);
+        phone = (EditText) findViewById(R.id.phone); phone.addTextChangedListener(this);
+        promotionOffers = (Switch) findViewById(R.id.receive_promo); promotionOffers.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(!isChecked)         new AlertDialog.Builder(ProfileActivity.this)
+                        .setIconAttribute(android.R.attr.alertDialogIcon)
+                        .setTitle("Stop receiving offers ?")
+                        .setMessage("You have chosen to unsubscribe from all promotional offers via email and SMS. Are you sure to want to disable sending promotional offers?")
+                        .setPositiveButton("Disable", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).setNegativeButton("Enable", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                promotionOffers.setChecked(true);
+                            }
+                        }).show();
+            }
+        });
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/profile", JsonProvider.getStandartRequestJson(ProfileActivity.this), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONObject userJson = response.getJSONObject("user");
+                    name.setText(userJson.getString("name"));
+                    dob.setText(userJson.getString("dob"));
+                    email.setText(userJson.getString("email"));
+                    phone.setText(userJson.getString("phone"));
+                    promotionOffers.setChecked(userJson.getBoolean("offers"));
+                } catch (JSONException e) { e.printStackTrace(); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
+
     }
 
     public void onClick(View v) {
@@ -86,7 +158,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.clear_fields: name.setText(null); dob.setText(null); email.setText(null); phone.setText(null); promotionOffers.setChecked(true); break;
             case R.id.change_password: intent = new Intent(this, ChangePasswordActivity.class); startActivity(intent); break;
             case R.id.cancel: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
-            case R.id.save: makeJsonRequest(); break;
+            case R.id.save: if(isEverythingValid()) makeJsonRequest(); else Alerts.showValidityAlert(ProfileActivity.this); break;
         }
     }
 
@@ -101,20 +173,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             JSONObject dataJson = new JSONObject(profileHashMap);
             dataJson.put("offers", promotionOffers.isChecked());
 
-            HashMap<String,String> tokensHashMap = new HashMap<>();
-            SharedPreferences sharedPreferences = getSharedPreferences("session",0);
-            tokensHashMap.put("auth_user_token", sharedPreferences.getString("user_token", null));
-            tokensHashMap.put("auth_session_token", sharedPreferences.getString("session_token", null));
-            tokensHashMap.put("auth_android_token", sharedPreferences.getString("android_token", null));
-            requestJson = new JSONObject(tokensHashMap);
-            requestJson.put("data",dataJson);
+            requestJson = JsonProvider.getStandartRequestJson(ProfileActivity.this);
+            requestJson.put("user",dataJson);
 
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;
     }
 
     private void makeJsonRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/profile", getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, getString(R.string.api_root_path) + "/profile", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -138,8 +205,29 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 System.out.println("Response Error: " + error);
             }
         });
+        Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
 
+    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {      }
+    @Override public void onTextChanged(CharSequence s, int start, int before, int count) {  }
+    @Override public void afterTextChanged(Editable s) {
+        if(s==name.getEditableText()) {
+            if(s.toString().trim().length()<2) { if(nameValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(nameValidate,500); }
+            else { if(nameValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(nameValidate,500); }
+        }else if(s==email.getEditableText()) {
+            if(!EmailValidator.getInstance().isValid(s.toString().trim())) { if(emailValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(emailValidate,500); }
+            else { if(emailValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(emailValidate,500); }
+        }else if(s==phone.getEditableText()) {
+            if(s.toString().trim().length()!=10) { if(phoneValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(phoneValidate,500); }
+            else { if(phoneValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(phoneValidate,500); }
+        }
+    }
+
+    private boolean isEverythingValid() {
+        return name.getText().toString().trim().length()>=2 &&
+                EmailValidator.getInstance().isValid(email.getText().toString().trim()) &&
+                phone.getText().toString().trim().length()==10;
+    }
 
 }

@@ -80,4 +80,6 @@
     <string name ="api_root_path">http://10.0.2.2:3000/api/v1</string>
     <string name="login_later">Login Later</string>
     <string name="name">name</string>
+    <string name="issue_feedback">Issue or Feedback</string>
+    <string name="description">Description</string>
 </resources>

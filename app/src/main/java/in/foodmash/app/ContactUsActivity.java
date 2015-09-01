@@ -9,9 +9,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -26,7 +29,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     LinearLayout call;
     LinearLayout email;
 
-    Spinner issue;
+    AutoCompleteTextView issue;
     ArrayList<String> issueList;
     EditText description;
 
@@ -55,16 +58,15 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_us);
 
-        issueList = new ArrayList<String>();
-        issueList.add("Select issue");
+        issueList = new ArrayList<>();
         issueList.add("Not Delivered");
         issueList.add("Package Tampered or Damaged");
         issueList.add("Delayed Delivery");
-        issueList.add("Payment issues");
-        issueList.add("Food not hot");
+        issueList.add("Payment Issues");
+        issueList.add("Food not Hot");
+        issueList.add("Issues in App");
+        issueList.add("Bug Report");
         issueList.add("Feedback");
-        issueList.add("How to...");
-        issueList.add("Others");
 
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         call = (LinearLayout) findViewById(R.id.call); call.setOnClickListener(this);
@@ -72,10 +74,10 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         clearFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
 
         description = (EditText) findViewById(R.id.description);
-        issue = (Spinner) findViewById(R.id.issue);
-        ArrayAdapter<String> issueAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,issueList);
-        issueAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        issue = (AutoCompleteTextView) findViewById(R.id.issue);
+        ArrayAdapter<String> issueAdapter = new ArrayAdapter<String>(this,android.R.layout.select_dialog_item,issueList);
         issue.setAdapter(issueAdapter);
+        issue.setThreshold(2);
 
     }
 
@@ -87,4 +89,5 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
             case R.id.email: break;
         }
     }
+
 }
