@@ -1,6 +1,7 @@
 package in.foodmash.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -86,7 +87,6 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true; }
         if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); return true; }
         if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_wallet_cash) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true; }
         if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true; }
         if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); return true; }
         return super.onOptionsItemSelected(item);
@@ -130,7 +130,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         addressLine1 = (EditText) findViewById(R.id.address_line_1); addressLine1.addTextChangedListener(this);
         addressLine2 = (EditText) findViewById(R.id.address_line_2); addressLine2.addTextChangedListener(this);
         city = (EditText) findViewById(R.id.city);
-        phone = (EditText) findViewById(R.id.phone); phone.addTextChangedListener(this);
+        phone = (EditText) findViewById(R.id.phone); if(!edit) phone.setText(getPhone());  phone.addTextChangedListener(this);
         landline = (EditText) findViewById(R.id.landline); landline.addTextChangedListener(this);
         primaryAddress = (Switch) findViewById(R.id.primary_address);
         area = (AutoCompleteTextView) findViewById(R.id.area);
@@ -168,21 +168,12 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
             try {
                 Geocoder geocoder = new Geocoder(this);
                 List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                if(addresses.get(0).getPostalCode().length()==6) {
-                    pincode.setText(addresses.get(0).getPostalCode());
-                    addressLine2.setText(addresses.get(0).getAddressLine(0));
-                }
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/profile" + JsonProvider.getStandartRequestJson(AddAddressActivity.this), new Response.Listener<JSONObject>() {
-                    @Override public void onResponse(JSONObject response) {
-                        try {
-                            JSONObject userJson = response.getJSONObject("user");
-                            phone.setText(userJson.getString("phone"));
-                            phoneRadioGroup.check(R.id.mobile_radio);
-                        } catch (JSONException e) { e.printStackTrace(); }
+                if(addresses.get(0)!=null)
+                    if(addresses.get(0).getPostalCode().length()==6) {
+                        pincode.setText(addresses.get(0).getPostalCode());
+                        addressLine2.setText(addresses.get(0).getAddressLine(0));
                     }
-                }, new Response.ErrorListener() { @Override public void onErrorResponse(VolleyError error) { }
-                }); Swift.getInstance(AddAddressActivity.this).addToRequestQueue(jsonObjectRequest);
-            } catch (IOException e) { e.printStackTrace(); }
+            } catch (Exception e) { e.printStackTrace(); }
         }
 
         clearFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
@@ -191,8 +182,8 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.clear_fields: name.setText(null); pincode.setText(null); addressLine1.setText(null); addressLine2.setText(null); area.setSelection(0); break;
-            case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
-            case R.id.save: if(isEverythingValid()) makeJsonRequest(); else Alerts.showValidityAlert(AddAddressActivity.this); break;
+            case R.id.back: if(cart) intent = new Intent(this, CartActivity.class); else intent = new Intent(this, AddressActivity.class); startActivity(intent); break;
+            case R.id.save: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(AddAddressActivity.this); break;
         }
     }
 
@@ -254,7 +245,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
                         else intent = new Intent(AddAddressActivity.this, AddressActivity.class);
                         startActivity(intent);
                     } else if(!(response.getBoolean("success"))) {
-                        Alerts.showCommonErrorAlert(AddAddressActivity.this,"Address Invalid","We are unable to process your Address Details. Try Again!","Okay");
+                        Alerts.commonErrorAlert(AddAddressActivity.this, "Address Invalid", "We are unable to process your Address Details. Try Again!", "Okay");
                         System.out.println("Error: " + response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -262,8 +253,8 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(AddAddressActivity.this);
-                else Alerts.showUnknownError(AddAddressActivity.this);
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(AddAddressActivity.this);
+                else Alerts.unknownErrorAlert(AddAddressActivity.this);
                 System.out.println("JSON Error: " + error);
             }
         });
@@ -273,28 +264,14 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
     @Override public void afterTextChanged(Editable s) {
-        if(s==name.getEditableText()) {
-            if(s.toString().trim().length()<2) { if(nameValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(nameValidate,500); }
-            else { if(nameValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(nameValidate,500); }
-        } else if(s==addressLine1.getEditableText()) {
-            if(s.toString().trim().length()<2) { if(addressLine1Validate.getVisibility()!=View.VISIBLE) Animations.fadeIn(addressLine1Validate,500); }
-            else { if(addressLine1Validate.getVisibility()==View.VISIBLE) Animations.fadeOut(addressLine1Validate,500); }
-        } else if(s==addressLine2.getEditableText()) {
-            if(s.toString().trim().length()<2) { if(addressLine2Validate.getVisibility()!=View.VISIBLE) Animations.fadeIn(addressLine2Validate,500); }
-            else { if(addressLine2Validate.getVisibility()==View.VISIBLE) Animations.fadeOut(addressLine2Validate,500); }
-        } else if(s==pincode.getEditableText()) {
-            if(s.toString().trim().length()!=6) { if(pincodeValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(pincodeValidate,500); }
-            else { if(pincodeValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(pincodeValidate,500); }
-        } else if(s==phone.getEditableText()) {
-            if(s.toString().trim().length()!=10) { if(phoneValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(phoneValidate,500); }
-            else { if(phoneValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(phoneValidate,500); }
-        } else if(s==landline.getEditableText()) {
-            if(s.toString().trim().length()<7) { if(landlineValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(landlineValidate,500); }
-            else { if(landlineValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(landlineValidate,500); }
-        } else if(s==area.getEditableText()) {
-            if(!(areaList.contains(s.toString()))) { if(areaValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(areaValidate,500); }
-            else { if(areaValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(areaValidate,500); }
-        }
+        if(s==name.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(nameValidate,500); else Animations.fadeOut(nameValidate,500);}
+        else if(s==addressLine1.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(addressLine1Validate,500); else Animations.fadeOut(addressLine1Validate,500);}
+        else if(s==addressLine2.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(addressLine2Validate,500); else Animations.fadeOut(addressLine2Validate,500);}
+        else if(s==pincode.getEditableText()) { if(s.toString().trim().length()!=6) Animations.fadeInOnlyIfInvisible(pincodeValidate,500); else Animations.fadeOut(pincodeValidate,500);}
+        else if(s==phone.getEditableText()) { if(s.toString().trim().length()!=10) Animations.fadeInOnlyIfInvisible(phoneValidate,500); else Animations.fadeOut(phoneValidate,500);}
+        else if(s==landline.getEditableText()) { if(s.toString().trim().length()<7) Animations.fadeInOnlyIfInvisible(landlineValidate,500); else Animations.fadeOut(landlineValidate,500);}
+        else if(s==area.getEditableText()) { if(!(areaList.contains(s.toString()))) Animations.fadeInOnlyIfInvisible(areaValidate,500); else Animations.fadeOut(areaValidate,500); }
+
     }
 
     private boolean isEverythingValid() {
@@ -305,5 +282,10 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
                 addressLine2.getText().toString().trim().length()>=2 &&
                 pincode.getText().toString().trim().length()==6 &&
                 (phoneRadioGroup.getCheckedRadioButtonId()==R.id.mobile_radio)?phone.getText().toString().trim().length()==10:landline.getText().toString().trim().length()>=7;
+    }
+
+    private String getPhone() {
+        SharedPreferences sharedPreferences = getSharedPreferences("cache",0);
+        return sharedPreferences.getString("phone",null);
     }
 }

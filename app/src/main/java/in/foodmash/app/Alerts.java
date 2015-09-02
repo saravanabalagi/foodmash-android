@@ -9,7 +9,7 @@ import android.content.DialogInterface;
  */
 public class Alerts {
 
-    public static void showInternetConnectionError(Context context) {
+    public static void internetConnectionErrorAlert(Context context) {
         new AlertDialog.Builder(context)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Network Error")
@@ -21,7 +21,7 @@ public class Alerts {
                 }).show();
     }
 
-    public static void showUnknownError(Context context) {
+    public static void unknownErrorAlert(Context context) {
         new AlertDialog.Builder(context)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Server Error")
@@ -34,7 +34,7 @@ public class Alerts {
                 }).show();
     }
 
-    public static void showCommonErrorAlert(Context context, String title, String message, String buttonName) {
+    public static void commonErrorAlert(Context context, String title, String message, String buttonName) {
         new AlertDialog.Builder(context)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle(title)
@@ -47,11 +47,24 @@ public class Alerts {
                 }).show();
     }
 
-    public static void showValidityAlert(Context context) {
+    public static void validityAlert(Context context) {
         new AlertDialog.Builder(context)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Invalid Data Found")
                 .setMessage("One or more data you have entered is invalid. Correct them before procceding.")
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
+    }
+
+    public static void unableToProcessResponseAlert(Context context) {
+        new AlertDialog.Builder(context)
+                .setIconAttribute(android.R.attr.alertDialogIcon)
+                .setTitle("Unable to process request")
+                .setMessage("Something went wrong. We are unable to process your request. We'll fix it soon!")
                 .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

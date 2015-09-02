@@ -1,19 +1,36 @@
 package in.foodmash.app;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+
+import com.android.volley.NoConnectionError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.apache.commons.validator.routines.EmailValidator;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 /**
  * Created by sarav on Aug 08 2015.
  */
-public class ForgotPasswordActivity extends AppCompatActivity implements View.OnClickListener{
+public class ForgotPasswordActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
     LinearLayout back;
     LinearLayout forgot;
@@ -22,6 +39,9 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
 
     EditText phone;
     EditText email;
+
+    ImageView phoneValidate;
+    ImageView emailValidate;
 
     RadioGroup otpMethodRadioGroup;
     TouchableImageButton clearAllFields;
@@ -39,7 +59,6 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
             case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
             case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
             case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
-            case R.id.menu_wallet_cash: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
             case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true;
             case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); return true;
             case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); return true;
@@ -57,8 +76,10 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         phoneLayout = (LinearLayout) findViewById(R.id.phone_layout);
         emailLayout = (LinearLayout) findViewById(R.id.email_layout);
 
-        phone = (EditText) findViewById(R.id.phone);
-        email = (EditText) findViewById(R.id.email);
+        phoneValidate = (ImageView) findViewById(R.id.phone_validate);
+        emailValidate = (ImageView) findViewById(R.id.email_validate);
+        phone = (EditText) findViewById(R.id.phone); phone.addTextChangedListener(this);
+        email = (EditText) findViewById(R.id.email); email.addTextChangedListener(this);
 
         clearAllFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearAllFields.setOnClickListener(this);
 
@@ -78,16 +99,57 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         switch (v.getId()) {
             case R.id.clear_fields: email.setText(null); phone.setText(null); break;
             case R.id.back: intent = new Intent(this, LoginActivity.class); startActivity(intent); break;
-            case R.id.forgot:
-
-                intent = new Intent(this, ForgotPasswordOtpActivity.class);
-                switch (otpMethodRadioGroup.getCheckedRadioButtonId()){
-                    case R.id.phone_radio: intent.putExtra("type","phone"); intent.putExtra("value",phone.getText().toString()); break;
-                    case R.id.email_radio: intent.putExtra("type","email"); intent.putExtra("value",email.getText().toString()); break;
-                }
-                startActivity(intent);
-                break;
+            case R.id.forgot: if(isEverthingValid()) makeRequest(); else Alerts.validityAlert(ForgotPasswordActivity.this); break;
         }
     }
 
+    private JSONObject getRequestJson() {
+        JSONObject requestJson = new JSONObject();
+        try {
+            requestJson = JsonProvider.getStandartRequestJson(ForgotPasswordActivity.this);
+            JSONObject dataJson = new JSONObject();
+            if(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio) dataJson.put("phone",phone.getText().toString().trim());
+            else if(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.email_radio) dataJson.put("email",email.getText().toString().trim());
+            requestJson.put("data",dataJson);
+        } catch (JSONException e) { e.printStackTrace(); }
+        return requestJson;
+    }
+
+    private void makeRequest() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/forgot_password", getRequestJson(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    if(response.getBoolean("success")) {
+                        intent = new Intent(ForgotPasswordActivity.this, ForgotPasswordOtpActivity.class);
+                        startActivity(intent);
+                    } else if(!(response.getBoolean("success"))) {
+                        Alerts.commonErrorAlert(ForgotPasswordActivity.this, "Address Invalid", "We are unable to process your Address Details. Try Again!", "Okay");
+                        System.out.println("Error: " + response.getString("error"));
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ForgotPasswordActivity.this);
+                else Alerts.unknownErrorAlert(ForgotPasswordActivity.this);
+                System.out.println("JSON Error: " + error);
+            }
+        });
+        Swift.getInstance(ForgotPasswordActivity.this).addToRequestQueue(jsonObjectRequest);
+    }
+
+    private boolean isEverthingValid() {
+         return (otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone)
+                 ?phone.getText().toString().trim().length()==10
+                 : EmailValidator.getInstance().isValid(email.getText().toString().trim());
+    }
+
+    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }
+    @Override public void onTextChanged(CharSequence s, int start, int before, int count) {  }
+    @Override public void afterTextChanged(Editable s) {
+        if(s==phone.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(phoneValidate,500); else Animations.fadeOut(phoneValidate,500); }
+        else if(s==email.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(emailValidate,500); else Animations.fadeOut(emailValidate,500); }
+    }
 }

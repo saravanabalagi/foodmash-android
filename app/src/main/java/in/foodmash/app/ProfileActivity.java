@@ -32,7 +32,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Created by sarav on Aug 08 2015.
@@ -69,7 +68,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
             case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
             case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
-            case R.id.menu_wallet_cash: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
             case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true;
             case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); return true;
             case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); return true;
@@ -134,12 +132,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    JSONObject userJson = response.getJSONObject("user");
-                    name.setText(userJson.getString("name"));
-                    dob.setText(userJson.getString("dob"));
-                    email.setText(userJson.getString("email"));
-                    phone.setText(userJson.getString("phone"));
-                    promotionOffers.setChecked(userJson.getBoolean("offers"));
+                    if(response.getBoolean("success")) {
+                        JSONObject userJson = response.getJSONObject("user");
+                        name.setText(userJson.getString("name"));
+                        dob.setText(userJson.getString("dob"));
+                        email.setText(userJson.getString("email"));
+                        phone.setText(userJson.getString("phone"));
+                        promotionOffers.setChecked(userJson.getBoolean("offers"));
+                    } else if(response.getBoolean("success")) {
+                        Alerts.unableToProcessResponseAlert(ProfileActivity.this);
+                        System.out.println(response.getString("error"));
+                    }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
         }, new Response.ErrorListener() {
@@ -157,7 +160,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.clear_fields: name.setText(null); dob.setText(null); email.setText(null); phone.setText(null); promotionOffers.setChecked(true); break;
             case R.id.change_password: intent = new Intent(this, ChangePasswordActivity.class); startActivity(intent); break;
             case R.id.cancel: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
-            case R.id.save: if(isEverythingValid()) makeJsonRequest(); else Alerts.showValidityAlert(ProfileActivity.this); break;
+            case R.id.save: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(ProfileActivity.this); break;
         }
     }
 
@@ -188,7 +191,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         intent = new Intent(ProfileActivity.this, MainActivity.class);
                         startActivity(intent);
                     } else if(!(response.getBoolean("success"))) {
-                        Alerts.showCommonErrorAlert(ProfileActivity.this,
+                        Alerts.commonErrorAlert(ProfileActivity.this,
                                 "Invalid Details",
                                 "We are unable to save your profile details as they are invalid. Try again later!",
                                 "Okay");
@@ -199,8 +202,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(ProfileActivity.this);
-                else Alerts.showUnknownError(ProfileActivity.this);
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ProfileActivity.this);
+                else Alerts.unknownErrorAlert(ProfileActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
@@ -211,16 +214,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {      }
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) {  }
     @Override public void afterTextChanged(Editable s) {
-        if(s==name.getEditableText()) {
-            if(s.toString().trim().length()<2) { if(nameValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(nameValidate,500); }
-            else { if(nameValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(nameValidate,500); }
-        }else if(s==email.getEditableText()) {
-            if(!EmailValidator.getInstance().isValid(s.toString().trim())) { if(emailValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(emailValidate,500); }
-            else { if(emailValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(emailValidate,500); }
-        }else if(s==phone.getEditableText()) {
-            if(s.toString().trim().length()!=10) { if(phoneValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(phoneValidate,500); }
-            else { if(phoneValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(phoneValidate,500); }
-        }
+        if(s==name.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(nameValidate,500); else Animations.fadeOut(nameValidate,500); }
+        else if(s==email.getEditableText()) { if(!EmailValidator.getInstance().isValid(s.toString().trim())) Animations.fadeInOnlyIfInvisible(emailValidate,500); else Animations.fadeOut(emailValidate,500); }
+        else if(s==phone.getEditableText()) { if(s.toString().trim().length()!=10) Animations.fadeInOnlyIfInvisible(phoneValidate,500); else Animations.fadeOut(phoneValidate,500); }
     }
 
     private boolean isEverythingValid() {

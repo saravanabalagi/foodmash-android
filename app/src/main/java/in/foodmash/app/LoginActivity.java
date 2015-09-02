@@ -60,7 +60,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
             case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
             case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
-            case R.id.menu_wallet_cash: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
             case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true;
             case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); return true;
             case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); return true;
@@ -83,12 +82,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         clearAllFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearAllFields.setOnClickListener(this);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
         passwordValidate = (ImageView) findViewById(R.id.password_validate);
-        email = (EditText) findViewById(R.id.email); email.addTextChangedListener(this);
+        email = (EditText) findViewById(R.id.email); email.setText(getEmail()); email.addTextChangedListener(this);
         password = (EditText) findViewById(R.id.password); password.addTextChangedListener(this);
         keepLoggedIn = (Switch) findViewById(R.id.keep_logged_in); keepLoggedIn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(!isChecked) { keepMeLoggedIn(false); Alerts.showCommonErrorAlert(LoginActivity.this,"Logout on exit","You will be logged out once you close the app","Okay"); }
+                if(!isChecked) { keepMeLoggedIn(false); Alerts.commonErrorAlert(LoginActivity.this, "Logout on exit", "You will be logged out once you close the app", "Okay"); }
                 else keepMeLoggedIn(true);
             }
         });
@@ -103,7 +102,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.clear_fields: email.setText(null); password.setText(null); keepLoggedIn.setChecked(true); break;
             case R.id.register: intent = new Intent(this, SignupActivity.class); startActivity(intent); break;
             case R.id.forgot_password: intent = new Intent(this, ForgotPasswordActivity.class); startActivity(intent); break;
-            case R.id.login: if(isEverythingValid()) makeJsonRequest(); else Alerts.showValidityAlert(LoginActivity.this); break;
+            case R.id.login: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(LoginActivity.this); break;
         }
     }
 
@@ -140,7 +139,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         editor.commit();
                         startActivity(intent);
                     } else if(!(response.getBoolean("success"))) {
-                        Alerts.showCommonErrorAlert(LoginActivity.this,
+                        Alerts.commonErrorAlert(LoginActivity.this,
                                 "Invalid username or password",
                                 "We are unable to log you in with the entered credentials. Please try again!",
                                 "Okay");
@@ -151,8 +150,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(LoginActivity.this);
-                else Alerts.showUnknownError(LoginActivity.this);
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(LoginActivity.this);
+                else Alerts.unknownErrorAlert(LoginActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
@@ -163,12 +162,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
     @Override public void afterTextChanged(Editable s) {
-        if(s==email.getEditableText())
-            if(EmailValidator.getInstance().isValid(s.toString().trim())) { if(emailValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(emailValidate,500); }
-            else { if(emailValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(emailValidate,500); }
-        else if(s==password.getEditableText())
-            if(s.length()>=8)  { if(passwordValidate.getVisibility()==View.VISIBLE) Animations.fadeOut(passwordValidate, 500); }
-            else { if(passwordValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(passwordValidate,500); }
+        if(s==email.getEditableText()) { if(EmailValidator.getInstance().isValid(s.toString().trim())) Animations.fadeOut(emailValidate,500); else Animations.fadeIn(emailValidate,500); }
+        else if(s==password.getEditableText()) { if(s.length()>=8) Animations.fadeOut(passwordValidate, 500); else Animations.fadeIn(passwordValidate,500); }
     }
 
     private void keepMeLoggedIn(boolean bool) {
@@ -177,6 +172,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         editor.putBoolean("keep_me_logged_in",bool);
         editor.apply();
     }
+
+    private String getEmail() {
+        SharedPreferences sharedPreferences = getSharedPreferences("cache",0);
+        return sharedPreferences.getString("email",null);
+    }
+
+
 
 
 }

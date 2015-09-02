@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 public class Animations {
 
     public static void fadeOut(View v, int duration) {
+        if(v.getVisibility()==View.GONE) return;
         final View vf = v;
         v.animate()
                 .setDuration(duration)
@@ -27,7 +28,22 @@ public class Animations {
 
     public static void fadeIn(View v, int duration) {
         final View vf = v;
-        vf.setAlpha(0);
+        v.animate()
+                .setDuration(duration)
+                .alpha(1.0f)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        super.onAnimationStart(animation);
+                        vf.setAlpha(0);
+                        vf.setVisibility(View.VISIBLE);
+                    }
+                });
+    }
+
+    public static void fadeInOnlyIfInvisible(View v, int duration) {
+        if(v.getVisibility()==View.VISIBLE) return;
+        final View vf = v;
         v.animate()
                 .setDuration(duration)
                 .alpha(1.0f)

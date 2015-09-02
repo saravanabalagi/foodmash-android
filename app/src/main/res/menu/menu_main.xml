@@ -16,11 +16,6 @@
         android:icon="@mipmap/box"
         android:orderInCategory="3"
         app:showAsAction="never" />
-    <item android:id="@+id/menu_wallet_cash"
-        android:title="@string/menu_wallet_cash"
-        android:icon="@mipmap/wallet"
-        android:orderInCategory="4"
-        app:showAsAction="never" />
     <item android:id="@+id/menu_contact_us"
         android:title="@string/menu_contact_us"
         android:icon="@mipmap/call"

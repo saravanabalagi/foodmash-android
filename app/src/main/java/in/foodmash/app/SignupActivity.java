@@ -81,7 +81,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
             case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
             case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
-            case R.id.menu_wallet_cash: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
             case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true;
             case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); return true;
             case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); return true;
@@ -130,7 +129,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.create:
                 if(termsAccepted) {
                     if(isEverythingValid()) makeJsonRequest();
-                    else Alerts.showValidityAlert(SignupActivity.this);
+                    else Alerts.validityAlert(SignupActivity.this);
                     break;
                 } else new AlertDialog.Builder(SignupActivity.this)
                         .setIconAttribute(android.R.attr.alertDialogIcon)
@@ -198,15 +197,15 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(SignupActivity.this);
-                else Alerts.showUnknownError(SignupActivity.this);
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(SignupActivity.this);
+                else Alerts.unknownErrorAlert(SignupActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
         Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
-    private void setCancelOnImageView(ImageView imageView) { imageView.setColorFilter(getResources().getColor(R.color.color_accent)); imageView.setImageResource(R.mipmap.cancel); }
+    private void setCancelOnImageView(ImageView imageView) { imageView.setColorFilter(getResources().getColor(R.color.color_accent)); imageView.setImageResource(R.mipmap.error); }
     private void setOkayOnImageView(ImageView imageView) { imageView.setColorFilter(getResources().getColor(R.color.okay_green)); imageView.setImageResource(R.mipmap.tick); }
 
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -243,8 +242,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(SignupActivity.this);
-                        else Alerts.showUnknownError(SignupActivity.this);
+                        if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(SignupActivity.this);
+                        else Alerts.unknownErrorAlert(SignupActivity.this);
                         System.out.println("Email response error: "+error);
                         isEmailValidationInProgress = false;
                         setCancelOnImageView(emailValidate);
@@ -281,8 +280,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(SignupActivity.this);
-                        else Alerts.showUnknownError(SignupActivity.this);
+                        if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(SignupActivity.this);
+                        else Alerts.unknownErrorAlert(SignupActivity.this);
                         System.out.println("Phone response error: "+error);
                         isPhoneValidationInProgress = false;
                         setCancelOnImageView(phoneValidate);

@@ -31,10 +31,14 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        intent = new Intent(SplashActivity.this,LoginActivity.class);
+        startActivity(intent);
+
+        /*
         HashMap<String,String> hashMap = new HashMap<>();
         hashMap.put("android_id", Settings.Secure.getString(SplashActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID));
         JSONObject requestJson = new JSONObject(hashMap);
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "check_connection", requestJson, new Response.Listener<JSONObject>() {
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/check_connection", requestJson, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -43,7 +47,7 @@ public class SplashActivity extends Activity {
                             intent = new Intent(SplashActivity.this,MainActivity.class);
                             startActivity(intent);
                         } else if(!isKeepMeLoggedInSet() && isLoggedIn()) {
-                            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "sessions/destroy", JsonProvider.getStandartRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
+                            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/sessions/destroy", JsonProvider.getStandartRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     try {
@@ -58,7 +62,7 @@ public class SplashActivity extends Activity {
                                             intent = new Intent(SplashActivity.this,LoginActivity.class);
                                             startActivity(intent);
                                         } else if(!(response.getBoolean("success"))) {
-                                            Alerts.showCommonErrorAlert(SplashActivity.this,"Unable to Logout","We are unable to sign you out. Try again later!","Okay");
+                                            Alerts.commonErrorAlert(SplashActivity.this, "Unable to Logout", "We are unable to sign you out. Try again later!", "Okay");
                                             System.out.println(response.getString("error"));
                                         }
                                     } catch (JSONException e) { e.printStackTrace(); }
@@ -66,8 +70,8 @@ public class SplashActivity extends Activity {
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.showInternetConnectionError(SplashActivity.this);
-                                    else Alerts.showUnknownError(SplashActivity.this);
+                                    if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(SplashActivity.this);
+                                    else Alerts.unknownErrorAlert(SplashActivity.this);
                                     System.out.println("Response Error: " + error);
                                 }
                             });
@@ -77,8 +81,7 @@ public class SplashActivity extends Activity {
                             startActivity(intent);
                         }
                     } else if(response.getBoolean("success")) {
-                        Alerts.showCommonErrorAlert(SplashActivity.this,"Secure connection could not be made","App cannot continue since connection cannot be securely established. App will exit now","Okay");
-                        finish();
+                        Alerts.commonErrorAlert(SplashActivity.this, "Secure connection could not be made", "App cannot continue since connection cannot be securely established. App will exit now", "Okay");
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -86,17 +89,16 @@ public class SplashActivity extends Activity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if(error instanceof NoConnectionError || error instanceof TimeoutError) {
-                    Alerts.showInternetConnectionError(SplashActivity.this);
+                    Alerts.internetConnectionErrorAlert(SplashActivity.this);
                     makeRequest(jsonObjectRequest);
                 }
-                else Alerts.showUnknownError(SplashActivity.this);
+                else Alerts.unknownErrorAlert(SplashActivity.this);
                 System.out.println("Response Error: " + error);
-                finish();
             }
         });
         makeRequest(jsonObjectRequest);
 
-
+        */
 
     }
 
