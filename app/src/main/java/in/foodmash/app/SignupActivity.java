@@ -152,9 +152,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         hashMap.put("password",password.getText().toString());
         hashMap.put("password_confirmation",passwordConfirmation.getText().toString());
         hashMap.put("mobile_no",phone.getText().toString());
-        JSONObject user = new JSONObject(hashMap);
+        JSONObject userJson = new JSONObject(hashMap);
         try {
-            jsonObject.put("user",user);
+            jsonObject.put("user",userJson);
+            JSONObject dataJson = new JSONObject();
+            jsonObject.put("data",dataJson);
             jsonObject.put("android_id",androidId);
         } catch (JSONException e) { e.printStackTrace(); }
         return jsonObject;

@@ -3,6 +3,7 @@ package in.foodmash.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,6 +11,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.android.volley.NoConnectionError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by sarav on Aug 08 2015.
@@ -90,10 +101,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                 handler.postDelayed(initiateOtpTimer, 1000);
                 break;
             case R.id.back: intent = new Intent(this, ForgotPasswordActivity.class); startActivity(intent); break;
-            case R.id.proceed:
-                intent = new Intent(this, ChangePasswordActivity.class);
-                intent.putExtra("forgot",true); startActivity(intent);
-                break;
+            case R.id.proceed: if(isEverythingValid()) makeRequest(); else Alerts.validityAlert(ForgotPasswordOtpActivity.this); break;
         }
     }
 
@@ -114,4 +122,48 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
             handler.postDelayed(initiateOtpTimer, 1000);
         }
     };
+
+    private JSONObject getRequestJson() {
+        JSONObject requestJson = new JSONObject();
+        try {
+            requestJson.put("android_id", Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID));
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("otp",otp.getText().toString().trim());
+            requestJson.put("data",dataJson);
+        } catch(JSONException e) {e.printStackTrace();}
+        return requestJson;
+    }
+
+    private void makeRequest() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkOtp", getRequestJson(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    if(response.getBoolean("success")) {
+                        JSONObject dataJson = response.getJSONObject("data");
+                        intent = new Intent(ForgotPasswordOtpActivity.this, ChangePasswordActivity.class);
+                        intent.putExtra("otp_token",dataJson.getString("otp_token"));
+                        intent.putExtra("forgot",true);
+                        startActivity(intent);
+                    } else if(!(response.getBoolean("success"))) {
+                        Alerts.commonErrorAlert(ForgotPasswordOtpActivity.this, "Address Invalid", "We are unable to process your Address Details. Try Again!", "Okay");
+                        System.out.println("Error: " + response.getString("error"));
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ForgotPasswordOtpActivity.this);
+                else Alerts.unknownErrorAlert(ForgotPasswordOtpActivity.this);
+                System.out.println("JSON Error: " + error);
+            }
+        });
+        Swift.getInstance(ForgotPasswordOtpActivity.this).addToRequestQueue(jsonObjectRequest);
+    }
+
+    private boolean isEverythingValid() {
+        return otpExpired &&
+                otp.getText().toString().trim().length()==6;
+    }
 }

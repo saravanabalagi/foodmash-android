@@ -34,7 +34,6 @@ public class SplashActivity extends Activity {
         intent = new Intent(SplashActivity.this,LoginActivity.class);
         startActivity(intent);
 
-        /*
         HashMap<String,String> hashMap = new HashMap<>();
         hashMap.put("android_id", Settings.Secure.getString(SplashActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID));
         JSONObject requestJson = new JSONObject(hashMap);
@@ -97,8 +96,6 @@ public class SplashActivity extends Activity {
             }
         });
         makeRequest(jsonObjectRequest);
-
-        */
 
     }
 

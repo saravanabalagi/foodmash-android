@@ -172,11 +172,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             profileHashMap.put("dob", dob.getText().toString().trim());
             profileHashMap.put("email", email.getText().toString().trim());
             profileHashMap.put("phone", phone.getText().toString().trim());
-            JSONObject dataJson = new JSONObject(profileHashMap);
-            dataJson.put("offers", promotionOffers.isChecked());
+            JSONObject userJson = new JSONObject(profileHashMap);
+            userJson.put("offers", promotionOffers.isChecked());
 
             requestJson = JsonProvider.getStandartRequestJson(ProfileActivity.this);
-            requestJson.put("user",dataJson);
+            requestJson.put("user",userJson);
+            JSONObject dataJson = new JSONObject();
+            requestJson.put("data",dataJson);
 
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;
@@ -214,9 +216,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {      }
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) {  }
     @Override public void afterTextChanged(Editable s) {
-        if(s==name.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(nameValidate,500); else Animations.fadeOut(nameValidate,500); }
-        else if(s==email.getEditableText()) { if(!EmailValidator.getInstance().isValid(s.toString().trim())) Animations.fadeInOnlyIfInvisible(emailValidate,500); else Animations.fadeOut(emailValidate,500); }
-        else if(s==phone.getEditableText()) { if(s.toString().trim().length()!=10) Animations.fadeInOnlyIfInvisible(phoneValidate,500); else Animations.fadeOut(phoneValidate,500); }
+        if(s==name.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(nameValidate, 500); else Animations.fadeOut(nameValidate,500); }
+        else if(s==email.getEditableText()) { if(!EmailValidator.getInstance().isValid(s.toString().trim())) Animations.fadeInOnlyIfInvisible(emailValidate, 500); else Animations.fadeOut(emailValidate,500); }
+        else if(s==phone.getEditableText()) { if(s.toString().trim().length()!=10) Animations.fadeInOnlyIfInvisible(phoneValidate, 500); else Animations.fadeOut(phoneValidate,500); }
     }
 
     private boolean isEverythingValid() {

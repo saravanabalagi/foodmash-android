@@ -111,9 +111,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         HashMap<String,String> hashMap=  new HashMap<>();
         hashMap.put("email", email.getText().toString());
         hashMap.put("password", password.getText().toString());
-        JSONObject user = new JSONObject(hashMap);
+        JSONObject userJson = new JSONObject(hashMap);
         try {
-            jsonObject.put("user",user);
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("user",userJson);
+            jsonObject.put("data",dataJson);
             jsonObject.put("android_id",androidId);
         } catch (JSONException e) { e.printStackTrace(); }
         return jsonObject;
@@ -127,8 +129,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 intent = new Intent(LoginActivity.this, MainActivity.class);
                 try {
                     if (response.getBoolean("success")) {
-                        String userToken = response.getString("user_token");
-                        String sessionToken = response.getString("session_token");
+                        JSONObject dataJson = response.getJSONObject("data");
+                        String userToken = dataJson.getString("user_token");
+                        String sessionToken = dataJson.getString("session_token");
                         String androidId = Settings.Secure.getString(LoginActivity.this.getContentResolver(),Settings.Secure.ANDROID_ID);
                         SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
                         SharedPreferences.Editor editor = sharedPreferences.edit();

@@ -1,7 +1,9 @@
 package in.foodmash.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -34,7 +36,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     EditText confirmPassword;
 
     boolean forgot = false;
-    String otpHash;
+    String otpToken;
 
     ImageView oldPasswordValidate;
     ImageView newPasswordValidate;
@@ -67,7 +69,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
-        if(getIntent().getBooleanExtra("forgot",false)) { forgot = true; otpHash = getIntent().getStringExtra("opt_hash"); }
+        if(getIntent().getBooleanExtra("forgot",false)) { forgot = true; otpToken = getIntent().getStringExtra("opt_token"); }
 
         oldPasswordValidate = (ImageView) findViewById(R.id.old_password_validate);
         newPasswordValidate = (ImageView) findViewById(R.id.new_password_validate);
@@ -101,25 +103,44 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         JSONObject requestJson = new JSONObject();
         try {
             HashMap<String, String> hashMap = new HashMap<>();
-            if(forgot) hashMap.put("otp_token", otpHash);
+            if(forgot) hashMap.put("otp_token", otpToken);
             else hashMap.put("old_password", oldPassword.getText().toString());
             hashMap.put("password", newPassword.getText().toString());
             hashMap.put("password_confirmation", confirmPassword.getText().toString());
             JSONObject userJson = new JSONObject(hashMap);
-            requestJson = JsonProvider.getStandartRequestJson(ChangePasswordActivity.this);
-            requestJson.put("user", userJson);
+            if(forgot) requestJson.put("android_id", Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID));
+            else requestJson = JsonProvider.getStandartRequestJson(ChangePasswordActivity.this);
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("user",userJson);
+            requestJson.put("data", dataJson);
         } catch (Exception e) { e.printStackTrace(); }
         return requestJson;
     }
 
     private void makeRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/change_password", getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + ((forgot)?"/registrations/resetPasswordFromToken":"/registrations/changePassword"), getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
-                        intent = new Intent(ChangePasswordActivity.this,ProfileActivity.class);
-                        startActivity(intent);
+                        if(forgot) {
+                            JSONObject dataJson = response.getJSONObject("data");
+                            String userToken = dataJson.getString("user_token");
+                            String sessionToken = dataJson.getString("session_token");
+                            String androidId = Settings.Secure.getString(ChangePasswordActivity.this.getContentResolver(),Settings.Secure.ANDROID_ID);
+                            SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putBoolean("logged_in",true);
+                            editor.putString("user_token", userToken);
+                            editor.putString("session_token", sessionToken);
+                            editor.putString("android_token", Cryptography.encrypt(androidId, sessionToken));
+                            editor.commit();
+                            intent = new Intent(ChangePasswordActivity.this, MainActivity.class);
+                            startActivity(intent);
+                        } else {
+                            intent = new Intent(ChangePasswordActivity.this, ProfileActivity.class);
+                            startActivity(intent);
+                        }
                     } else if(!response.getBoolean("success")) {
                         Alerts.unableToProcessResponseAlert(ChangePasswordActivity.this);
                         System.out.println(response.getString("error"));

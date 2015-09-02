@@ -3,6 +3,7 @@ package in.foodmash.app;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -106,21 +107,24 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     private JSONObject getRequestJson() {
         JSONObject requestJson = new JSONObject();
         try {
-            requestJson = JsonProvider.getStandartRequestJson(ForgotPasswordActivity.this);
+            requestJson.put("android_id", Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID));
+            JSONObject userJson = new JSONObject();
+            if(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio) userJson.put("mobile_no",phone.getText().toString().trim());
+            else if(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.email_radio) userJson.put("email",email.getText().toString().trim());
             JSONObject dataJson = new JSONObject();
-            if(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio) dataJson.put("phone",phone.getText().toString().trim());
-            else if(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.email_radio) dataJson.put("email",email.getText().toString().trim());
+            dataJson.put("user",userJson);
             requestJson.put("data",dataJson);
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;
     }
 
     private void makeRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/forgot_password", getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/forgotPassword", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
+                        System.out.println(response.getString("otp"));
                         intent = new Intent(ForgotPasswordActivity.this, ForgotPasswordOtpActivity.class);
                         startActivity(intent);
                     } else if(!(response.getBoolean("success"))) {
@@ -149,7 +153,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) {  }
     @Override public void afterTextChanged(Editable s) {
-        if(s==phone.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(phoneValidate,500); else Animations.fadeOut(phoneValidate,500); }
-        else if(s==email.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(emailValidate,500); else Animations.fadeOut(emailValidate,500); }
+        if(s==phone.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(phoneValidate, 500); else Animations.fadeOut(phoneValidate,500); }
+        else if(s==email.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(emailValidate, 500); else Animations.fadeOut(emailValidate,500); }
     }
 }
