@@ -63,16 +63,9 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             ((TextView) comboLayout.findViewById(R.id.name)).setText("Combo Cart " + i);
             final TextView price = (TextView) comboLayout.findViewById(R.id.price); price.setText("" + (100 + i));
             final EditText quantity = (EditText) comboLayout.findViewById(R.id.quantity); quantity.setText("1"); quantity.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+                @Override public void afterTextChanged(Editable s) {
                     ((TextView) comboLayout.findViewById(R.id.quantity_display)).setText((s.length() < 1) ? "" + 1 : s.toString());
                     ((TextView) comboLayout.findViewById(R.id.amount)).setText("" + (((s.length() < 1) ? 1 : Integer.parseInt(s.toString())) * Integer.parseInt(price.getText().toString())));
                     updateCartValue();

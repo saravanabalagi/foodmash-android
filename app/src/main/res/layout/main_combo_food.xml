@@ -21,18 +21,51 @@
             android:layout_height="wrap_content"
             android:paddingLeft="5dp">
 
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/food_name_lorem_ipsum"
-                android:id="@+id/name"
-                android:layout_marginLeft="0dp"
-                android:layout_marginTop="0dp"
-                android:textSize="14sp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingTop="1dp"
-                android:singleLine="true" />
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/food_name_lorem_ipsum"
+                    android:id="@+id/name"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginTop="0dp"
+                    android:textSize="14sp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:singleLine="true" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/restaurant_layout"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@mipmap/next"
+                        android:tint="@color/color_accent"
+                        android:contentDescription="@string/from" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/restaurant"
+                        android:id="@+id/restaurant_name"
+                        android:textSize="11sp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:singleLine="true"
+                        android:textAllCaps="true" />
+                </LinearLayout>
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -48,6 +81,16 @@
                 android:paddingTop="1dp"
                 android:paddingRight="5dp"
                 android:paddingBottom="5dp" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/options_layout">
+
+
+
+            </LinearLayout>
         </LinearLayout>
 
 </LinearLayout>

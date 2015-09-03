@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
     android:background="@color/combo_background"
     android:layout_marginTop="5dp"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp">
+
+        <LinearLayout android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="center_vertical">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -154,5 +158,27 @@
             android:padding="10dp"
             android:cropToPadding="true"
             android:scaleType="centerCrop" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/black_222"
+        android:baselineAligned="false">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selected_combo_dishes"
+            android:textColor="@color/abc_primary_text_material_dark"
+            android:textSize="11sp"
+            android:textAllCaps="true"
+            android:padding="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp" />
+    </LinearLayout>
 
 </LinearLayout>

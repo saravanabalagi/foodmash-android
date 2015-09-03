@@ -82,4 +82,8 @@
     <string name="name">name</string>
     <string name="issue_feedback">Issue or Feedback</string>
     <string name="description">Description</string>
+    <string name="from">from</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="dish_name">Dish Name</string>
+    <string name="selected">selected</string>
 </resources>
