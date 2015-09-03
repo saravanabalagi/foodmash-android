@@ -74,9 +74,9 @@ public class Animations {
                 });
     }
 
-    public static void leftPad(View v, int leftPaddingInDp, int duration) {
+    public static void leftPad(View v, int leftPaddingInPixels, int duration) {
         final View vf = v;
-        ValueAnimator animator = ValueAnimator.ofInt(v.getPaddingLeft(), leftPaddingInDp);
+        ValueAnimator animator = ValueAnimator.ofInt(v.getPaddingLeft(), leftPaddingInPixels);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator){
@@ -87,9 +87,9 @@ public class Animations {
         animator.start();
     }
 
-    public static void rightPad(View v, int rightPaddingInDp, int duration) {
+    public static void rightPad(View v, int rightPaddingInPixels, int duration) {
         final View vf = v;
-        ValueAnimator animator = ValueAnimator.ofInt(v.getPaddingRight(), rightPaddingInDp);
+        ValueAnimator animator = ValueAnimator.ofInt(v.getPaddingRight(), rightPaddingInPixels);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator){
@@ -100,9 +100,9 @@ public class Animations {
         animator.start();
     }
 
-    public static void topPad(View v, int topPaddingInDp, int duration) {
+    public static void topPad(View v, int topPaddingInPixels, int duration) {
         final View vf = v;
-        ValueAnimator animator = ValueAnimator.ofInt(v.getPaddingTop(), topPaddingInDp);
+        ValueAnimator animator = ValueAnimator.ofInt(v.getPaddingTop(), topPaddingInPixels);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator){
@@ -113,9 +113,9 @@ public class Animations {
         animator.start();
     }
 
-    public static void bottomPad(View v, int bottomPaddingInDp, int duration) {
+    public static void bottomPad(View v, int bottomPaddingInPixels, int duration) {
         final View vf = v;
-        ValueAnimator animator = ValueAnimator.ofInt(v.getPaddingBottom(), bottomPaddingInDp);
+        ValueAnimator animator = ValueAnimator.ofInt(v.getPaddingBottom(), bottomPaddingInPixels);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator){
@@ -126,12 +126,12 @@ public class Animations {
         animator.start();
     }
 
-    public static void leftMargin(View v, int leftMarginInDp, int duration) {
+    public static void leftMargin(View v, int leftMarginInPixels, int duration) {
         final ViewGroup.MarginLayoutParams p;
         if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)
             p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
         else return;
-        ValueAnimator animator = ValueAnimator.ofInt(p.leftMargin, leftMarginInDp);
+        ValueAnimator animator = ValueAnimator.ofInt(p.leftMargin, leftMarginInPixels);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator){
@@ -142,12 +142,12 @@ public class Animations {
         animator.start();
     }
 
-    public static void rightMargin(View v, int rightMarginInDp, int duration) {
+    public static void rightMargin(View v, int rightMarginInPixels, int duration) {
         final ViewGroup.MarginLayoutParams p;
         if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)
             p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
         else return;
-        ValueAnimator animator = ValueAnimator.ofInt(p.rightMargin, rightMarginInDp);
+        ValueAnimator animator = ValueAnimator.ofInt(p.rightMargin, rightMarginInPixels);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator){
@@ -158,12 +158,12 @@ public class Animations {
         animator.start();
     }
 
-    public static void topMargin(View v, int topMarginInDp, int duration) {
+    public static void topMargin(View v, int topMarginInPixels, int duration) {
         final ViewGroup.MarginLayoutParams p;
         if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)
             p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
         else return;
-        ValueAnimator animator = ValueAnimator.ofInt(p.topMargin, topMarginInDp);
+        ValueAnimator animator = ValueAnimator.ofInt(p.topMargin, topMarginInPixels);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator){
@@ -174,12 +174,12 @@ public class Animations {
         animator.start();
     }
 
-    public static void bottomMargin(View v, int bottomMarginInDp, int duration) {
+    public static void bottomMargin(View v, int bottomMarginInPixels, int duration) {
         final ViewGroup.MarginLayoutParams p;
         if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)
             p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
         else return;
-        ValueAnimator animator = ValueAnimator.ofInt(p.bottomMargin, bottomMarginInDp);
+        ValueAnimator animator = ValueAnimator.ofInt(p.bottomMargin, bottomMarginInPixels);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator){

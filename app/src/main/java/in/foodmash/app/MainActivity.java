@@ -7,6 +7,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
                                             }
+                                            if(j==comboOptions.length()-1) Animations.bottomMargin(currentComboFoodLayout,(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics()),0);
                                             comboFoodLayout.addView(currentComboFoodLayout, j);
                                         }
                                     } catch (JSONException e) { e.printStackTrace(); }
@@ -268,6 +270,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.putString("phone",phone);
         editor.apply();
     }
-
 
 }
