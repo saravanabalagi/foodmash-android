@@ -39,8 +39,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     LinearLayout login;
 
     TouchableImageButton clearAllFields;
+    boolean isEmail = true;
     EditText email;
     EditText password;
+    EditText phonePrefix;
     ImageView emailValidate;
     ImageView passwordValidate;
     Switch keepLoggedIn;
@@ -82,7 +84,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         clearAllFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearAllFields.setOnClickListener(this);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
         passwordValidate = (ImageView) findViewById(R.id.password_validate);
-        email = (EditText) findViewById(R.id.email); email.setText(getEmail()); email.addTextChangedListener(this);
+        phonePrefix = (EditText) findViewById(R.id.phone_prefix);
+        email = (EditText) findViewById(R.id.email_or_phone); email.addTextChangedListener(this);
+        if(getPhone()!=null) { email.setText(getPhone()); }
         password = (EditText) findViewById(R.id.password); password.addTextChangedListener(this);
         keepLoggedIn = (Switch) findViewById(R.id.keep_logged_in); keepLoggedIn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -109,7 +113,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private JSONObject getRequestJson() {
         JSONObject jsonObject = new JSONObject();
         HashMap<String,String> hashMap=  new HashMap<>();
-        hashMap.put("email", email.getText().toString());
+        if(isEmail) hashMap.put("email", email.getText().toString().trim());
+        else hashMap.put("mobile_no",email.getText().toString().trim());
         hashMap.put("password", password.getText().toString());
         JSONObject userJson = new JSONObject(hashMap);
         try {
@@ -161,12 +166,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
-    private boolean isEverythingValid() {return (EmailValidator.getInstance().isValid(email.getText().toString().trim()) && password.getText().length()>=8); }
+    private boolean isEverythingValid() {
+        return (isEmail)?EmailValidator.getInstance().isValid(email.getText().toString().trim()):email.getText().toString().trim().length()==10
+                && password.getText().length()>=8;
+    }
+
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
     @Override public void afterTextChanged(Editable s) {
-        if(s==email.getEditableText()) { if(EmailValidator.getInstance().isValid(s.toString().trim())) Animations.fadeOut(emailValidate,500); else Animations.fadeIn(emailValidate,500); }
-        else if(s==password.getEditableText()) { if(s.length()>=8) Animations.fadeOut(passwordValidate, 500); else Animations.fadeIn(passwordValidate,500); }
+        if(s==email.getEditableText()) {
+            if (isInteger(s.toString())) {
+                Animations.fadeInOnlyIfInvisible(phonePrefix, 500);
+                if(s.length()==10) Animations.fadeOut(emailValidate,500);
+                else Animations.fadeInOnlyIfInvisible(emailValidate,500);
+                isEmail = false;
+            }
+            else {
+                Animations.fadeOut(phonePrefix, 500);
+                if (EmailValidator.getInstance().isValid(s.toString().trim()))
+                    Animations.fadeOut(emailValidate, 500);
+                else Animations.fadeInOnlyIfInvisible(emailValidate, 500);
+                isEmail = true;
+            }
+        }
+        else if(s==password.getEditableText()) { if(s.length()>=8) Animations.fadeOut(passwordValidate, 500); else Animations.fadeInOnlyIfInvisible(passwordValidate,500); }
     }
 
     private void keepMeLoggedIn(boolean bool) {
@@ -181,7 +204,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return sharedPreferences.getString("email",null);
     }
 
+    private String getPhone() {
+        SharedPreferences sharedPreferences = getSharedPreferences("cache",0);
+        return sharedPreferences.getString("phone",null);
+    }
 
+    public static boolean isInteger(String string) {
+        if (string == null) { return false; }
+        if (string.length() == 0) { return false; }
+        for (int i = 0; i < string.length(); i++) {
+            char c = string.charAt(i);
+            if ( c < '0' || c > '9') { return false; }
+        }
+        return true;
+    }
 
 
 }

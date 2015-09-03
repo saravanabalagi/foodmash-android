@@ -162,7 +162,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
                 area.setText(addressJson.getString("area"));
                 primaryAddress.setChecked(jsonObject.getBoolean("primary"));
                 if(jsonObject.getString("phone").length()==10) phone.setText(jsonObject.getString("phone"));
-                else { landline.setText(jsonObject.getString("phone")); phoneRadioGroup.check(R.id.landline_radio);}
+                else { landline.setText(jsonObject.getString("phone")); phoneRadioGroup.check(R.id.landline_radio); Animations.fadeOutAndFadeIn(mobileLayout,landlineLayout,0); }
             } catch (JSONException e) { e.printStackTrace(); }
         } else {
             try {
@@ -181,7 +181,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear_fields: name.setText(null); pincode.setText(null); addressLine1.setText(null); addressLine2.setText(null); area.setSelection(0); break;
+            case R.id.clear_fields: name.setText(null); pincode.setText(null); addressLine1.setText(null); addressLine2.setText(null); area.setText(null);  break;
             case R.id.back: if(cart) intent = new Intent(this, CartActivity.class); else intent = new Intent(this, AddressActivity.class); startActivity(intent); break;
             case R.id.save: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(AddAddressActivity.this); break;
         }
@@ -193,11 +193,11 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         String nameVal = name.getText().toString().trim();
         String addressLine1Temp = addressLine1.getText().toString().trim();
         if(addressLine1Temp.charAt(addressLine1Temp.length()-1)==',')
-            addressLine1.setText(addressLine1Temp.substring(0,addressLine1Temp.length()-2));
+            addressLine1.setText(addressLine1Temp.substring(0,addressLine1Temp.length()-1));
         String addressVal1 = addressLine1.getText().toString().trim();
         String addressLine2Temp = addressLine2.getText().toString().trim();
         if(addressLine2Temp.charAt(addressLine2Temp.length() - 1)==',')
-            addressLine2.setText(addressLine2Temp.substring(0,addressLine2Temp.length()-2));
+            addressLine2.setText(addressLine2Temp.substring(0,addressLine2Temp.length()-1));
         String addressVal2 = addressLine2.getText().toString().trim();
         String areaVal = area.getText().toString().trim();
         String cityVal = city.getText().toString().trim();
@@ -264,13 +264,13 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
     @Override public void afterTextChanged(Editable s) {
-        if(s==name.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(nameValidate,500); else Animations.fadeOut(nameValidate,500);}
-        else if(s==addressLine1.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(addressLine1Validate,500); else Animations.fadeOut(addressLine1Validate,500);}
-        else if(s==addressLine2.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(addressLine2Validate,500); else Animations.fadeOut(addressLine2Validate,500);}
-        else if(s==pincode.getEditableText()) { if(s.toString().trim().length()!=6) Animations.fadeInOnlyIfInvisible(pincodeValidate,500); else Animations.fadeOut(pincodeValidate,500);}
-        else if(s==phone.getEditableText()) { if(s.toString().trim().length()!=10) Animations.fadeInOnlyIfInvisible(phoneValidate,500); else Animations.fadeOut(phoneValidate,500);}
-        else if(s==landline.getEditableText()) { if(s.toString().trim().length()<7) Animations.fadeInOnlyIfInvisible(landlineValidate,500); else Animations.fadeOut(landlineValidate,500);}
-        else if(s==area.getEditableText()) { if(!(areaList.contains(s.toString()))) Animations.fadeInOnlyIfInvisible(areaValidate,500); else Animations.fadeOut(areaValidate,500); }
+        if(s==name.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(nameValidate, 500); else Animations.fadeOut(nameValidate,500);}
+        else if(s==addressLine1.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(addressLine1Validate, 500); else Animations.fadeOut(addressLine1Validate,500);}
+        else if(s==addressLine2.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(addressLine2Validate, 500); else Animations.fadeOut(addressLine2Validate,500);}
+        else if(s==pincode.getEditableText()) { if(s.toString().trim().length()!=6) Animations.fadeInOnlyIfInvisible(pincodeValidate, 500); else Animations.fadeOut(pincodeValidate,500);}
+        else if(s==phone.getEditableText()) { if(s.toString().trim().length()!=10) Animations.fadeInOnlyIfInvisible(phoneValidate, 500); else Animations.fadeOut(phoneValidate,500);}
+        else if(s==landline.getEditableText()) { if(s.toString().trim().length()<7) Animations.fadeInOnlyIfInvisible(landlineValidate, 500); else Animations.fadeOut(landlineValidate,500);}
+        else if(s==area.getEditableText()) { if(!(areaList.contains(s.toString()))) Animations.fadeInOnlyIfInvisible(areaValidate, 500); else Animations.fadeOut(areaValidate,500); }
 
     }
 

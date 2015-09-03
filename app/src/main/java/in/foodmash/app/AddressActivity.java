@@ -76,7 +76,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                         addressJson.getString("pincode");
                                 ((TextView) addressLayout.findViewById(R.id.name)).setText(jsonObject.getString("name"));
                                 ((TextView) addressLayout.findViewById(R.id.address)).setText(address);
-                                ((TextView) addressLayout.findViewById(R.id.phone)).setText(jsonObject.getString("phone"));
+                                ((TextView) addressLayout.findViewById(R.id.phone)).setText(((jsonObject.getString("phone").length()==10)?"+91 ":"+91 44 ")+jsonObject.getString("phone"));
                                 if (jsonObject.getBoolean("primary"))
                                     addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
                                 addressLayout.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {

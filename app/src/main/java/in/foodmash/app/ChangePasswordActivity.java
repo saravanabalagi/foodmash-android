@@ -95,7 +95,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         switch (v.getId()) {
             case R.id.clear_fields: oldPassword.setText(null); newPassword.setText(null); confirmPassword.setText(null); break;
             case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
-            case R.id.forgot: if (isEverythingValid()) makeRequest(); else Alerts.validityAlert(ChangePasswordActivity.this); break;
+            case R.id.change: if (isEverythingValid()) makeRequest(); else Alerts.validityAlert(ChangePasswordActivity.this); break;
         }
     }
 
@@ -159,16 +159,35 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     }
 
     private boolean isEverythingValid() {
-        return oldPassword.getText().length()>=8 &&
-                newPassword.getText().length()>=8 &&
-                confirmPassword.getText().length()>=8;
+        return (forgot) || oldPassword.getText().length() >= 8 &&
+                (forgot) || !newPassword.getText().toString().equals(oldPassword.getText().toString()) &&
+                confirmPassword.getText().toString().equals(newPassword.getText().toString()) &&
+                newPassword.getText().length() >= 8;
     }
 
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) {  }
     @Override public void afterTextChanged(Editable s) {
-        if(s==oldPassword.getEditableText()) { if(oldPassword.getText().toString().length()<8) Animations.fadeInOnlyIfInvisible(oldPasswordValidate,500); else Animations.fadeOut(oldPasswordValidate,500); }
-        else if(s==newPassword.getEditableText()) { if(newPassword.getText().toString().length()<8) Animations.fadeInOnlyIfInvisible(newPasswordValidate,500); else Animations.fadeOut(newPasswordValidate,500); }
-        else if(s==confirmPassword.getEditableText()) { if(confirmPassword.getText().toString().length()<8) Animations.fadeInOnlyIfInvisible(confirmPasswordValidate,500); else Animations.fadeOut(confirmPasswordValidate,500); }
+        if(s==oldPassword.getEditableText()) {
+            if(oldPassword.getText().toString().length()<8)
+                Animations.fadeInOnlyIfInvisible(oldPasswordValidate,500);
+            else Animations.fadeOut(oldPasswordValidate,500);
+            if(newPassword.getText().length()>0 && !newPassword.getText().toString().equals(oldPassword.getText().toString()))
+                Animations.fadeInOnlyIfInvisible(newPasswordValidate,500);
+            else if(newPassword.getText().length()>=8 && newPassword.getText().toString().equals(oldPassword.getText().toString()));
+                    Animations.fadeOut(newPasswordValidate,500);
+        } else if(s==newPassword.getEditableText()) {
+            if(newPassword.getText().toString().length()<8
+                    || (!forgot && !newPassword.getText().toString().equals(oldPassword.getText().toString())))
+                Animations.fadeInOnlyIfInvisible(newPasswordValidate,500);
+            else Animations.fadeOut(newPasswordValidate,500);
+            if(confirmPassword.getText().length()>0 && !confirmPassword.getText().toString().equals(newPassword.getText().toString()))
+                Animations.fadeInOnlyIfInvisible(confirmPasswordValidate,500);
+            else if(confirmPassword.getText().toString().equals(newPassword.getText().toString()))
+                Animations.fadeOut(confirmPasswordValidate,500);
+        } else if(s==confirmPassword.getEditableText()) {
+            if(!confirmPassword.getText().toString().equals(newPassword.getText().toString())) Animations.fadeInOnlyIfInvisible(confirmPasswordValidate,500);
+            else Animations.fadeOut(confirmPasswordValidate,500);
+        }
     }
 }

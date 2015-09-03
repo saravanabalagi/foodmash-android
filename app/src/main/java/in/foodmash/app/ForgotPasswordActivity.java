@@ -1,7 +1,7 @@
 package in.foodmash.app;
 
 import android.content.Intent;
-import android.media.Image;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
@@ -25,8 +25,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
 
 /**
  * Created by sarav on Aug 08 2015.
@@ -79,8 +77,8 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
 
         phoneValidate = (ImageView) findViewById(R.id.phone_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
-        phone = (EditText) findViewById(R.id.phone); phone.addTextChangedListener(this);
-        email = (EditText) findViewById(R.id.email); email.addTextChangedListener(this);
+        phone = (EditText) findViewById(R.id.phone); phone.setText(getPhone()); phone.addTextChangedListener(this);
+        email = (EditText) findViewById(R.id.email_or_phone); email.setText(getEmail()); email.addTextChangedListener(this);
 
         clearAllFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearAllFields.setOnClickListener(this);
 
@@ -126,6 +124,8 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
                     if(response.getBoolean("success")) {
                         System.out.println(response.getString("otp"));
                         intent = new Intent(ForgotPasswordActivity.this, ForgotPasswordOtpActivity.class);
+                        intent.putExtra("type",(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)?"phone":"email");
+                        intent.putExtra("value",(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)?phone.getText().toString().trim():email.getText().toString().trim());
                         startActivity(intent);
                     } else if(!(response.getBoolean("success"))) {
                         Alerts.commonErrorAlert(ForgotPasswordActivity.this, "Address Invalid", "We are unable to process your Address Details. Try Again!", "Okay");
@@ -145,7 +145,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     }
 
     private boolean isEverthingValid() {
-         return (otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone)
+         return (otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)
                  ?phone.getText().toString().trim().length()==10
                  : EmailValidator.getInstance().isValid(email.getText().toString().trim());
     }
@@ -153,7 +153,18 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) {  }
     @Override public void afterTextChanged(Editable s) {
-        if(s==phone.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(phoneValidate, 500); else Animations.fadeOut(phoneValidate,500); }
-        else if(s==email.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(emailValidate, 500); else Animations.fadeOut(emailValidate,500); }
+        if(s==phone.getEditableText()) { if(s.toString().trim().length()!=10) Animations.fadeInOnlyIfInvisible(phoneValidate, 500); else Animations.fadeOut(phoneValidate,500); }
+        else if(s==email.getEditableText()) { if(!EmailValidator.getInstance().isValid(s.toString())) Animations.fadeInOnlyIfInvisible(emailValidate, 500); else Animations.fadeOut(emailValidate,500); }
     }
+
+    private String getEmail() {
+        SharedPreferences sharedPreferences = getSharedPreferences("cache",0);
+        return sharedPreferences.getString("email",null);
+    }
+
+    private String getPhone() {
+        SharedPreferences sharedPreferences = getSharedPreferences("cache",0);
+        return sharedPreferences.getString("phone",null);
+    }
+
 }

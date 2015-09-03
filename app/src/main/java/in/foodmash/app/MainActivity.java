@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if(response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
                         JSONObject userJson = dataJson.getJSONObject("user");
-                        cacheEmailAndPhone(userJson.getString("email"),userJson.getString("phone"));
+                        cacheEmailAndPhone(userJson.getString("email"),userJson.getString("mobile_no"));
                     } else if(response.getBoolean("success")) {
                         Alerts.unableToProcessResponseAlert(MainActivity.this);
                         System.out.println(response.getString("error"));

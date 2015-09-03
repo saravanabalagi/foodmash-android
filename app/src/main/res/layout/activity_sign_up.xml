@@ -92,9 +92,9 @@
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
                         android:ems="10"
-                        android:id="@+id/email"
+                        android:id="@+id/email_or_phone"
                         android:layout_margin="5dp"
-                        android:hint="@string/email_edit_text_hint"
+                        android:hint="@string/email_or_phone_edit_text_hint"
                         android:singleLine="true"
                         android:layout_weight="1" />
 

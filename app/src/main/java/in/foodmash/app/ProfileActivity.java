@@ -102,10 +102,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
                         dob.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.getTime()));
                     }
-                }, Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH);
+                }, 1985, 0, 1).show();
             }
         });
-        email = (EditText) findViewById(R.id.email); email.addTextChangedListener(this);
+        email = (EditText) findViewById(R.id.email_or_phone); email.addTextChangedListener(this);
         phone = (EditText) findViewById(R.id.phone); phone.addTextChangedListener(this);
         promotionOffers = (Switch) findViewById(R.id.receive_promo); promotionOffers.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -133,11 +133,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
-                        JSONObject userJson = response.getJSONObject("user");
+                        JSONObject dataJson = response.getJSONObject("data");
+                        JSONObject userJson = dataJson.getJSONObject("user");
                         name.setText(userJson.getString("name"));
-                        dob.setText(userJson.getString("dob"));
+                        dob.setText(userJson.getString("dob").equals("null")?null:userJson.getString("dob"));
                         email.setText(userJson.getString("email"));
-                        phone.setText(userJson.getString("phone"));
+                        phone.setText(userJson.getString("mobile_no"));
                         promotionOffers.setChecked(userJson.getBoolean("offers"));
                     } else if(response.getBoolean("success")) {
                         Alerts.unableToProcessResponseAlert(ProfileActivity.this);
@@ -171,13 +172,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             profileHashMap.put("name", name.getText().toString().trim());
             profileHashMap.put("dob", dob.getText().toString().trim());
             profileHashMap.put("email", email.getText().toString().trim());
-            profileHashMap.put("phone", phone.getText().toString().trim());
+            profileHashMap.put("mobile_no", phone.getText().toString().trim());
             JSONObject userJson = new JSONObject(profileHashMap);
             userJson.put("offers", promotionOffers.isChecked());
 
             requestJson = JsonProvider.getStandartRequestJson(ProfileActivity.this);
-            requestJson.put("user",userJson);
             JSONObject dataJson = new JSONObject();
+            dataJson.put("user",userJson);
             requestJson.put("data",dataJson);
 
         } catch (JSONException e) { e.printStackTrace(); }

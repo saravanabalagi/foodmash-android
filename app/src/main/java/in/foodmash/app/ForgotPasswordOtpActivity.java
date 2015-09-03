@@ -40,7 +40,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     String recoveryKey=null;
 
     Handler handler=new Handler();
-    int timerMinutes=1;
+    int timerMinutes=3;
     int timerSeconds=0;
     boolean otpExpired = false;
 
@@ -163,7 +163,8 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     }
 
     private boolean isEverythingValid() {
-        return otpExpired &&
+        return !otpExpired &&
                 otp.getText().toString().trim().length()==6;
     }
+
 }

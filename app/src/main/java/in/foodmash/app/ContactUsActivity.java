@@ -82,7 +82,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
 
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         call = (LinearLayout) findViewById(R.id.call); call.setOnClickListener(this);
-        email = (LinearLayout) findViewById(R.id.email); email.setOnClickListener(this);
+        email = (LinearLayout) findViewById(R.id.email_or_phone); email.setOnClickListener(this);
         clearFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
 
         issueValidate = (ImageView) findViewById(R.id.issue_validate);
@@ -101,7 +101,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
             case R.id.clear_fields: issue.setText(null); description.setText(null); break;
             case R.id.call: Intent callIntent = new Intent(Intent.ACTION_CALL); callIntent.setData(Uri.parse("tel:+918056249612")); startActivity(callIntent); break;
             case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
-            case R.id.email: if(isEverythingValid()) makeRequset(); else Alerts.validityAlert(ContactUsActivity.this); break;
+            case R.id.email_or_phone: if(isEverythingValid()) makeRequset(); else Alerts.validityAlert(ContactUsActivity.this); break;
         }
     }
 
@@ -151,7 +151,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) {  }
     @Override public void afterTextChanged(Editable s) {
-        if(s==issue.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(issueValidate,500); else Animations.fadeOut(issueValidate,500); }
-        else if(s==description.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(descriptionValidate,500); else Animations.fadeOut(descriptionValidate,500); }
+        if(s==issue.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(issueValidate, 500); else Animations.fadeOut(issueValidate,500); }
+        else if(s==description.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(descriptionValidate, 500); else Animations.fadeOut(descriptionValidate,500); }
     }
 }

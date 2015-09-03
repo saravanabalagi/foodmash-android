@@ -75,6 +75,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
         }
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         if(!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) enableGpsAlert();
 
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
@@ -107,7 +108,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
     @Override
     public void onMapReady(GoogleMap map) {
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 14));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, (edit)?17:14));
         locationListener = new LocationListener() {
             @Override public void onLocationChanged(Location location) {
                 initialLocation = new LatLng(location.getLatitude(),location.getLongitude());
