@@ -27,6 +27,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
 
     Intent intent;
     JSONArray jsonArray;
+    JsonObjectRequest jsonObjectRequest = null;
 
     LinearLayout back;
     LinearLayout addAddress;
@@ -59,7 +60,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
 
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",JsonProvider.getStandartRequestJson(AddressActivity.this),new Response.Listener<JSONObject>() {
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",JsonProvider.getStandartRequestJson(AddressActivity.this),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -97,12 +98,14 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                             dataJson.put("id", jsonObject.getString("id"));
                                             requestJson.put("data", dataJson);
                                         } catch (JSONException e) { e.printStackTrace(); }
-                                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
+                                        JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
                                             @Override
                                             public void onResponse(JSONObject response) {
                                                 try {
-                                                    if (response.getBoolean("success"))
+                                                    if (response.getBoolean("success")) {
                                                         fillLayout.removeView(addressLayout);
+                                                        Swift.getInstance(AddressActivity.this).addToRequestQueue(jsonObjectRequest);
+                                                    }
                                                     else if (response.getBoolean("success"))
                                                         Alerts.commonErrorAlert(AddressActivity.this, "Could not delete !", "The address that you want to remove could not be removed. Try again!", "Okay");
                                                 } catch (JSONException e) { e.printStackTrace(); }
@@ -116,7 +119,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                                 System.out.println("Response Error: " + error);
                                             }
                                         });
-                                        Swift.getInstance(AddressActivity.this).addToRequestQueue(jsonObjectRequest);
+                                        Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteRequest);
                                     }
                                 });
                                 fillLayout.addView(addressLayout);

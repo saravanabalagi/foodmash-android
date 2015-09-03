@@ -141,7 +141,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                         intent.putExtra("forgot",true);
                         startActivity(intent);
                     } else if(!(response.getBoolean("success"))) {
-                        Alerts.commonErrorAlert(ForgotPasswordOtpActivity.this, "Address Invalid", "We are unable to process your Address Details. Try Again!", "Okay");
+                        Alerts.commonErrorAlert(ForgotPasswordOtpActivity.this, "Invalid OTP", "We are unable to process the OTP you entered. Try Again!", "Okay");
                         System.out.println("Error: " + response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -189,7 +189,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                         handler.removeCallbacks(initiateOtpTimer);
                         handler.postDelayed(initiateOtpTimer, 1000);
                     } else if(!(response.getBoolean("success"))) {
-                        Alerts.commonErrorAlert(ForgotPasswordOtpActivity.this, "Address Invalid", "We are unable to process your Address Details. Try Again!", "Okay");
+                        Alerts.commonErrorAlert(ForgotPasswordOtpActivity.this, "Could not send OTP", "We are unable to send you OTP as the details you entered are invalid. Try Again!", "Okay");
                         System.out.println("Error: " + response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }

@@ -128,7 +128,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
                         intent.putExtra("value",(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)?phone.getText().toString().trim():email.getText().toString().trim());
                         startActivity(intent);
                     } else if(!(response.getBoolean("success"))) {
-                        Alerts.commonErrorAlert(ForgotPasswordActivity.this, "Address Invalid", "We are unable to process your Address Details. Try Again!", "Okay");
+                        Alerts.commonErrorAlert(ForgotPasswordActivity.this, "Could not send OTP", "We are unable to send you OTP as the details you entered are invalid. Try Again!", "Okay");
                         System.out.println("Error: " + response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }

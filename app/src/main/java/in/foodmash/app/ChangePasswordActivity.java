@@ -142,7 +142,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                             startActivity(intent);
                         }
                     } else if(!response.getBoolean("success")) {
-                        Alerts.unableToProcessResponseAlert(ChangePasswordActivity.this);
+                        Alerts.commonErrorAlert(ChangePasswordActivity.this,"Invalid Old Password","We are unable to change your password as Old Password entered by you is Invalid","Okay");
                         System.out.println(response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }

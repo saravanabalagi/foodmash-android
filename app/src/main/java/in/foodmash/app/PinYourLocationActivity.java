@@ -75,7 +75,6 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
         }
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
         if(!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) enableGpsAlert();
 
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);

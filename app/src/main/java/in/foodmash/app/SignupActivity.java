@@ -182,17 +182,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         editor.apply();
                         startActivity(intent);
                     } else {
-                        new AlertDialog.Builder(SignupActivity.this)
-                                .setIconAttribute(android.R.attr.alertDialogIcon)
-                                .setTitle("Registration Invalid")
-                                .setMessage("We are unable to sign you up. Please try again!")
-                                .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                }).show();
-                        System.out.println("Error Details: "+response.getString("info"));
+                        Alerts.commonErrorAlert(SignupActivity.this,"Registration Invalid", "We are unable to sign you up. Please try again!","Okay");
+                        System.out.println("Error Details: " + response.getString("info"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }

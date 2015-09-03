@@ -64,7 +64,7 @@ public class Alerts {
         new AlertDialog.Builder(context)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Unable to process request")
-                .setMessage("Something went wrong. We are unable to process your request. We'll fix it soon!")
+                .setMessage("Something went wrong. We are unable to process your request. Try again!")
                 .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
