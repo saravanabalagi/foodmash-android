@@ -28,7 +28,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NavigableMap;
 import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView for_3_focus;
 
     ViewPager viewPager;
-    JSONArray jsonArray;
+    JSONArray combosJson;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -95,18 +94,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 LinearLayout linearLayout = new LinearLayout(getBaseContext());
                 linearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 linearLayout.setOrientation(LinearLayout.VERTICAL);
-                for (int i=0;i<jsonArray.length();i++) {
+                for (int i=0;i< combosJson.length();i++) {
                     TreeMap<Integer, LinearLayout> comboTreeMap = new TreeMap<>();
                     final LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo, linearLayout, false);
                     try {
-                        final JSONObject comboJson = jsonArray.getJSONObject(i);
+                        final JSONObject comboJson = combosJson.getJSONObject(i);
                         if (Integer.parseInt(comboJson.getString("group_size"))!=position) { continue; }
 
+                        final int comboId = comboJson.getInt("id");
                         final JSONArray comboOptions = comboJson.getJSONArray("combo_options");
                         final HashMap<Integer,Integer> comboSelectionHashMap = new HashMap<>();
+                        final HashMap<Integer,Integer> comboDishesHashMap = new HashMap<>();
 
 
-                        ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
+                                ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
                         ((TextView) comboLayout.findViewById(R.id.name)).setText(comboJson.getString("name"));
                         ((TextView) comboLayout.findViewById(R.id.description)).setText(comboJson.getString("description"));
                         ((TextView) comboLayout.findViewById(R.id.price)).setText(String.format("%.0f", Float.parseFloat(comboJson.getString("price"))));
@@ -155,18 +156,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                                 ((TextView) currentComboFoodLayout.findViewById(R.id.restaurant_name)).setText(restaurantHashMap.values().toArray()[0].toString());
                                             } else currentComboFoodLayout.findViewById(R.id.restaurant_layout).setVisibility(View.GONE);
                                             if(j==comboOptions.length()-1) Animations.bottomMargin(currentComboFoodLayout,(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics()),0);
-                                            comboOptionsHashMap.put(comboOptionsJson.getInt("position"),currentComboFoodLayout);
+                                            comboOptionsHashMap.put(comboOptionsJson.getInt("priority"),currentComboFoodLayout);
                                         }
                                         JSONArray comboDishes = comboJson.getJSONArray("combo_dishes");
                                         for(int i=0;i<comboDishes.length();i++) {
-                                            JSONObject dishJson = comboDishes.getJSONObject(i);
+                                            JSONObject comboDishJson = comboDishes.getJSONObject(i);
+                                            JSONObject dishJson = comboDishJson.getJSONObject("dish");
+                                            comboDishesHashMap.put(comboDishJson.getInt("id"),dishJson.getInt("id"));
                                             final LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo_food, comboFoodLayout, false);
                                             ((ImageView) currentComboFoodLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
                                             ((TextView) currentComboFoodLayout.findViewById(R.id.name)).setText(dishJson.getString("name"));
                                             ((TextView) currentComboFoodLayout.findViewById(R.id.description)).setText(dishJson.getString("description"));
                                             JSONObject restaurantJson = dishJson.getJSONObject("restaurant");
                                             ((TextView) currentComboFoodLayout.findViewById(R.id.restaurant_name)).setText(restaurantJson.getString("name"));
-                                            comboOptionsHashMap.put(dishJson.getInt("position"),currentComboFoodLayout);
+                                            comboOptionsHashMap.put(comboDishJson.getInt("priority"),currentComboFoodLayout);
                                         }
                                     } catch (JSONException e) { e.printStackTrace(); }
                                     for(int i=0;i<comboOptionsHashMap.size();i++)
@@ -179,36 +182,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         final TextView count = (TextView) addedToCartLayout.findViewById(R.id.count);
                         ImageView plus = (ImageView) addedToCartLayout.findViewById(R.id.plus);
                         ImageView minus = (ImageView) addedToCartLayout.findViewById(R.id.minus);
-                        plus.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { count.setText(String.valueOf(Integer.parseInt(count.getText().toString())+1)); } });
-                        minus.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { count.setText(String.valueOf(Integer.parseInt(count.getText().toString())-1)); if(Integer.parseInt(count.getText().toString())==0) Animations.fadeOut(addedToCartLayout,200); } });
-                        addToCart.setOnClickListener(new View.OnClickListener() {
+                        plus.setOnClickListener(new View.OnClickListener() {
                             @Override public void onClick(View v) {
-                                JSONObject comboRequestJson = null;
-                                try {
-                                    comboRequestJson = JsonProvider.getStandartRequestJson(MainActivity.this);
-                                    JSONArray comboOptionsSelected = new JSONArray();
-                                    for(Map.Entry<Integer,Integer> entry : comboSelectionHashMap.entrySet()) {
-                                        JSONObject jsonObject = new JSONObject();
-                                        jsonObject.put("id",entry.getKey());
-                                        JSONObject dishJson = new JSONObject();
-                                        dishJson.put("id",entry.getValue());
-                                        jsonObject.put("dish",dishJson);
-                                        comboOptionsSelected.put(jsonObject);
-                                    }
-                                    JSONObject dataJson = new JSONObject();
-                                    dataJson.put("combo_id",comboJson.getInt("id"));
-                                    dataJson.put("combo_options", comboOptionsSelected);
-                                    comboRequestJson.put("data", dataJson);
-                                } catch (JSONException e) { e.printStackTrace(); }
-                                JsonObjectRequest cartJsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/cart/update", comboRequestJson, new Response.Listener<JSONObject>() {
+                                JsonObjectRequest cartJsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/add", getComboRequestJson(comboId,comboSelectionHashMap,comboDishesHashMap), new Response.Listener<JSONObject>() {
                                     @Override
                                     public void onResponse(JSONObject response) {
                                         try {
                                             if (response.getBoolean("success")) {
-                                                comboFoodLayout.removeAllViews();
-                                                Animations.fadeInOnlyIfInvisible(addedToCartLayout, 200);
-                                                count.setText(String.valueOf(Integer.parseInt(count.getText().toString())+1));
-                                            } else if(!(response.getBoolean("success"))) {
+                                                count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
+                                            } else if (!(response.getBoolean("success"))) {
                                                 Alerts.unableToProcessResponseAlert(MainActivity.this);
                                                 System.out.println("Error Details: " + response.getString("error"));
                                             }
@@ -217,7 +199,62 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 }, new Response.ErrorListener() {
                                     @Override
                                     public void onErrorResponse(VolleyError error) {
-                                        if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(MainActivity.this);
+                                        if (error instanceof NoConnectionError || error instanceof TimeoutError)
+                                            Alerts.internetConnectionErrorAlert(MainActivity.this);
+                                        else Alerts.unknownErrorAlert(MainActivity.this);
+                                        System.out.println("Response Error: " + error);
+                                    }
+                                });
+                                Swift.getInstance(MainActivity.this).addToRequestQueue(cartJsonObjectRequest);
+                            }
+                        });
+                        minus.setOnClickListener(new View.OnClickListener() {
+                            @Override public void onClick(View v) {
+                                JsonObjectRequest cartJsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/remove", getComboRequestJson(comboId), new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        try {
+                                            if (response.getBoolean("success")) {
+                                                count.setText(String.valueOf(Integer.parseInt(count.getText().toString())-1));
+                                                if(Integer.parseInt(count.getText().toString())==0) Animations.fadeOut(addedToCartLayout,200);
+                                            } else if (!(response.getBoolean("success"))) {
+                                                Alerts.unableToProcessResponseAlert(MainActivity.this);
+                                                System.out.println("Error Details: " + response.getString("error"));
+                                            }
+                                        } catch (JSONException e) { e.printStackTrace(); }
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        if (error instanceof NoConnectionError || error instanceof TimeoutError)
+                                            Alerts.internetConnectionErrorAlert(MainActivity.this);
+                                        else Alerts.unknownErrorAlert(MainActivity.this);
+                                        System.out.println("Response Error: " + error);
+                                    }
+                                });
+                                Swift.getInstance(MainActivity.this).addToRequestQueue(cartJsonObjectRequest);
+                            } });
+                        addToCart.setOnClickListener(new View.OnClickListener() {
+                            @Override public void onClick(View v) {
+                                JsonObjectRequest cartJsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/add", getComboRequestJson(comboId), new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        try {
+                                            if (response.getBoolean("success")) {
+                                                comboFoodLayout.removeAllViews();
+                                                Animations.fadeInOnlyIfInvisible(addedToCartLayout, 200);
+                                                count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
+                                            } else if (!(response.getBoolean("success"))) {
+                                                Alerts.unableToProcessResponseAlert(MainActivity.this);
+                                                System.out.println("Error Details: " + response.getString("error"));
+                                            }
+                                        } catch (JSONException e) { e.printStackTrace(); }
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        if (error instanceof NoConnectionError || error instanceof TimeoutError)
+                                            Alerts.internetConnectionErrorAlert(MainActivity.this);
                                         else Alerts.unknownErrorAlert(MainActivity.this);
                                         System.out.println("Response Error: " + error);
                                     }
@@ -241,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onResponse(JSONObject response) {
                 try {
                     if (response.getBoolean("success")) {
-                        jsonArray = response.getJSONArray("data");
+                        combosJson = response.getJSONArray("data");
                         viewPager.setAdapter(pagerAdapter);
                         viewPager.addOnPageChangeListener(MainActivity.this);
                     } else if (!response.getBoolean("success")) {
@@ -336,7 +373,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if(response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
                         JSONObject userJson = dataJson.getJSONObject("user");
-                        cacheEmailAndPhone(userJson.getString("email"),userJson.getString("mobile_no"));
+                        cacheEmailAndPhone(userJson.getString("email"), userJson.getString("mobile_no"));
                     } else if(response.getBoolean("success")) {
                         Alerts.unableToProcessResponseAlert(MainActivity.this);
                         System.out.println(response.getString("error"));
@@ -359,5 +396,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.putString("phone",phone);
         editor.apply();
     }
+
+    private JSONObject getComboRequestJson(int comboId, HashMap<Integer,Integer> comboOptionsHashMap, HashMap<Integer,Integer> comboDishesHashMap) {
+        JSONObject requestJson = JsonProvider.getStandartRequestJson(MainActivity.this);
+        try {
+            JSONArray comboOptionsSelected = new JSONArray();
+            for(Map.Entry<Integer,Integer> entry : comboOptionsHashMap.entrySet()) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id",entry.getKey());
+                JSONObject dishJson = new JSONObject();
+                dishJson.put("id",entry.getValue());
+                jsonObject.put("dish",dishJson);
+                comboOptionsSelected.put(jsonObject);
+            }
+            JSONArray comboDishesSelected = new JSONArray();
+            for(Map.Entry<Integer,Integer> entry : comboDishesHashMap.entrySet()) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id",entry.getKey());
+                JSONObject dishJson = new JSONObject();
+                dishJson.put("id",entry.getValue());
+                jsonObject.put("dish",dishJson);
+                comboDishesSelected.put(jsonObject);
+            }
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("combo_id",comboId);
+            dataJson.put("combo_options", comboOptionsSelected);
+            dataJson.put("combo_dishes",comboDishesSelected);
+            requestJson.put("data", dataJson);
+        } catch (JSONException e) { e.printStackTrace(); }
+        return requestJson;
+    }
+
+    private JSONObject getComboRequestJson(int comboId) {
+        JSONObject requestJson = JsonProvider.getStandartRequestJson(MainActivity.this);
+        try {
+            JSONObject dataJson = new JSONObject();
+            JSONObject comboJson = new JSONObject();
+            comboJson.put("id",comboId);
+            dataJson.put("combo",comboJson);
+            requestJson.put("data", dataJson);
+        } catch (JSONException e) { e.printStackTrace(); }
+        return requestJson;
+    }
+
+
 
 }

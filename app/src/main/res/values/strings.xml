@@ -86,4 +86,6 @@
     <string name="restaurant">Restaurant</string>
     <string name="dish_name">Dish Name</string>
     <string name="selected">selected</string>
+    <string name="empty_cart">Aren\'t you hungry?</string>
+    <string name="empty_cart_description">You didn\'t add any combos to the cart</string>
 </resources>

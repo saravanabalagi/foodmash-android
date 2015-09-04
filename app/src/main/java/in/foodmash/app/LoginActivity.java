@@ -175,7 +175,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
     @Override public void afterTextChanged(Editable s) {
         if(s==email.getEditableText()) {
-            if (isInteger(s.toString())) {
+            if (Calculations.isInteger(s.toString())) {
                 Animations.fadeInOnlyIfInvisible(phonePrefix, 500);
                 if(s.length()==10) Animations.fadeOut(emailValidate,500);
                 else Animations.fadeInOnlyIfInvisible(emailValidate,500);
@@ -208,16 +208,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         SharedPreferences sharedPreferences = getSharedPreferences("cache",0);
         return sharedPreferences.getString("phone",null);
     }
-
-    public static boolean isInteger(String string) {
-        if (string == null) { return false; }
-        if (string.length() == 0) { return false; }
-        for (int i = 0; i < string.length(); i++) {
-            char c = string.charAt(i);
-            if ( c < '0' || c > '9') { return false; }
-        }
-        return true;
-    }
-
 
 }

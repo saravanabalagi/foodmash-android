@@ -45,13 +45,55 @@
         android:layout_weight="1" >
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/fill_layout"
-            android:animateLayoutChanges="true">
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal"
+                android:id="@+id/empty_cart_layout">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/empty_cart"
+                    android:cropToPadding="true"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/empty_cart"
+                    android:gravity="center_horizontal"
+                    android:textSize="25sp"
+                    android:fontFamily="sans-serif-light"
+                    android:layout_margin="5dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/empty_cart_description"
+                    android:gravity="center_horizontal"
+                    android:fontFamily="sans-serif-light"
+                    android:layout_margin="5dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/fill_layout"
+                android:animateLayoutChanges="true">
+
+            </LinearLayout>
 
         </LinearLayout>
+
+
     </ScrollView>
 
     <View
