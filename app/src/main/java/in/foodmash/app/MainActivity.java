@@ -127,11 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     final ImageView selected = (ImageView) comboOptionsLayout.findViewById(R.id.selected);
                                     if(k==0) selected.setVisibility(View.VISIBLE);
                                     final JSONObject dishJson = comboDishOptionJson.getJSONObject("dish");
-                                    if(comboSelectionHashMap.containsKey(comboOptionsJson.getInt("id"))) {
-                                        for(int l=0; l<comboOptionDishes.length(); l++) optionsLayout.getChildAt(l).findViewById(R.id.selected).setVisibility(View.INVISIBLE);
-                                        selected.setVisibility(View.VISIBLE);
-                                    }
-                                    else if(k==0) comboSelectionHashMap.put(comboOptionsJson.getInt("id"),dishJson.getInt("id"));
+                                    if(k==0) comboSelectionHashMap.put(comboOptionsJson.getInt("id"),dishJson.getInt("id"));
                                     ((TextView) comboOptionsLayout.findViewById(R.id.option_name)).setText(dishJson.getString("name"));
                                     JSONObject restaurantJson = dishJson.getJSONObject("restaurant");
                                     restaurantHashMap.put(restaurantJson.getInt("id"), restaurantJson.getString("name"));

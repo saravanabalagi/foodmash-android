@@ -110,8 +110,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                                         JSONObject requestJson = JsonProvider.getStandartRequestJson(CartActivity.this);
                                         try {
                                             JSONObject dataJson = new JSONObject();
-                                            dataJson.put("id",subOrderJson.getInt("id"));
-                                            dataJson.put("quantity",s.toString());
+                                            JSONObject orderJson = new JSONObject();
+                                            orderJson.put("id",subOrderJson.getInt("id"));
+                                            orderJson.put("quantity",s.toString());
+                                            dataJson.put("order",orderJson);
                                             requestJson.put("data",dataJson);
                                         } catch (JSONException e) { e.printStackTrace(); }
                                         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, getString(R.string.api_root_path) + "/orders", requestJson, new Response.Listener<JSONObject>() {
