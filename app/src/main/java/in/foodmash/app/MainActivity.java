@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onClick(View v) {
                                 if(comboFoodLayout.getChildCount()==0) {
-                                    HashMap<Integer,LinearLayout> comboOptionsHashMap = new HashMap<>();
+                                    TreeMap<Integer,LinearLayout> layoutOrderTreeMap = new TreeMap<>();
                                     try {
                                         for (int j = 0; j < comboOptions.length(); j++) {
                                             final LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo_food, comboFoodLayout, false);
@@ -156,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                                 ((TextView) currentComboFoodLayout.findViewById(R.id.restaurant_name)).setText(restaurantHashMap.values().toArray()[0].toString());
                                             } else currentComboFoodLayout.findViewById(R.id.restaurant_layout).setVisibility(View.GONE);
                                             if(j==comboOptions.length()-1) Animations.bottomMargin(currentComboFoodLayout,(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics()),0);
-                                            comboOptionsHashMap.put(comboOptionsJson.getInt("priority"),currentComboFoodLayout);
+                                            layoutOrderTreeMap.put(comboOptionsJson.getInt("priority"), currentComboFoodLayout);
                                         }
                                         JSONArray comboDishes = comboJson.getJSONArray("combo_dishes");
                                         for(int i=0;i<comboDishes.length();i++) {
@@ -166,14 +167,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             final LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo_food, comboFoodLayout, false);
                                             ((ImageView) currentComboFoodLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
                                             ((TextView) currentComboFoodLayout.findViewById(R.id.name)).setText(dishJson.getString("name"));
-                                            ((TextView) currentComboFoodLayout.findViewById(R.id.description)).setText(dishJson.getString("description"));
+                                            ((TextView) currentComboFoodLayout.findViewById(R.id.description)).setText(/*dishJson.getString("description")*/"Some Description");
                                             JSONObject restaurantJson = dishJson.getJSONObject("restaurant");
                                             ((TextView) currentComboFoodLayout.findViewById(R.id.restaurant_name)).setText(restaurantJson.getString("name"));
-                                            comboOptionsHashMap.put(comboDishJson.getInt("priority"),currentComboFoodLayout);
+                                            layoutOrderTreeMap.put(comboDishJson.getInt("priority"), currentComboFoodLayout);
                                         }
                                     } catch (JSONException e) { e.printStackTrace(); }
-                                    for(int i=0;i<comboOptionsHashMap.size();i++)
-                                        comboFoodLayout.addView(comboOptionsHashMap.get(i));
+                                    for(Integer i:layoutOrderTreeMap.navigableKeySet())
+                                        comboFoodLayout.addView(layoutOrderTreeMap.get(i));
                                 } else comboFoodLayout.removeAllViews();
                             }
                         });
@@ -273,9 +274,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, getString(R.string.api_root_path) + "/combos",new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", JsonProvider.getStandartRequestJson(MainActivity.this) ,new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                System.out.println(response);
                 try {
                     if (response.getBoolean("success")) {
                         combosJson = response.getJSONArray("data");

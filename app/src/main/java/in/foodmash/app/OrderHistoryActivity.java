@@ -10,6 +10,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.NoConnectionError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by sarav on Aug 08 2015.
  */
@@ -46,22 +57,51 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
 
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
-        for(int i=0;i<3;i++) {
-            LinearLayout orderLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.user_order,fillLayout,false);
-            ((TextView) orderLayout.findViewById(R.id.order_id)).setText("OD"+((i*2132434)%10000));
-//            ((TextView) comboLayout.findViewById(R.id.date)).setText("");
-//            ((TextView) comboLayout.findViewById(R.id.status)).setText("");
-            ((TextView) orderLayout.findViewById(R.id.price)).setText(""+((i*23423)%1000));
-            ((ImageView) orderLayout.findViewById(R.id.statusIcon)).setImageResource(R.mipmap.tick);
-            orderLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(OrderHistoryActivity.this, OrderDescriptionActivity.class);
-                    startActivity(intent);
-                }
-            });
-            fillLayout.addView(orderLayout);
-        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/history", new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    if (response.getBoolean("success")) {
+                        JSONArray ordersJson = response.getJSONArray("data");
+                        for(int i=0;i<ordersJson.length();i++) {
+                            final JSONObject orderJson = ordersJson.getJSONObject(i);
+                            LinearLayout orderLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.user_order,fillLayout,false);
+                            ((TextView) orderLayout.findViewById(R.id.order_id)).setText(orderJson.getString("order_id"));
+                            ((TextView) orderLayout.findViewById(R.id.date)).setText(orderJson.getString("updated_at"));
+                            ((TextView) orderLayout.findViewById(R.id.status)).setText(orderJson.getString("aasm_state"));
+                            ((TextView) orderLayout.findViewById(R.id.price)).setText(orderJson.getString("total"));
+                            setStatus((ImageView) orderLayout.findViewById(R.id.statusIcon), response.getString("aasm_state"));
+                            orderLayout.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String orderId = "";
+                                    try { orderId = orderJson.getString("order_id"); }
+                                    catch (JSONException e) { e.printStackTrace(); }
+                                    Intent intent = new Intent(OrderHistoryActivity.this, OrderDescriptionActivity.class);
+                                    intent.putExtra("order_id",orderId);
+                                    startActivity(intent);
+                                }
+                            });
+                            fillLayout.addView(orderLayout);
+                        }
+                    } else if (!response.getBoolean("success")) {
+                        Alerts.unableToProcessResponseAlert(OrderHistoryActivity.this);
+                        System.out.println(response.getString("error"));
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error instanceof NoConnectionError || error instanceof TimeoutError)
+                    Alerts.internetConnectionErrorAlert(OrderHistoryActivity.this);
+                else Alerts.unknownErrorAlert(OrderHistoryActivity.this);
+                System.out.println("Response Error: " + error);
+            }
+        });
+        Swift.getInstance(OrderHistoryActivity.this).addToRequestQueue(jsonObjectRequest);
+
     }
 
     public void onClick(View v) {
@@ -69,4 +109,13 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
             case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
         }
     }
+
+    private void setStatus (ImageView statusImageView, String status) {
+        switch (status) {
+            case "delivered": statusImageView.setImageResource(R.mipmap.tick); statusImageView.setColorFilter(getResources().getColor(R.color.okay_green)); break;
+            case "cancelled": statusImageView.setImageResource(R.mipmap.cancel); statusImageView.setColorFilter(getResources().getColor(R.color.color_accent)); break;
+        }
+    }
+
+
 }

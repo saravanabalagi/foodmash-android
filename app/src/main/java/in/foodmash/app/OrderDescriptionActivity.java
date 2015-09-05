@@ -10,6 +10,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.NoConnectionError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 /**
  * Created by sarav on Aug 08 2015.
@@ -17,6 +28,7 @@ import android.widget.TextView;
 public class OrderDescriptionActivity extends AppCompatActivity implements View.OnClickListener {
 
     Intent intent;
+    String orderId;
 
     TextView status;
     TextView date;
@@ -49,6 +61,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_description);
 
+        orderId = getIntent().getStringExtra("order_id");
         orderHistory = (LinearLayout) findViewById(R.id.order_history); orderHistory.setOnClickListener(this);
         status = (TextView) findViewById(R.id.status);
         date = (TextView) findViewById(R.id.date);
@@ -56,19 +69,51 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
         statusIcon = (ImageView) findViewById(R.id.status_icon);
 
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
-        for(int i=0; i<3; i++) {
-            LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.order_combo, fillLayout, false);
-            ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
-            ((TextView) comboLayout.findViewById(R.id.name)).setText("Combo Cart " + i);
-            TextView price = (TextView) comboLayout.findViewById(R.id.price); price.setText("" + (100 + i));
-            TextView quantity = (TextView) comboLayout.findViewById(R.id.quantity); quantity.setText(String.valueOf(i+1));
-            ((TextView) comboLayout.findViewById(R.id.quantity_display)).setText(quantity.getText());
-            ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf(Integer.parseInt(quantity.getText().toString()) * Integer.parseInt(price.getText().toString())));
-            fillLayout.addView(comboLayout);
-        }
 
-
-        updateOrderValue();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/show", getRequestJson(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    if (response.getBoolean("success")) {
+                        JSONObject orderJson = response.getJSONObject("data");
+                        total.setText(orderJson.getString("total"));
+                        JSONArray subOrdersJson = orderJson.getJSONArray("orders");
+                        for(int i=0; i<subOrdersJson.length(); i++) {
+                            JSONObject subOrderJson = subOrdersJson.getJSONObject(i);
+                            JSONObject productJson = subOrderJson.getJSONObject("product");
+                            JSONArray comboDishesJson = subOrderJson.getJSONArray("order_items");
+                            String dishes = "";
+                            for(int j=0; j<comboDishesJson.length(); j++) {
+                                JSONObject comboDishJson = comboDishesJson.getJSONObject(j);
+                                JSONObject dishJson = comboDishJson.getJSONObject("item");
+                                dishes += dishJson.getJSONArray("name") + ((j==comboDishesJson.length()-1)?"":", ");
+                            }
+                            LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.order_combo, fillLayout, false);
+                            ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
+                            ((TextView) comboLayout.findViewById(R.id.name)).setText(productJson.getString("name"));
+                            TextView price = (TextView) comboLayout.findViewById(R.id.price); price.setText(productJson.getString("price"));
+                            TextView quantity = (TextView) comboLayout.findViewById(R.id.quantity); quantity.setText(subOrderJson.getString("quantity"));
+                            ((TextView) comboLayout.findViewById(R.id.quantity_display)).setText(subOrderJson.getString("quantity"));
+                            ((TextView) comboLayout.findViewById(R.id.amount)).setText(subOrderJson.getString("total"));
+                            ((TextView) comboLayout.findViewById(R.id.dishes)).setText(dishes);
+                            fillLayout.addView(comboLayout);
+                        }
+                    } else if (!response.getBoolean("success")) {
+                        Alerts.unableToProcessResponseAlert(OrderDescriptionActivity.this);
+                        System.out.println(response.getString("error"));
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error instanceof NoConnectionError || error instanceof TimeoutError)
+                    Alerts.internetConnectionErrorAlert(OrderDescriptionActivity.this);
+                else Alerts.unknownErrorAlert(OrderDescriptionActivity.this);
+                System.out.println("Response Error: " + error);
+            }
+        });
+        Swift.getInstance(OrderDescriptionActivity.this).addToRequestQueue(jsonObjectRequest);
 
     }
 
@@ -78,10 +123,13 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
         }
     }
 
-    private void updateOrderValue() {
-        float totalCartValue = 0;
-        for(int i=0; i<fillLayout.getChildCount();i++)
-            totalCartValue+= Float.parseFloat(((TextView) fillLayout.getChildAt(i).findViewById(R.id.amount)).getText().toString());
-        total.setText(String.format("%.02f",totalCartValue));
+    private JSONObject getRequestJson() {
+        JSONObject requestJson = JsonProvider.getStandartRequestJson(OrderDescriptionActivity.this);
+        try {
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("order_id",orderId);
+            requestJson.put("data",dataJson);
+        } catch (JSONException e) { e.printStackTrace(); }
+        return requestJson;
     }
 }

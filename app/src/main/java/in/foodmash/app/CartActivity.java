@@ -40,6 +40,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     LinearLayout buy;
     LinearLayout fillLayout;
     LinearLayout emptyCartLayout;
+    int cartId;
 
     TextView total;
     TouchableImageButton clearCart;
@@ -79,6 +80,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 try {
                     if(response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
+                        cartId = dataJson.getInt("id");
                         total.setText(dataJson.getString("total"));
                         JSONArray subOrdersJson = dataJson.getJSONArray("orders");
                         if(subOrdersJson.length()>0) emptyCartLayout.setVisibility(View.GONE);
@@ -205,7 +207,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                         .setMessage("Do you want to remove all combos added to the cart?")
                         .setPositiveButton("Remove All", new DialogInterface.OnClickListener() {
                             @Override public void onClick(DialogInterface dialog, int which) {
-                                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/cart/destroy", new Response.Listener<JSONObject>() {
+                                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/destroy", JsonProvider.getStandartRequestJson(CartActivity.this),new Response.Listener<JSONObject>() {
                                     @Override
                                     public void onResponse(JSONObject response) {
                                         try {
@@ -241,6 +243,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 if(isCartEmpty()) Alerts.commonErrorAlert(CartActivity.this,"Empty Cart","Your cart is empty. Add some combos and we'll proceed!","Okay");
                 else if(isEverythingValid()) {
                     intent = new Intent(this, CheckoutAddressActivity.class);
+                    intent.putExtra("cart_id",cartId);
                     startActivity(intent);
                 } else {
                     Alerts.validityAlert(CartActivity.this);

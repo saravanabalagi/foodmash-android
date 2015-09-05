@@ -27,7 +27,6 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
 
     Intent intent;
     JSONArray jsonArray;
-    JsonObjectRequest jsonObjectRequest = null;
 
     LinearLayout back;
     LinearLayout addAddress;
@@ -58,71 +57,80 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         addAddress = (LinearLayout) findViewById(R.id.add_address); addAddress.setOnClickListener(this);
 
-        fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
+        fillLayout = (LinearLayout) findViewById(R.id.fill_layout); fillLayout();
+    }
 
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",JsonProvider.getStandartRequestJson(AddressActivity.this),new Response.Listener<JSONObject>() {
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
+            case R.id.add_address: intent = new Intent(this, PinYourLocationActivity.class); startActivity(intent); break;
+        }
+    }
+
+    private void fillLayout() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",JsonProvider.getStandartRequestJson(AddressActivity.this),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
                         jsonArray = response.getJSONArray("data");
                         for (int i = 0; i < jsonArray.length(); i++) {
-                                final JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                JSONObject addressJson = jsonObject.getJSONObject("address");
-                                final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.user_address, fillLayout, false);
-                                String address = addressJson.getString("line1") + ",\n" +
-                                        addressJson.getString("line2") + ",\n" +
-                                        addressJson.getString("area") + ",\n" +
-                                        addressJson.getString("city") + " - " +
-                                        addressJson.getString("pincode");
-                                ((TextView) addressLayout.findViewById(R.id.name)).setText(jsonObject.getString("name"));
-                                ((TextView) addressLayout.findViewById(R.id.address)).setText(address);
-                                ((TextView) addressLayout.findViewById(R.id.phone)).setText(((jsonObject.getString("phone").length()==10)?"+91 ":"+91 44 ")+jsonObject.getString("phone"));
-                                if (jsonObject.getBoolean("primary"))
-                                    addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
-                                addressLayout.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Intent intent = new Intent(AddressActivity.this, PinYourLocationActivity.class);
-                                        intent.putExtra("json", jsonObject.toString());
-                                        intent.putExtra("edit", true);
-                                        startActivity(intent);
-                                    }
-                                });
-                                addressLayout.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        JSONObject requestJson = JsonProvider.getStandartRequestJson(AddressActivity.this);
-                                        JSONObject dataJson = new JSONObject();
-                                        try {
-                                            dataJson.put("id", jsonObject.getString("id"));
-                                            requestJson.put("data", dataJson);
-                                        } catch (JSONException e) { e.printStackTrace(); }
-                                        JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
-                                            @Override
-                                            public void onResponse(JSONObject response) {
-                                                try {
-                                                    if (response.getBoolean("success")) {
-                                                        fillLayout.removeView(addressLayout);
-                                                        Swift.getInstance(AddressActivity.this).addToRequestQueue(jsonObjectRequest);
-                                                    }
-                                                    else if (response.getBoolean("success"))
-                                                        Alerts.commonErrorAlert(AddressActivity.this, "Could not delete !", "The address that you want to remove could not be removed. Try again!", "Okay");
-                                                } catch (JSONException e) { e.printStackTrace(); }
-                                            }
-                                        }, new Response.ErrorListener() {
-                                            @Override
-                                            public void onErrorResponse(VolleyError error) {
-                                                if (error instanceof NoConnectionError || error instanceof TimeoutError)
-                                                    Alerts.internetConnectionErrorAlert(AddressActivity.this);
-                                                else Alerts.unknownErrorAlert(AddressActivity.this);
-                                                System.out.println("Response Error: " + error);
-                                            }
-                                        });
-                                        Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteRequest);
-                                    }
-                                });
-                                fillLayout.addView(addressLayout);
+                            final JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            JSONObject addressJson = jsonObject.getJSONObject("address");
+                            final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.user_address, fillLayout, false);
+                            String address = addressJson.getString("line1") + ",\n" +
+                                    addressJson.getString("line2") + ",\n" +
+                                    addressJson.getString("area") + ",\n" +
+                                    addressJson.getString("city") + " - " +
+                                    addressJson.getString("pincode");
+                            ((TextView) addressLayout.findViewById(R.id.name)).setText(jsonObject.getString("name"));
+                            ((TextView) addressLayout.findViewById(R.id.address)).setText(address);
+                            ((TextView) addressLayout.findViewById(R.id.phone)).setText(((jsonObject.getString("phone").length()==10)?"+91 ":"+91 44 ")+jsonObject.getString("phone"));
+                            if (jsonObject.getBoolean("primary"))
+                                addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
+                            addressLayout.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(AddressActivity.this, PinYourLocationActivity.class);
+                                    intent.putExtra("json", jsonObject.toString());
+                                    intent.putExtra("edit", true);
+                                    startActivity(intent);
+                                }
+                            });
+                            addressLayout.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    JSONObject requestJson = JsonProvider.getStandartRequestJson(AddressActivity.this);
+                                    JSONObject dataJson = new JSONObject();
+                                    try {
+                                        dataJson.put("id", jsonObject.getString("id"));
+                                        requestJson.put("data", dataJson);
+                                    } catch (JSONException e) { e.printStackTrace(); }
+                                    JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+                                            try {
+                                                if (response.getBoolean("success")) {
+                                                    fillLayout.removeView(addressLayout);
+                                                    fillLayout();
+                                                }
+                                                else if (response.getBoolean("success"))
+                                                    Alerts.commonErrorAlert(AddressActivity.this, "Could not delete !", "The address that you want to remove could not be removed. Try again!", "Okay");
+                                            } catch (JSONException e) { e.printStackTrace(); }
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            if (error instanceof NoConnectionError || error instanceof TimeoutError)
+                                                Alerts.internetConnectionErrorAlert(AddressActivity.this);
+                                            else Alerts.unknownErrorAlert(AddressActivity.this);
+                                            System.out.println("Response Error: " + error);
+                                        }
+                                    });
+                                    Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteRequest);
+                                }
+                            });
+                            fillLayout.addView(addressLayout);
                         }
                     } else if(!response.getBoolean("success")) {
                         Alerts.unableToProcessResponseAlert(AddressActivity.this);
@@ -139,13 +147,6 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
         Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
-    }
-
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
-            case R.id.add_address: intent = new Intent(this, PinYourLocationActivity.class); startActivity(intent); break;
-        }
     }
 
 }
