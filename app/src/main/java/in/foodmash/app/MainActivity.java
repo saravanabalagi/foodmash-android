@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             final LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo_food, comboFoodLayout, false);
                                             ((ImageView) currentComboFoodLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
                                             ((TextView) currentComboFoodLayout.findViewById(R.id.name)).setText(dishJson.getString("name"));
-                                            ((TextView) currentComboFoodLayout.findViewById(R.id.description)).setText(/*dishJson.getString("description")*/"Some Description");
+                                            ((TextView) currentComboFoodLayout.findViewById(R.id.description)).setText(dishJson.getString("description"));
                                             JSONObject restaurantJson = dishJson.getJSONObject("restaurant");
                                             ((TextView) currentComboFoodLayout.findViewById(R.id.restaurant_name)).setText(restaurantJson.getString("name"));
                                             layoutOrderTreeMap.put(comboDishJson.getInt("priority"), currentComboFoodLayout);
