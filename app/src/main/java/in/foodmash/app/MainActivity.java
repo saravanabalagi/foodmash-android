@@ -106,8 +106,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         final HashMap<Integer,Integer> comboSelectionHashMap = new HashMap<>();
                         final HashMap<Integer,Integer> comboDishesHashMap = new HashMap<>();
 
-
-                                ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
+                        ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
                         ((TextView) comboLayout.findViewById(R.id.name)).setText(comboJson.getString("name"));
                         ((TextView) comboLayout.findViewById(R.id.description)).setText(comboJson.getString("description"));
                         ((TextView) comboLayout.findViewById(R.id.price)).setText(String.format("%.0f", Float.parseFloat(comboJson.getString("price"))));

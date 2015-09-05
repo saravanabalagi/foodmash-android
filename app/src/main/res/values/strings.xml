@@ -77,7 +77,7 @@
     <string name="landline">landline</string>
     <string name="receive_promotional_offers">Receive promotional offers</string>
     <string name="order_history">Order History</string>
-    <string name="api_root_path">http://192.168.1.103:3000/api/v1</string>
+    <string name="api_root_path">http://192.168.85.1:3000/api/v1</string>
     <string name="login_later">Login Later</string>
     <string name="name">name</string>
     <string name="issue_feedback">Issue or Feedback</string>
@@ -88,4 +88,5 @@
     <string name="selected">selected</string>
     <string name="empty_cart">Aren\'t you hungry?</string>
     <string name="empty_cart_description">You didn\'t add any combos to the cart</string>
+    <string name="email_edit_text_hint">someone@mailbox.com</string>
 </resources>

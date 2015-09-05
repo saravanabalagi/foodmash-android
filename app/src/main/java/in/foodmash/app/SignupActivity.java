@@ -154,8 +154,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         hashMap.put("mobile_no",phone.getText().toString());
         JSONObject userJson = new JSONObject(hashMap);
         try {
-            jsonObject.put("user",userJson);
             JSONObject dataJson = new JSONObject();
+            dataJson.put("user",userJson);
             jsonObject.put("data",dataJson);
             jsonObject.put("android_id",androidId);
         } catch (JSONException e) { e.printStackTrace(); }
@@ -170,8 +170,9 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 intent = new Intent(SignupActivity.this, MainActivity.class);
                 try {
                     if (response.getBoolean("success")) {
-                        String userToken = response.getString("user_token");
-                        String sessionToken = response.getString("session_token");
+                        JSONObject dataJson = response.getJSONObject("data");
+                        String userToken = dataJson.getString("user_token");
+                        String sessionToken = dataJson.getString("session_token");
                         String androidId = Settings.Secure.getString(SignupActivity.this.getContentResolver(),Settings.Secure.ANDROID_ID);
                         SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -212,8 +213,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         if(s==email.getEditableText()) {
             if(EmailValidator.getInstance().isValid(s.toString())) {
                 JSONObject requestJson = new JSONObject();
-                try{ requestJson.put("email",s.toString()); }
-                catch (JSONException e) { e.printStackTrace(); }
+                try{
+                    JSONObject dataJson = new JSONObject();
+                    dataJson.put("email",s.toString());
+                    requestJson.put("data",dataJson);
+                } catch (JSONException e) { e.printStackTrace(); }
                 System.out.println("Request Json: "+requestJson);
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkEmail", requestJson, new Response.Listener<JSONObject>() {
                     @Override
@@ -252,8 +256,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         if(s==phone.getEditableText()) {
             if(s.length()==10) {
                 JSONObject requestJson = new JSONObject();
-                try { requestJson.put("mobile_no", phone.getText().toString().trim()); }
-                catch (JSONException e) { e.printStackTrace(); }
+                try {
+                    JSONObject dataJson = new JSONObject();
+                    dataJson.put("mobile_no", phone.getText().toString().trim());
+                    requestJson.put("data",dataJson);
+                } catch (JSONException e) { e.printStackTrace(); }
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkMobileNo", requestJson, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

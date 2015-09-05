@@ -18,7 +18,7 @@
         app:showAsAction="never" />
     <item android:id="@+id/menu_contact_us"
         android:title="@string/menu_contact_us"
-        android:icon="@mipmap/call"
+        android:icon="@mipmap/contact_us"
         android:orderInCategory="5"
         app:showAsAction="never" />
     <item android:id="@+id/menu_log_out"
