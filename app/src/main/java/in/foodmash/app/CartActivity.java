@@ -107,6 +107,13 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                                 public void afterTextChanged(Editable s) {
                                     if(s.toString().equals("0")) quantity.setText("");
                                     if (s.length() > 0 && Calculations.isInteger(s.toString())) {
+                                        JSONObject requestJson = JsonProvider.getStandartRequestJson(CartActivity.this);
+                                        try {
+                                            JSONObject dataJson = new JSONObject();
+                                            dataJson.put("id",subOrderJson.getInt("id"));
+                                            dataJson.put("quantity",s.toString());
+                                            requestJson.put("data",dataJson);
+                                        } catch (JSONException e) { e.printStackTrace(); }
                                         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, getString(R.string.api_root_path) + "/orders", new Response.Listener<JSONObject>() {
                                             @Override
                                             public void onResponse(JSONObject response) {
@@ -151,15 +158,15 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                             comboLayout.findViewById(R.id.remove).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    JSONObject requestJson = JsonProvider.getStandartRequestJson(CartActivity.this);
                                     try {
-                                        JSONObject requestJson = JsonProvider.getStandartRequestJson(CartActivity.this);
                                         JSONObject dataJson = new JSONObject();
                                         JSONObject orderJson = new JSONObject();
                                         orderJson.put("id", subOrderJson.getInt("id"));
                                         dataJson.put("order", orderJson);
                                         requestJson.put("data", dataJson);
                                     } catch (JSONException e) { e.printStackTrace(); }
-                                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/orders/destroy", new Response.Listener<JSONObject>() {
+                                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/orders/destroy", requestJson, new Response.Listener<JSONObject>() {
                                         @Override
                                         public void onResponse(JSONObject response) {
                                             try {
