@@ -9,6 +9,16 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
+import com.android.volley.NoConnectionError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Zeke on Jul 19 2015.
  */
@@ -18,6 +28,8 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
 
     LinearLayout address;
     LinearLayout pay;
+    String payableAmount;
+    String paymentMethod;
 
     RadioGroup paymentMode;
 
@@ -43,6 +55,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout_payment);
 
+        payableAmount = getIntent().getStringExtra("payable_amount");
         address = (LinearLayout) findViewById(R.id.address); address.setOnClickListener(this);
         pay = (LinearLayout) findViewById(R.id.pay); pay.setOnClickListener(this);
 
@@ -51,10 +64,10 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case R.id.credit_card: break;
-                    case R.id.debit_card: break;
-                    case R.id.netbanking: break;
-                    case R.id.paytm_wallet: break;
+                    case R.id.credit_card:   paymentMethod="credit_card"; break;
+                    case R.id.debit_card:  paymentMethod="debit_card"; break;
+                    case R.id.netbanking:  paymentMethod="netbanking"; break;
+                    case R.id.cod:  paymentMethod="cod"; break;
                 }
             }
         });
@@ -63,7 +76,49 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.address: intent = new Intent(this, CheckoutAddressActivity.class); startActivity(intent); break;
-            case R.id.pay: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
+            case R.id.pay: if(isEverythingValid()) makePaymentRequest(); break;
         }
+    }
+
+    private JSONObject getPaymentJson() {
+        JSONObject requestJson = JsonProvider.getStandartRequestJson(CheckoutPaymentActivity.this);
+        try {
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("payment_method",paymentMethod);
+            requestJson.put("data",dataJson);
+        } catch (JSONException e) { e.printStackTrace(); }
+        return requestJson;
+    }
+
+    private void makePaymentRequest() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/purchase", getPaymentJson(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    if(response.getBoolean("success")) {
+                        JSONObject dataJson = response.getJSONObject("data");
+                        String orderId = dataJson.getString("order_id");
+                        intent = new Intent(CheckoutPaymentActivity.this,OrderDescriptionActivity.class);
+                        intent.putExtra("order_id",orderId);
+                        startActivity(intent);
+                    } else if(!response.getBoolean("success")) {
+                        Alerts.unableToProcessResponseAlert(CheckoutPaymentActivity.this);
+                        System.out.println(response.getString("error"));
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(CheckoutPaymentActivity.this);
+                else Alerts.unknownErrorAlert(CheckoutPaymentActivity.this);
+                System.out.println("Response Error: " + error);
+            }
+        });
+        Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(jsonObjectRequest);
+    }
+
+    private boolean isEverythingValid() {
+        return !(paymentMethod.length()<1);
     }
 }

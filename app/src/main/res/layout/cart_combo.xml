@@ -172,7 +172,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/selected_combo_dishes"
+            android:id="@+id/dishes"
             android:textColor="@color/abc_primary_text_material_dark"
             android:textSize="11sp"
             android:textAllCaps="true"

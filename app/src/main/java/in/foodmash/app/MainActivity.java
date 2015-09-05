@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
                         ((TextView) comboLayout.findViewById(R.id.name)).setText(comboJson.getString("name"));
-                        ((TextView) comboLayout.findViewById(R.id.description)).setText(comboJson.getString("description"));
+                        ((TextView) comboLayout.findViewById(R.id.description)).setText(comboJson.getString("description").equals("null")?"":comboJson.getString("description"));
                         ((TextView) comboLayout.findViewById(R.id.price)).setText(String.format("%.0f", Float.parseFloat(comboJson.getString("price"))));
                         final LinearLayout comboFoodLayout = (LinearLayout) comboLayout.findViewById(R.id.food_items_layout);
                         comboLayout.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             final JSONObject comboOptionsJson = comboOptions.getJSONObject(j);
                                             ((ImageView) currentComboFoodLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
                                             ((TextView) currentComboFoodLayout.findViewById(R.id.name)).setText(comboOptionsJson.getString("name"));
-                                            ((TextView) currentComboFoodLayout.findViewById(R.id.description)).setText(comboOptionsJson.getString("description"));
+                                            ((TextView) currentComboFoodLayout.findViewById(R.id.description)).setText(comboOptionsJson.getString("description").equals("null")?"":comboOptionsJson.getString("description"));
                                             final LinearLayout optionsLayout = (LinearLayout) currentComboFoodLayout.findViewById(R.id.options_layout);
                                             final JSONArray comboOptionDishes = comboOptionsJson.getJSONArray("combo_option_dishes");
                                             HashMap<Integer,String> restaurantHashMap = new HashMap<>();
@@ -140,8 +140,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                                 comboOptionsLayout.setOnClickListener(new View.OnClickListener() {
                                                     @Override
                                                     public void onClick(View v) {
-                                                        try { comboSelectionHashMap.put(comboOptionsJson.getInt("id"),dishJson.getInt("id")); }
-                                                        catch (JSONException e) { e.printStackTrace(); }
+                                                        try {
+                                                            System.out.println(comboOptionsJson.getInt("id")+" "+dishJson.getInt("id"));
+                                                            comboSelectionHashMap.put(comboOptionsJson.getInt("id"),dishJson.getInt("id"));
+                                                        } catch (JSONException e) { e.printStackTrace(); }
                                                         for(int l=0; l<comboOptionDishes.length(); l++) optionsLayout.getChildAt(l).findViewById(R.id.selected).setVisibility(View.INVISIBLE);
                                                         selected.setVisibility(View.VISIBLE);
                                                     }
@@ -165,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             final LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo_food, comboFoodLayout, false);
                                             ((ImageView) currentComboFoodLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
                                             ((TextView) currentComboFoodLayout.findViewById(R.id.name)).setText(dishJson.getString("name"));
-                                            ((TextView) currentComboFoodLayout.findViewById(R.id.description)).setText(dishJson.getString("description"));
+                                            ((TextView) currentComboFoodLayout.findViewById(R.id.description)).setText(dishJson.getString("description").equals("null")?"":dishJson.getString("description"));
                                             JSONObject restaurantJson = dishJson.getJSONObject("restaurant");
                                             ((TextView) currentComboFoodLayout.findViewById(R.id.restaurant_name)).setText(restaurantJson.getString("name"));
                                             layoutOrderTreeMap.put(comboDishJson.getInt("priority"), currentComboFoodLayout);
@@ -235,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             } });
                         addToCart.setOnClickListener(new View.OnClickListener() {
                             @Override public void onClick(View v) {
-                                JsonObjectRequest cartJsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/add", getComboRequestJson(comboId), new Response.Listener<JSONObject>() {
+                                JsonObjectRequest cartJsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/add", getComboRequestJson(comboId, comboSelectionHashMap, comboDishesHashMap), new Response.Listener<JSONObject>() {
                                     @Override
                                     public void onResponse(JSONObject response) {
                                         try {
@@ -401,7 +403,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         JSONObject requestJson = JsonProvider.getStandartRequestJson(MainActivity.this);
         try {
             JSONArray comboOptionsSelected = new JSONArray();
-            for(Map.Entry<Integer,Integer> entry : comboOptionsHashMap.entrySet()) {
+            for(HashMap.Entry<Integer,Integer> entry : comboOptionsHashMap.entrySet()) {
+
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("id",entry.getKey());
                 JSONObject dishJson = new JSONObject();
@@ -410,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 comboOptionsSelected.put(jsonObject);
             }
             JSONArray comboDishesSelected = new JSONArray();
-            for(Map.Entry<Integer,Integer> entry : comboDishesHashMap.entrySet()) {
+            for(HashMap.Entry<Integer,Integer> entry : comboDishesHashMap.entrySet()) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("id",entry.getKey());
                 JSONObject dishJson = new JSONObject();
@@ -418,10 +421,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 jsonObject.put("dish",dishJson);
                 comboDishesSelected.put(jsonObject);
             }
+            JSONObject comboJson = new JSONObject();
+            comboJson.put("id", comboId);
+            comboJson.put("combo_options", comboOptionsSelected);
+            comboJson.put("combo_dishes", comboDishesSelected);
             JSONObject dataJson = new JSONObject();
-            dataJson.put("combo_id",comboId);
-            dataJson.put("combo_options", comboOptionsSelected);
-            dataJson.put("combo_dishes",comboDishesSelected);
+            dataJson.put("combo",comboJson);
             requestJson.put("data", dataJson);
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;

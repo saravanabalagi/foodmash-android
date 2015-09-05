@@ -33,6 +33,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
     TextView status;
     TextView date;
     TextView total;
+    TextView paymentMethod;
     ImageView statusIcon;
     LinearLayout orderHistory;
     LinearLayout fillLayout;
@@ -66,6 +67,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
         status = (TextView) findViewById(R.id.status);
         date = (TextView) findViewById(R.id.date);
         total = (TextView) findViewById(R.id.total);
+        paymentMethod = (TextView) findViewById(R.id.payment_method);
         statusIcon = (ImageView) findViewById(R.id.status_icon);
 
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
@@ -77,6 +79,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
                     if (response.getBoolean("success")) {
                         JSONObject orderJson = response.getJSONObject("data");
                         total.setText(orderJson.getString("total"));
+                        paymentMethod.setText(orderJson.getString("payment_method"));
                         JSONArray subOrdersJson = orderJson.getJSONArray("orders");
                         for(int i=0; i<subOrdersJson.length(); i++) {
                             JSONObject subOrderJson = subOrdersJson.getJSONObject(i);
@@ -86,7 +89,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
                             for(int j=0; j<comboDishesJson.length(); j++) {
                                 JSONObject comboDishJson = comboDishesJson.getJSONObject(j);
                                 JSONObject dishJson = comboDishJson.getJSONObject("item");
-                                dishes += dishJson.getJSONArray("name") + ((j==comboDishesJson.length()-1)?"":", ");
+                                dishes += dishJson.getString("name") + ((j==comboDishesJson.length()-1)?"":", ");
                             }
                             LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.order_combo, fillLayout, false);
                             ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);

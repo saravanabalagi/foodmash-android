@@ -21,12 +21,10 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.wallet.Cart;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 /**
  * Created by Zeke on Jul 19 2015.
@@ -41,6 +39,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     LinearLayout fillLayout;
     LinearLayout emptyCartLayout;
     int cartId;
+    String payableAmount;
 
     TextView total;
     TouchableImageButton clearCart;
@@ -82,14 +81,23 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                         JSONObject dataJson = response.getJSONObject("data");
                         cartId = dataJson.getInt("id");
                         total.setText(dataJson.getString("total"));
+                        payableAmount = dataJson.getString("total");
                         JSONArray subOrdersJson = dataJson.getJSONArray("orders");
                         if(subOrdersJson.length()>0) emptyCartLayout.setVisibility(View.GONE);
                         for(int i=0;i<subOrdersJson.length();i++){
                             final JSONObject subOrderJson = subOrdersJson.getJSONObject(i);
+                            JSONArray comboDishesJson = subOrderJson.getJSONArray("order_items");
+                            String dishes = "";
+                            for(int j=0; j<comboDishesJson.length(); j++) {
+                                JSONObject comboDishJson = comboDishesJson.getJSONObject(j);
+                                JSONObject dishJson = comboDishJson.getJSONObject("item");
+                                dishes += dishJson.getString("name") + ((j==comboDishesJson.length()-1)?"":", ");
+                            }
                             JSONObject productJson = subOrderJson.getJSONObject("product");
                             final LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.cart_combo, fillLayout, false);
                             ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
                             ((TextView) comboLayout.findViewById(R.id.name)).setText(productJson.getString("name"));
+                            ((TextView) comboLayout.findViewById(R.id.dishes)).setText(dishes);
                             ((TextView) comboLayout.findViewById(R.id.quantity_display)).setText(subOrderJson.getString("quantity"));
                             final TextView price = (TextView) comboLayout.findViewById(R.id.price); price.setText(productJson.getString("price"));
                             final EditText quantity = (EditText) comboLayout.findViewById(R.id.quantity); quantity.setText(subOrderJson.getString("quantity")); quantity.addTextChangedListener(new TextWatcher() {
@@ -178,6 +186,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                                     Swift.getInstance(CartActivity.this).addToRequestQueue(jsonObjectRequest);
                                 }
                             });
+
                             fillLayout.addView(comboLayout);
                         }
                     } else if(response.getBoolean("success")) {
@@ -244,6 +253,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 else if(isEverythingValid()) {
                     intent = new Intent(this, CheckoutAddressActivity.class);
                     intent.putExtra("cart_id",cartId);
+                    intent.putExtra("payable_amount", payableAmount);
                     startActivity(intent);
                 } else {
                     Alerts.validityAlert(CartActivity.this);

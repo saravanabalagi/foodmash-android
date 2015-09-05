@@ -76,8 +76,8 @@
                     <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/paytm_wallet"
-                        android:id="@+id/paytm_wallet"
+                        android:text="@string/cash_on_delivery"
+                        android:id="@+id/cod"
                         android:textSize="15sp"
                         android:padding="5dp"
                         android:singleLine="true"
@@ -86,54 +86,52 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="1dp"
-                android:background="#555"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp" />
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="center_vertical"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Paytm Cash"
-                    android:textSize="15sp"
-                    android:layout_margin="15dp"
-                    android:textColor="@color/color_accent_white_bg" />
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/rupee"
-                        android:textSize="20sp"
-                        android:layout_marginRight="2dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/price_lorem_ipsum"
-                        android:id="@+id/paytm_cash"
-                        android:textSize="25sp" />
-                </LinearLayout>
-
-            </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:background="#555"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center_vertical|center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/payable_amount"
+            android:textSize="17sp"
+            android:layout_margin="15dp"
+            android:textColor="@color/color_accent_white_bg" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/rupee"
+                android:textSize="20sp"
+                android:layout_marginRight="2dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/price_lorem_ipsum"
+                android:id="@+id/total"
+                android:textSize="25sp" />
+        </LinearLayout>
+
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
