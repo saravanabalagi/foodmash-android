@@ -91,7 +91,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                             for(int j=0; j<comboDishesJson.length(); j++) {
                                 JSONObject comboDishJson = comboDishesJson.getJSONObject(j);
                                 JSONObject dishJson = comboDishJson.getJSONObject("item");
-                                dishes += dishJson.getString("name") + ((j==comboDishesJson.length()-1)?"":", ");
+                                dishes += dishJson.getString("name") + ((j==comboDishesJson.length()-1)?"":",  ");
                             }
                             JSONObject productJson = subOrderJson.getJSONObject("product");
                             final LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.cart_combo, fillLayout, false);

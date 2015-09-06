@@ -89,7 +89,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
                             for(int j=0; j<comboDishesJson.length(); j++) {
                                 JSONObject comboDishJson = comboDishesJson.getJSONObject(j);
                                 JSONObject dishJson = comboDishJson.getJSONObject("item");
-                                dishes += dishJson.getString("name") + ((j==comboDishesJson.length()-1)?"":", ");
+                                dishes += dishJson.getString("name") + ((j==comboDishesJson.length()-1)?"":",  ");
                             }
                             LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.order_combo, fillLayout, false);
                             ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);

@@ -23,51 +23,66 @@
             android:layout_height="wrap_content"
             android:baselineAligned="false">
 
-            <LinearLayout
-                android:orientation="horizontal"
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp">
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:id="@+id/image"
-                    android:layout_margin="5dp"
-                    android:contentDescription="@string/combo_image"
-                    android:src="@mipmap/image_default" />
+                android:layout_weight="1">
 
                 <LinearLayout
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp">
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/combo_name_lorem_ipsum"
-                        android:textSize="17sp"
-                        android:layout_marginLeft="0dp"
-                        android:layout_marginTop="0dp"
-                        android:id="@+id/name"
-                        android:paddingTop="2dp"
-                        android:paddingBottom="5dp" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:id="@+id/image"
+                        android:layout_margin="5dp"
+                        android:contentDescription="@string/combo_image"
+                        android:src="@mipmap/image_default" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/combo_description_lorem_ipsum"
-                        android:id="@+id/description"
-                        android:maxLines="2"
-                        android:ellipsize="end"
-                        android:minLines="1" />
+                        android:layout_margin="5dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/combo_name_lorem_ipsum"
+                            android:textSize="17sp"
+                            android:layout_marginLeft="0dp"
+                            android:layout_marginTop="0dp"
+                            android:id="@+id/name"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="5dp"
+                            android:layout_marginRight="15dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/combo_description_lorem_ipsum"
+                            android:id="@+id/description"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:minLines="1" />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/label"
+                    android:src="@mipmap/food_label"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:orientation="vertical"

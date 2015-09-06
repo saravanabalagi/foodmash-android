@@ -106,8 +106,8 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="10dp"
                         android:indeterminate="true"
-                        android:indeterminateTint="@color/color_accent_white_bg"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:progressTint="@color/color_accent_white_bg" />
 
                     <ImageView
                         android:layout_width="20dp"
@@ -157,8 +157,8 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="10dp"
                         android:indeterminate="true"
-                        android:indeterminateTint="@color/color_accent_white_bg"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:progressTint="@color/color_accent_white_bg" />
 
                     <ImageView
                         android:layout_width="20dp"

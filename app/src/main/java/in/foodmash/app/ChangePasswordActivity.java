@@ -69,7 +69,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
-        if(getIntent().getBooleanExtra("forgot",false)) { forgot = true; otpToken = getIntent().getStringExtra("opt_token"); }
+        if(getIntent().getBooleanExtra("forgot",false)) { forgot = true; otpToken = getIntent().getStringExtra("otp_token"); }
 
         oldPasswordValidate = (ImageView) findViewById(R.id.old_password_validate);
         newPasswordValidate = (ImageView) findViewById(R.id.new_password_validate);
@@ -142,7 +142,8 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                             startActivity(intent);
                         }
                     } else if(!response.getBoolean("success")) {
-                        Alerts.commonErrorAlert(ChangePasswordActivity.this,"Invalid Old Password","We are unable to change your password as Old Password entered by you is Invalid","Okay");
+                        if(forgot) Alerts.commonErrorAlert(ChangePasswordActivity.this,"OTP Error","There's a problem processing the OTP that you've sent","Okay");
+                        else Alerts.commonErrorAlert(ChangePasswordActivity.this,"Invalid Old Password","We are unable to change your password as Old Password entered by you is Invalid","Okay");
                         System.out.println(response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
