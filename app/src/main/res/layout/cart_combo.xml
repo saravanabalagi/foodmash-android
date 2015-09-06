@@ -126,14 +126,18 @@
                         android:text="1"
                         android:id="@+id/quantity_display"
                         android:singleLine="true"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:paddingLeft="1dp"
+                        android:paddingRight="1dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="x"
                         android:singleLine="true"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:paddingLeft="1dp"
+                        android:paddingRight="1dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -141,7 +145,9 @@
                         android:id="@+id/price"
                         android:text="@string/price_lorem_ipsum"
                         android:singleLine="true"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:paddingLeft="1dp"
+                        android:paddingRight="1dp" />
                 </LinearLayout>
 
             </LinearLayout>

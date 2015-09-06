@@ -112,7 +112,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                                             JSONObject dataJson = new JSONObject();
                                             JSONObject orderJson = new JSONObject();
                                             orderJson.put("id",subOrderJson.getInt("id"));
-                                            orderJson.put("quantity",s.toString());
+                                            orderJson.put("quantity",Integer.parseInt(s.toString()));
                                             dataJson.put("order",orderJson);
                                             requestJson.put("data",dataJson);
                                         } catch (JSONException e) { e.printStackTrace(); }
@@ -177,7 +177,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                                                     total.setText(dataJson.getString("total"));
                                                     fillLayout.removeView(comboLayout);
                                                     if(fillLayout.getChildCount()==0)
-                                                        Animations.fadeIn(comboLayout,500);
+                                                        Animations.fadeIn(emptyCartLayout,500);
                                                 } else if(response.getBoolean("success")) {
                                                     Alerts.unableToProcessResponseAlert(CartActivity.this);
                                                     System.out.println(response.getString("error"));
