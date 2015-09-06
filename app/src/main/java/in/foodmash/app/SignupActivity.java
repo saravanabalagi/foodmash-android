@@ -20,9 +20,9 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 
 import com.android.volley.NoConnectionError;
-import com.android.volley.TimeoutError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -78,12 +78,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
-            case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
-            case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
-            case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true;
-            case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); return true;
-            case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); return true;
+            case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); finish(); return true;
             default: return super.onOptionsItemSelected(item);
         }
     }
@@ -125,7 +125,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.clear_fields: name.setText(null); email.setText(null); phone.setText(null); password.setText(null); passwordConfirmation.setText(null); acceptTerms.setChecked(false); break;
-            case R.id.login: intent = new Intent(this, LoginActivity.class); startActivity(intent); break;
+            case R.id.login: finish(); break;
             case R.id.create:
                 if(termsAccepted) {
                     if(isEverythingValid()) makeJsonRequest();
@@ -182,6 +182,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         editor.putString("android_token", Cryptography.encrypt(androidId, sessionToken));
                         editor.apply();
                         startActivity(intent);
+                        finish();
                     } else {
                         Alerts.commonErrorAlert(SignupActivity.this,"Registration Invalid", "We are unable to sign you up. Please try again!","Okay");
                         System.out.println("Error Details: " + response.getString("info"));

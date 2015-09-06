@@ -18,9 +18,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 
-import com.android.volley.NoConnectionError; import com.android.volley.TimeoutError;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -65,12 +66,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
-            case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
-            case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
-            case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true;
-            case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); return true;
-            case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); return true;
+            case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); finish(); return true;
             default: return super.onOptionsItemSelected(item);
         }
     }
@@ -160,7 +161,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.clear_fields: name.setText(null); dob.setText(null); email.setText(null); phone.setText(null); promotionOffers.setChecked(true); break;
             case R.id.change_password: intent = new Intent(this, ChangePasswordActivity.class); startActivity(intent); break;
-            case R.id.cancel: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
+            case R.id.cancel: finish(); break;
             case R.id.save: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(ProfileActivity.this); break;
         }
     }
@@ -191,8 +192,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
-                        intent = new Intent(ProfileActivity.this, MainActivity.class);
-                        startActivity(intent);
+                        finish();
                     } else if(!(response.getBoolean("success"))) {
                         Alerts.commonErrorAlert(ProfileActivity.this,
                                 "Invalid Details",

@@ -42,11 +42,11 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); return true; }
+        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true; }
         return super.onOptionsItemSelected(item);
     }
 
@@ -75,7 +75,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.address: intent = new Intent(this, CheckoutAddressActivity.class); startActivity(intent); break;
+            case R.id.address: finish(); break;
             case R.id.pay: if(isEverythingValid()) makePaymentRequest(); break;
         }
     }
@@ -101,6 +101,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                         intent = new Intent(CheckoutPaymentActivity.this,OrderDescriptionActivity.class);
                         intent.putExtra("order_id",orderId);
                         startActivity(intent);
+                        finish();
                     } else if(!response.getBoolean("success")) {
                         Alerts.unableToProcessResponseAlert(CheckoutPaymentActivity.this);
                         System.out.println(response.getString("error"));

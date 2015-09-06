@@ -47,11 +47,11 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); return true; }
+        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true; }
         return super.onOptionsItemSelected(item);
     }
 
@@ -70,8 +70,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                     .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            intent = new Intent(CheckoutAddressActivity.this,CartActivity.class);
-                            startActivity(intent);
+                            finish();
                         }
                     }).show();
             return;
@@ -86,7 +85,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.cart: intent = new Intent(this, CartActivity.class); startActivity(intent); break;
+            case R.id.cart: finish(); break;
             case R.id.add_address: intent = new Intent(this, PinYourLocationActivity.class); intent.putExtra("cart",true); startActivity(intent); break;
             case R.id.confirm:
                 if(isEverythingValid()) makeConfirmRequest();

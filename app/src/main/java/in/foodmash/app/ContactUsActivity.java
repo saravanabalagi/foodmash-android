@@ -57,11 +57,11 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); return true; }
+        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true; }
         return super.onOptionsItemSelected(item);
     }
 
@@ -100,7 +100,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         switch (v.getId()) {
             case R.id.clear_fields: issue.setText(null); description.setText(null); break;
             case R.id.call: Intent callIntent = new Intent(Intent.ACTION_CALL); callIntent.setData(Uri.parse("tel:+918056249612")); startActivity(callIntent); break;
-            case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
+            case R.id.back: finish(); break;
             case R.id.email_or_phone: if(isEverythingValid()) makeRequset(); else Alerts.validityAlert(ContactUsActivity.this); break;
         }
     }
@@ -124,8 +124,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
-                        intent = new Intent(ContactUsActivity.this, MainActivity.class);
-                        startActivity(intent);
+                        finish();
                     } else if(!response.getBoolean("success")) {
                         Alerts.unableToProcessResponseAlert(ContactUsActivity.this);
                         System.out.println(response.getString("error"));

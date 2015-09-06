@@ -20,9 +20,9 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 
 import com.android.volley.NoConnectionError;
-import com.android.volley.TimeoutError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.maps.model.LatLng;
@@ -30,7 +30,6 @@ import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,11 +83,11 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); return true; }
+        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true; }
         return super.onOptionsItemSelected(item);
     }
 
@@ -182,7 +181,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.clear_fields: name.setText(null); pincode.setText(null); addressLine1.setText(null); addressLine2.setText(null); area.setText(null);  break;
-            case R.id.back: if(cart) intent = new Intent(this, CartActivity.class); else intent = new Intent(this, AddressActivity.class); startActivity(intent); break;
+            case R.id.back: finish(); break;
             case R.id.save: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(AddAddressActivity.this); break;
         }
     }
@@ -244,6 +243,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
                         if (cart) intent = new Intent(AddAddressActivity.this, CheckoutPaymentActivity.class);
                         else intent = new Intent(AddAddressActivity.this, AddressActivity.class);
                         startActivity(intent);
+                        finish();
                     } else if(!(response.getBoolean("success"))) {
                         Alerts.commonErrorAlert(AddAddressActivity.this, "Address Invalid", "We are unable to process your Address Details. Try Again!", "Okay");
                         System.out.println("Error: " + response.getString("error"));

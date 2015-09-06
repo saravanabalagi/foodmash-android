@@ -56,12 +56,12 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
-            case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
-            case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
-            case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true;
-            case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); return true;
-            case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); return true;
+            case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); finish(); return true;
             default: return super.onOptionsItemSelected(item);
         }
     }
@@ -95,7 +95,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.resend_otp: if(otpExpired) resendOtpRequest(); break;
-            case R.id.back: intent = new Intent(this, ForgotPasswordActivity.class); startActivity(intent); break;
+            case R.id.back: finish(); break;
             case R.id.proceed: if(isEverythingValid()) makeRequest(); else Alerts.validityAlert(ForgotPasswordOtpActivity.this); break;
         }
     }
@@ -140,6 +140,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                         intent.putExtra("otp_token",dataJson.getString("otp_token"));
                         intent.putExtra("forgot",true);
                         startActivity(intent);
+                        finish();
                     } else if(!(response.getBoolean("success"))) {
                         Alerts.commonErrorAlert(ForgotPasswordOtpActivity.this, "Invalid OTP", "We are unable to process the OTP you entered. Try Again!", "Okay");
                         System.out.println("Error: " + response.getString("error"));

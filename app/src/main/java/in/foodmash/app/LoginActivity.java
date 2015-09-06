@@ -16,9 +16,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 
-import com.android.volley.NoConnectionError; import com.android.volley.TimeoutError;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -141,6 +142,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         editor.putString("android_token", Cryptography.encrypt(androidId, sessionToken));
                         editor.commit();
                         startActivity(intent);
+                        finish();
                     } else if(!(response.getBoolean("success"))) {
                         Alerts.commonErrorAlert(LoginActivity.this,
                                 "Invalid username or password",

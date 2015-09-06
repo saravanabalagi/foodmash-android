@@ -57,11 +57,11 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true; }
-        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); return true; }
+        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true; }
         return super.onOptionsItemSelected(item);
     }
 
@@ -94,7 +94,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.clear_fields: oldPassword.setText(null); newPassword.setText(null); confirmPassword.setText(null); break;
-            case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
+            case R.id.back: finish(); break;
             case R.id.change: if (isEverythingValid()) makeRequest(); else Alerts.validityAlert(ChangePasswordActivity.this); break;
         }
     }
@@ -130,16 +130,18 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                             String androidId = Settings.Secure.getString(ChangePasswordActivity.this.getContentResolver(),Settings.Secure.ANDROID_ID);
                             SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putBoolean("logged_in",true);
+                            editor.putBoolean("logged_in", true);
                             editor.putString("user_token", userToken);
                             editor.putString("session_token", sessionToken);
                             editor.putString("android_token", Cryptography.encrypt(androidId, sessionToken));
                             editor.commit();
                             intent = new Intent(ChangePasswordActivity.this, MainActivity.class);
                             startActivity(intent);
+                            finish();
                         } else {
                             intent = new Intent(ChangePasswordActivity.this, ProfileActivity.class);
                             startActivity(intent);
+                            finish();
                         }
                     } else if(!response.getBoolean("success")) {
                         if(forgot) Alerts.commonErrorAlert(ChangePasswordActivity.this,"OTP Error","There's a problem processing the OTP that you've sent","Okay");

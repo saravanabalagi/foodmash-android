@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
             case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
             case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true;
-            case R.id.menu_log_out:  logout(); return true;
+            case R.id.menu_log_out: logout(); return true;
             case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); return true;
             default: return super.onOptionsItemSelected(item);
         }
@@ -385,6 +385,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         editor.commit();
                         intent = new Intent(MainActivity.this,LoginActivity.class);
                         startActivity(intent);
+                        finish();
                     } else if(!(response.getBoolean("success"))) {
                         Alerts.commonErrorAlert(MainActivity.this, "Unable to Logout", "We are unable to sign you out. Try again later!", "Okay");
                         System.out.println(response.getString("error"));

@@ -42,6 +42,7 @@ public class SplashActivity extends Activity {
                         if(isKeepMeLoggedInSet() && isLoggedIn()) {
                             intent = new Intent(SplashActivity.this,MainActivity.class);
                             startActivity(intent);
+                            finish();
                         } else if(!isKeepMeLoggedInSet() && isLoggedIn()) {
                             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/sessions/destroy", JsonProvider.getStandartRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
                                 @Override
@@ -57,6 +58,7 @@ public class SplashActivity extends Activity {
                                             editor.commit();
                                             intent = new Intent(SplashActivity.this,LoginActivity.class);
                                             startActivity(intent);
+                                            finish();
                                         } else if(!(response.getBoolean("success"))) {
                                             Alerts.commonErrorAlert(SplashActivity.this, "Unable to Logout", "We are unable to sign you out. Try again later!", "Okay");
                                             System.out.println(response.getString("error"));
@@ -75,6 +77,7 @@ public class SplashActivity extends Activity {
                         } else {
                             intent = new Intent(SplashActivity.this, LoginActivity.class);
                             startActivity(intent);
+                            finish();
                         }
                     } else if(response.getBoolean("success")) {
                         Alerts.commonErrorAlert(SplashActivity.this, "Secure connection could not be made", "App cannot continue since connection cannot be securely established. App will exit now", "Okay");

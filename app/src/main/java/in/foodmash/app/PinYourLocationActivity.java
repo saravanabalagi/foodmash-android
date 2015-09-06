@@ -14,8 +14,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.*;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,12 +53,12 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
-            case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
-            case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
-            case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true;
-            case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); return true;
-            case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); return true;
+            case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); finish(); return true;
             default: return super.onOptionsItemSelected(item);
         }
     }
@@ -88,7 +92,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.reset_map: mapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation,15));break;
-            case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
+            case R.id.back: finish(); break;
             case R.id.proceed:
                 locationManager.removeUpdates(locationListener);
                 intent = new Intent(this, AddAddressActivity.class);
