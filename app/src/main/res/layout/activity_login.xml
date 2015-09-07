@@ -155,7 +155,8 @@
                     android:paddingLeft="10dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="5dp"
-                    android:id="@+id/skip">
+                    android:id="@+id/skip"
+                    android:visibility="gone">
 
                     <ImageView
                         android:layout_width="20dp"
