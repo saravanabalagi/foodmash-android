@@ -37,6 +37,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
     TextView paymentMethod;
     ImageView statusIcon;
     LinearLayout orderHistory;
+    LinearLayout home;
     LinearLayout fillLayout;
 
     @Override
@@ -66,6 +67,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
         cart = getIntent().getBooleanExtra("cart", false);
         orderId = getIntent().getStringExtra("order_id");
         orderHistory = (LinearLayout) findViewById(R.id.order_history); orderHistory.setOnClickListener(this);
+        home = (LinearLayout) findViewById(R.id.home); home.setOnClickListener(this);
         status = (TextView) findViewById(R.id.status);
         date = (TextView) findViewById(R.id.date);
         total = (TextView) findViewById(R.id.total);
@@ -82,6 +84,9 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
                         JSONObject orderJson = response.getJSONObject("data");
                         total.setText(orderJson.getString("total"));
                         paymentMethod.setText(orderJson.getString("payment_method"));
+                        setStatus(statusIcon, orderJson.getString("aasm_state"));
+                        date.setText(orderJson.getString("updated_at"));
+                        status.setText(orderJson.getString("aasm_state"));
                         JSONArray subOrdersJson = orderJson.getJSONArray("orders");
                         for(int i=0; i<subOrdersJson.length(); i++) {
                             JSONObject subOrderJson = subOrdersJson.getJSONObject(i);
@@ -145,4 +150,10 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
         return requestJson;
     }
 
+    private void setStatus (ImageView statusImageView, String status) {
+        switch (status) {
+            case "delivered": statusImageView.setImageResource(R.mipmap.tick); statusImageView.setColorFilter(getResources().getColor(R.color.okay_green)); break;
+            case "cancelled": statusImageView.setImageResource(R.mipmap.cancel); statusImageView.setColorFilter(getResources().getColor(R.color.color_accent)); break;
+        }
+    }
 }

@@ -159,7 +159,7 @@
             android:gravity="center_vertical|center_horizontal"
             android:paddingRight="20dp"
             android:background="@drawable/button_flat_large_background"
-            android:id="@+id/home" >
+            android:id="@+id/order_history">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -171,7 +171,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/home"
+                android:text="@string/orders"
                 android:textSize="20sp"
                 android:textColor="@color/abc_primary_text_material_dark"
                 android:singleLine="true" />
@@ -185,19 +185,19 @@
             android:gravity="center_vertical|center_horizontal"
             android:paddingRight="20dp"
             android:background="@drawable/button_flat_large_background"
-            android:id="@+id/order_history">
+            android:id="@+id/home" >
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/box"
+                android:src="@mipmap/offers"
                 android:contentDescription="@string/back_icon"
                 android:tint="@color/color_accent" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/orders"
+                android:text="@string/home"
                 android:textSize="20sp"
                 android:textColor="@color/abc_primary_text_material_dark"
                 android:singleLine="true" />

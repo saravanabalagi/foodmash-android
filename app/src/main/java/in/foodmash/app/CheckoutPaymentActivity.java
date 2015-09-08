@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
@@ -28,6 +29,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
 
     LinearLayout address;
     LinearLayout pay;
+    TextView total;
     String payableAmount;
     String paymentMethod="cod";
 
@@ -58,6 +60,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
         payableAmount = getIntent().getStringExtra("payable_amount");
         address = (LinearLayout) findViewById(R.id.address); address.setOnClickListener(this);
         pay = (LinearLayout) findViewById(R.id.pay); pay.setOnClickListener(this);
+        total = (TextView) findViewById(R.id.total); total.setText(payableAmount);
 
         paymentMode = (RadioGroup) findViewById(R.id.payment_mode_radio_group);
         paymentMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
