@@ -101,6 +101,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
             JSONObject dataJson = new JSONObject();
             dataJson.put("id",cartId);
             dataJson.put("delivery_address_id",addressId);
+            requestJson.put("data",dataJson);
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;
     }

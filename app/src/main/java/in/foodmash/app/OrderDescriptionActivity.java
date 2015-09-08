@@ -29,6 +29,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
 
     Intent intent;
     String orderId;
+    boolean cart;
 
     TextView status;
     TextView date;
@@ -62,6 +63,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_description);
 
+        cart = getIntent().getBooleanExtra("cart", false);
         orderId = getIntent().getStringExtra("order_id");
         orderHistory = (LinearLayout) findViewById(R.id.order_history); orderHistory.setOnClickListener(this);
         status = (TextView) findViewById(R.id.status);
@@ -120,9 +122,16 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if(cart) { intent = new Intent(OrderDescriptionActivity.this,MainActivity.class); startActivity(intent); }
+        else super.onBackPressed();
+    }
+
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.order_history: finish(); break;
+            case R.id.order_history: if(cart) { intent = new Intent(OrderDescriptionActivity.this,OrderHistoryActivity.class); startActivity(intent); } else finish(); break;
+            case R.id.home: intent = new Intent(OrderDescriptionActivity.this,MainActivity.class); startActivity(intent); break;
         }
     }
 

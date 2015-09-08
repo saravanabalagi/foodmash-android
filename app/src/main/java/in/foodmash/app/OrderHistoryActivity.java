@@ -58,7 +58,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/history", new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/history", JsonProvider.getStandartRequestJson(OrderHistoryActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -71,7 +71,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
                             ((TextView) orderLayout.findViewById(R.id.date)).setText(orderJson.getString("updated_at"));
                             ((TextView) orderLayout.findViewById(R.id.status)).setText(orderJson.getString("aasm_state"));
                             ((TextView) orderLayout.findViewById(R.id.price)).setText(orderJson.getString("total"));
-                            setStatus((ImageView) orderLayout.findViewById(R.id.statusIcon), response.getString("aasm_state"));
+                            setStatus((ImageView) orderLayout.findViewById(R.id.statusIcon), orderJson.getString("aasm_state"));
                             orderLayout.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {

@@ -39,7 +39,6 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     LinearLayout fillLayout;
     LinearLayout emptyCartLayout;
     int cartId;
-    String payableAmount;
 
     TextView total;
     TouchableImageButton clearCart;
@@ -81,7 +80,6 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                         JSONObject dataJson = response.getJSONObject("data");
                         cartId = dataJson.getInt("id");
                         total.setText(dataJson.getString("total"));
-                        payableAmount = dataJson.getString("total");
                         JSONArray subOrdersJson = dataJson.getJSONArray("orders");
                         if(subOrdersJson.length()>0) emptyCartLayout.setVisibility(View.GONE);
                         for(int i=0;i<subOrdersJson.length();i++){
@@ -262,7 +260,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 else if(isEverythingValid()) {
                     intent = new Intent(this, CheckoutAddressActivity.class);
                     intent.putExtra("cart_id",cartId);
-                    intent.putExtra("payable_amount", payableAmount);
+                    intent.putExtra("payable_amount", String.format("%.2f",Float.parseFloat(total.getText().toString())));
                     startActivity(intent);
                 } else {
                     Alerts.validityAlert(CartActivity.this);

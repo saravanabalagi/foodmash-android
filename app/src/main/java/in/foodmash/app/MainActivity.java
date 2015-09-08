@@ -441,7 +441,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed() {
         new AlertDialog.Builder(MainActivity.this)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
-                .setCancelable(false)
                 .setTitle("Exit App ?")
                 .setMessage("Do you really want to exit the app")
                 .setPositiveButton("Exit", new DialogInterface.OnClickListener() {

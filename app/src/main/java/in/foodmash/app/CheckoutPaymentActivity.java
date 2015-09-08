@@ -29,7 +29,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     LinearLayout address;
     LinearLayout pay;
     String payableAmount;
-    String paymentMethod;
+    String paymentMethod="cod";
 
     RadioGroup paymentMode;
 
@@ -100,6 +100,8 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                         String orderId = dataJson.getString("order_id");
                         intent = new Intent(CheckoutPaymentActivity.this,OrderDescriptionActivity.class);
                         intent.putExtra("order_id",orderId);
+                        intent.putExtra("cart",true);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
                     } else if(!response.getBoolean("success")) {

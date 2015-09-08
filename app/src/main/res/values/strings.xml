@@ -77,7 +77,7 @@
     <string name="landline">landline</string>
     <string name="receive_promotional_offers">Receive promotional offers</string>
     <string name="order_history">Order History</string>
-    <string name="api_root_path">http://192.168.43.131:3000/api/v1</string>
+    <string name="api_root_path">http://192.168.1.103:3000/api/v1</string>
     <string name="login_later">Login Later</string>
     <string name="name">name</string>
     <string name="issue_feedback">Issue or Feedback</string>
@@ -92,4 +92,6 @@
     <string name="cash_on_delivery">Cash on Delivery</string>
     <string name="payable_amount">Payable Amount</string>
     <string name="paid_using">Paid using</string>
+    <string name="orders">orders</string>
+    <string name="home">home</string>
 </resources>
