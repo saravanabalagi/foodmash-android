@@ -240,8 +240,9 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
-                        if (cart) intent = new Intent(AddAddressActivity.this, CheckoutPaymentActivity.class);
+                        if (cart) intent = new Intent(AddAddressActivity.this, CheckoutAddressActivity.class);
                         else intent = new Intent(AddAddressActivity.this, AddressActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
                     } else if(!(response.getBoolean("success"))) {

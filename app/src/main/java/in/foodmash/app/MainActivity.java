@@ -1,5 +1,7 @@
 package in.foodmash.app;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -428,11 +430,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void cacheEmailAndPhone(String email, String phone) {
-        SharedPreferences sharedPreferences = getSharedPreferences("cache",0);
+        SharedPreferences sharedPreferences = getSharedPreferences("cache", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("email",email);
         editor.putString("phone",phone);
         editor.apply();
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(MainActivity.this)
+                .setIconAttribute(android.R.attr.alertDialogIcon)
+                .setCancelable(false)
+                .setTitle("Exit App ?")
+                .setMessage("Do you really want to exit the app")
+                .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        MainActivity.super.onBackPressed();
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).show();
     }
 
     private JSONObject getComboRequestJson(int comboId, HashMap<Integer,Integer> comboOptionsHashMap, HashMap<Integer,Integer> comboDishesHashMap) {

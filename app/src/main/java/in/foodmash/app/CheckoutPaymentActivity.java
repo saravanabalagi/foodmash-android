@@ -64,7 +64,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case R.id.credit_card:   paymentMethod="credit_card"; break;
+                    case R.id.credit_card: paymentMethod="credit_card"; break;
                     case R.id.debit_card:  paymentMethod="debit_card"; break;
                     case R.id.netbanking:  paymentMethod="netbanking"; break;
                     case R.id.cod:  paymentMethod="cod"; break;
@@ -75,7 +75,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.address: finish(); break;
+            case R.id.address: intent = new Intent(CheckoutPaymentActivity.this,CheckoutPaymentActivity.class); intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); break;
             case R.id.pay: if(isEverythingValid()) makePaymentRequest(); break;
         }
     }

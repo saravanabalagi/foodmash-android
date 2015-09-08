@@ -99,7 +99,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         JSONObject requestJson = JsonProvider.getStandartRequestJson(CheckoutAddressActivity.this);
         try {
             JSONObject dataJson = new JSONObject();
-            dataJson.put("cart_id",cartId);
+            dataJson.put("id",cartId);
             dataJson.put("delivery_address_id",addressId);
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;
