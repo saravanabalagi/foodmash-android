@@ -104,7 +104,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                                 @Override
                                 public void afterTextChanged(Editable s) {
                                     if(s.toString().equals("0")) quantity.setText("");
-                                    if (s.length() > 0 && Calculations.isInteger(s.toString())) {
+                                    if (s.length() > 0 && NumberUtils.isInteger(s.toString())) {
                                         JSONObject requestJson = JsonProvider.getStandartRequestJson(CartActivity.this);
                                         try {
                                             JSONObject dataJson = new JSONObject();

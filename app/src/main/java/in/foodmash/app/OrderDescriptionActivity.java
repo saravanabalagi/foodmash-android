@@ -82,8 +82,8 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
                 try {
                     if (response.getBoolean("success")) {
                         JSONObject orderJson = response.getJSONObject("data");
-                        total.setText(orderJson.getString("total"));
-                        paymentMethod.setText(orderJson.getString("payment_method"));
+                        total.setText(String.format("%.2f",Float.parseFloat(orderJson.getString("total"))));
+                        paymentMethod.setText(WordUtils.titleize(orderJson.getString("payment_method")));
                         setStatus(statusIcon, orderJson.getString("aasm_state"));
                         date.setText(orderJson.getString("updated_at"));
                         status.setText(orderJson.getString("aasm_state"));

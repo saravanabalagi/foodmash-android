@@ -3,7 +3,7 @@ package in.foodmash.app;
 /**
  * Created by sarav on Sep 04 2015.
  */
-public class Calculations {
+public class NumberUtils {
     public static boolean isInteger(String string) {
         if (string == null) { return false; }
         if (string.length() == 0) { return false; }

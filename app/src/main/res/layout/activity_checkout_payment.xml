@@ -77,7 +77,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/cash_on_delivery"
-                        android:id="@+id/cod"
+                        android:id="@+id/cash_on_delivery"
                         android:textSize="15sp"
                         android:padding="5dp"
                         android:singleLine="true"

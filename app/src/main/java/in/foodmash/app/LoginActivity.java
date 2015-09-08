@@ -172,7 +172,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
     @Override public void afterTextChanged(Editable s) {
         if(s==email.getEditableText()) {
-            if (Calculations.isInteger(s.toString())) {
+            if (NumberUtils.isInteger(s.toString())) {
                 Animations.fadeInOnlyIfInvisible(phonePrefix, 500);
                 if(s.length()==10) Animations.fadeOut(emailValidate,500);
                 else Animations.fadeInOnlyIfInvisible(emailValidate,500);

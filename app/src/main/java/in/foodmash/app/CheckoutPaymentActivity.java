@@ -31,7 +31,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     LinearLayout pay;
     TextView total;
     String payableAmount;
-    String paymentMethod="cod";
+    String paymentMethod;
 
     RadioGroup paymentMode;
 
@@ -70,10 +70,11 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                     case R.id.credit_card: paymentMethod="credit_card"; break;
                     case R.id.debit_card:  paymentMethod="debit_card"; break;
                     case R.id.netbanking:  paymentMethod="netbanking"; break;
-                    case R.id.cod:  paymentMethod="cod"; break;
+                    case R.id.cash_on_delivery:  paymentMethod="cash_on_delivery"; break;
                 }
             }
         });
+        paymentMode.check(R.id.cash_on_delivery);
     }
 
     public void onClick(View v) {

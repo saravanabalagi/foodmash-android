@@ -69,7 +69,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
                             LinearLayout orderLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.user_order,fillLayout,false);
                             ((TextView) orderLayout.findViewById(R.id.order_id)).setText(orderJson.getString("order_id"));
                             ((TextView) orderLayout.findViewById(R.id.date)).setText(orderJson.getString("updated_at"));
-                            ((TextView) orderLayout.findViewById(R.id.status)).setText(orderJson.getString("aasm_state"));
+                            ((TextView) orderLayout.findViewById(R.id.status)).setText(WordUtils.titleize(orderJson.getString("aasm_state")));
                             ((TextView) orderLayout.findViewById(R.id.price)).setText(orderJson.getString("total"));
                             setStatus((ImageView) orderLayout.findViewById(R.id.statusIcon), orderJson.getString("aasm_state"));
                             orderLayout.setOnClickListener(new View.OnClickListener() {
