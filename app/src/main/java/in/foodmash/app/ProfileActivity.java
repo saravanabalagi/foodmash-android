@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -192,6 +193,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
+                        cacheEmailAndPhone(email.getText().toString().trim(),phone.getText().toString().trim());
                         finish();
                     } else if(!(response.getBoolean("success"))) {
                         Alerts.commonErrorAlert(ProfileActivity.this,
@@ -222,10 +224,21 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         else if(s==phone.getEditableText()) { if(s.toString().trim().length()!=10) Animations.fadeInOnlyIfInvisible(phoneValidate, 500); else Animations.fadeOut(phoneValidate,500); }
     }
 
+    private boolean isDobFilled() { return dob.getText().toString().length()>0; }
     private boolean isEverythingValid() {
         return name.getText().toString().trim().length()>=2 &&
                 EmailValidator.getInstance().isValid(email.getText().toString().trim()) &&
-                phone.getText().toString().trim().length()==10;
+                phone.getText().toString().trim().length()==10 &&
+                NumberUtils.isInteger(phone.getText().toString().trim());
     }
+
+    private void cacheEmailAndPhone(String email, String phone) {
+        SharedPreferences sharedPreferences = getSharedPreferences("cache", 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("email",email);
+        editor.putString("phone",phone);
+        editor.apply();
+    }
+
 
 }
