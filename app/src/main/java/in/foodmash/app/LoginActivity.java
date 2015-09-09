@@ -83,6 +83,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         phonePrefix = (EditText) findViewById(R.id.phone_prefix);
         email = (EditText) findViewById(R.id.email_or_phone); email.addTextChangedListener(this);
         if(getPhone()!=null) { email.setText(getPhone()); }
+        else if(getEmail()!=null) { email.setText(getEmail()); }
         password = (EditText) findViewById(R.id.password); password.addTextChangedListener(this);
         keepLoggedIn = (Switch) findViewById(R.id.keep_logged_in); keepLoggedIn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -110,7 +111,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         JSONObject jsonObject = new JSONObject();
         HashMap<String,String> hashMap=  new HashMap<>();
         if(isEmail) hashMap.put("email", email.getText().toString().trim());
-        else hashMap.put("mobile_no",email.getText().toString().trim());
+        else hashMap.put("mobile_no", email.getText().toString().trim());
         hashMap.put("password", password.getText().toString());
         JSONObject userJson = new JSONObject(hashMap);
         try {
@@ -131,6 +132,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 try {
                     if (response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
+                        JSONObject userJson = dataJson.getJSONObject("user");
+                        cacheEmailAndPhone(userJson.getString("email"),userJson.getString("mobile_no"));
                         String userToken = dataJson.getString("user_token");
                         String sessionToken = dataJson.getString("session_token");
                         String androidId = Settings.Secure.getString(LoginActivity.this.getContentResolver(),Settings.Secure.ANDROID_ID);
@@ -204,6 +207,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String getPhone() {
         SharedPreferences sharedPreferences = getSharedPreferences("cache",0);
         return sharedPreferences.getString("phone",null);
+    }
+
+    private void cacheEmailAndPhone(String email, String phone) {
+        SharedPreferences sharedPreferences = getSharedPreferences("cache", 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("email",email);
+        editor.putString("phone",phone);
+        editor.apply();
     }
 
 }

@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
             case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
             case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true;
-            case R.id.menu_log_out: logout(); return true;
+            case R.id.menu_log_out: makeLogoutRequest(); return true;
             case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); return true;
             default: return super.onOptionsItemSelected(item);
         }
@@ -275,7 +275,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
-        makeProfileRequest();
 
     }
 
@@ -313,69 +312,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void logout() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/sessions/destroy", JsonProvider.getStandartRequestJson(MainActivity.this), new Response.Listener<JSONObject>() {
+    private void makeLogoutRequest() {
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/sessions/destroy", JsonProvider.getStandartRequestJson(MainActivity.this), new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    if(response.getBoolean("success")) {
-                        SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putBoolean("logged_in", false);
-                        editor.remove("user_token");
-                        editor.remove("session_token");
-                        editor.remove("android_token");
-                        editor.commit();
-                        intent = new Intent(MainActivity.this,LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else if(!(response.getBoolean("success"))) {
-                        Alerts.commonErrorAlert(MainActivity.this, "Unable to Logout", "We are unable to sign you out. Try again later!", "Okay");
-                        System.out.println(response.getString("error"));
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
-            }
+            public void onResponse(JSONObject response) { logout(); }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(MainActivity.this);
-                else Alerts.unknownErrorAlert(MainActivity.this);
+                if(error instanceof NoConnectionError || error instanceof TimeoutError) {
+                    Alerts.internetConnectionErrorAlert(MainActivity.this);
+                } else Alerts.unknownErrorAlert(MainActivity.this);
+                logout();
                 System.out.println("Response Error: " + error);
             }
         });
         Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
-    private void makeProfileRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/profile", JsonProvider.getStandartRequestJson(MainActivity.this), new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    if(response.getBoolean("success")) {
-                        JSONObject dataJson = response.getJSONObject("data");
-                        JSONObject userJson = dataJson.getJSONObject("user");
-                        cacheEmailAndPhone(userJson.getString("email"), userJson.getString("mobile_no"));
-                    } else if(response.getBoolean("success")) {
-                        Alerts.unableToProcessResponseAlert(MainActivity.this);
-                        System.out.println(response.getString("error"));
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }); Swift.getInstance(MainActivity.this).addToRequestQueue(jsonObjectRequest);
-
-    }
-
-    private void cacheEmailAndPhone(String email, String phone) {
-        SharedPreferences sharedPreferences = getSharedPreferences("cache", 0);
+    private void logout() {
+        SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("email",email);
-        editor.putString("phone",phone);
-        editor.apply();
+        editor.putBoolean("logged_in", false);
+        editor.remove("user_token");
+        editor.remove("session_token");
+        editor.remove("android_token");
+        editor.commit();
+        intent = new Intent(MainActivity.this,LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -440,7 +404,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;
     }
-
-
 
 }

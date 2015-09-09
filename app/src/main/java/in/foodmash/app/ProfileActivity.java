@@ -112,7 +112,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         promotionOffers = (Switch) findViewById(R.id.receive_promo); promotionOffers.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(!isChecked)         new AlertDialog.Builder(ProfileActivity.this)
+                if(!isChecked)
+                    new AlertDialog.Builder(ProfileActivity.this)
                         .setIconAttribute(android.R.attr.alertDialogIcon)
                         .setTitle("Stop receiving offers ?")
                         .setMessage("You have chosen to unsubscribe from all promotional offers via email and SMS. Are you sure to want to disable sending promotional offers?")
