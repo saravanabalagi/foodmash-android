@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
             case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
             case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true;
-            case R.id.menu_log_out: makeLogoutRequest(); return true;
+            case R.id.menu_log_out: Swift.getInstance(MainActivity.this).addToRequestQueue(getLogoutJsonObjectRequest()); return true;
             case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); return true;
             default: return super.onOptionsItemSelected(item);
         }
@@ -312,8 +312,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void makeLogoutRequest() {
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/sessions/destroy", JsonProvider.getStandartRequestJson(MainActivity.this), new Response.Listener<JSONObject>() {
+    private JsonObjectRequest getLogoutJsonObjectRequest() {
+        JsonObjectRequest logoutJsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/sessions/destroy", JsonProvider.getStandartRequestJson(MainActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) { logout(); }
         }, new Response.ErrorListener() {
@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 System.out.println("Response Error: " + error);
             }
         });
-        Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        return logoutJsonObjectRequest;
     }
 
     private void logout() {
