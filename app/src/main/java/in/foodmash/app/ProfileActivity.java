@@ -96,7 +96,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onClick(View v) {
                 final Calendar calendar = Calendar.getInstance();
-                new DatePickerDialog(ProfileActivity.this, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(ProfileActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         calendar.set(Calendar.YEAR,year);
@@ -104,7 +104,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
                         dob.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.getTime()));
                     }
-                }, 1985, 0, 1).show();
+                }, 1985, Calendar.JANUARY, 1);
+                Calendar minCalender = Calendar.getInstance(); minCalender.set(1900,0,1);
+                Calendar maxCalender = Calendar.getInstance(); maxCalender.set(Calendar.YEAR-7,Calendar.MONTH,Calendar.DAY_OF_MONTH);
+                datePickerDialog.getDatePicker().setMaxDate(calendar.getTime().getTime());
+                datePickerDialog.getDatePicker().setMinDate(minCalender.getTime().getTime());
+                datePickerDialog.show();
             }
         });
         email = (EditText) findViewById(R.id.email_or_phone); email.addTextChangedListener(this);
