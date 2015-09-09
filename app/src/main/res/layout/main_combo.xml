@@ -88,18 +88,18 @@
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:id="@+id/add_to_cart"
                 android:gravity="center_vertical|center_horizontal">
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/add_to_cart_background"
                     android:paddingLeft="15dp"
                     android:paddingTop="5dp"
                     android:paddingRight="15dp"
-                    android:paddingBottom="5dp">
+                    android:paddingBottom="5dp"
+                    android:gravity="center_horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -118,12 +118,60 @@
                         android:textColor="@color/abc_primary_text_material_dark" />
                 </LinearLayout>
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@mipmap/cart"
-                    android:tint="@color/color_accent_white_bg"
-                    android:layout_margin="10dp" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@mipmap/cart"
+                        android:tint="@color/color_accent_white_bg"
+                        android:layout_margin="5dp"
+                        android:id="@+id/add_to_cart" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:id="@+id/count_layout">
+
+                        <in.foodmash.app.TouchableImageButton
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:id="@+id/minus"
+                            android:tint="@color/color_accent_dark_bg"
+                            android:src="@mipmap/subtract"
+                            android:contentDescription="@string/decrement"
+                            android:scaleType="centerInside"
+                            android:background="@color/transparent"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:id="@+id/count"
+                            android:textSize="16sp"
+                            android:padding="5dp" />
+
+                        <in.foodmash.app.TouchableImageButton
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:id="@+id/plus"
+                            android:src="@mipmap/add"
+                            android:tint="@color/color_accent_dark_bg"
+                            android:contentDescription="@string/increment"
+                            android:scaleType="centerInside"
+                            android:background="@color/transparent"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp" />
+
+                    </LinearLayout>
+                </RelativeLayout>
 
             </LinearLayout>
 
@@ -148,7 +196,7 @@
         android:gravity="center_vertical"
         android:background="@color/black_222"
         android:id="@+id/added_to_cart_layout"
-        android:visibility="gone"
+        android:visibility="visible"
         android:baselineAligned="false">
 
         <LinearLayout
@@ -159,60 +207,22 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp">
 
-            <in.foodmash.app.TouchableImageButton
-                android:layout_width="40dp"
-                android:layout_height="fill_parent"
-                android:id="@+id/minus"
-                android:tint="@color/color_accent_dark_bg"
-                android:src="@mipmap/subtract"
-                android:contentDescription="@string/decrement"
-                android:scaleType="centerInside"
-                android:background="@color/transparent" />
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@mipmap/cart"
+                android:scaleType="centerCrop"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_marginBottom="1dp" />
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical|center_horizontal"
-                android:layout_weight="1">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@mipmap/cart"
-                    android:scaleType="centerCrop"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginBottom="1dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ADDED TO CART"
-                    android:textColor="@color/abc_primary_text_material_dark"
-                    android:textSize="11sp"
-                    android:fontFamily="sans-serif-light" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:id="@+id/count"
-                    android:textSize="11sp"
-                    android:textColor="@color/abc_primary_text_material_dark"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp" />
-            </LinearLayout>
-
-            <in.foodmash.app.TouchableImageButton
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
-                android:id="@+id/plus"
-                android:src="@mipmap/add"
-                android:tint="@color/color_accent_dark_bg"
-                android:contentDescription="@string/increment"
-                android:scaleType="centerInside"
-                android:background="@color/transparent" />
+                android:text="ADDED TO CART"
+                android:textColor="@color/abc_primary_text_material_dark"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-light" />
 
         </LinearLayout>
 

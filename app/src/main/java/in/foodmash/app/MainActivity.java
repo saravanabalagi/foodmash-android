@@ -204,98 +204,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 } else comboFoodLayout.removeAllViews();
                             }
                         });
-                        LinearLayout addToCart = (LinearLayout) comboLayout.findViewById(R.id.add_to_cart);
+                        final ImageView addToCart = (ImageView) comboLayout.findViewById(R.id.add_to_cart);
                         final LinearLayout addedToCartLayout = (LinearLayout) comboLayout.findViewById(R.id.added_to_cart_layout);
-                        final TextView count = (TextView) addedToCartLayout.findViewById(R.id.count);
+                        final LinearLayout countLayout = (LinearLayout) comboLayout.findViewById(R.id.count_layout);
+                        final TextView count = (TextView) countLayout.findViewById(R.id.count);
                         if(quantityHashMap.containsKey(comboId)) {
                             int quantity = quantityHashMap.get(comboId);
                             count.setText(String.valueOf(quantity));
                             if (quantity>0) addedToCartLayout.setVisibility(View.VISIBLE);
                         }
-                        ImageView plus = (ImageView) addedToCartLayout.findViewById(R.id.plus);
-                        ImageView minus = (ImageView) addedToCartLayout.findViewById(R.id.minus);
+                        ImageView plus = (ImageView) countLayout.findViewById(R.id.plus);
+                        ImageView minus = (ImageView) countLayout.findViewById(R.id.minus);
                         plus.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                JsonObjectRequest cartJsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/add", getComboRequestJson(comboId, comboSelectionHashMap, comboDishesHashMap), new Response.Listener<JSONObject>() {
-                                    @Override
-                                    public void onResponse(JSONObject response) {
-                                        try {
-                                            if (response.getBoolean("success")) {
-                                                count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
-                                            } else if (!(response.getBoolean("success"))) {
-                                                Alerts.unableToProcessResponseAlert(MainActivity.this);
-                                                System.out.println("Error Details: " + response.getString("error"));
-                                            }
-                                        } catch (JSONException e) { e.printStackTrace(); }
-                                    }
-                                }, new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        if (error instanceof NoConnectionError || error instanceof TimeoutError)
-                                            Alerts.internetConnectionErrorAlert(MainActivity.this);
-                                        else Alerts.unknownErrorAlert(MainActivity.this);
-                                        System.out.println("Response Error: " + error);
-                                    }
-                                });
-                                Swift.getInstance(MainActivity.this).addToRequestQueue(cartJsonObjectRequest);
+                                count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
                             }
                         });
                         minus.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                JsonObjectRequest cartJsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/remove", getComboRequestJson(comboId), new Response.Listener<JSONObject>() {
-                                    @Override
-                                    public void onResponse(JSONObject response) {
-                                        try {
-                                            if (response.getBoolean("success")) {
-                                                count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) - 1));
-                                                if (Integer.parseInt(count.getText().toString()) == 0)
-                                                    Animations.fadeOut(addedToCartLayout, 200);
-                                            } else if (!(response.getBoolean("success"))) {
-                                                Alerts.unableToProcessResponseAlert(MainActivity.this);
-                                                System.out.println("Error Details: " + response.getString("error"));
-                                            }
-                                        } catch (JSONException e) { e.printStackTrace(); }
-                                    }
-                                }, new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        if (error instanceof NoConnectionError || error instanceof TimeoutError)
-                                            Alerts.internetConnectionErrorAlert(MainActivity.this);
-                                        else Alerts.unknownErrorAlert(MainActivity.this);
-                                        System.out.println("Response Error: " + error);
-                                    }
-                                });
-                                Swift.getInstance(MainActivity.this).addToRequestQueue(cartJsonObjectRequest);
+                                count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) - 1));
+                                if(Integer.parseInt(count.getText().toString())==0) {
+                                    Animations.fadeOut(addedToCartLayout, 200);
+                                    Animations.fadeOutAndFadeIn(countLayout,addToCart,200);
+                                }
                             }
                         });
                         addToCart.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                JsonObjectRequest cartJsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/add", getComboRequestJson(comboId, comboSelectionHashMap, comboDishesHashMap), new Response.Listener<JSONObject>() {
-                                    @Override
-                                    public void onResponse(JSONObject response) {
-                                        try {
-                                            if (response.getBoolean("success")) {
-                                                Animations.fadeInOnlyIfInvisible(addedToCartLayout, 200);
-                                                count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
-                                            } else if (!(response.getBoolean("success"))) {
-                                                Alerts.unableToProcessResponseAlert(MainActivity.this);
-                                                System.out.println("Error Details: " + response.getString("error"));
-                                            }
-                                        } catch (JSONException e) { e.printStackTrace(); }
-                                    }
-                                }, new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        if (error instanceof NoConnectionError || error instanceof TimeoutError)
-                                            Alerts.internetConnectionErrorAlert(MainActivity.this);
-                                        else Alerts.unknownErrorAlert(MainActivity.this);
-                                        System.out.println("Response Error: " + error);
-                                    }
-                                });
-                                Swift.getInstance(MainActivity.this).addToRequestQueue(cartJsonObjectRequest);
+                                Animations.fadeInOnlyIfInvisible(addedToCartLayout, 200);
+                                Animations.fadeOutAndFadeIn(addToCart,countLayout,200);
+                                count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
                             }
                         });
                         comboTreeMap.put((int) Float.parseFloat(comboJson.getString("price")), comboLayout);
