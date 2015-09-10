@@ -1,4 +1,4 @@
-package in.foodmash.app;
+package in.foodmash.app.commons;
 
 /***************************************************************
 

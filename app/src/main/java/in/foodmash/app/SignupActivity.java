@@ -32,6 +32,12 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Cryptography;
+import in.foodmash.app.commons.Swift;
+import in.foodmash.app.custom.TouchableImageButton;
+
 /**
  * Created by sarav on Aug 08 2015.
  */
@@ -209,7 +215,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         if(s==name.getEditableText()) {
             if(name.getText().toString().trim().length()<2) setCancelOnImageView(nameValidate);
             else setOkayOnImageView(nameValidate);
-            if(nameValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(nameValidate,500);
+            if(nameValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(nameValidate, 500);
         }
         if(s==email.getEditableText()) {
             if(EmailValidator.getInstance().isValid(s.toString())) {

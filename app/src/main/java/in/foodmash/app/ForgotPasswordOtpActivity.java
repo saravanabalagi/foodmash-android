@@ -22,6 +22,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Swift;
+
 /**
  * Created by sarav on Aug 08 2015.
  */
@@ -107,7 +111,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                 if(timerMinutes==0) {
                     if(!otpExpired) {
                         otpExpired=true;
-                        Animations.fadeOutAndFadeIn(otpTimeLayout,otpExpiredLayout,500);
+                        Animations.fadeOutAndFadeIn(otpTimeLayout, otpExpiredLayout, 500);
                         Animations.fadeOutAndFadeIn(otpFillLayout, resendOtp, 500);
                         return;
                     } return; }

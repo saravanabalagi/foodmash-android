@@ -26,6 +26,11 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Swift;
+import in.foodmash.app.custom.TouchableImageButton;
+
 /**
  * Created by sarav on Aug 08 2015.
  */
@@ -86,7 +91,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case R.id.phone_radio: Animations.fadeOutAndFadeIn(emailLayout,phoneLayout,500); break;
+                    case R.id.phone_radio: Animations.fadeOutAndFadeIn(emailLayout, phoneLayout, 500); break;
                     case R.id.email_radio: Animations.fadeOutAndFadeIn(phoneLayout,emailLayout,500); break;
                 }
             }

@@ -1,4 +1,4 @@
-package in.foodmash.app;
+package in.foodmash.app.utils;
 
 /**
  * Created by sarav on Sep 08 2015.

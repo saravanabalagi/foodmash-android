@@ -26,6 +26,13 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Cryptography;
+import in.foodmash.app.commons.JsonProvider;
+import in.foodmash.app.commons.Swift;
+import in.foodmash.app.custom.TouchableImageButton;
+
 /**
  * Created by sarav on Aug 08 2015.
  */
@@ -173,7 +180,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     @Override public void afterTextChanged(Editable s) {
         if(s==oldPassword.getEditableText()) {
             if(oldPassword.getText().toString().length()<8)
-                Animations.fadeInOnlyIfInvisible(oldPasswordValidate,500);
+                Animations.fadeInOnlyIfInvisible(oldPasswordValidate, 500);
             else Animations.fadeOut(oldPasswordValidate,500);
             if(newPassword.getText().length()>0 && !newPassword.getText().toString().equals(oldPassword.getText().toString()))
                 Animations.fadeInOnlyIfInvisible(newPasswordValidate,500);

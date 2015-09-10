@@ -26,6 +26,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.JsonProvider;
+import in.foodmash.app.commons.Swift;
+import in.foodmash.app.custom.TouchableImageButton;
+import in.foodmash.app.utils.NumberUtils;
+
 /**
  * Created by Zeke on Jul 19 2015.
  */
@@ -175,7 +182,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                                                     total.setText(dataJson.getString("total"));
                                                     fillLayout.removeView(comboLayout);
                                                     if(fillLayout.getChildCount()==0)
-                                                        Animations.fadeIn(emptyCartLayout,500);
+                                                        Animations.fadeIn(emptyCartLayout, 500);
                                                 } else if(response.getBoolean("success")) {
                                                     Alerts.unableToProcessResponseAlert(CartActivity.this);
                                                     System.out.println(response.getString("error"));

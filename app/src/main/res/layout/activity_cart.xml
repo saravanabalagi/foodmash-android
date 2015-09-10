@@ -26,7 +26,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true" />
 
-        <in.foodmash.app.TouchableImageButton
+        <in.foodmash.app.custom.TouchableImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/clear_cart"

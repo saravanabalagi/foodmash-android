@@ -1,4 +1,4 @@
-package in.foodmash.app;
+package in.foodmash.app.commons;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

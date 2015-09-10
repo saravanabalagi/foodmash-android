@@ -34,6 +34,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.JsonProvider;
+import in.foodmash.app.commons.Swift;
+import in.foodmash.app.custom.TouchableImageButton;
+
 /**
  * Created by sarav on Aug 08 2015.
  */
@@ -143,7 +149,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
-                    case R.id.mobile_radio: Animations.fadeOutAndFadeIn(landlineLayout,mobileLayout,500); break;
+                    case R.id.mobile_radio: Animations.fadeOutAndFadeIn(landlineLayout, mobileLayout, 500); break;
                     case R.id.landline_radio: Animations.fadeOutAndFadeIn(mobileLayout,landlineLayout,500); break;
                 }
             }

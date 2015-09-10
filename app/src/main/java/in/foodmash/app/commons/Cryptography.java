@@ -1,4 +1,4 @@
-package in.foodmash.app;
+package in.foodmash.app.commons;
 
 
 import java.io.UnsupportedEncodingException;
@@ -36,7 +36,7 @@ public class Cryptography {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             System.out.println("String to encrypt: "+strToEncrypt);
             System.out.println("Base64: " +Base64.encode(cipher.doFinal(hexToByte(strToEncrypt))));
-            System.out.println("Decrypt: " +decrypt(Base64.encode(cipher.doFinal(hexToByte(strToEncrypt))),key));
+            System.out.println("Decrypt: " +decrypt(Base64.encode(cipher.doFinal(hexToByte(strToEncrypt))), key));
             return Base64.encode(cipher.doFinal(hexToByte(strToEncrypt)));
         } catch (Exception e) {  System.out.println("Error while encrypting: " + e.toString()); e.printStackTrace(); }
         return null;

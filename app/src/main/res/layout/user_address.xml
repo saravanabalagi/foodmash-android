@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <in.foodmash.app.TouchableImageButton
+        <in.foodmash.app.custom.TouchableImageButton
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:id="@+id/selected"
@@ -25,7 +25,7 @@
             android:scaleType="centerCrop"
             android:visibility="gone" />
 
-        <in.foodmash.app.TouchableImageButton
+        <in.foodmash.app.custom.TouchableImageButton
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/edit"
@@ -41,7 +41,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp" />
 
-        <in.foodmash.app.TouchableImageButton
+        <in.foodmash.app.custom.TouchableImageButton
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/delete"

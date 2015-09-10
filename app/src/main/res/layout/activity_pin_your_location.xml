@@ -23,7 +23,7 @@
             android:layout_marginTop="0dp"
             android:singleLine="true" />
 
-        <in.foodmash.app.TouchableImageButton
+        <in.foodmash.app.custom.TouchableImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/reset_map"

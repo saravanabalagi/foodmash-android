@@ -143,7 +143,7 @@
                         android:visibility="gone"
                         android:layout_centerHorizontal="true">
 
-                        <in.foodmash.app.TouchableImageButton
+                        <in.foodmash.app.custom.TouchableImageButton
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:id="@+id/minus"
@@ -163,7 +163,7 @@
                             android:textSize="16sp"
                             android:padding="5dp" />
 
-                        <in.foodmash.app.TouchableImageButton
+                        <in.foodmash.app.custom.TouchableImageButton
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:id="@+id/plus"

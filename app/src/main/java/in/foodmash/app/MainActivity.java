@@ -32,6 +32,11 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.JsonProvider;
+import in.foodmash.app.commons.Swift;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
     Intent intent;
@@ -99,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 linearLayout.setOrientation(LinearLayout.VERTICAL);
                 HashMap<Integer,Integer> quantityHashMap = new HashMap<>();
                 try {
-
                     JSONArray ordersJson = cartJson.getJSONArray("orders");
                     for (int i = 0; i < ordersJson.length(); i++) {
                         JSONObject orderJson = ordersJson.getJSONObject(i);

@@ -28,7 +28,7 @@
             android:paddingBottom="5dp"
             android:textAllCaps="true" />
 
-        <in.foodmash.app.TouchableImageButton
+        <in.foodmash.app.custom.TouchableImageButton
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:id="@+id/clear_fields"

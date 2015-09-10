@@ -20,6 +20,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.JsonProvider;
+import in.foodmash.app.commons.Swift;
+
 /**
  * Created by sarav on Aug 08 2015.
  */
@@ -68,7 +72,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void fillLayout() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",JsonProvider.getStandartRequestJson(AddressActivity.this),new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses", JsonProvider.getStandartRequestJson(AddressActivity.this),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
