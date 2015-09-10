@@ -34,6 +34,11 @@ public class Cart {
         else orders.put(combo, 1);
     }
 
+    public void decrementFromCart(Combo combo) {
+        if(orders.get(combo)-1==0) orders.remove(combo);
+        else orders.put(combo,orders.get(combo)-1);
+    }
+
     public int hasHowMany(int comboId) {
         int count =0;
         for (HashMap.Entry<Combo,Integer> order: orders.entrySet() )
