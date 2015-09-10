@@ -12,9 +12,9 @@ public class Combo {
     String label;
     String name;
     String description;
-    boolean special;
-    ArrayList<ComboDish> comboDishes;
-    ArrayList<ComboOption> comboOptions;
+//    boolean special;
+    ArrayList<ComboDish> comboDishes = new ArrayList<>();
+    ArrayList<ComboOption> comboOptions = new ArrayList<>();
 }
 
 class ComboDish {
@@ -35,7 +35,7 @@ class ComboOption {
     String name;
     String description;
     int selected = 0;
-    ArrayList<ComboDish> comboDishes;
+    ArrayList<ComboDish> comboDishes = new ArrayList<>();
     public int getSelected() { return selected; }
     public void setSelected(int selected) { this.selected = selected; }
 }
