@@ -1,5 +1,7 @@
 package in.foodmash.app.custom;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.ArrayList;
 
 /**
@@ -58,4 +60,15 @@ public class Combo {
         return this.getId() == combo.getId() && this.getComboOptions().equals(combo.getComboOptions());
     }
 
+    @Override
+    public int hashCode() {
+        ArrayList<Integer> selected = new ArrayList<>();
+        for (ComboOption comboOption : getComboOptions()) {
+            selected.add(comboOption.getSelected());
+        }
+        return new HashCodeBuilder(13,29)
+                .append(this.getId())
+                .append(selected.toArray())
+                .hashCode();
+    }
 }

@@ -191,16 +191,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     plus.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
                             cart.addToCart(combo);
+                            count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
                         }
                     });
                     minus.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            if(count.getText().toString().equals("0")) return;
+                            cart.decrementFromCart(combo);
                             count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) - 1));
                             if(Integer.parseInt(count.getText().toString())==0) {
-                                cart.decrementFromCart(combo);
                                 Animations.fadeOut(addedToCartLayout, 200);
                                 Animations.fadeOut(countLayout,200);
                                 Animations.fadeIn(addToCart,200);
@@ -210,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     addToCart.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            cart.addToCart(combo);
                             Animations.fadeInOnlyIfInvisible(addedToCartLayout, 200);
                             Animations.fadeOut(addToCart, 200);
                             Animations.fadeIn(countLayout,200);

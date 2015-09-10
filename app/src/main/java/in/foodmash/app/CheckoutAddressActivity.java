@@ -33,7 +33,6 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
 
     Intent intent;
     JSONArray addressesJson;
-    int cartId;
     int addressId;
     String payableAmount;
 
@@ -63,9 +62,8 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout_address);
-        cartId = getIntent().getIntExtra("cart_id",0);
         payableAmount = getIntent().getStringExtra("payable_amount");
-        if(cartId==0 || payableAmount==null) {
+        if(payableAmount==null) {
             new AlertDialog.Builder(CheckoutAddressActivity.this)
                     .setCancelable(false)
                     .setIconAttribute(android.R.attr.alertDialogIcon)
@@ -103,7 +101,6 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         JSONObject requestJson = JsonProvider.getStandartRequestJson(CheckoutAddressActivity.this);
         try {
             JSONObject dataJson = new JSONObject();
-            dataJson.put("id",cartId);
             dataJson.put("delivery_address_id",addressId);
             requestJson.put("data",dataJson);
         } catch (JSONException e) { e.printStackTrace(); }
