@@ -41,4 +41,10 @@ public class Cart {
                 count += order.getValue();
         return count;
     }
+
+    public HashMap<Combo,Integer> getOrders() { return orders; }
+    public void changeQuantity(Combo combo, int quantity) { orders.put(combo,quantity); }
+    public void removeOrder(Combo combo) { orders.remove(combo); }
+    public void removeAllOrders() { orders.clear(); }
+
 }

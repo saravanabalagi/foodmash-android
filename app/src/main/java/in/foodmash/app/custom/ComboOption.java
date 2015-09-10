@@ -28,6 +28,12 @@ public class ComboOption {
             restaurantIdSet.add(comboDish.getDish().getRestaurant().getId());
         return restaurantIdSet.size()==1;
     }
+    public String getSelectedDishName() {
+        for (ComboDish comboDish:comboOptionDishes)
+            if(selected==comboDish.getId())
+                return comboDish.getDish().getName();
+        return null;
+    }
 
     public void setId(int id) { this.id = id; }
     public void setPriority(int priority) { this.priority = priority; }

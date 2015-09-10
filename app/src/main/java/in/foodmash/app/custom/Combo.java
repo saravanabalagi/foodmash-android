@@ -30,6 +30,14 @@ public class Combo {
     public boolean isSpecial() { return special; }
     public ArrayList<ComboDish> getComboDishes() { return comboDishes; }
     public ArrayList<ComboOption> getComboOptions() { return comboOptions; }
+    public String getDishNames() {
+        String dishNames = "";
+        for (ComboOption comboOption : this.getComboOptions())
+            dishNames += comboOption.getSelectedDishName() + ", ";
+        for (ComboDish comboDish : this.getComboDishes())
+            dishNames += comboDish.getDish().getName() + ", ";
+        return dishNames.substring(0,dishNames.length()-2);
+    }
 
     public void setId(int id) { this.id = id; }
     public void setGroupSize(int groupSize) { this.groupSize = groupSize; }
