@@ -1,7 +1,5 @@
 package in.foodmash.app.custom;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-
 import java.util.ArrayList;
 
 /**
@@ -23,7 +21,8 @@ public class Combo {
     public int getId() { return id; }
     public int getGroupSize() { return groupSize; }
     public int getNoOfPurchases() { return noOfPurchases; }
-    public float getPrice() { return price; }
+    public int getIntPrice() { return (int)price; }
+    public float getFloatPrice() { return price; }
     public String getStringPrice() { return String.valueOf((int)price); }
     public String getLabel() { return label; }
     public String getName() { return name; }
@@ -45,13 +44,10 @@ public class Combo {
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof Combo)) return false;
-        if(o == this) return true;
+        if (!(o instanceof Combo)) return false;
+        if (o == this) return true;
         Combo combo = (Combo) o;
-        return new EqualsBuilder()
-                .append(id,combo.id)
-                .append(comboOptions,combo.comboOptions)
-                .isEquals();
-
+        return this.getId() == combo.getId() && this.getComboOptions().equals(combo.getComboOptions());
     }
+
 }

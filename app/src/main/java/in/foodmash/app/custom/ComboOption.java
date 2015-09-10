@@ -1,6 +1,8 @@
 package in.foodmash.app.custom;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by sarav on Sep 11 2015.
@@ -20,6 +22,12 @@ public class ComboOption {
     public String getDescription() { return description; }
     public int getSelected() { return selected; }
     public ArrayList<ComboDish> getComboOptionDishes() { return comboOptionDishes; }
+    public boolean isFromSameRestaurant() {
+        Set<Integer> restaurantIdSet = new HashSet<>();
+        for (ComboDish comboDish:comboOptionDishes)
+            restaurantIdSet.add(comboDish.getDish().getRestaurant().getId());
+        return restaurantIdSet.size()==1;
+    }
 
     public void setId(int id) { this.id = id; }
     public void setPriority(int priority) { this.priority = priority; }

@@ -7,8 +7,7 @@ import java.util.HashMap;
  */
 public class Cart {
 
-    float total;
-    HashMap<Combo,Integer> orders = new HashMap<>();
+    private HashMap<Combo,Integer> orders = new HashMap<>();
 
     private static Cart mInstance;
     public synchronized static Cart getInstance() {
@@ -23,8 +22,23 @@ public class Cart {
         return count;
     }
 
+    public String getTotal() {
+        float total = 0;
+        for (HashMap.Entry<Combo,Integer> order: orders.entrySet() )
+            total += order.getKey().getFloatPrice() * order.getValue();
+        return String.format("%.2f",total);
+    }
+
     public void addToCart(Combo combo) {
         if(orders.containsKey(combo)) { orders.put(combo,orders.get(combo)+1); }
         else orders.put(combo, 1);
+    }
+
+    public int hasHowMany(int comboId) {
+        int count =0;
+        for (HashMap.Entry<Combo,Integer> order: orders.entrySet() )
+            if(order.getKey().getId()==comboId)
+                count += order.getValue();
+        return count;
     }
 }
