@@ -1,46 +1,57 @@
 package in.foodmash.app.custom;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
 import java.util.ArrayList;
 
 /**
  * Created by sarav on Sep 10 2015.
  */
 public class Combo {
-    int id;
-    int groupSize;
-    float price;
-    String label;
-    String name;
-    String description;
-//    boolean special;
-    ArrayList<ComboDish> comboDishes = new ArrayList<>();
-    ArrayList<ComboOption> comboOptions = new ArrayList<>();
-}
+    private int id;
+    private int groupSize;
+    private int noOfPurchases;
+    private float price;
+    private String label;
+    private String name;
+    private String description;
+    private boolean special;
 
-class ComboDish {
-    int id;
-    int priority;
-    Dish dish;
-}
+    private ArrayList<ComboDish> comboDishes = new ArrayList<>();
+    private ArrayList<ComboOption> comboOptions = new ArrayList<>();
 
-class Dish {
-    int id;
-    String name;
-    Restaurant restaurant;
-}
+    public int getId() { return id; }
+    public int getGroupSize() { return groupSize; }
+    public int getNoOfPurchases() { return noOfPurchases; }
+    public float getPrice() { return price; }
+    public String getStringPrice() { return String.valueOf((int)price); }
+    public String getLabel() { return label; }
+    public String getName() { return name; }
+    public String getDescription() { return description; }
+    public boolean isSpecial() { return special; }
+    public ArrayList<ComboDish> getComboDishes() { return comboDishes; }
+    public ArrayList<ComboOption> getComboOptions() { return comboOptions; }
 
-class ComboOption {
-    int id;
-    int priority;
-    String name;
-    String description;
-    int selected = 0;
-    ArrayList<ComboDish> comboDishes = new ArrayList<>();
-    public int getSelected() { return selected; }
-    public void setSelected(int selected) { this.selected = selected; }
-}
+    public void setId(int id) { this.id = id; }
+    public void setGroupSize(int groupSize) { this.groupSize = groupSize; }
+    public void setNoOfPurchases(int noOfPurchases) { this.noOfPurchases = noOfPurchases; }
+    public void setPrice(float price) { this.price = price; }
+    public void setLabel(String label) { this.label = label; }
+    public void setName(String name) { this.name = name; }
+    public void setDescription(String description) { this.description = description; }
+    public void setSpecial(boolean special) { this.special = special; }
+    public void setComboDishes(ArrayList<ComboDish> comboDishes) { this.comboDishes = comboDishes; }
+    public void setComboOptions(ArrayList<ComboOption> comboOptions) { this.comboOptions = comboOptions; }
 
-class Restaurant {
-    int id;
-    String name;
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof Combo)) return false;
+        if(o == this) return true;
+        Combo combo = (Combo) o;
+        return new EqualsBuilder()
+                .append(id,combo.id)
+                .append(comboOptions,combo.comboOptions)
+                .isEquals();
+
+    }
 }
