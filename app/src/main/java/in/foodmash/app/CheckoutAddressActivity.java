@@ -35,6 +35,8 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     JSONArray addressesJson;
     int addressId;
     String payableAmount;
+    JsonObjectRequest getAddressesRequest;
+    JsonObjectRequest confirmOrderRequest;
 
     LinearLayout cart;
     LinearLayout confirm;
@@ -98,7 +100,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     }
 
     private JSONObject getConfirmRequestJson() {
-        JSONObject requestJson = JsonProvider.getStandartRequestJson(CheckoutAddressActivity.this);
+        JSONObject requestJson = JsonProvider.getStandardRequestJson(CheckoutAddressActivity.this);
         try {
             JSONObject dataJson = new JSONObject();
             dataJson.put("delivery_address_id",addressId);
@@ -107,7 +109,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         return requestJson;
     }
     private void makeConfirmRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/addAddress", getConfirmRequestJson(), new Response.Listener<JSONObject>() {
+        confirmOrderRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/addAddress", getConfirmRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -116,7 +118,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                         intent.putExtra("payable_amount",payableAmount);
                         startActivity(intent);
                     } else if(response.getBoolean("success")) {
-                        Alerts.unableToProcessResponseAlert(CheckoutAddressActivity.this);
+                        Alerts.requestUnauthorisedAlert(CheckoutAddressActivity.this);
                         System.out.println(response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -124,12 +126,18 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this);
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(CheckoutAddressActivity.this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(confirmOrderRequest);
+                    }
+                });
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this);
                 else Alerts.unknownErrorAlert(CheckoutAddressActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
-        Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(confirmOrderRequest);
     }
 
     private boolean isEverythingValid() {
@@ -145,7 +153,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     }
 
     private void fillLayout() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",JsonProvider.getStandartRequestJson(CheckoutAddressActivity.this),new Response.Listener<JSONObject>() {
+        getAddressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",JsonProvider.getStandardRequestJson(CheckoutAddressActivity.this),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -179,7 +187,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                             addressLayout.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    JSONObject requestJson = JsonProvider.getStandartRequestJson(CheckoutAddressActivity.this);
+                                    JSONObject requestJson = JsonProvider.getStandardRequestJson(CheckoutAddressActivity.this);
                                     JSONObject dataJson = new JSONObject();
                                     try {
                                         dataJson.put("id", addressJson.getString("id"));
@@ -223,7 +231,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                             fillLayout.addView(addressLayout);
                         }
                     } else if(!response.getBoolean("success")) {
-                        Alerts.unableToProcessResponseAlert(CheckoutAddressActivity.this);
+                        Alerts.requestUnauthorisedAlert(CheckoutAddressActivity.this);
                         System.out.println(response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -231,12 +239,18 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this);
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(CheckoutAddressActivity.this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(getAddressesRequest);
+                    }
+                });
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this);
                 else Alerts.unknownErrorAlert(CheckoutAddressActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
-        Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(getAddressesRequest);
     }
 
 }

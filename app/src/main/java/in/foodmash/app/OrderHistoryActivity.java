@@ -63,7 +63,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/history", JsonProvider.getStandartRequestJson(OrderHistoryActivity.this), new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/history", JsonProvider.getStandardRequestJson(OrderHistoryActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -91,7 +91,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
                             fillLayout.addView(orderLayout);
                         }
                     } else if (!response.getBoolean("success")) {
-                        Alerts.unableToProcessResponseAlert(OrderHistoryActivity.this);
+                        Alerts.requestUnauthorisedAlert(OrderHistoryActivity.this);
                         System.out.println(response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }

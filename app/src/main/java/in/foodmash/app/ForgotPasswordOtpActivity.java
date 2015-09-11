@@ -1,9 +1,9 @@
 package in.foodmash.app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 
 /**
@@ -48,6 +49,8 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     int timerMinutes=3;
     int timerSeconds=0;
     boolean otpExpired = false;
+    JsonObjectRequest checkOtpRequest;
+    JsonObjectRequest resendOtpRequest;
 
     Intent intent;
 
@@ -123,9 +126,8 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     };
 
     private JSONObject getRequestJson() {
-        JSONObject requestJson = new JSONObject();
+        JSONObject requestJson = JsonProvider.getAnonymousRequestJson(ForgotPasswordOtpActivity.this);
         try {
-            requestJson.put("android_id", Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID));
             JSONObject dataJson = new JSONObject();
             dataJson.put("otp",otp.getText().toString().trim());
             requestJson.put("data",dataJson);
@@ -134,7 +136,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     }
 
     private void makeRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkOtp", getRequestJson(), new Response.Listener<JSONObject>() {
+        checkOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkOtp", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -154,12 +156,18 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ForgotPasswordOtpActivity.this);
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ForgotPasswordOtpActivity.this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Swift.getInstance(ForgotPasswordOtpActivity.this).addToRequestQueue(checkOtpRequest);
+                    }
+                });
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ForgotPasswordOtpActivity.this);
                 else Alerts.unknownErrorAlert(ForgotPasswordOtpActivity.this);
                 System.out.println("JSON Error: " + error);
             }
         });
-        Swift.getInstance(ForgotPasswordOtpActivity.this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(ForgotPasswordOtpActivity.this).addToRequestQueue(checkOtpRequest);
     }
 
     private boolean isEverythingValid() {
@@ -168,9 +176,8 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     }
 
     private JSONObject getOtpRequestJson() {
-        JSONObject requestJson = new JSONObject();
+        JSONObject requestJson = JsonProvider.getAnonymousRequestJson(ForgotPasswordOtpActivity.this);
         try {
-            requestJson.put("android_id", Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID));
             JSONObject userJson = new JSONObject();
             if(type.equals("phone")) userJson.put("mobile_no",recoveryKey);
             else if(type.equals("email")) userJson.put("email",recoveryKey);
@@ -182,7 +189,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     }
 
     private void resendOtpRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/forgotPassword", getOtpRequestJson(), new Response.Listener<JSONObject>() {
+        resendOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/forgotPassword", getOtpRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -202,12 +209,18 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ForgotPasswordOtpActivity.this);
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ForgotPasswordOtpActivity.this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Swift.getInstance(ForgotPasswordOtpActivity.this).addToRequestQueue(resendOtpRequest);
+                    }
+                });
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ForgotPasswordOtpActivity.this);
                 else Alerts.unknownErrorAlert(ForgotPasswordOtpActivity.this);
                 System.out.println("JSON Error: " + error);
             }
         });
-        Swift.getInstance(ForgotPasswordOtpActivity.this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(ForgotPasswordOtpActivity.this).addToRequestQueue(resendOtpRequest);
     }
 
 }

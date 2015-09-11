@@ -1,6 +1,9 @@
 package in.foodmash.app.commons;
 
 
+import android.content.Context;
+import android.provider.Settings;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -18,20 +21,18 @@ public class Cryptography {
     private static void setKey(String myKey) throws UnsupportedEncodingException {
         MessageDigest sha = null;
         try {
-            //key = hexToByte(myKey);
+            key = hexToByte(myKey);
             key = myKey.getBytes();
             sha = MessageDigest.getInstance("SHA-1");
             key = sha.digest(key);
-            System.out.println("Before pruning: "+ byteToHex(key));
             key = Arrays.copyOf(key, 16); // use only first 128 bit
-            System.out.println("After pruning: " + byteToHex(key));
+            System.out.println("Key: " + byteToHex(key));
             secretKey = new SecretKeySpec(key, "AES");
         } catch (NoSuchAlgorithmException e) { e.printStackTrace(); }
     }
 
-    public static String encrypt(String strToEncrypt, String key) {
+    private static String encrypt(String strToEncrypt, String key) {
         try {
-            setKey("hello");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             System.out.println("String to encrypt: "+strToEncrypt);
@@ -42,14 +43,18 @@ public class Cryptography {
         return null;
     }
 
-    public static String decrypt(String strToDecrypt, String key) {
+    private static String decrypt(String strToDecrypt, String key) {
         try {
-            setKey("hello");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             return new String(cipher.doFinal(Base64.decode(cipher.doFinal(strToDecrypt.getBytes()))));
         } catch (Exception e) { System.out.println("Error while decrypting: "+e.toString()); e.printStackTrace(); }
         return null;
+    }
+
+    public static String getEncrptedAndroidId(Context context, String key) {
+        String androidId = Settings.Secure.getString(context.getContentResolver(),Settings.Secure.ANDROID_ID);
+        return encrypt(androidId,key);
     }
 
     private static String byteToHex(byte[] value) {

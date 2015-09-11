@@ -114,7 +114,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
                             fillLayout.addView(comboLayout);
                         }
                     } else if (!response.getBoolean("success")) {
-                        Alerts.unableToProcessResponseAlert(OrderDescriptionActivity.this);
+                        Alerts.requestUnauthorisedAlert(OrderDescriptionActivity.this);
                         System.out.println(response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -146,7 +146,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
     }
 
     private JSONObject getRequestJson() {
-        JSONObject requestJson = JsonProvider.getStandartRequestJson(OrderDescriptionActivity.this);
+        JSONObject requestJson = JsonProvider.getStandardRequestJson(OrderDescriptionActivity.this);
         try {
             JSONObject dataJson = new JSONObject();
             dataJson.put("order_id",orderId);

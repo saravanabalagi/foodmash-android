@@ -138,7 +138,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         for (final ComboDish comboDish: comboOption.getComboOptionDishes()) {
                             LinearLayout comboOptionsLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo_food_options, currentComboFoodLayout, false);
                             final ImageView selected = (ImageView) comboOptionsLayout.findViewById(R.id.selected);
-                            if (i==0) { comboOption.setSelected(comboDish.getId()); selected.setVisibility(View.VISIBLE); }
+                            if (i==0 && comboOption.getSelected()!=0) { comboOption.setSelected(comboDish.getId()); selected.setVisibility(View.VISIBLE); }
+                            else if(comboOption.getSelected()==comboDish.getId()) { selected.setVisibility(View.VISIBLE); }
                             ((TextView) comboOptionsLayout.findViewById(R.id.option_name)).setText(comboDish.getDish().getName());
                             ((TextView) comboOptionsLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());
                             comboOptionsLayout.setOnClickListener(new View.OnClickListener() {
@@ -228,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", JsonProvider.getStandartRequestJson(MainActivity.this) ,new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", JsonProvider.getStandardRequestJson(MainActivity.this) ,new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 System.out.println(response);
@@ -240,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         viewPager.setAdapter(pagerAdapter);
                         viewPager.addOnPageChangeListener(MainActivity.this);
                     } else if (!response.getBoolean("success")) {
-                        Alerts.unableToProcessResponseAlert(MainActivity.this);
+                        Alerts.requestUnauthorisedAlert(MainActivity.this);
                         System.out.println(response.getString("error"));
                     }
                 } catch (Exception e) { e.printStackTrace(); }
@@ -291,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private JsonObjectRequest getLogoutJsonObjectRequest() {
-        return new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/sessions/destroy", JsonProvider.getStandartRequestJson(this), new Response.Listener<JSONObject>() {
+        return new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/sessions/destroy", JsonProvider.getStandardRequestJson(this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) { logout(); }
         }, new Response.ErrorListener() {
@@ -313,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.remove("user_token");
         editor.remove("session_token");
         editor.remove("android_token");
-        editor.commit();
+        editor.apply();
         intent = new Intent(MainActivity.this,LoginActivity.class);
         startActivity(intent);
         finish();

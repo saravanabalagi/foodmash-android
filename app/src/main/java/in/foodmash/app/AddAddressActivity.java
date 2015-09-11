@@ -1,5 +1,6 @@
 package in.foodmash.app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
@@ -50,6 +51,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     boolean edit = false;
     boolean cart = false;
     JSONObject jsonObject;
+    JsonObjectRequest addAddressRequest;
 
     RadioGroup phoneRadioGroup;
 
@@ -232,7 +234,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
             dataJson.put("primary", primaryAddressVal);
             if(edit) dataJson.put("id",id);
 
-            requestJson = JsonProvider.getStandartRequestJson(AddAddressActivity.this);
+            requestJson = JsonProvider.getStandardRequestJson(AddAddressActivity.this);
             requestJson.put("data",dataJson);
 
         } catch (JSONException e) { e.printStackTrace(); }
@@ -241,7 +243,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void makeJsonRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest((edit)?Request.Method.PATCH:Request.Method.POST, getString(R.string.api_root_path) + ((edit)?"/delivery_addresses":"/delivery_addresses/create"), getRequestJson(), new Response.Listener<JSONObject>() {
+        addAddressRequest = new JsonObjectRequest((edit)?Request.Method.PATCH:Request.Method.POST, getString(R.string.api_root_path) + ((edit)?"/delivery_addresses":"/delivery_addresses/create"), getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -260,12 +262,18 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(AddAddressActivity.this);
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddAddressActivity.this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Swift.getInstance(AddAddressActivity.this).addToRequestQueue(addAddressRequest);
+                    }
+                });
+                else if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddAddressActivity.this);
                 else Alerts.unknownErrorAlert(AddAddressActivity.this);
                 System.out.println("JSON Error: " + error);
             }
         });
-        Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(AddAddressActivity.this).addToRequestQueue(addAddressRequest);
     }
 
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }

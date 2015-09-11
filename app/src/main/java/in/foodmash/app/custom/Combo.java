@@ -57,7 +57,10 @@ public class Combo {
         if (!(o instanceof Combo)) return false;
         if (o == this) return true;
         Combo combo = (Combo) o;
-        return this.getId() == combo.getId() && this.getComboOptions().equals(combo.getComboOptions());
+        if(this.getId() == combo.getId() && this.getComboOptions().equals(combo.getComboOptions())){
+            System.out.println("Combo is equal");
+            return true;
+        } else return false;
     }
 
     @Override
@@ -66,9 +69,11 @@ public class Combo {
         for (ComboOption comboOption : getComboOptions()) {
             selected.add(comboOption.getSelected());
         }
-        return new HashCodeBuilder(13,29)
+        int hash = new HashCodeBuilder(13,29)
                 .append(this.getId())
                 .append(selected.toArray())
                 .hashCode();
+        System.out.println("Hash COde: "+hash);
+        return hash;
     }
 }

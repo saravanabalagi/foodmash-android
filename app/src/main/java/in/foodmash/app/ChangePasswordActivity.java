@@ -1,9 +1,9 @@
 package in.foodmash.app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,6 +41,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     EditText oldPassword;
     EditText newPassword;
     EditText confirmPassword;
+    JsonObjectRequest changePasswordRequest;
 
     boolean forgot = false;
     String otpToken;
@@ -115,8 +116,8 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
             hashMap.put("password", newPassword.getText().toString());
             hashMap.put("password_confirmation", confirmPassword.getText().toString());
             JSONObject userJson = new JSONObject(hashMap);
-            if(forgot) requestJson.put("android_id", Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID));
-            else requestJson = JsonProvider.getStandartRequestJson(ChangePasswordActivity.this);
+            if(forgot) requestJson = JsonProvider.getAnonymousRequestJson(ChangePasswordActivity.this);
+            else requestJson = JsonProvider.getStandardRequestJson(ChangePasswordActivity.this);
             JSONObject dataJson = new JSONObject();
             dataJson.put("user",userJson);
             requestJson.put("data", dataJson);
@@ -125,7 +126,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     }
 
     private void makeRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + ((forgot)?"/registrations/resetPasswordFromToken":"/registrations/changePassword"), getRequestJson(), new Response.Listener<JSONObject>() {
+        changePasswordRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + ((forgot)?"/registrations/resetPasswordFromToken":"/registrations/changePassword"), getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -134,14 +135,13 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                             JSONObject dataJson = response.getJSONObject("data");
                             String userToken = dataJson.getString("user_token");
                             String sessionToken = dataJson.getString("session_token");
-                            String androidId = Settings.Secure.getString(ChangePasswordActivity.this.getContentResolver(),Settings.Secure.ANDROID_ID);
                             SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putBoolean("logged_in", true);
                             editor.putString("user_token", userToken);
                             editor.putString("session_token", sessionToken);
-                            editor.putString("android_token", Cryptography.encrypt(androidId, userToken));
-                            editor.commit();
+                            editor.putString("android_token", Cryptography.getEncrptedAndroidId(ChangePasswordActivity.this, userToken));
+                            editor.apply();
                             intent = new Intent(ChangePasswordActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();
@@ -160,12 +160,18 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ChangePasswordActivity.this);
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ChangePasswordActivity.this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Swift.getInstance(ChangePasswordActivity.this).addToRequestQueue(changePasswordRequest);
+                    }
+                });
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ChangePasswordActivity.this);
                 else Alerts.unknownErrorAlert(ChangePasswordActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
-        Swift.getInstance(ChangePasswordActivity.this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(ChangePasswordActivity.this).addToRequestQueue(changePasswordRequest);
     }
 
     private boolean isEverythingValid() {
@@ -184,7 +190,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
             else Animations.fadeOut(oldPasswordValidate,500);
             if(newPassword.getText().length()>0 && !newPassword.getText().toString().equals(oldPassword.getText().toString()))
                 Animations.fadeInOnlyIfInvisible(newPasswordValidate,500);
-            else if(newPassword.getText().length()>=8 && newPassword.getText().toString().equals(oldPassword.getText().toString()));
+            else if(newPassword.getText().length()>=8 && newPassword.getText().toString().equals(oldPassword.getText().toString()))
                     Animations.fadeOut(newPasswordValidate,500);
         } else if(s==newPassword.getEditableText()) {
             if(newPassword.getText().toString().length()<8

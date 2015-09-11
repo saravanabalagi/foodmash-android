@@ -64,6 +64,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     ImageView phoneValidate;
 
     TouchableImageButton clearFields;
+    JsonObjectRequest profileRequest;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -143,7 +144,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/profile", JsonProvider.getStandartRequestJson(ProfileActivity.this), new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/profile", JsonProvider.getStandardRequestJson(ProfileActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -156,7 +157,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         phone.setText(userJson.getString("mobile_no"));
                         promotionOffers.setChecked(userJson.getBoolean("offers"));
                     } else if(response.getBoolean("success")) {
-                        Alerts.unableToProcessResponseAlert(ProfileActivity.this);
+                        Alerts.requestUnauthorisedAlert(ProfileActivity.this);
                         System.out.println(response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -191,7 +192,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             JSONObject userJson = new JSONObject(profileHashMap);
             userJson.put("offers", promotionOffers.isChecked());
 
-            requestJson = JsonProvider.getStandartRequestJson(ProfileActivity.this);
+            requestJson = JsonProvider.getStandardRequestJson(ProfileActivity.this);
             JSONObject dataJson = new JSONObject();
             dataJson.put("user",userJson);
             requestJson.put("data",dataJson);
@@ -201,7 +202,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void makeJsonRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PATCH, getString(R.string.api_root_path) + "/profile", getRequestJson(), new Response.Listener<JSONObject>() {
+        profileRequest = new JsonObjectRequest(Request.Method.PATCH, getString(R.string.api_root_path) + "/profile", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -220,12 +221,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ProfileActivity.this);
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ProfileActivity.this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Swift.getInstance(ProfileActivity.this).addToRequestQueue(profileRequest);
+                    }
+                });
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ProfileActivity.this);
                 else Alerts.unknownErrorAlert(ProfileActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
-        Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(ProfileActivity.this).addToRequestQueue(profileRequest);
     }
 
 

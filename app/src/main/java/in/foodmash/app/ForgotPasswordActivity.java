@@ -1,9 +1,9 @@
 package in.foodmash.app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.TouchableImageButton;
 
@@ -40,6 +41,8 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     LinearLayout forgot;
     LinearLayout phoneLayout;
     LinearLayout emailLayout;
+
+    JsonObjectRequest forgotRequest;
 
     EditText phone;
     EditText email;
@@ -108,9 +111,8 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     }
 
     private JSONObject getRequestJson() {
-        JSONObject requestJson = new JSONObject();
+        JSONObject requestJson = JsonProvider.getAnonymousRequestJson(ForgotPasswordActivity.this);
         try {
-            requestJson.put("android_id", Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID));
             JSONObject userJson = new JSONObject();
             if(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio) userJson.put("mobile_no",phone.getText().toString().trim());
             else if(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.email_radio) userJson.put("email",email.getText().toString().trim());
@@ -122,7 +124,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     }
 
     private void makeRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/forgotPassword", getRequestJson(), new Response.Listener<JSONObject>() {
+        forgotRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/forgotPassword", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -141,12 +143,18 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ForgotPasswordActivity.this);
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ForgotPasswordActivity.this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Swift.getInstance(ForgotPasswordActivity.this).addToRequestQueue(forgotRequest);
+                    }
+                });
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ForgotPasswordActivity.this);
                 else Alerts.unknownErrorAlert(ForgotPasswordActivity.this);
                 System.out.println("JSON Error: " + error);
             }
         });
-        Swift.getInstance(ForgotPasswordActivity.this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(ForgotPasswordActivity.this).addToRequestQueue(forgotRequest);
     }
 
     private boolean isEverthingValid() {

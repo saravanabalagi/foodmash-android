@@ -1,9 +1,9 @@
 package in.foodmash.app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,6 +32,7 @@ import java.util.HashMap;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
+import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.TouchableImageButton;
 import in.foodmash.app.utils.NumberUtils;
@@ -55,8 +56,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     ImageView passwordValidate;
     Switch keepLoggedIn;
 
+    JsonObjectRequest loginRequest;
     Intent intent;
-    String androidId;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -78,7 +79,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         setContentView(R.layout.activity_login);
 
-        androidId = Settings.Secure.getString(this.getContentResolver(),Settings.Secure.ANDROID_ID);
         register = (LinearLayout) findViewById(R.id.register); register.setOnClickListener(this);
         forgotPassword = (LinearLayout) findViewById(R.id.forgot_password); forgotPassword.setOnClickListener(this);
         skip = (LinearLayout) findViewById(R.id.skip); skip.setOnClickListener(this);
@@ -115,7 +115,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private JSONObject getRequestJson() {
-        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject = JsonProvider.getAnonymousRequestJson(LoginActivity.this);
         HashMap<String,String> hashMap=  new HashMap<>();
         if(isEmail) hashMap.put("email", email.getText().toString().trim());
         else hashMap.put("mobile_no", email.getText().toString().trim());
@@ -125,13 +125,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             JSONObject dataJson = new JSONObject();
             dataJson.put("user",userJson);
             jsonObject.put("data",dataJson);
-            jsonObject.put("android_id",androidId);
         } catch (JSONException e) { e.printStackTrace(); }
         return jsonObject;
     }
 
     private void makeJsonRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path)+"/sessions",getRequestJson(), new Response.Listener<JSONObject>() {
+        loginRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path)+"/sessions",getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 System.out.println("JSON Response: "+response);
@@ -143,14 +142,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         cacheEmailAndPhone(userJson.getString("email"),userJson.getString("mobile_no"));
                         String userToken = dataJson.getString("user_token");
                         String sessionToken = dataJson.getString("session_token");
-                        String androidId = Settings.Secure.getString(LoginActivity.this.getContentResolver(),Settings.Secure.ANDROID_ID);
                         SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putBoolean("logged_in",true);
                         editor.putString("user_token", userToken);
                         editor.putString("session_token", sessionToken);
-                        editor.putString("android_token", Cryptography.encrypt(androidId, sessionToken));
-                        editor.commit();
+                        editor.putString("android_token", Cryptography.getEncrptedAndroidId(LoginActivity.this,sessionToken));
+                        editor.apply();
                         startActivity(intent);
                         finish();
                     } else if(!(response.getBoolean("success"))) {
@@ -165,12 +163,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(LoginActivity.this);
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(LoginActivity.this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Swift.getInstance(LoginActivity.this).addToRequestQueue(loginRequest);
+                    }
+                });
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(LoginActivity.this);
                 else Alerts.unknownErrorAlert(LoginActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
-        Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(LoginActivity.this).addToRequestQueue(loginRequest);
     }
 
     private boolean isEverythingValid() {

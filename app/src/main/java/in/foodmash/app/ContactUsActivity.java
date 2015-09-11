@@ -1,5 +1,6 @@
 package in.foodmash.app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -44,6 +45,8 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     LinearLayout back;
     LinearLayout call;
     LinearLayout email;
+
+    JsonObjectRequest contactUsRequest;
 
     ImageView issueValidate;
     ImageView descriptionValidate;
@@ -114,7 +117,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     private JSONObject getRequestJson() {
         JSONObject requestJson = new JSONObject();
         try {
-            requestJson = JsonProvider.getStandartRequestJson(ContactUsActivity.this);
+            requestJson = JsonProvider.getStandardRequestJson(ContactUsActivity.this);
             HashMap<String,String> hashMap = new HashMap<>();
             hashMap.put("issue",issue.getText().toString().trim());
             hashMap.put("description",description.getText().toString().trim());
@@ -125,14 +128,14 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void makeRequset() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/contact_us", getRequestJson(), new Response.Listener<JSONObject>() {
+        contactUsRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/contact_us", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
                         finish();
                     } else if(!response.getBoolean("success")) {
-                        Alerts.unableToProcessResponseAlert(ContactUsActivity.this);
+                        Alerts.requestUnauthorisedAlert(ContactUsActivity.this);
                         System.out.println(response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -140,12 +143,18 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ContactUsActivity.this);
+                if(error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ContactUsActivity.this);
+                if(error instanceof NoConnectionError) Alerts.timeoutErrorAlert(ContactUsActivity.this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Swift.getInstance(ContactUsActivity.this).addToRequestQueue(contactUsRequest);
+                    }
+                });
                 else Alerts.unknownErrorAlert(ContactUsActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
-        Swift.getInstance(ContactUsActivity.this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(ContactUsActivity.this).addToRequestQueue(contactUsRequest);
     }
 
     private boolean isEverythingValid() {

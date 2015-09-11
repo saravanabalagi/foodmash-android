@@ -1,5 +1,6 @@
 package in.foodmash.app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -38,6 +39,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     String paymentMethod;
 
     RadioGroup paymentMode;
+    JsonObjectRequest makePurchaseRequest;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -89,7 +91,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     }
 
     private JSONObject getPaymentJson() {
-        JSONObject requestJson = JsonProvider.getStandartRequestJson(CheckoutPaymentActivity.this);
+        JSONObject requestJson = JsonProvider.getStandardRequestJson(CheckoutPaymentActivity.this);
         try {
             JSONObject dataJson = new JSONObject();
             dataJson.put("payment_method",paymentMethod);
@@ -99,7 +101,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     }
 
     private void makePaymentRequest() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/purchase", getPaymentJson(), new Response.Listener<JSONObject>() {
+        makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/purchase", getPaymentJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -113,7 +115,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                         startActivity(intent);
                         finish();
                     } else if(!response.getBoolean("success")) {
-                        Alerts.unableToProcessResponseAlert(CheckoutPaymentActivity.this);
+                        Alerts.requestUnauthorisedAlert(CheckoutPaymentActivity.this);
                         System.out.println(response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -121,12 +123,18 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(CheckoutPaymentActivity.this);
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(CheckoutPaymentActivity.this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makePurchaseRequest);
+                    }
+                });
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutPaymentActivity.this);
                 else Alerts.unknownErrorAlert(CheckoutPaymentActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
-        Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makePurchaseRequest);
     }
 
     private boolean isEverythingValid() {

@@ -1,5 +1,6 @@
 package in.foodmash.app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,8 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
 
     Intent intent;
     JSONArray jsonArray;
+    JsonObjectRequest deleteAddressRequest;
+    JsonObjectRequest getAddressesRequest;
 
     LinearLayout back;
     LinearLayout addAddress;
@@ -72,7 +75,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void fillLayout() {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses", JsonProvider.getStandartRequestJson(AddressActivity.this),new Response.Listener<JSONObject>() {
+        getAddressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses", JsonProvider.getStandardRequestJson(AddressActivity.this),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -104,13 +107,13 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                             addressLayout.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    JSONObject requestJson = JsonProvider.getStandartRequestJson(AddressActivity.this);
+                                    JSONObject requestJson = JsonProvider.getStandardRequestJson(AddressActivity.this);
                                     JSONObject dataJson = new JSONObject();
                                     try {
                                         dataJson.put("id", jsonObject.getString("id"));
                                         requestJson.put("data", dataJson);
                                     } catch (JSONException e) { e.printStackTrace(); }
-                                    JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
+                                    deleteAddressRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
                                         @Override
                                         public void onResponse(JSONObject response) {
                                             try {
@@ -125,19 +128,24 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            if (error instanceof NoConnectionError || error instanceof TimeoutError)
-                                                Alerts.internetConnectionErrorAlert(AddressActivity.this);
+                                            if (error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddressActivity.this, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteAddressRequest);
+                                                }
+                                            });
+                                            if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this);
                                             else Alerts.unknownErrorAlert(AddressActivity.this);
                                             System.out.println("Response Error: " + error);
                                         }
                                     });
-                                    Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteRequest);
+                                    Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteAddressRequest);
                                 }
                             });
                             fillLayout.addView(addressLayout);
                         }
                     } else if(!response.getBoolean("success")) {
-                        Alerts.unableToProcessResponseAlert(AddressActivity.this);
+                        Alerts.requestUnauthorisedAlert(AddressActivity.this);
                         System.out.println(response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -145,12 +153,18 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(AddressActivity.this);
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddressActivity.this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Swift.getInstance(AddressActivity.this).addToRequestQueue(getAddressesRequest);
+                    }
+                });
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this);
                 else Alerts.unknownErrorAlert(AddressActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
-        Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(AddressActivity.this).addToRequestQueue(getAddressesRequest);
     }
 
 }
