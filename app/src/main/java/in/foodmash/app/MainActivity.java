@@ -383,7 +383,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void updateCartCount() {
         int count = cart.getCount();
-        if(count>0) { cartCount.setText(String.valueOf(count)); Animations.fadeIn(cartCount,500); }
+        if(count>0) { cartCount.setText(String.valueOf(count)); Animations.fadeInOnlyIfInvisible(cartCount,500); }
         else Animations.fadeOut(cartCount,500);
     }
 }
