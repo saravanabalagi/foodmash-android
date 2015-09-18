@@ -41,7 +41,6 @@ import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
 import in.foodmash.app.custom.ComboDish;
 import in.foodmash.app.custom.ComboOption;
-import in.foodmash.app.custom.ImmutableCombo;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
@@ -199,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     plus.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            cart.addToCart(new ImmutableCombo(combo));
+                            cart.addToCart(new Combo(combo));
                             count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
                         }
                     });
@@ -207,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onClick(View v) {
                             if(count.getText().toString().equals("0")) return;
-                            cart.decrementFromCart(new ImmutableCombo(combo));
+                            cart.decrementFromCart(combo);
                             count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) - 1));
                             if(Integer.parseInt(count.getText().toString())==0) {
                                 Animations.fadeOut(addedToCartLayout, 200);
@@ -219,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     addToCart.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            cart.addToCart(new ImmutableCombo(combo));
+                            cart.addToCart(new Combo(combo));
                             Animations.fadeInOnlyIfInvisible(addedToCartLayout, 200);
                             Animations.fadeOut(addToCart, 200);
                             Animations.fadeIn(countLayout,200);
@@ -228,10 +227,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     });
                     comboTreeMap.put(combo.getIntPrice(), comboLayout);
                 }
-                for (int n : comboTreeMap.navigableKeySet()) {
+                for (int n : comboTreeMap.navigableKeySet())
                     linearLayout.addView(comboTreeMap.get(n));
-                    System.out.println("Tree contains" + String.valueOf(n));
-                }
                 scrollView.addView(linearLayout);
                 container.addView(scrollView);
                 return scrollView;

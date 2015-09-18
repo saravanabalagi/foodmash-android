@@ -20,6 +20,20 @@ public class Combo {
     private ArrayList<ComboDish> comboDishes = new ArrayList<>();
     private ArrayList<ComboOption> comboOptions = new ArrayList<>();
 
+    public Combo() {}
+    public Combo(Combo c) {
+        this.id = c.id;
+        this.groupSize = c.groupSize;
+        this.noOfPurchases = c.noOfPurchases;
+        this.price = c.price;
+        this.label = c.label;
+        this.name = c.name;
+        this.description = c.description;
+        this.special = c.special;
+        this.comboDishes = new ArrayList<>(c.comboDishes);
+        this.comboOptions = new ArrayList<>(c.comboOptions);
+    }
+
     public int getId() { return id; }
     public int getGroupSize() { return groupSize; }
     public int getNoOfPurchases() { return noOfPurchases; }

@@ -9,8 +9,8 @@ import java.util.TreeMap;
  */
 public class Cart {
 
-    private HashMap<ImmutableCombo,Integer> orders = new HashMap<>();
-    private TreeMap<Long, ImmutableCombo> timestamps = new TreeMap<>();
+    private HashMap<Combo,Integer> orders = new HashMap<>();
+    private TreeMap<Long, Combo> timestamps = new TreeMap<>();
     private static Cart mInstance;
     public synchronized static Cart getInstance() {
         if(mInstance==null) { mInstance = new Cart(); }
@@ -26,12 +26,12 @@ public class Cart {
 
     public String getTotal() {
         float total = 0;
-        for (HashMap.Entry<ImmutableCombo,Integer> order: orders.entrySet() )
+        for (HashMap.Entry<Combo,Integer> order: orders.entrySet() )
             total += order.getKey().getFloatPrice() * order.getValue();
         return String.format("%.2f",total);
     }
 
-    public void addToCart(ImmutableCombo combo) {
+    public void addToCart(Combo combo) {
         timestamps.put(System.currentTimeMillis(),combo);
         System.out.println("Combo Hash: "+combo.hashCode());
         if(orders.containsKey(combo)) { orders.put(combo,orders.get(combo)+1); System.out.println("Increasing quantity by 1");}
@@ -40,9 +40,9 @@ public class Cart {
         printTimestampsContents();
       }
 
-    public void decrementFromCart(ImmutableCombo combo) {
+    public void decrementFromCart(Combo combo) {
         for(Long timestamp: timestamps.descendingKeySet()) {
-            ImmutableCombo comboEntry = timestamps.get(timestamp);
+            Combo comboEntry = timestamps.get(timestamp);
             if (combo.getId() == comboEntry.getId()) {
                 if (orders.get(comboEntry) - 1 == 0) orders.remove(comboEntry);
                 else orders.put(comboEntry, orders.get(comboEntry) - 1);
@@ -56,14 +56,14 @@ public class Cart {
 
     public int hasHowMany(int comboId) {
         int count =0;
-        for (HashMap.Entry<ImmutableCombo,Integer> order: orders.entrySet() )
+        for (HashMap.Entry<Combo,Integer> order: orders.entrySet() )
             if(order.getKey().getId()==comboId)
                 count += order.getValue();
         return count;
     }
 
-    public HashMap<ImmutableCombo,Integer> getOrders() { return orders; }
-    public void changeQuantity(ImmutableCombo combo, int quantity) {
+    public HashMap<Combo,Integer> getOrders() { return orders; }
+    public void changeQuantity(Combo combo, int quantity) {
         if(orders.get(combo)-quantity>0) {
             int i = 0;
             Iterator<Long> iterator = timestamps.descendingKeySet().iterator();
@@ -80,7 +80,7 @@ public class Cart {
         printOrdersContents(); printTimestampsContents();
     }
     public void removeAllOrders() { orders.clear(); timestamps.clear(); }
-    public void removeOrder(ImmutableCombo combo) {
+    public void removeOrder(Combo combo) {
         orders.remove(combo);
         Iterator<Long> iterator = timestamps.descendingKeySet().iterator();
         while(iterator.hasNext()) {
@@ -94,13 +94,13 @@ public class Cart {
 
     public void printTimestampsContents() {
         System.out.println("Treemap contents: ");
-        for (TreeMap.Entry<Long, ImmutableCombo> entry : timestamps.entrySet())
+        for (TreeMap.Entry<Long, Combo> entry : timestamps.entrySet())
             System.out.println("Timestamp: "+entry.getKey()+" Combo Hash: "+entry.getValue().hashCode()+ " Selected: "+entry.getValue().getSelectedComboDishes()+" Combo ID: "+entry.getValue().getId());
     }
 
     public void printOrdersContents() {
         System.out.println("Orders hashmap contents: ");
-        for (HashMap.Entry<ImmutableCombo, Integer> entry: orders.entrySet())
+        for (HashMap.Entry<Combo, Integer> entry: orders.entrySet())
             System.out.println("Combo Hash: "+entry.getKey().hashCode()+ " Selected: "+entry.getKey().getSelectedComboDishes()+" Quantity: "+entry.getValue());
     }
 
