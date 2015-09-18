@@ -147,7 +147,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         editor.putBoolean("logged_in",true);
                         editor.putString("user_token", userToken);
                         editor.putString("session_token", sessionToken);
-                        editor.putString("android_token", Cryptography.getEncrptedAndroidId(LoginActivity.this,sessionToken));
+                        editor.putString("android_token", Cryptography.getEncryptedAndroidId(LoginActivity.this, sessionToken));
                         editor.apply();
                         startActivity(intent);
                         finish();

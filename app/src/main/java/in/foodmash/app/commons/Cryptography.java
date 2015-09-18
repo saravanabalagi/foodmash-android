@@ -22,7 +22,6 @@ public class Cryptography {
         MessageDigest sha = null;
         try {
             key = hexToByte(myKey);
-            key = myKey.getBytes();
             sha = MessageDigest.getInstance("SHA-1");
             key = sha.digest(key);
             key = Arrays.copyOf(key, 16); // use only first 128 bit
@@ -33,6 +32,7 @@ public class Cryptography {
 
     private static String encrypt(String strToEncrypt, String key) {
         try {
+            setKey(key);
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             System.out.println("String to encrypt: "+strToEncrypt);
@@ -45,6 +45,7 @@ public class Cryptography {
 
     private static String decrypt(String strToDecrypt, String key) {
         try {
+            setKey(key);
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             return new String(cipher.doFinal(Base64.decode(cipher.doFinal(strToDecrypt.getBytes()))));
@@ -52,7 +53,7 @@ public class Cryptography {
         return null;
     }
 
-    public static String getEncrptedAndroidId(Context context, String key) {
+    public static String getEncryptedAndroidId(Context context, String key) {
         String androidId = Settings.Secure.getString(context.getContentResolver(),Settings.Secure.ANDROID_ID);
         return encrypt(androidId,key);
     }

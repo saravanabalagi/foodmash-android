@@ -1,5 +1,6 @@
 package in.foodmash.app.commons;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,7 +22,7 @@ public class Alerts {
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Network Error")
                 .setMessage(message)
-                .setPositiveButton("Turn Internet On", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { Intent i = new Intent(Settings.ACTION_WIRELESS_SETTINGS); context.startActivity(i); } })
+                .setPositiveButton("Turn Internet On", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { Intent i = new Intent(Settings.ACTION_SETTINGS); ((Activity)context).startActivityForResult(i,0); } })
                 .setNegativeButton("Ignore", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { } })
                 .show();
     }

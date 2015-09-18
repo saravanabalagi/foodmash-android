@@ -25,7 +25,7 @@ public class JsonProvider {
         String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         HashMap<String,String> hashMap = new HashMap<>();
         hashMap.put("android_id", androidId);
-        hashMap.put("android_token",Cryptography.getEncrptedAndroidId(context,"hello"));
+        hashMap.put("android_token",Cryptography.getEncryptedAndroidId(context, "abcdef"));
         return new JSONObject(hashMap);
     }
 }

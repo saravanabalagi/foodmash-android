@@ -49,7 +49,10 @@ public class ComboOption {
         ComboOption comboOption = (ComboOption) o;
         if (this.comboOptionDishes.size() != comboOption.comboOptionDishes.size()) return false;
         comboOption.comboOptionDishes.removeAll(this.comboOptionDishes);
-        return comboOption.comboOptionDishes.size() == 0 && selected == comboOption.selected;
+        if(comboOption.comboOptionDishes.size() == 0 && selected == comboOption.selected) {
+            System.out.println("Equal Combo Options!");
+            return true;
+        } else return false;
     }
 
 }

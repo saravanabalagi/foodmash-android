@@ -109,6 +109,11 @@ public class SplashActivity extends Activity {
         return sharedPreferences.getBoolean("keep_me_logged_in",false);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        makeRequest(checkConnectionRequest);
+    }
+
     private boolean isLoggedIn() {
         SharedPreferences sharedPreferences = getSharedPreferences("session",0);
         return sharedPreferences.getBoolean("logged_in",false);

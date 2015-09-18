@@ -184,7 +184,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         editor.putBoolean("logged_in",true);
                         editor.putString("user_token", userToken);
                         editor.putString("session_token", sessionToken);
-                        editor.putString("android_token", Cryptography.getEncrptedAndroidId(SignupActivity.this, sessionToken));
+                        editor.putString("android_token", Cryptography.getEncryptedAndroidId(SignupActivity.this, sessionToken));
                         editor.apply();
                         startActivity(intent);
                         finish();

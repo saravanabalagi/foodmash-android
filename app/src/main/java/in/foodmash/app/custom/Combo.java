@@ -40,6 +40,12 @@ public class Combo {
             dishNames += comboDish.getDish().getName() + ", ";
         return dishNames.substring(0,dishNames.length()-2);
     }
+    public ArrayList<Integer> getSelectedComboDishes() {
+        ArrayList<Integer> selectedList = new ArrayList<>();
+        for (ComboOption comboOption : this.getComboOptions())
+            selectedList.add(comboOption.getSelected());
+        return selectedList;
+    }
 
     public void setId(int id) { this.id = id; }
     public void setGroupSize(int groupSize) { this.groupSize = groupSize; }
@@ -55,25 +61,17 @@ public class Combo {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Combo)) return false;
-        if (o == this) return true;
+        if (o == this) { return true; }
         Combo combo = (Combo) o;
-        if(this.getId() == combo.getId() && this.getComboOptions().equals(combo.getComboOptions())){
-            System.out.println("Combo is equal");
-            return true;
-        } else return false;
+        return this.getId() == combo.getId() && this.getComboOptions().equals(combo.getComboOptions());
     }
 
     @Override
     public int hashCode() {
-        ArrayList<Integer> selected = new ArrayList<>();
-        for (ComboOption comboOption : getComboOptions()) {
-            selected.add(comboOption.getSelected());
-        }
-        int hash = new HashCodeBuilder(13,29)
+
+        return new HashCodeBuilder(13,29)
                 .append(this.getId())
-                .append(selected.toArray())
+                .append(getSelectedComboDishes().toArray())
                 .hashCode();
-        System.out.println("Hash COde: "+hash);
-        return hash;
     }
 }

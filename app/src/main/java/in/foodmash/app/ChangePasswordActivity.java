@@ -140,7 +140,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                             editor.putBoolean("logged_in", true);
                             editor.putString("user_token", userToken);
                             editor.putString("session_token", sessionToken);
-                            editor.putString("android_token", Cryptography.getEncrptedAndroidId(ChangePasswordActivity.this, userToken));
+                            editor.putString("android_token", Cryptography.getEncryptedAndroidId(ChangePasswordActivity.this, userToken));
                             editor.apply();
                             intent = new Intent(ChangePasswordActivity.this, MainActivity.class);
                             startActivity(intent);

@@ -21,7 +21,7 @@ import java.util.HashMap;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.custom.Cart;
-import in.foodmash.app.custom.Combo;
+import in.foodmash.app.custom.ImmutableCombo;
 import in.foodmash.app.custom.TouchableImageButton;
 import in.foodmash.app.utils.NumberUtils;
 
@@ -73,8 +73,8 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
         total.setText(cart.getTotal());
         if(cart.getCount()>0) emptyCartLayout.setVisibility(View.GONE);
-        for(final HashMap.Entry<Combo,Integer> order: cart.getOrders().entrySet()){
-            final Combo combo = order.getKey();
+        for(final HashMap.Entry<ImmutableCombo,Integer> order: cart.getOrders().entrySet()){
+            final ImmutableCombo combo = order.getKey();
             final LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.cart_combo, fillLayout, false);
             ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
             ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
@@ -87,7 +87,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void afterTextChanged(Editable s) {
                     try {
-                        if(s.toString().equals("0")) quantity.setText("");
+                        if(s.toString().equals("0")) { quantity.setText(""); return; }
                         if (s.length() > 0 && NumberUtils.isInteger(s.toString())) {
                             cart.changeQuantity(combo,Integer.parseInt(s.toString()));
                             total.setText(cart.getTotal());
@@ -104,7 +104,6 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                         if(quantity.getText().length()<1) {
                             Alerts.commonErrorAlert(CartActivity.this,"Empty Quantity","Quantity field cannot be empty","Okay");
                             quantity.setText(((TextView)comboLayout.findViewById(R.id.quantity_display)).getText().toString());
-                            quantity.requestFocus();
                         }
                 }
             });
@@ -144,7 +143,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                         }).setNegativeButton("No, don't remove", new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialog, int which) { }
                 }).show(); break;
-            case R.id.back: intent = new Intent(this, MainActivity.class); startActivity(intent); break;
+            case R.id.back: finish(); break;
             case R.id.buy:
                 if(cart.getCount()==0) Alerts.commonErrorAlert(CartActivity.this,"Empty Cart","Your cart is empty. Add some combos and we'll proceed!","Okay");
                 else if(isEverythingValid()) {
