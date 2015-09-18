@@ -30,8 +30,12 @@ public class Combo {
         this.name = c.name;
         this.description = c.description;
         this.special = c.special;
-        this.comboDishes = new ArrayList<>(c.comboDishes);
-        this.comboOptions = new ArrayList<>(c.comboOptions);
+        this.comboDishes = c.comboDishes;
+        this.comboOptions = new ArrayList<>();
+        for (ComboOption entry: c.getComboOptions()) {
+            ComboOption comboOption = new ComboOption(entry);
+            this.comboOptions.add(comboOption);
+        }
     }
 
     public int getId() { return id; }

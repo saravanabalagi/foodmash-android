@@ -16,6 +16,16 @@ public class ComboOption {
     private int selected = 0;
     private ArrayList<ComboDish> comboOptionDishes = new ArrayList<>();
 
+    public ComboOption() {}
+    public ComboOption(ComboOption c) {
+        this.id = c.id;
+        this.priority = c.priority;
+        this.name = c.name;
+        this.description = c.description;
+        this.selected  = c.selected ;
+        this.comboOptionDishes = c.comboOptionDishes;
+    }
+
     public int getId() { return id; }
     public int getPriority() { return priority; }
     public String getName() { return name; }
@@ -49,10 +59,7 @@ public class ComboOption {
         ComboOption comboOption = (ComboOption) o;
         if (this.comboOptionDishes.size() != comboOption.comboOptionDishes.size()) return false;
         comboOption.comboOptionDishes.removeAll(this.comboOptionDishes);
-        if(comboOption.comboOptionDishes.size() == 0 && selected == comboOption.selected) {
-            System.out.println("Equal Combo Options!");
-            return true;
-        } else return false;
+        return comboOption.comboOptionDishes.size() == 0 && selected == comboOption.selected;
     }
 
 }

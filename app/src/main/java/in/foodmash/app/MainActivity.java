@@ -70,6 +70,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPostResume() {
         super.onPostResume();
         System.out.println("Resumed");
+        if(combos!=null) {
+            for (int i=0;i<viewPager.getChildCount();i++) {
+                ScrollView scrollView = (ScrollView) viewPager.getChildAt(i);
+                LinearLayout currentPage = (LinearLayout) scrollView.getChildAt(0);
+                for (int j=0;j<currentPage.getChildCount();j++) {
+                    LinearLayout comboLayout = (LinearLayout) currentPage.getChildAt(j);
+                    int quantity = cart.hasHowMany(Integer.parseInt(((TextView) comboLayout.findViewById(R.id.id)).getText().toString()));
+                    final ImageView addToCart = (ImageView) comboLayout.findViewById(R.id.add_to_cart);
+                    final LinearLayout addedToCartLayout = (LinearLayout) comboLayout.findViewById(R.id.added_to_cart_layout);
+                    final LinearLayout countLayout = (LinearLayout) comboLayout.findViewById(R.id.count_layout);
+                    final TextView count = (TextView) countLayout.findViewById(R.id.count);
+                    count.setText(String.valueOf(quantity));
+                    if (quantity > 0) {
+                        addedToCartLayout.setVisibility(View.VISIBLE);
+                        addToCart.setVisibility(View.GONE);
+                        countLayout.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -101,7 +121,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for_3_focus = (ImageView) findViewById(R.id.for_3_focus);
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
-        final PagerAdapter pagerAdapter = new PagerAdapter() {
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", JsonProvider.getStandardRequestJson(MainActivity.this) ,new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                System.out.println(response);
+                try {
+                    if (response.getBoolean("success")) {
+                        ObjectMapper mapper = new ObjectMapper();
+                        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+                        combos = Arrays.asList(mapper.readValue(response.getJSONArray("data").toString(), Combo[].class));
+                        viewPager.setAdapter(getPagerAdapter());
+                        viewPager.addOnPageChangeListener(MainActivity.this);
+                    } else if (!response.getBoolean("success")) {
+                        Alerts.requestUnauthorisedAlert(MainActivity.this);
+                        System.out.println(response.getString("error"));
+                    }
+                } catch (Exception e) { e.printStackTrace(); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(MainActivity.this);
+                else Alerts.unknownErrorAlert(MainActivity.this);
+            }
+        });
+        Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.offers: setFocus(v.getId()); break;
+            case R.id.for_1: setFocus(v.getId()); break;
+            case R.id.for_2: setFocus(v.getId()); break;
+            case R.id.for_3: setFocus(v.getId()); break;
+        }
+    }
+
+    private PagerAdapter getPagerAdapter() {
+        return new PagerAdapter() {
             @Override public int getCount() { return 4; }
             @Override public boolean isViewFromObject(View view, Object object) { return view==object; }
             @Override public void destroyItem(ViewGroup container, int position, Object object) { container.removeView((ScrollView) object); }
@@ -119,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     final LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo, linearLayout, false);
                     if (combo.getGroupSize()!= position) continue;
+                    ((TextView) comboLayout.findViewById(R.id.id)).setText(String.valueOf(combo.getId()));
                     ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
                     ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
                     ((TextView) comboLayout.findViewById(R.id.description)).setText(combo.getDescription());
@@ -234,43 +296,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return scrollView;
             }
         };
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", JsonProvider.getStandardRequestJson(MainActivity.this) ,new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                System.out.println(response);
-                try {
-                    if (response.getBoolean("success")) {
-                        ObjectMapper mapper = new ObjectMapper();
-                        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-                        combos = Arrays.asList(mapper.readValue(response.getJSONArray("data").toString(), Combo[].class));
-                        viewPager.setAdapter(pagerAdapter);
-                        viewPager.addOnPageChangeListener(MainActivity.this);
-                    } else if (!response.getBoolean("success")) {
-                        Alerts.requestUnauthorisedAlert(MainActivity.this);
-                        System.out.println(response.getString("error"));
-                    }
-                } catch (Exception e) { e.printStackTrace(); }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (error instanceof NoConnectionError || error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(MainActivity.this);
-                else Alerts.unknownErrorAlert(MainActivity.this);
-            }
-        });
-        Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
-
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.offers: setFocus(v.getId()); break;
-            case R.id.for_1: setFocus(v.getId()); break;
-            case R.id.for_2: setFocus(v.getId()); break;
-            case R.id.for_3: setFocus(v.getId()); break;
-        }
     }
 
     private void setFocus(int id){
