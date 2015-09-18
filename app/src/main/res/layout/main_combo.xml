@@ -132,8 +132,19 @@
                         android:tint="@color/color_accent_white_bg"
                         android:id="@+id/add_to_cart"
                         android:layout_centerHorizontal="true"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp" />
+                        android:paddingLeft="30dp"
+                        android:paddingRight="30dp" />
+
+                    <ImageView
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:id="@+id/imageView"
+                        android:src="@mipmap/add"
+                        android:tint="@color/abc_primary_text_material_dark"
+                        android:layout_alignRight="@+id/add_to_cart"
+                        android:layout_marginTop="17dp"
+                        android:layout_marginRight="30dp"
+                        android:background="@drawable/cart_count_background" />
 
                     <LinearLayout
                         android:orientation="horizontal"
@@ -156,11 +167,12 @@
                             android:padding="10dp" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="20dp"
                             android:layout_height="wrap_content"
-                            android:text="0"
+                            android:text="99"
                             android:id="@+id/count"
-                            android:textSize="16sp" />
+                            android:textSize="16sp"
+                            android:gravity="center_horizontal" />
 
                         <in.foodmash.app.custom.TouchableImageButton
                             android:layout_width="40dp"
