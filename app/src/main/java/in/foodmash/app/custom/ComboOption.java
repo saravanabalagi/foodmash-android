@@ -45,6 +45,13 @@ public class ComboOption {
         return null;
     }
 
+    public String getSelectedDishRestaurant() {
+        for (ComboDish comboDish:comboOptionDishes)
+            if(selected==comboDish.getId())
+                return comboDish.getDish().getRestaurant().getName();
+        return null;
+    }
+
     public void setId(int id) { this.id = id; }
     public void setPriority(int priority) { this.priority = priority; }
     public void setName(String name) { this.name = name; }

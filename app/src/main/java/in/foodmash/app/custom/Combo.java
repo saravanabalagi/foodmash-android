@@ -53,7 +53,7 @@ public class Combo {
     public String getDishNames() {
         String dishNames = "";
         for (ComboOption comboOption : this.getComboOptions())
-            dishNames += comboOption.getSelectedDishName() + ", ";
+            dishNames += comboOption.getSelectedDishName() + (comboOption.isFromSameRestaurant()?"":" ("+comboOption.getSelectedDishRestaurant()+")") + ", ";
         for (ComboDish comboDish : this.getComboDishes())
             dishNames += comboDish.getDish().getName() + ", ";
         return dishNames.substring(0,dishNames.length()-2);
