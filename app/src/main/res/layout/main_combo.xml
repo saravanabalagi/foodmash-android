@@ -125,26 +125,32 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal">
 
-                    <ImageView
-                        android:layout_width="90dp"
-                        android:layout_height="match_parent"
-                        android:src="@mipmap/cart"
-                        android:tint="@color/color_accent_white_bg"
-                        android:id="@+id/add_to_cart"
-                        android:layout_centerHorizontal="true"
-                        android:paddingLeft="30dp"
-                        android:paddingRight="30dp" />
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/add_to_cart_layout">
 
-                    <ImageView
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:id="@+id/imageView"
-                        android:src="@mipmap/add"
-                        android:tint="@color/abc_primary_text_material_dark"
-                        android:layout_alignRight="@+id/add_to_cart"
-                        android:layout_marginTop="17dp"
-                        android:layout_marginRight="30dp"
-                        android:background="@drawable/cart_count_background" />
+                        <ImageView
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:src="@mipmap/cart"
+                            android:tint="@color/color_accent_white_bg"
+                            android:id="@+id/add_to_cart"
+                            android:layout_centerHorizontal="true"
+                            android:paddingLeft="33dp"
+                            android:paddingRight="33dp" />
+
+                        <ImageView
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:id="@+id/imageView"
+                            android:src="@mipmap/add"
+                            android:tint="@color/abc_primary_text_material_dark"
+                            android:layout_alignRight="@+id/add_to_cart"
+                            android:layout_marginTop="17dp"
+                            android:layout_marginRight="32dp"
+                            android:background="@drawable/cart_count_background" />
+                    </RelativeLayout>
 
                     <LinearLayout
                         android:orientation="horizontal"

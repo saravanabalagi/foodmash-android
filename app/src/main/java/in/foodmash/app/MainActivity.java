@@ -84,14 +84,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 for (int j=0;j<currentPage.getChildCount();j++) {
                     LinearLayout comboLayout = (LinearLayout) currentPage.getChildAt(j);
                     int quantity = cart.hasHowMany(Integer.parseInt(((TextView) comboLayout.findViewById(R.id.id)).getText().toString()));
-                    final ImageView addToCart = (ImageView) comboLayout.findViewById(R.id.add_to_cart);
+                    final LinearLayout addToCartLayout = (LinearLayout) comboLayout.findViewById(R.id.add_to_cart_layout);
                     final LinearLayout addedToCartLayout = (LinearLayout) comboLayout.findViewById(R.id.added_to_cart_layout);
                     final LinearLayout countLayout = (LinearLayout) comboLayout.findViewById(R.id.count_layout);
                     final TextView count = (TextView) countLayout.findViewById(R.id.count);
                     count.setText(String.valueOf(quantity));
                     if (quantity > 0) {
                         addedToCartLayout.setVisibility(View.VISIBLE);
-                        addToCart.setVisibility(View.GONE);
+                        addToCartLayout.setVisibility(View.GONE);
                         countLayout.setVisibility(View.VISIBLE);
                     }
                 }
@@ -256,13 +256,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             } else comboFoodLayout.removeAllViews();
                         }
                     });
-                    final ImageView addToCart = (ImageView) comboLayout.findViewById(R.id.add_to_cart);
+                    final LinearLayout addToCartLayout = (LinearLayout) comboLayout.findViewById(R.id.add_to_cart_layout);
                     final LinearLayout addedToCartLayout = (LinearLayout) comboLayout.findViewById(R.id.added_to_cart_layout);
                     final LinearLayout countLayout = (LinearLayout) comboLayout.findViewById(R.id.count_layout);
                     final TextView count = (TextView) countLayout.findViewById(R.id.count);
                     int quantity = cart.hasHowMany(combo.getId());
                     count.setText(String.valueOf(quantity));
-                    if (quantity>0) { addedToCartLayout.setVisibility(View.VISIBLE); addToCart.setVisibility(View.GONE); countLayout.setVisibility(View.VISIBLE); }
+                    if (quantity>0) { addedToCartLayout.setVisibility(View.VISIBLE); addToCartLayout.setVisibility(View.GONE); countLayout.setVisibility(View.VISIBLE); }
                     ImageView plus = (ImageView) countLayout.findViewById(R.id.plus);
                     ImageView minus = (ImageView) countLayout.findViewById(R.id.minus);
                     plus.setOnClickListener(new View.OnClickListener() {
@@ -282,17 +282,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if(Integer.parseInt(count.getText().toString())==0) {
                                 Animations.fadeOut(addedToCartLayout, 200);
                                 Animations.fadeOut(countLayout, 200);
-                                Animations.fadeIn(addToCart, 200);
+                                Animations.fadeIn(addToCartLayout, 200);
                             }
                             updateCartCount();
                         }
                     });
-                    addToCart.setOnClickListener(new View.OnClickListener() {
+                    addToCartLayout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             cart.addToCart(new Combo(combo));
                             Animations.fadeInOnlyIfInvisible(addedToCartLayout, 200);
-                            Animations.fadeOut(addToCart, 200);
+                            Animations.fadeOut(addToCartLayout, 200);
                             Animations.fadeIn(countLayout, 200);
                             count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
                             updateCartCount();
@@ -383,7 +383,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void updateCartCount() {
         int count = cart.getCount();
-        if(count>0) { cartCount.setText(String.valueOf(count)); Animations.fadeInOnlyIfInvisible(cartCount,500); }
+        if(count>0) { cartCount.setText(String.valueOf(count)); Animations.fadeInOnlyIfInvisible(cartCount, 500); }
         else Animations.fadeOut(cartCount,500);
     }
 }
