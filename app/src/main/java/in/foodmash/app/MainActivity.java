@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -58,11 +59,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ViewPager viewPager;
     private List<Combo> combos;
+    private TextView cartCount;
     private Cart cart = Cart.getInstance();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
+        cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count); updateCartCount();
         return true;
     }
 
@@ -70,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPostResume() {
         super.onPostResume();
         System.out.println("Resumed");
+        updateCartCount();
         if(combos!=null) {
             for (int i=0;i<viewPager.getChildCount();i++) {
                 ScrollView scrollView = (ScrollView) viewPager.getChildAt(i);
@@ -263,6 +268,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         public void onClick(View v) {
                             cart.addToCart(new Combo(combo));
                             count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
+                            updateCartCount();
                         }
                     });
                     minus.setOnClickListener(new View.OnClickListener() {
@@ -276,6 +282,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 Animations.fadeOut(countLayout,200);
                                 Animations.fadeIn(addToCart,200);
                             }
+                            updateCartCount();
                         }
                     });
                     addToCart.setOnClickListener(new View.OnClickListener() {
@@ -286,6 +293,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             Animations.fadeOut(addToCart, 200);
                             Animations.fadeIn(countLayout,200);
                             count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
+                            updateCartCount();
                         }
                     });
                     comboTreeMap.put(combo.getIntPrice(), comboLayout);
@@ -371,5 +379,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }).show();
     }
 
-
+    private void updateCartCount() {
+        int count = cart.getCount();
+        if(count>0) { cartCount.setText(String.valueOf(count)); Animations.fadeIn(cartCount,500); }
+        else Animations.fadeOut(cartCount,500);
+    }
 }

@@ -28,6 +28,7 @@
         app:showAsAction="never" />
     <item android:id="@+id/menu_cart"
         android:title="@string/cart"
+        android:actionLayout="@layout/menu_cart_count"
         android:icon="@mipmap/cart"
         android:orderInCategory="7"
         app:showAsAction="always" />
