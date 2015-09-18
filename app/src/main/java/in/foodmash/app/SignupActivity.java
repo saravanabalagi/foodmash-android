@@ -118,7 +118,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         passwordConfirmationValidate = (ImageView) findViewById(R.id.password_confirmation_validate);
 
         name = (EditText) findViewById(R.id.name); name.addTextChangedListener(this);
-        email = (EditText) findViewById(R.id.email_or_phone); email.addTextChangedListener(this);
+        email = (EditText) findViewById(R.id.email); email.addTextChangedListener(this);
         phone = (EditText) findViewById(R.id.phone); phone.addTextChangedListener(this);
         password = (EditText) findViewById(R.id.password); password.addTextChangedListener(this);
         passwordConfirmation = (EditText) findViewById(R.id.password_confirmation); passwordConfirmation.addTextChangedListener(this);
