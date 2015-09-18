@@ -2,7 +2,6 @@ package in.foodmash.app;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -37,6 +36,7 @@ import java.util.List;
 
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.TouchableImageButton;
@@ -137,7 +137,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         addressLine1 = (EditText) findViewById(R.id.address_line_1); addressLine1.addTextChangedListener(this);
         addressLine2 = (EditText) findViewById(R.id.address_line_2); addressLine2.addTextChangedListener(this);
         city = (EditText) findViewById(R.id.city);
-        phone = (EditText) findViewById(R.id.phone); if(!edit) phone.setText(getPhone());  phone.addTextChangedListener(this);
+        phone = (EditText) findViewById(R.id.phone); if(!edit) phone.setText(Info.getPhone(AddAddressActivity.this));  phone.addTextChangedListener(this);
         landline = (EditText) findViewById(R.id.landline); landline.addTextChangedListener(this);
         primaryAddress = (Switch) findViewById(R.id.primary_address);
         area = (AutoCompleteTextView) findViewById(R.id.area);
@@ -299,8 +299,4 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
                 (phoneRadioGroup.getCheckedRadioButtonId()==R.id.mobile_radio)?phone.getText().toString().trim().length()==10:landline.getText().toString().trim().length()>=7;
     }
 
-    private String getPhone() {
-        SharedPreferences sharedPreferences = getSharedPreferences("cache",0);
-        return sharedPreferences.getString("phone",null);
-    }
 }

@@ -32,6 +32,7 @@ import java.util.HashMap;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.TouchableImageButton;
@@ -89,18 +90,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         passwordValidate = (ImageView) findViewById(R.id.password_validate);
         phonePrefix = (EditText) findViewById(R.id.phone_prefix);
         email = (EditText) findViewById(R.id.email_or_phone); email.addTextChangedListener(this);
-        if(getPhone()!=null) { email.setText(getPhone()); }
-        else if(getEmail()!=null) { email.setText(getEmail()); }
+        if(Info.getPhone(LoginActivity.this)!=null) { email.setText(Info.getPhone(LoginActivity.this)); }
+        else if(Info.getEmail(LoginActivity.this)!=null) { email.setText(Info.getEmail(LoginActivity.this)); }
         password = (EditText) findViewById(R.id.password); password.addTextChangedListener(this);
         keepLoggedIn = (Switch) findViewById(R.id.keep_logged_in); keepLoggedIn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(!isChecked) { keepMeLoggedIn(false); Alerts.commonErrorAlert(LoginActivity.this, "Logout on exit", "You will be logged out once you close the app", "Okay"); }
-                else keepMeLoggedIn(true);
+                if (!isChecked) {
+                    Info.setKeepMeLoggedIn(LoginActivity.this, false);
+                    Alerts.commonErrorAlert(LoginActivity.this, "Logout on exit", "You will be logged out once you close the app", "Okay");
+                } else Info.setKeepMeLoggedIn(LoginActivity.this, true);
             }
         });
 
-        keepMeLoggedIn(true);
+        Info.setKeepMeLoggedIn(LoginActivity.this,true);
 
     }
 
@@ -139,7 +142,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
                         JSONObject userJson = dataJson.getJSONObject("user");
-                        cacheEmailAndPhone(userJson.getString("email"),userJson.getString("mobile_no"));
+                        Info.cacheEmailAndPhone(LoginActivity.this, userJson.getString("email"), userJson.getString("mobile_no"));
                         String userToken = dataJson.getString("user_token");
                         String sessionToken = dataJson.getString("session_token");
                         SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
@@ -201,31 +204,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
         else if(s==password.getEditableText()) { if(s.length()>=8) Animations.fadeOut(passwordValidate, 500); else Animations.fadeInOnlyIfInvisible(passwordValidate,500); }
-    }
-
-    private void keepMeLoggedIn(boolean bool) {
-        SharedPreferences sharedPreferences = getSharedPreferences("preferences",0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("keep_me_logged_in",bool);
-        editor.apply();
-    }
-
-    private String getEmail() {
-        SharedPreferences sharedPreferences = getSharedPreferences("cache",0);
-        return sharedPreferences.getString("email",null);
-    }
-
-    private String getPhone() {
-        SharedPreferences sharedPreferences = getSharedPreferences("cache",0);
-        return sharedPreferences.getString("phone",null);
-    }
-
-    private void cacheEmailAndPhone(String email, String phone) {
-        SharedPreferences sharedPreferences = getSharedPreferences("cache", 0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("email",email);
-        editor.putString("phone",phone);
-        editor.apply();
     }
 
 }

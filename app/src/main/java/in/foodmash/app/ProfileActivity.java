@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -37,6 +36,7 @@ import java.util.Locale;
 
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.TouchableImageButton;
@@ -207,7 +207,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
-                        cacheEmailAndPhone(email.getText().toString().trim(),phone.getText().toString().trim());
+                        Info.cacheEmailAndPhone(ProfileActivity.this, email.getText().toString().trim(), phone.getText().toString().trim());
                         finish();
                     } else if(!(response.getBoolean("success"))) {
                         Alerts.commonErrorAlert(ProfileActivity.this,
@@ -251,14 +251,5 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 phone.getText().toString().trim().length()==10 &&
                 NumberUtils.isInteger(phone.getText().toString().trim());
     }
-
-    private void cacheEmailAndPhone(String email, String phone) {
-        SharedPreferences sharedPreferences = getSharedPreferences("cache", 0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("email",email);
-        editor.putString("phone",phone);
-        editor.apply();
-    }
-
 
 }

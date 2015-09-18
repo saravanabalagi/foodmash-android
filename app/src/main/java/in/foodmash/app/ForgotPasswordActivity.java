@@ -2,7 +2,6 @@ package in.foodmash.app;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -28,6 +27,7 @@ import org.json.JSONObject;
 
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.TouchableImageButton;
@@ -85,8 +85,8 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
 
         phoneValidate = (ImageView) findViewById(R.id.phone_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
-        phone = (EditText) findViewById(R.id.phone); phone.setText(getPhone()); phone.addTextChangedListener(this);
-        email = (EditText) findViewById(R.id.email_or_phone); email.setText(getEmail()); email.addTextChangedListener(this);
+        phone = (EditText) findViewById(R.id.phone); phone.setText(Info.getPhone(ForgotPasswordActivity.this)); phone.addTextChangedListener(this);
+        email = (EditText) findViewById(R.id.email_or_phone); email.setText(Info.getEmail(ForgotPasswordActivity.this)); email.addTextChangedListener(this);
 
         clearAllFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearAllFields.setOnClickListener(this);
 
@@ -106,7 +106,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         switch (v.getId()) {
             case R.id.clear_fields: email.setText(null); phone.setText(null); break;
             case R.id.back: finish(); break;
-            case R.id.forgot: if(isEverthingValid()) makeRequest(); else Alerts.validityAlert(ForgotPasswordActivity.this); break;
+            case R.id.forgot: if(isEverythingValid()) makeRequest(); else Alerts.validityAlert(ForgotPasswordActivity.this); break;
         }
     }
 
@@ -157,7 +157,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         Swift.getInstance(ForgotPasswordActivity.this).addToRequestQueue(forgotRequest);
     }
 
-    private boolean isEverthingValid() {
+    private boolean isEverythingValid() {
          return (otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)
                  ?phone.getText().toString().trim().length()==10
                  : EmailValidator.getInstance().isValid(email.getText().toString().trim());
@@ -169,15 +169,4 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         if(s==phone.getEditableText()) { if(s.toString().trim().length()!=10) Animations.fadeInOnlyIfInvisible(phoneValidate, 500); else Animations.fadeOut(phoneValidate,500); }
         else if(s==email.getEditableText()) { if(!EmailValidator.getInstance().isValid(s.toString())) Animations.fadeInOnlyIfInvisible(emailValidate, 500); else Animations.fadeOut(emailValidate,500); }
     }
-
-    private String getEmail() {
-        SharedPreferences sharedPreferences = getSharedPreferences("cache",0);
-        return sharedPreferences.getString("email",null);
-    }
-
-    private String getPhone() {
-        SharedPreferences sharedPreferences = getSharedPreferences("cache",0);
-        return sharedPreferences.getString("phone",null);
-    }
-
 }
