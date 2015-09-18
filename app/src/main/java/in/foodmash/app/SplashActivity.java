@@ -16,6 +16,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONObject;
 
 import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 
@@ -35,11 +36,11 @@ public class SplashActivity extends Activity {
         checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/check_connection", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                if(isKeepMeLoggedInSet() && isLoggedIn()) {
+                if(Info.isKeepMeLoggedInSet(SplashActivity.this) && Info.isLoggedIn(SplashActivity.this)) {
                     intent = new Intent(SplashActivity.this,MainActivity.class);
                     startActivity(intent);
                     finish();
-                } else if(!isKeepMeLoggedInSet() && isLoggedIn()) {
+                } else if(!Info.isKeepMeLoggedInSet(SplashActivity.this) && Info.isLoggedIn(SplashActivity.this)) {
                     logoutRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/sessions/destroy", JsonProvider.getStandardRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
@@ -104,18 +105,10 @@ public class SplashActivity extends Activity {
         Swift.getInstance(SplashActivity.this).addToRequestQueue(jsonObjectRequest);
     }
 
-    private boolean isKeepMeLoggedInSet() {
-        SharedPreferences sharedPreferences = getSharedPreferences("preferences",0);
-        return sharedPreferences.getBoolean("keep_me_logged_in",false);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         makeRequest(checkConnectionRequest);
     }
 
-    private boolean isLoggedIn() {
-        SharedPreferences sharedPreferences = getSharedPreferences("session",0);
-        return sharedPreferences.getBoolean("logged_in",false);
-    }
+
 }

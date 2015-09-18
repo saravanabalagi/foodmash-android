@@ -36,6 +36,7 @@ import java.util.TreeMap;
 
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.Cart;
@@ -64,7 +65,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        if(Info.isLoggedIn(MainActivity.this)) getMenuInflater().inflate(R.menu.menu_main, menu);
+        else getMenuInflater().inflate(R.menu.menu_signed_out,menu);
         RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
         cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count); updateCartCount();
         return true;
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPostResume() {
         super.onPostResume();
         System.out.println("Resumed");
-        updateCartCount();
+        if(cartCount!=null) updateCartCount();
         if(combos!=null) {
             for (int i=0;i<viewPager.getChildCount();i++) {
                 ScrollView scrollView = (ScrollView) viewPager.getChildAt(i);
@@ -279,8 +281,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) - 1));
                             if(Integer.parseInt(count.getText().toString())==0) {
                                 Animations.fadeOut(addedToCartLayout, 200);
-                                Animations.fadeOut(countLayout,200);
-                                Animations.fadeIn(addToCart,200);
+                                Animations.fadeOut(countLayout, 200);
+                                Animations.fadeIn(addToCart, 200);
                             }
                             updateCartCount();
                         }
@@ -291,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             cart.addToCart(new Combo(combo));
                             Animations.fadeInOnlyIfInvisible(addedToCartLayout, 200);
                             Animations.fadeOut(addToCart, 200);
-                            Animations.fadeIn(countLayout,200);
+                            Animations.fadeIn(countLayout, 200);
                             count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
                             updateCartCount();
                         }

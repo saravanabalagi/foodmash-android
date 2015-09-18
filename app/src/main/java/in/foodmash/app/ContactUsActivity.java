@@ -2,7 +2,6 @@ package in.foodmash.app;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +32,7 @@ import java.util.HashMap;
 
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.TouchableImageButton;
@@ -102,7 +102,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         sendEmail = (LinearLayout) findViewById(R.id.send_email); sendEmail.setOnClickListener(this);
         clearFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
         notLoggedInLayout = (LinearLayout) findViewById(R.id.not_logged_in_layout);
-        if(isLoggedIn()) notLoggedInLayout.setVisibility(View.GONE);
+        if(Info.isLoggedIn(ContactUsActivity.this)) notLoggedInLayout.setVisibility(View.GONE);
 
         issueValidate = (ImageView) findViewById(R.id.issue_validate);
         descriptionValidate = (ImageView) findViewById(R.id.description_validate);
@@ -172,7 +172,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     }
 
     private boolean isEverythingValid() {
-        return (isLoggedIn() || (EmailValidator.getInstance().isValid(email.getText().toString()) && NumberUtils.isInteger(phone.getText().toString()) && phone.getText().toString().length() == 10)) &&
+        return (Info.isLoggedIn(ContactUsActivity.this) || (EmailValidator.getInstance().isValid(email.getText().toString()) && NumberUtils.isInteger(phone.getText().toString()) && phone.getText().toString().length() == 10)) &&
                 issue.getText().length()>=2 &&
                 description.getText().length()>=2;
     }
@@ -186,8 +186,4 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         else if(s==phone.getEditableText()) { if(!(NumberUtils.isInteger(s.toString()) && s.length()==10)) Animations.fadeInOnlyIfInvisible(phoneValidate, 500); else Animations.fadeOut(phoneValidate,500); }
     }
 
-    private boolean isLoggedIn() {
-        SharedPreferences sharedPreferences = getSharedPreferences("session",0);
-        return sharedPreferences.getBoolean("logged_in",false);
-    }
 }
