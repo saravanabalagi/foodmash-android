@@ -78,6 +78,7 @@ public class Combo {
 
     @Override
     public boolean equals(Object o) {
+        System.out.println("Equals triggered!");
         if (!(o instanceof Combo)) return false;
         if (o == this) { return true; }
         Combo combo = (Combo) o;

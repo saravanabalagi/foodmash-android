@@ -214,6 +214,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 @Override
                                 public void onClick(View v) {
                                     comboOption.setSelected(comboDish.getId());
+                                    System.out.println("Combo Options: "+comboOption.getComboOptionDishes().size());
                                     for (int l = 0; l < comboOption.getComboOptionDishes().size(); l++)
                                         optionsLayout.getChildAt(l).findViewById(R.id.selected).setVisibility(View.INVISIBLE);
                                     selected.setVisibility(View.VISIBLE);

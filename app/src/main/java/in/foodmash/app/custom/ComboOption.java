@@ -22,7 +22,7 @@ public class ComboOption {
         this.priority = c.priority;
         this.name = c.name;
         this.description = c.description;
-        this.selected  = c.selected ;
+        this.selected  = c.selected;
         this.comboOptionDishes = c.comboOptionDishes;
     }
 
@@ -31,7 +31,7 @@ public class ComboOption {
     public String getName() { return name; }
     public String getDescription() { return description; }
     public int getSelected() { return selected; }
-    public ArrayList<ComboDish> getComboOptionDishes() { return comboOptionDishes; }
+    public ArrayList<ComboDish> getComboOptionDishes() { return new ArrayList<>(comboOptionDishes); }
     public boolean isFromSameRestaurant() {
         Set<Integer> restaurantIdSet = new HashSet<>();
         for (ComboDish comboDish:comboOptionDishes)
@@ -58,8 +58,9 @@ public class ComboOption {
         if (o == this) return true;
         ComboOption comboOption = (ComboOption) o;
         if (this.comboOptionDishes.size() != comboOption.comboOptionDishes.size()) return false;
-        comboOption.comboOptionDishes.removeAll(this.comboOptionDishes);
-        return comboOption.comboOptionDishes.size() == 0 && selected == comboOption.selected;
+        ArrayList<ComboDish> compareComboOptionDishes = comboOption.getComboOptionDishes();
+        compareComboOptionDishes.removeAll(this.comboOptionDishes);
+        return compareComboOptionDishes.size() == 0 && selected == comboOption.selected;
     }
 
 }

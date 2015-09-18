@@ -34,7 +34,7 @@ public class Cart {
     public void addToCart(Combo combo) {
         timestamps.put(System.currentTimeMillis(),combo);
         System.out.println("Combo Hash: "+combo.hashCode());
-        if(orders.containsKey(combo)) { orders.put(combo,orders.get(combo)+1); System.out.println("Increasing quantity by 1");}
+        if(orders.containsKey(combo)) { System.out.println("Existing quantity: "+orders.get(combo)); orders.put(combo, orders.get(combo) + 1); System.out.println("Increasing quantity by 1");}
         else { orders.put(combo, 1); System.out.println("Adding a new order"); }
         printOrdersContents();
         printTimestampsContents();
@@ -101,7 +101,7 @@ public class Cart {
     public void printOrdersContents() {
         System.out.println("Orders hashmap contents: ");
         for (HashMap.Entry<Combo, Integer> entry: orders.entrySet())
-            System.out.println("Combo Hash: "+entry.getKey().hashCode()+ " Selected: "+entry.getKey().getSelectedComboDishes()+" Quantity: "+entry.getValue());
+            System.out.println("Combo Hash: "+entry.getKey().hashCode()+ " Selected: "+entry.getKey().getSelectedComboDishes()+" Quantity: "+entry.getValue()+" Contents: "+entry.getKey().getDishNames());
     }
 
 }
