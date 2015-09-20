@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
@@ -67,7 +68,8 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        if(Info.isLoggedIn(ContactUsActivity.this)) getMenuInflater().inflate(R.menu.menu_main, menu);
+        else getMenuInflater().inflate(R.menu.menu_signed_out, menu);
         return true;
     }
 
@@ -78,7 +80,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
         if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
         if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_log_out) { Actions.logout(ContactUsActivity.this); return true; }
         return super.onOptionsItemSelected(item);
     }
 
@@ -157,13 +159,14 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ContactUsActivity.this);
-                if(error instanceof NoConnectionError) Alerts.timeoutErrorAlert(ContactUsActivity.this, new DialogInterface.OnClickListener() {
+                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Swift.getInstance(ContactUsActivity.this).addToRequestQueue(contactUsRequest);
                     }
-                });
+                };
+                if(error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ContactUsActivity.this, onClickTryAgain);
+                if(error instanceof NoConnectionError) Alerts.timeoutErrorAlert(ContactUsActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(ContactUsActivity.this);
                 System.out.println("Response Error: " + error);
             }

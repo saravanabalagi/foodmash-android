@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.custom.TouchableImageButton;
 
 
@@ -59,7 +60,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
             case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true;
             case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true;
             case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true;
-            case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_log_out: Actions.logout(PinYourLocationActivity.this); return true;
             case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); finish(); return true;
             default: return super.onOptionsItemSelected(item);
         }

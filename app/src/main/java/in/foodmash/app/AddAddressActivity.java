@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
@@ -95,7 +96,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
         if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
         if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_log_out) { Actions.logout(AddAddressActivity.this); return true; }
         return super.onOptionsItemSelected(item);
     }
 
@@ -262,13 +263,14 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddAddressActivity.this, new DialogInterface.OnClickListener() {
+                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Swift.getInstance(AddAddressActivity.this).addToRequestQueue(addAddressRequest);
                     }
-                });
-                else if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddAddressActivity.this);
+                };
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddAddressActivity.this, onClickTryAgain);
+                else if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddAddressActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(AddAddressActivity.this);
                 System.out.println("JSON Error: " + error);
             }

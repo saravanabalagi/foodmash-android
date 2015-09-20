@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.custom.Cart;
@@ -55,7 +56,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
         if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
         if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_log_out) { Actions.logout(CartActivity.this); return true; }
         return super.onOptionsItemSelected(item);
     }
 
@@ -82,40 +83,51 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             ((TextView) comboLayout.findViewById(R.id.quantity_display)).setText(String.valueOf(order.getValue()));
             final TextView price = (TextView) comboLayout.findViewById(R.id.price); price.setText(combo.getStringPrice());
             final EditText quantity = (EditText) comboLayout.findViewById(R.id.quantity); quantity.setText(String.valueOf(order.getValue())); quantity.addTextChangedListener(new TextWatcher() {
-                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-                @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
                 @Override
                 public void afterTextChanged(Editable s) {
                     try {
-                        if(s.toString().equals("0")) { quantity.setText(""); return; }
+                        if (s.toString().equals("0")) {
+                            quantity.setText("");
+                            return;
+                        }
                         if (s.length() > 0 && NumberUtils.isInteger(s.toString())) {
-                            cart.changeQuantity(combo,Integer.parseInt(s.toString()));
+                            cart.changeQuantity(combo, Integer.parseInt(s.toString()));
                             total.setText(cart.getTotal());
                             ((TextView) comboLayout.findViewById(R.id.quantity_display)).setText(s.toString());
-                            ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf(combo.getIntPrice()*Integer.parseInt(s.toString())));
+                            ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf(combo.getIntPrice() * Integer.parseInt(s.toString())));
                         }
-                    } catch (NumberFormatException e) { e.printStackTrace(); }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             quantity.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    if(!hasFocus)
-                        if(quantity.getText().length()<1) {
-                            Alerts.commonErrorAlert(CartActivity.this,"Empty Quantity","Quantity field cannot be empty","Okay");
-                            quantity.setText(((TextView)comboLayout.findViewById(R.id.quantity_display)).getText().toString());
+                    if (!hasFocus)
+                        if (quantity.getText().length() < 1) {
+                            Alerts.commonErrorAlert(CartActivity.this, "Empty Quantity", "Quantity field cannot be empty", "Okay");
+                            quantity.setText(((TextView) comboLayout.findViewById(R.id.quantity_display)).getText().toString());
                             quantity.requestFocus();
                         }
                 }
             });
-            ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf(combo.getIntPrice()*order.getValue()));
+            ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf(combo.getIntPrice() * order.getValue()));
             comboLayout.findViewById(R.id.remove).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     cart.removeOrder(combo);
                     total.setText(cart.getTotal());
                     fillLayout.removeView(comboLayout);
-                    if(fillLayout.getChildCount()==0)
+                    if (fillLayout.getChildCount() == 0)
                         Animations.fadeIn(emptyCartLayout, 500);
                 }
             });

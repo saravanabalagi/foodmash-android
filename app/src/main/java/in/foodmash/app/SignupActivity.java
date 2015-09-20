@@ -86,12 +86,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true;
-            case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true;
-            case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true;
             case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true;
-            case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true;
-            case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); finish(); return true;
             default: return super.onOptionsItemSelected(item);
         }
     }
@@ -197,13 +192,14 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, new DialogInterface.OnClickListener() {
+                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Swift.getInstance(SignupActivity.this).addToRequestQueue(registerRequest);
                     }
-                });
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this);
+                };
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(SignupActivity.this);
                 System.out.println("Response Error: " + error);
             }
@@ -251,13 +247,14 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, new DialogInterface.OnClickListener() {
+                        DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Swift.getInstance(SignupActivity.this).addToRequestQueue(checkEmailRequest);
                             }
-                        });
-                        if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this);
+                        };
+                        if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
+                        if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
                         else Alerts.unknownErrorAlert(SignupActivity.this);
                         System.out.println("Email response error: "+error);
                         isEmailValidationInProgress = false;
@@ -298,13 +295,14 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, new DialogInterface.OnClickListener() {
+                        DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Swift.getInstance(SignupActivity.this).addToRequestQueue(checkPhoneRequest);
                             }
-                        });
-                        if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this);
+                        };
+                        if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
+                        if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
                         else Alerts.unknownErrorAlert(SignupActivity.this);
                         System.out.println("Phone response error: "+error);
                         isPhoneValidationInProgress = false;

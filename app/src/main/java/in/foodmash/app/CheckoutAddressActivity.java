@@ -22,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
@@ -37,6 +38,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     String payableAmount;
     JsonObjectRequest getAddressesRequest;
     JsonObjectRequest confirmOrderRequest;
+    JsonObjectRequest deleteRequest;
 
     LinearLayout cart;
     LinearLayout confirm;
@@ -56,7 +58,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
         if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
         if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_log_out) { Actions.logout(CheckoutAddressActivity.this); return true; }
         return super.onOptionsItemSelected(item);
     }
 
@@ -126,13 +128,14 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(CheckoutAddressActivity.this, new DialogInterface.OnClickListener() {
+                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(confirmOrderRequest);
                     }
-                });
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this);
+                };
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(CheckoutAddressActivity.this, onClickTryAgain);
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(CheckoutAddressActivity.this);
                 System.out.println("Response Error: " + error);
             }
@@ -193,7 +196,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                                         dataJson.put("id", addressJson.getString("id"));
                                         requestJson.put("data", dataJson);
                                     } catch (JSONException e) { e.printStackTrace(); }
-                                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
+                                    deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
                                         @Override
                                         public void onResponse(JSONObject response) {
                                             try {
@@ -207,13 +210,19 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            if (error instanceof NoConnectionError || error instanceof TimeoutError)
-                                                Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this);
+                                            DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(deleteRequest);
+                                                }
+                                            };
+                                            if (error instanceof TimeoutError) Alerts.timeoutErrorAlert(CheckoutAddressActivity.this, onClickTryAgain);
+                                            if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this, onClickTryAgain);
                                             else Alerts.unknownErrorAlert(CheckoutAddressActivity.this);
                                             System.out.println("Response Error: " + error);
                                         }
                                     });
-                                    Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(jsonObjectRequest);
+                                    Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(deleteRequest);
                                 }
                             });
                             addressLayout.setOnClickListener(new View.OnClickListener() {
@@ -239,13 +248,14 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(CheckoutAddressActivity.this, new DialogInterface.OnClickListener() {
+                DialogInterface.OnClickListener onClickTryAgain =  new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(getAddressesRequest);
                     }
-                });
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this);
+                };
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(CheckoutAddressActivity.this, onClickTryAgain);
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(CheckoutAddressActivity.this);
                 System.out.println("Response Error: " + error);
             }

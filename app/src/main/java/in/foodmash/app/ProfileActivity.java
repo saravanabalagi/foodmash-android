@@ -34,9 +34,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
-import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.TouchableImageButton;
@@ -79,7 +79,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true;
             case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true;
             case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true;
-            case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_log_out: Actions.logout(ProfileActivity.this); return true;
             case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); finish(); return true;
             default: return super.onOptionsItemSelected(item);
         }
@@ -207,7 +207,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
-                        Info.cacheEmailAndPhone(ProfileActivity.this, email.getText().toString().trim(), phone.getText().toString().trim());
+                        Actions.cacheEmailAndPhone(ProfileActivity.this, email.getText().toString().trim(), phone.getText().toString().trim());
                         finish();
                     } else if(!(response.getBoolean("success"))) {
                         Alerts.commonErrorAlert(ProfileActivity.this,
@@ -221,13 +221,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ProfileActivity.this, new DialogInterface.OnClickListener() {
+                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Swift.getInstance(ProfileActivity.this).addToRequestQueue(profileRequest);
                     }
-                });
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ProfileActivity.this);
+                };
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ProfileActivity.this, onClickTryAgain);
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ProfileActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(ProfileActivity.this);
                 System.out.println("Response Error: " + error);
             }

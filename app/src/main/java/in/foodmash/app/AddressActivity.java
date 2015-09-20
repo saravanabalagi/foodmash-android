@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
@@ -52,7 +53,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
         if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
         if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_log_out) { Actions.logout(AddressActivity.this); return true; }
         return super.onOptionsItemSelected(item);
     }
 
@@ -128,13 +129,14 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            if (error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddressActivity.this, new DialogInterface.OnClickListener() {
+                                            DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteAddressRequest);
                                                 }
-                                            });
-                                            if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this);
+                                            };
+                                            if (error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddressActivity.this, onClickTryAgain);
+                                            if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this, onClickTryAgain);
                                             else Alerts.unknownErrorAlert(AddressActivity.this);
                                             System.out.println("Response Error: " + error);
                                         }
@@ -153,13 +155,14 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddressActivity.this, new DialogInterface.OnClickListener() {
+                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Swift.getInstance(AddressActivity.this).addToRequestQueue(getAddressesRequest);
                     }
-                });
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this);
+                };
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddressActivity.this, onClickTryAgain);
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(AddressActivity.this);
                 System.out.println("Response Error: " + error);
             }

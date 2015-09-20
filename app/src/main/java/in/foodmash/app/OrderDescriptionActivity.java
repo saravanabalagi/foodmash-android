@@ -1,5 +1,6 @@
 package in.foodmash.app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
@@ -32,18 +34,20 @@ import in.foodmash.app.utils.WordUtils;
  */
 public class OrderDescriptionActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Intent intent;
-    String orderId;
-    boolean cart;
+    private Intent intent;
+    private String orderId;
+    private boolean cart;
 
-    TextView status;
-    TextView date;
-    TextView total;
-    TextView paymentMethod;
-    ImageView statusIcon;
-    LinearLayout orderHistory;
-    LinearLayout home;
-    LinearLayout fillLayout;
+    private TextView status;
+    private TextView date;
+    private TextView total;
+    private TextView paymentMethod;
+    private ImageView statusIcon;
+    private LinearLayout orderHistory;
+    private LinearLayout home;
+    private LinearLayout fillLayout;
+
+    private JsonObjectRequest orderDescriptionRequest;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -58,7 +62,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
             case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true;
             case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true;
             case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true;
-            case R.id.menu_log_out: intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_log_out: Actions.logout(OrderDescriptionActivity.this); return true;
             case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); finish(); return true;
             default: return super.onOptionsItemSelected(item);
         }
@@ -81,7 +85,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
 
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/show", getRequestJson(), new Response.Listener<JSONObject>() {
+        orderDescriptionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/show", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -122,13 +126,19 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (error instanceof NoConnectionError || error instanceof TimeoutError)
-                    Alerts.internetConnectionErrorAlert(OrderDescriptionActivity.this);
+                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Swift.getInstance(OrderDescriptionActivity.this).addToRequestQueue(orderDescriptionRequest);
+                    }
+                };
+                if (error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(OrderDescriptionActivity.this, onClickTryAgain);
+                if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(OrderDescriptionActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(OrderDescriptionActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
-        Swift.getInstance(OrderDescriptionActivity.this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(OrderDescriptionActivity.this).addToRequestQueue(orderDescriptionRequest);
 
     }
 

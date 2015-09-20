@@ -26,6 +26,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
@@ -69,7 +70,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
         if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
         if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_log_out) { intent = new Intent(this,LoginActivity.class); startActivity(intent); finish(); return true; }
+        if (id == R.id.menu_log_out) { Actions.logout(ChangePasswordActivity.this); return true; }
         return super.onOptionsItemSelected(item);
     }
 
@@ -160,13 +161,14 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ChangePasswordActivity.this, new DialogInterface.OnClickListener() {
+                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Swift.getInstance(ChangePasswordActivity.this).addToRequestQueue(changePasswordRequest);
                     }
-                });
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ChangePasswordActivity.this);
+                };
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ChangePasswordActivity.this, onClickTryAgain);
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ChangePasswordActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(ChangePasswordActivity.this);
                 System.out.println("Response Error: " + error);
             }

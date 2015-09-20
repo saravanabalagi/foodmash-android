@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
@@ -97,13 +98,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (!isChecked) {
-                    Info.setKeepMeLoggedIn(LoginActivity.this, false);
+                    Actions.setKeepMeLoggedIn(LoginActivity.this, false);
                     Alerts.commonErrorAlert(LoginActivity.this, "Logout on exit", "You will be logged out once you close the app", "Okay");
-                } else Info.setKeepMeLoggedIn(LoginActivity.this, true);
+                } else Actions.setKeepMeLoggedIn(LoginActivity.this, true);
             }
         });
 
-        Info.setKeepMeLoggedIn(LoginActivity.this,true);
+        Actions.setKeepMeLoggedIn(LoginActivity.this,true);
 
     }
 
@@ -142,7 +143,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
                         JSONObject userJson = dataJson.getJSONObject("user");
-                        Info.cacheEmailAndPhone(LoginActivity.this, userJson.getString("email"), userJson.getString("mobile_no"));
+                        Actions.cacheEmailAndPhone(LoginActivity.this, userJson.getString("email"), userJson.getString("mobile_no"));
                         String userToken = dataJson.getString("user_token");
                         String sessionToken = dataJson.getString("session_token");
                         SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
@@ -166,13 +167,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(LoginActivity.this, new DialogInterface.OnClickListener() {
+                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Swift.getInstance(LoginActivity.this).addToRequestQueue(loginRequest);
                     }
-                });
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(LoginActivity.this);
+                };
+                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(LoginActivity.this, onClickTryAgain);
+                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(LoginActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(LoginActivity.this);
                 System.out.println("Response Error: " + error);
             }
