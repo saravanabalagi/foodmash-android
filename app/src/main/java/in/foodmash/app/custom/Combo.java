@@ -1,7 +1,5 @@
 package in.foodmash.app.custom;
 
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.util.ArrayList;
 
 /**
@@ -52,8 +50,9 @@ public class Combo {
     public ArrayList<ComboOption> getComboOptions() { return comboOptions; }
     public String getDishNames() {
         String dishNames = "";
-        for (ComboOption comboOption : this.getComboOptions())
-            dishNames += comboOption.getSelectedDishName() + (comboOption.isFromSameRestaurant()?"":" ("+comboOption.getSelectedDishRestaurant()+")") + ", ";
+        for (ComboOption comboOption : this.getComboOptions()) {
+            dishNames += comboOption.getSelectedDishName() + (comboOption.isFromSameRestaurant()?"":" ("+comboOption.getSelectedDishRestaurant()+") ") + ", ";
+        }
         for (ComboDish comboDish : this.getComboDishes())
             dishNames += comboDish.getDish().getName() + ", ";
         return dishNames.substring(0,dishNames.length()-2);
@@ -87,10 +86,10 @@ public class Combo {
 
     @Override
     public int hashCode() {
-
-        return new HashCodeBuilder(13,29)
-                .append(this.getId())
-                .append(getSelectedComboDishes().toArray())
-                .hashCode();
+        int hash = 13;
+        hash = 29*hash + this.getId();
+        for(Integer integer : this.getSelectedComboDishes())
+            hash += integer;
+        return hash;
     }
 }
