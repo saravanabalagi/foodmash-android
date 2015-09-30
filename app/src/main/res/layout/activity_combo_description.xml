@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:layout_gravity="center_horizontal"
+            android:padding="15dp"
+            android:gravity="center_horizontal"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:text="Description"
+            android:singleLine="true" />
+
+        <in.foodmash.app.custom.TouchableImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/clear_combo_from_cart"
+            android:src="@android:drawable/ic_input_delete"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="15dp"
+            android:tint="@color/color_accent_white_bg"
+            android:layout_marginRight="5dp"
+            android:background="@color/transparent" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingLeft="20dp"
+                android:paddingTop="10dp"
+                android:paddingRight="20dp"
+                android:id="@+id/fill_layout">
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:paddingRight="20dp"
+            android:background="@drawable/button_flat_large_background"
+            android:id="@+id/back">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/back"
+                android:contentDescription="@string/back_icon"
+                android:tint="@color/color_accent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/back"
+                android:textSize="20sp"
+                android:textColor="@color/abc_primary_text_material_dark"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|center_horizontal"
+                android:paddingRight="20dp"
+                android:background="@drawable/button_flat_large_background"
+                android:id="@+id/buy">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/cart"
+                    android:contentDescription="@string/buy"
+                    android:tint="@color/color_accent"
+                    android:paddingRight="5dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/buy"
+                    android:textSize="20sp"
+                    android:textColor="@color/abc_primary_text_material_dark"
+                    android:singleLine="true" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|center_horizontal"
+                android:id="@+id/count_layout"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/button_flat_large_background">
+
+                <in.foodmash.app.custom.TouchableImageButton
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:id="@+id/minus"
+                    android:tint="@color/color_accent"
+                    android:src="@mipmap/subtract"
+                    android:contentDescription="@string/decrement"
+                    android:scaleType="centerInside"
+                    android:background="@color/transparent"
+                    android:padding="10dp" />
+
+                <TextView
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/count_ipsum_lorem"
+                    android:id="@+id/count"
+                    android:textSize="30sp"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/abc_primary_text_material_dark" />
+
+                <in.foodmash.app.custom.TouchableImageButton
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:id="@+id/plus"
+                    android:src="@mipmap/add"
+                    android:tint="@color/color_accent"
+                    android:contentDescription="@string/increment"
+                    android:scaleType="centerInside"
+                    android:background="@color/transparent"
+                    android:padding="10dp" />
+
+            </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

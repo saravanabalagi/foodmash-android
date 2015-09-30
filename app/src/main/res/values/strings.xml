@@ -94,4 +94,9 @@
     <string name="paid_using">Paid using</string>
     <string name="orders">orders</string>
     <string name="home">home</string>
+    <string name="label">label</string>
+    <string name="count_ipsum_lorem">99</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="add">add</string>
+    <string name="added_to_cart">ADDED TO CART</string>
 </resources>

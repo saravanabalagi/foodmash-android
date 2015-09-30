@@ -4,97 +4,91 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <view
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        class="android.support.v4.view.ViewPager"
-        android:id="@+id/view_pager"
-        android:layout_weight="1"
-        android:paddingBottom="5dp" />
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="70dp">
+        android:layout_height="30dp"
+        android:background="@color/black_111"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/offers"
-            android:contentDescription="@string/offers"
-            android:src="@mipmap/offers"
-            android:background="@drawable/button_flat_large_background"
-            android:layout_weight="1" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/sort_size"
+            android:layout_weight="1">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/for_1"
-            android:contentDescription="@string/for_1"
-            android:src="@mipmap/person_1"
-            android:background="@drawable/button_flat_large_background"
-            android:layout_weight="1" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Size"
+                android:textColor="@color/abc_primary_text_material_dark"
+                android:padding="5dp" />
+        </LinearLayout>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/for_2"
-            android:contentDescription="@string/for_2"
-            android:src="@mipmap/person_2"
-            android:background="@drawable/button_flat_large_background"
-            android:layout_weight="1" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/sort_type"
+            android:layout_weight="1">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/for_3"
-            android:contentDescription="@string/for_3"
-            android:src="@mipmap/person_3"
-            android:background="@drawable/button_flat_large_background"
-            android:layout_weight="1" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Type"
+                android:textColor="@color/abc_primary_text_material_dark"
+                android:padding="5dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/sort_price"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Price"
+                android:textColor="@color/abc_primary_text_material_dark"
+                android:padding="5dp" />
+        </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="@color/button_large_flat_background">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/offers_focus"
-            android:layout_weight="1"
-            android:contentDescription="@string/offers_focus"
-            android:background="@color/color_accent" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/for_1_focus"
-            android:layout_weight="1"
-            android:contentDescription="@string/for_1_focus"
-            android:background="@color/color_accent"
-            android:visibility="invisible" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></LinearLayout>
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/for_2_focus"
-            android:layout_weight="1"
-            android:contentDescription="@string/for_2_focus"
-            android:background="@color/color_accent"
-            android:visibility="invisible" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingLeft="20dp"
+                android:paddingTop="10dp"
+                android:paddingRight="20dp"
+                android:id="@+id/fill_layout">
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/for_3_focus"
-            android:layout_weight="1"
-            android:contentDescription="@string/for_3_focus"
-            android:background="@color/color_accent"
-            android:visibility="invisible" />
-    </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
