@@ -9,7 +9,7 @@
     android:paddingBottom="5dp">
 
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <com.android.volley.toolbox.NetworkImageView
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:id="@+id/image"

@@ -12,14 +12,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.TreeMap;
 
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
+import in.foodmash.app.custom.Cache;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
 import in.foodmash.app.custom.ComboDish;
@@ -70,15 +69,15 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_combo_description);
-        try { combo = new ObjectMapper().readValue(getIntent().getStringExtra("combo"), Combo.class); }
-        catch (Exception e) { Alerts.unknownErrorAlert(ComboDescriptionActivity.this); e.printStackTrace(); }
+        combo = Cache.getCombo(getIntent().getIntExtra("combo_id", -1));
+        if(combo==null) { Alerts.unknownErrorAlert(ComboDescriptionActivity.this); return; }
 
-        back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
+        count = (TextView) findViewById(R.id.count);
+        countLayout = (LinearLayout) findViewById(R.id.count_layout);
         buy = (LinearLayout) findViewById(R.id.buy); buy.setOnClickListener(this);
+        back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         plus = (ImageView) countLayout.findViewById(R.id.plus); plus.setOnClickListener(this);
         minus = (ImageView) countLayout.findViewById(R.id.minus); minus.setOnClickListener(this);
-        countLayout = (LinearLayout) findViewById(R.id.count_layout);
-        count = (TextView) findViewById(R.id.count);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
         final TreeMap<Integer,LinearLayout> layoutOrderTreeMap = new TreeMap<>();
         for (final ComboOption comboOption: combo.getComboOptions()) {
@@ -131,6 +130,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
     }
 
     private void updateCartCount() {
+        if(cartCount==null) return;
         int count = cart.getCount();
         if(count>0) { cartCount.setText(String.valueOf(count)); Animations.fadeInOnlyIfInvisible(cartCount, 500); }
         else Animations.fadeOut(cartCount,500);

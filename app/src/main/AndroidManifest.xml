@@ -46,6 +46,11 @@
             android:windowSoftInputMode="stateHidden">
         </activity>
         <activity
+            android:name="in.foodmash.app.ComboDescriptionActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity
             android:name="in.foodmash.app.ContactUsActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden">
