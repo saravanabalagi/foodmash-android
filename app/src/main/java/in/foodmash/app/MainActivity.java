@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateFillLayout() {
-        if(combos==null||combos.size()==0) return;
+        if(combos==null||combos.size()==0) { Swift.getInstance(MainActivity.this).addToRequestQueue(getCombosRequest); return; }
         fillLayout.removeAllViews();
         TreeMap<Integer,LinearLayout> comboTreeMap = new TreeMap<>();
         for (final Combo combo: combos) {
@@ -161,9 +161,10 @@ public class MainActivity extends AppCompatActivity {
                 case "veg": foodLabel.setColorFilter(getResources().getColor(R.color.veg)); break;
                 case "non-veg": foodLabel.setColorFilter(getResources().getColor(R.color.non_veg)); break;
             }
-
-            comboLayout.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { intent = new Intent(MainActivity.this, ComboDescriptionActivity.class); intent.putExtra("combo_id",combo.getId()); startActivity(intent); } });
-            final RelativeLayout addToCartLayout = (RelativeLayout) comboLayout.findViewById(R.id.add_to_cart_layout);
+            View.OnClickListener showDescription = new View.OnClickListener() { @Override public void onClick(View v) { intent = new Intent(MainActivity.this, ComboDescriptionActivity.class); intent.putExtra("combo_id",combo.getId()); startActivity(intent); } };
+            comboLayout.findViewById(R.id.clickable_layout).setOnClickListener(showDescription);
+            comboLayout.findViewById(R.id.image).setOnClickListener(showDescription);
+            final LinearLayout addToCartLayout = (LinearLayout) comboLayout.findViewById(R.id.add_to_cart_layout);
             final LinearLayout addedToCartLayout = (LinearLayout) comboLayout.findViewById(R.id.added_to_cart_layout);
             final LinearLayout countLayout = (LinearLayout) comboLayout.findViewById(R.id.count_layout);
             final TextView count = (TextView) countLayout.findViewById(R.id.count);

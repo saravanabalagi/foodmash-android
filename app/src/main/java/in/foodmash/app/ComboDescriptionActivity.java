@@ -12,12 +12,17 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+
+import java.util.Random;
 import java.util.TreeMap;
 
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
+import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.Cache;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
@@ -41,6 +46,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
     private TextView count;
     private ImageView plus;
     private ImageView minus;
+    private ImageLoader imageLoader;
 
 
     @Override
@@ -73,28 +79,34 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         if(combo==null) { Alerts.unknownErrorAlert(ComboDescriptionActivity.this); return; }
 
         count = (TextView) findViewById(R.id.count);
+        int quantity = cart.hasHowMany(combo.getId());
+        count.setText(String.valueOf(quantity));
+        if (quantity>0) { buy.setVisibility(View.GONE); countLayout.setVisibility(View.VISIBLE); }
+
         countLayout = (LinearLayout) findViewById(R.id.count_layout);
         buy = (LinearLayout) findViewById(R.id.buy); buy.setOnClickListener(this);
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         plus = (ImageView) countLayout.findViewById(R.id.plus); plus.setOnClickListener(this);
         minus = (ImageView) countLayout.findViewById(R.id.minus); minus.setOnClickListener(this);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
+
+        imageLoader = Swift.getInstance(ComboDescriptionActivity.this).getImageLoader();
         final TreeMap<Integer,LinearLayout> layoutOrderTreeMap = new TreeMap<>();
+
         for (final ComboOption comboOption: combo.getComboOptions()) {
-            final LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo_food, fillLayout, false);
-            ((ImageView) currentComboFoodLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
-            ((TextView) currentComboFoodLayout.findViewById(R.id.name)).setText(comboOption.getName());
-            ((TextView) currentComboFoodLayout.findViewById(R.id.description)).setText(comboOption.getDescription());
-            final LinearLayout optionsLayout = (LinearLayout) currentComboFoodLayout.findViewById(R.id.options_layout);
+            final LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.description_combo_option, fillLayout, false);
+            final LinearLayout optionsLayout = (LinearLayout) currentComboFoodLayout.findViewById(R.id.combo_dishes_layout);
 
             int i=0;
             for (final ComboDish comboDish: comboOption.getComboOptionDishes()) {
-                LinearLayout comboOptionsLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo_food_options, currentComboFoodLayout, false);
+                LinearLayout comboOptionsLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.description_combo_option_dish, currentComboFoodLayout, false);
                 final ImageView selected = (ImageView) comboOptionsLayout.findViewById(R.id.selected);
                 if (i==0 && comboOption.getSelected()==0) { comboOption.setSelected(comboDish.getId()); selected.setVisibility(View.VISIBLE); }
                 else if(comboOption.getSelected()==comboDish.getId()) { selected.setVisibility(View.VISIBLE); }
-                ((TextView) comboOptionsLayout.findViewById(R.id.option_name)).setText(comboDish.getDish().getName());
+                ((TextView) comboOptionsLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
+                ((TextView) comboOptionsLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
                 ((TextView) comboOptionsLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());
+                ((NetworkImageView) comboOptionsLayout.findViewById(R.id.restaurant_logo)).setImageUrl(getImageUrl(),imageLoader);
                 comboOptionsLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -110,20 +122,24 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                 optionsLayout.addView(comboOptionsLayout);
                 i++;
             }
+
             if (comboOption.isFromSameRestaurant()) {
                 for (int m = 0; m < comboOption.getComboOptionDishes().size(); m++)
                     optionsLayout.getChildAt(m).findViewById(R.id.restaurant_layout).setVisibility(View.GONE);
                 ((TextView) currentComboFoodLayout.findViewById(R.id.restaurant_name)).setText(comboOption.getComboOptionDishes().get(0).getDish().getRestaurant().getName());
+                ((NetworkImageView) currentComboFoodLayout.findViewById(R.id.restaurant_logo)).setImageUrl(getImageUrl(),imageLoader);
             } else currentComboFoodLayout.findViewById(R.id.restaurant_layout).setVisibility(View.GONE);
             layoutOrderTreeMap.put(comboOption.getPriority(), currentComboFoodLayout);
+
         }
         for (ComboDish comboDish: combo.getComboDishes()) {
-            final LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo_food, fillLayout, false);
-            ((ImageView) currentComboFoodLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
-            ((TextView) currentComboFoodLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
-            ((TextView) currentComboFoodLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
-            ((TextView) currentComboFoodLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());
-            layoutOrderTreeMap.put(comboDish.getPriority(), currentComboFoodLayout);
+            final LinearLayout comboDishLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.description_combo_dish, fillLayout, false);
+            ((ImageView) comboDishLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
+            ((TextView) comboDishLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
+            ((TextView) comboDishLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
+            ((TextView) comboDishLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());
+            ((NetworkImageView) comboDishLayout.findViewById(R.id.restaurant_logo)).setImageUrl(getImageUrl(),imageLoader);
+            layoutOrderTreeMap.put(comboDish.getPriority(), comboDishLayout);
         }
         for (LinearLayout comboFoodLayout : layoutOrderTreeMap.values())
             fillLayout.addView(comboFoodLayout);
@@ -161,6 +177,16 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                 count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
                 updateCartCount();
                 break;
+        }
+    }
+
+    private String getImageUrl() {
+        int randomNumber = new Random().nextInt(3 - 1 + 1) + 1;
+        switch (randomNumber) {
+            case 1: return "http://s19.postimg.org/mbcpkaupf/92t8_Zu_KH.jpg";
+            case 2: return "http://s19.postimg.org/cs7m4kwkz/qka9d_YR.jpg";
+            case 3: return "http://s19.postimg.org/e8j4mpzhv/zgdz_Ur_DV.jpg";
+            default: return "http://s19.postimg.org/mbcpkaupf/92t8_Zu_KH.jpg";
         }
     }
 
