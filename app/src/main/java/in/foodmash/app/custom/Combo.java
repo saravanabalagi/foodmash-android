@@ -1,6 +1,7 @@
 package in.foodmash.app.custom;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 /**
  * Created by sarav on Sep 10 2015.
@@ -39,28 +40,48 @@ public class Combo {
     public int getId() { return id; }
     public int getGroupSize() { return groupSize; }
     public int getNoOfPurchases() { return noOfPurchases; }
-    public int getIntPrice() { return (int)price; }
-    public float getFloatPrice() { return price; }
-    public String getStringPrice() { return String.valueOf((int)price); }
     public String getLabel() { return label; }
     public String getName() { return name; }
     public String getDescription() { return description; }
     public boolean isSpecial() { return special; }
     public ArrayList<ComboDish> getComboDishes() { return comboDishes; }
     public ArrayList<ComboOption> getComboOptions() { return comboOptions; }
+    public float getPrice() {
+        //TODO change the below line
+        return this.price;
+        /*
+        float price = 0;
+        for (ComboDish comboDish : this.getComboDishes()) price+=(comboDish.getPrice()*comboDish.getCount());
+        for (ComboOption comboOption : this.getComboOptions()) price+=(comboOption.getSelectedDish().getPrice()*comboOption.getSelectedDish().getCount());
+        return price;
+        */
+    }
     public String getDishNames() {
         String dishNames = "";
-        for (ComboOption comboOption : this.getComboOptions()) {
-            dishNames += comboOption.getSelectedDishName() + (comboOption.isFromSameRestaurant()?"":" ("+comboOption.getSelectedDishRestaurant()+") ") + ", ";
-        }
+        for (ComboOption comboOption : this.getComboOptions())
+            dishNames += comboOption.getSelectedDish().getDish().getName() + (comboOption.isFromSameRestaurant()?"":" ("+comboOption.getSelectedDish().getDish().getRestaurant().getName()+") ") + ", ";
         for (ComboDish comboDish : this.getComboDishes())
             dishNames += comboDish.getDish().getName() + ", ";
         return dishNames.substring(0,dishNames.length()-2);
     }
-    public ArrayList<Integer> getSelectedComboDishes() {
-        ArrayList<Integer> selectedList = new ArrayList<>();
+
+    public TreeMap<Integer,String> getContents() {
+        TreeMap<Integer,String> contents = new TreeMap<>();
+        for (ComboOption comboOption : this.getComboOptions()) {
+            String comboOptions = "";
+            for(ComboDish comboDish: comboOption.getComboOptionDishes())
+                comboOptions += comboDish.getDish().getName() + "/ ";
+            contents.put(comboOption.getPriority(),comboOptions.substring(0,comboOptions.length()-2));
+        }
+        for (ComboDish comboDish : this.getComboDishes())
+            contents.put(comboDish.getPriority(),comboDish.getDish().getName());
+        return contents;
+    }
+
+    public ArrayList<ComboDish> getSelectedComboDishes() {
+        ArrayList<ComboDish> selectedList = new ArrayList<>();
         for (ComboOption comboOption : this.getComboOptions())
-            selectedList.add(comboOption.getSelected());
+            selectedList.add(comboOption.getSelectedComboDish());
         return selectedList;
     }
 
@@ -77,19 +98,25 @@ public class Combo {
 
     @Override
     public boolean equals(Object o) {
-        System.out.println("Equals triggered!");
         if (!(o instanceof Combo)) return false;
         if (o == this) { return true; }
         Combo combo = (Combo) o;
-        return this.getId() == combo.getId() && this.getComboOptions().equals(combo.getComboOptions());
+        if(this.getId() == combo.getId()) {
+            boolean equal = true;
+            if(!(comboOptions==((Combo) o).comboOptions)) equal=false;
+            if(!(comboDishes==((Combo) o).comboDishes)) equal=false;
+            return equal;
+        } else return false;
     }
 
     @Override
     public int hashCode() {
         int hash = 13;
-        hash = 29*hash + this.getId();
-        for(Integer integer : this.getSelectedComboDishes())
-            hash += integer;
+        hash = 7*hash + this.getId();
+        for(ComboOption comboOption: comboOptions)
+            hash = 7*hash + comboOption.getSelectedComboDish().getId();
+        for(ComboDish comboDish: comboDishes)
+            hash = 7*hash + comboDish.getCount();
         return hash;
     }
 }

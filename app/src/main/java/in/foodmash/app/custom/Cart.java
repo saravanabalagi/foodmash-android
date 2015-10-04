@@ -24,10 +24,18 @@ public class Cart {
         return count;
     }
 
+    public int getCount(int comboId) {
+        int count =0;
+        for (HashMap.Entry<Combo,Integer> order: orders.entrySet() )
+            if(order.getKey().getId()==comboId)
+                count += order.getValue();
+        return count;
+    }
+
     public String getTotal() {
         float total = 0;
         for (HashMap.Entry<Combo,Integer> order: orders.entrySet() )
-            total += order.getKey().getFloatPrice() * order.getValue();
+            total += order.getKey().getPrice() * order.getValue();
         return String.format("%.2f",total);
     }
 
@@ -52,14 +60,6 @@ public class Cart {
                 return;
             }
         }
-    }
-
-    public int hasHowMany(int comboId) {
-        int count =0;
-        for (HashMap.Entry<Combo,Integer> order: orders.entrySet() )
-            if(order.getKey().getId()==comboId)
-                count += order.getValue();
-        return count;
     }
 
     public HashMap<Combo,Integer> getOrders() { return orders; }

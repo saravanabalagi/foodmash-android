@@ -81,7 +81,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
             ((TextView) comboLayout.findViewById(R.id.dishes)).setText(combo.getDishNames());
             ((TextView) comboLayout.findViewById(R.id.quantity_display)).setText(String.valueOf(order.getValue()));
-            final TextView price = (TextView) comboLayout.findViewById(R.id.price); price.setText(combo.getStringPrice());
+            final TextView price = (TextView) comboLayout.findViewById(R.id.price); price.setText(String.valueOf((int)combo.getPrice()));
             final EditText quantity = (EditText) comboLayout.findViewById(R.id.quantity); quantity.setText(String.valueOf(order.getValue())); quantity.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -102,25 +102,14 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                             cart.changeQuantity(combo, Integer.parseInt(s.toString()));
                             total.setText(cart.getTotal());
                             ((TextView) comboLayout.findViewById(R.id.quantity_display)).setText(s.toString());
-                            ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf(combo.getIntPrice() * Integer.parseInt(s.toString())));
+                            ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int) combo.getPrice() * Integer.parseInt(s.toString())));
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
                 }
             });
-            quantity.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (!hasFocus)
-                        if (quantity.getText().length() < 1) {
-                            Alerts.commonErrorAlert(CartActivity.this, "Empty Quantity", "Quantity field cannot be empty", "Okay");
-                            quantity.setText(((TextView) comboLayout.findViewById(R.id.quantity_display)).getText().toString());
-                            quantity.requestFocus();
-                        }
-                }
-            });
-            ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf(combo.getIntPrice() * order.getValue()));
+            ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.getPrice() * order.getValue()));
             comboLayout.findViewById(R.id.remove).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -13,7 +13,7 @@ public class ComboOption {
     private int priority;
     private String name;
     private String description;
-    private int selected = 0;
+    private ComboDish selectedComboDish;
     private ArrayList<ComboDish> comboOptionDishes = new ArrayList<>();
 
     public ComboOption() {}
@@ -22,7 +22,7 @@ public class ComboOption {
         this.priority = c.priority;
         this.name = c.name;
         this.description = c.description;
-        this.selected  = c.selected;
+        this.selectedComboDish  = c.selectedComboDish;
         this.comboOptionDishes = c.comboOptionDishes;
     }
 
@@ -30,7 +30,7 @@ public class ComboOption {
     public int getPriority() { return priority; }
     public String getName() { return name; }
     public String getDescription() { return description; }
-    public int getSelected() { return selected; }
+    public ComboDish getSelectedComboDish() { return selectedComboDish; }
     public ArrayList<ComboDish> getComboOptionDishes() { return new ArrayList<>(comboOptionDishes); }
     public boolean isFromSameRestaurant() {
         Set<Integer> restaurantIdSet = new HashSet<>();
@@ -38,17 +38,10 @@ public class ComboOption {
             restaurantIdSet.add(comboDish.getDish().getRestaurant().getId());
         return restaurantIdSet.size()==1;
     }
-    public String getSelectedDishName() {
+    public ComboDish getSelectedDish() {
         for (ComboDish comboDish:comboOptionDishes)
-            if(selected==comboDish.getId())
-                return comboDish.getDish().getName();
-        return null;
-    }
-
-    public String getSelectedDishRestaurant() {
-        for (ComboDish comboDish:comboOptionDishes)
-            if(selected==comboDish.getId())
-                return comboDish.getDish().getRestaurant().getName();
+            if(selectedComboDish.getId()==comboDish.getId())
+                return comboDish;
         return null;
     }
 
@@ -56,7 +49,7 @@ public class ComboOption {
     public void setPriority(int priority) { this.priority = priority; }
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }
-    public void setSelected(int selected) { this.selected = selected; }
+    public void setSelected(ComboDish selectedComboDish) { this.selectedComboDish = selectedComboDish; }
     public void setComboOptionDishes(ArrayList<ComboDish> comboOptionDishes) { this.comboOptionDishes = comboOptionDishes; }
 
     @Override
@@ -67,7 +60,7 @@ public class ComboOption {
         if (this.comboOptionDishes.size() != comboOption.comboOptionDishes.size()) return false;
         ArrayList<ComboDish> compareComboOptionDishes = comboOption.getComboOptionDishes();
         compareComboOptionDishes.removeAll(this.comboOptionDishes);
-        return compareComboOptionDishes.size() == 0 && selected == comboOption.selected;
+        return compareComboOptionDishes.size() == 0 && selectedComboDish == comboOption.selectedComboDish;
     }
 
 }

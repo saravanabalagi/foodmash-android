@@ -79,7 +79,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         if(combo==null) { Alerts.unknownErrorAlert(ComboDescriptionActivity.this); return; }
 
         count = (TextView) findViewById(R.id.count);
-        int quantity = cart.hasHowMany(combo.getId());
+        int quantity = cart.getCount(combo.getId());
         count.setText(String.valueOf(quantity));
         if (quantity>0) { buy.setVisibility(View.GONE); countLayout.setVisibility(View.VISIBLE); }
 
@@ -101,16 +101,17 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             for (final ComboDish comboDish: comboOption.getComboOptionDishes()) {
                 LinearLayout comboOptionsLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.description_combo_option_dish, currentComboFoodLayout, false);
                 final ImageView selected = (ImageView) comboOptionsLayout.findViewById(R.id.selected);
-                if (i==0 && comboOption.getSelected()==0) { comboOption.setSelected(comboDish.getId()); selected.setVisibility(View.VISIBLE); }
-                else if(comboOption.getSelected()==comboDish.getId()) { selected.setVisibility(View.VISIBLE); }
+                if (i==0 && comboOption.getSelectedComboDish()==null) { comboOption.setSelected(comboDish); selected.setVisibility(View.VISIBLE); }
+                else if(comboOption.getSelectedComboDish().getId()==comboDish.getId()) { selected.setVisibility(View.VISIBLE); }
                 ((TextView) comboOptionsLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
+                ((NetworkImageView) comboOptionsLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(), imageLoader);
                 ((TextView) comboOptionsLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
                 ((TextView) comboOptionsLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());
-                ((NetworkImageView) comboOptionsLayout.findViewById(R.id.restaurant_logo)).setImageUrl(getImageUrl(),imageLoader);
+                ((NetworkImageView) comboOptionsLayout.findViewById(R.id.restaurant_logo)).setImageUrl(getRestaurantImageUrl(),imageLoader);
                 comboOptionsLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        comboOption.setSelected(comboDish.getId());
+                        comboOption.setSelected(comboDish);
                         System.out.println("Combo Options: "+comboOption.getComboOptionDishes().size());
                         for (int l = 0; l < comboOption.getComboOptionDishes().size(); l++)
                             optionsLayout.getChildAt(l).findViewById(R.id.selected).setVisibility(View.INVISIBLE);
@@ -132,13 +133,30 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             layoutOrderTreeMap.put(comboOption.getPriority(), currentComboFoodLayout);
 
         }
-        for (ComboDish comboDish: combo.getComboDishes()) {
+        for (final ComboDish comboDish: combo.getComboDishes()) {
             final LinearLayout comboDishLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.description_combo_dish, fillLayout, false);
-            ((ImageView) comboDishLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
+            ((NetworkImageView) comboDishLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(), imageLoader);
             ((TextView) comboDishLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
             ((TextView) comboDishLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
             ((TextView) comboDishLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());
-            ((NetworkImageView) comboDishLayout.findViewById(R.id.restaurant_logo)).setImageUrl(getImageUrl(),imageLoader);
+            ((NetworkImageView) comboDishLayout.findViewById(R.id.restaurant_logo)).setImageUrl(getRestaurantImageUrl(), imageLoader);
+            LinearLayout countLayout = (LinearLayout) comboDishLayout.findViewById(R.id.count_layout);
+            final TextView count = (TextView) countLayout.findViewById(R.id.count);
+            count.setText(String.valueOf(comboDish.getMinCount()));
+            countLayout.findViewById(R.id.plus).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(!comboDish.incrementCount()) Alerts.maxCountAlert(ComboDescriptionActivity.this, comboDish);
+                    count.setText(String.valueOf(comboDish.getCount()));
+                }
+            });
+            countLayout.findViewById(R.id.minus).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(!comboDish.decrementCount()) Alerts.minCountAlert(ComboDescriptionActivity.this, comboDish);
+                    count.setText(String.valueOf(comboDish.getCount()));
+                }
+            });
             layoutOrderTreeMap.put(comboDish.getPriority(), comboDishLayout);
         }
         for (LinearLayout comboFoodLayout : layoutOrderTreeMap.values())
@@ -187,6 +205,18 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             case 2: return "http://s19.postimg.org/cs7m4kwkz/qka9d_YR.jpg";
             case 3: return "http://s19.postimg.org/e8j4mpzhv/zgdz_Ur_DV.jpg";
             default: return "http://s19.postimg.org/mbcpkaupf/92t8_Zu_KH.jpg";
+        }
+    }
+
+    private String getRestaurantImageUrl() {
+        int randomNumber = new Random().nextInt(5 - 1 + 1) + 1;
+        switch (randomNumber) {
+            case 1: return "http://s19.postimg.org/4l7uv6j1v/300px_Burger_King_Logo_svg.png";
+            case 2: return "http://s19.postimg.org/kywfs2okz/Baskin_Robbins_svg.png";
+            case 3: return "http://s19.postimg.org/ptljclxir/kfc_logo.png";
+            case 4: return "http://s19.postimg.org/cj6vaklpv/logo_02.png";
+            case 5: return "http://s19.postimg.org/ank2zewvn/pizza_hut_delivery_maidenhead_logo.png";
+            default: return "http://s19.postimg.org/4l7uv6j1v/300px_Burger_King_Logo_svg.png";
         }
     }
 

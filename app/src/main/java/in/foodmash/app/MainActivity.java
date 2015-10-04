@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
@@ -40,6 +41,9 @@ import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.Cache;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
+import in.foodmash.app.custom.ComboDish;
+import in.foodmash.app.custom.ComboOption;
+import in.foodmash.app.custom.Restaurant;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         else getMenuInflater().inflate(R.menu.menu_signed_out,menu);
         RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
         cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count); updateCartCount();
+        cartCountLayout.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { intent = new Intent(MainActivity.this,CartActivity.class); startActivity(intent); } });
         return true;
     }
 
@@ -151,10 +156,16 @@ public class MainActivity extends AppCompatActivity {
         for (final Combo combo: combos) {
             final LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo, fillLayout, false);
             ((TextView) comboLayout.findViewById(R.id.id)).setText(String.valueOf(combo.getId()));
-            ((NetworkImageView) comboLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(),imageLoader);
+            ((NetworkImageView) comboLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(), imageLoader);
             ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
-            ((TextView) comboLayout.findViewById(R.id.description)).setText(combo.getDescription());
-            ((TextView) comboLayout.findViewById(R.id.price)).setText(combo.getStringPrice());
+            LinearLayout contentsLayout = (LinearLayout) comboLayout.findViewById(R.id.contents_layout);
+            TreeMap<Integer,String> contents = combo.getContents();
+            for(int n:contents.navigableKeySet()) {
+                LinearLayout contentTextView = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo_content,contentsLayout,false);
+                ((TextView)contentTextView.findViewById(R.id.content)).setText(contents.get(n));
+                contentsLayout.addView(contentTextView);
+            }
+            ((TextView) comboLayout.findViewById(R.id.price)).setText(String.valueOf((int)combo.getPrice()));
             ImageView foodLabel = (ImageView) comboLayout.findViewById(R.id.label);
             switch(combo.getLabel()) {
                 case "egg": foodLabel.setColorFilter(getResources().getColor(R.color.egg)); break;
@@ -168,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             final LinearLayout addedToCartLayout = (LinearLayout) comboLayout.findViewById(R.id.added_to_cart_layout);
             final LinearLayout countLayout = (LinearLayout) comboLayout.findViewById(R.id.count_layout);
             final TextView count = (TextView) countLayout.findViewById(R.id.count);
-            int quantity = cart.hasHowMany(combo.getId());
+            int quantity = cart.getCount(combo.getId());
             count.setText(String.valueOf(quantity));
             if (quantity>0) { addedToCartLayout.setVisibility(View.VISIBLE); addToCartLayout.setVisibility(View.GONE); countLayout.setVisibility(View.VISIBLE); }
             ImageView plus = (ImageView) countLayout.findViewById(R.id.plus);
@@ -177,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     cart.addToCart(new Combo(combo));
-                    count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
+                    count.setText(String.valueOf(cart.getCount(combo.getId())));
                     updateCartCount();
                 }
             });
@@ -186,8 +197,8 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if(count.getText().toString().equals("0")) return;
                     cart.decrementFromCart(combo);
-                    count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) - 1));
-                    if(Integer.parseInt(count.getText().toString())==0) {
+                    count.setText(String.valueOf(cart.getCount(combo.getId())));
+                    if(cart.getCount(combo.getId())==0) {
                         Animations.fadeOut(addedToCartLayout, 200);
                         Animations.fadeOut(countLayout, 200);
                         Animations.fadeIn(addToCartLayout, 200);
@@ -202,11 +213,27 @@ public class MainActivity extends AppCompatActivity {
                     Animations.fadeInOnlyIfInvisible(addedToCartLayout, 200);
                     Animations.fadeOut(addToCartLayout, 200);
                     Animations.fadeIn(countLayout, 200);
-                    count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
+                    count.setText(String.valueOf(cart.getCount(combo.getId())));
                     updateCartCount();
                 }
             });
-            comboTreeMap.put(combo.getIntPrice(), comboLayout);
+
+            LinearLayout restaurantsLayout = (LinearLayout) comboLayout.findViewById(R.id.restaurant_layout);
+            HashSet<Restaurant> restaurantsList = new HashSet<>();
+            for (ComboOption comboOption : combo.getComboOptions())
+                if(comboOption.isFromSameRestaurant()) restaurantsList.add(comboOption.getComboOptionDishes().get(0).getDish().getRestaurant());
+                else for (ComboDish comboDish : comboOption.getComboOptionDishes())
+                        restaurantsList.add(comboDish.getDish().getRestaurant());
+            for (ComboDish comboDish : combo.getComboDishes())
+                restaurantsList.add(comboDish.getDish().getRestaurant());
+            for (Restaurant restaurant: restaurantsList) {
+                LinearLayout restaurantLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.restaurant_logo,restaurantsLayout,false);
+                ((TextView)restaurantLayout.findViewById(R.id.name)).setText(restaurant.getName());
+                ((NetworkImageView)restaurantLayout.findViewById(R.id.logo)).setImageUrl(getRestaurantImageUrl(),imageLoader);
+                restaurantsLayout.addView(restaurantLayout);
+            }
+
+            comboTreeMap.put((int)combo.getPrice(), comboLayout);
         }
         for (int n : comboTreeMap.navigableKeySet())
             fillLayout.addView(comboTreeMap.get(n));
@@ -226,6 +253,18 @@ public class MainActivity extends AppCompatActivity {
             case 2: return "http://s19.postimg.org/cs7m4kwkz/qka9d_YR.jpg";
             case 3: return "http://s19.postimg.org/e8j4mpzhv/zgdz_Ur_DV.jpg";
             default: return "http://s19.postimg.org/mbcpkaupf/92t8_Zu_KH.jpg";
+        }
+    }
+
+    private String getRestaurantImageUrl() {
+        int randomNumber = new Random().nextInt(5 - 1 + 1) + 1;
+        switch (randomNumber) {
+            case 1: return "http://s19.postimg.org/4l7uv6j1v/300px_Burger_King_Logo_svg.png";
+            case 2: return "http://s19.postimg.org/kywfs2okz/Baskin_Robbins_svg.png";
+            case 3: return "http://s19.postimg.org/ptljclxir/kfc_logo.png";
+            case 4: return "http://s19.postimg.org/cj6vaklpv/logo_02.png";
+            case 5: return "http://s19.postimg.org/ank2zewvn/pizza_hut_delivery_maidenhead_logo.png";
+            default: return "http://s19.postimg.org/4l7uv6j1v/300px_Burger_King_Logo_svg.png";
         }
     }
 }

@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginRight="5dp">
+    android:layout_marginRight="10dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <com.android.volley.toolbox.NetworkImageView
-            android:layout_width="200dp"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:id="@+id/image"
             android:contentDescription="@string/food_image"
@@ -21,10 +21,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/selected"
-            android:src="@mipmap/tick_circled"
+            android:src="@mipmap/tick_circled_bordered"
             android:contentDescription="@string/selected"
             android:layout_marginTop="5dp"
-            android:layout_marginLeft="5dp" />
+            android:layout_marginLeft="5dp"
+            android:visibility="invisible" />
     </RelativeLayout>
 
     <LinearLayout
@@ -37,10 +38,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:id="@+id/restaurant_layout">
+            android:id="@+id/restaurant_layout"
+            android:padding="10dp">
             <com.android.volley.toolbox.NetworkImageView
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_height="20dp"
                 android:id="@+id/restaurant_logo"
                 android:contentDescription="@string/restaurant_logo" />
 
@@ -58,7 +60,8 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp">
+            android:padding="5dp"
+            android:layout_marginTop="-10dp">
 
             <LinearLayout
                 android:orientation="horizontal"

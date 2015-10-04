@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.provider.Settings;
 
+import in.foodmash.app.custom.ComboDish;
+
 /**
  * Created by sarav on Aug 30 2015.
  */
@@ -87,6 +89,26 @@ public class Alerts {
                 .setTitle("Request Unauthorized")
                 .setMessage("We are unable to process your request, as we found your request suspicious. Please login again!")
                 .setPositiveButton("Login", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { Actions.logout(context); } })
+                .show();
+    }
+
+    public static void minCountAlert(final Context context, ComboDish comboDish) {
+        new AlertDialog.Builder(context)
+                .setCancelable(false)
+                .setIconAttribute(android.R.attr.alertDialogIcon)
+                .setTitle("Could not decrement")
+                .setMessage("This combo should contain minimum "+comboDish.getMinCount()+" "+comboDish.getDish().getName())
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) {} })
+                .show();
+    }
+
+    public static void maxCountAlert(final Context context, ComboDish comboDish) {
+        new AlertDialog.Builder(context)
+                .setCancelable(false)
+                .setIconAttribute(android.R.attr.alertDialogIcon)
+                .setTitle("Could not increment")
+                .setMessage("For placing bulk order (with 10 or more) "+comboDish.getDish().getName()+" contact Customer Care")
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) {} })
                 .show();
     }
 
