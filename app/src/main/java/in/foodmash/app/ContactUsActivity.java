@@ -15,6 +15,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
@@ -70,6 +72,15 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     public boolean onCreateOptionsMenu(Menu menu) {
         if(Info.isLoggedIn(ContactUsActivity.this)) getMenuInflater().inflate(R.menu.menu_main, menu);
         else getMenuInflater().inflate(R.menu.menu_signed_out, menu);
+        RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
+        TextView cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count); Actions.updateCartCount(cartCount);
+        cartCountLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(ContactUsActivity.this, CartActivity.class);
+                startActivity(intent);
+            }
+        });
         return true;
     }
 

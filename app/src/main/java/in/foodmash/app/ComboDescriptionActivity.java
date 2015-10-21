@@ -49,9 +49,10 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if(Info.isLoggedIn(ComboDescriptionActivity.this)) getMenuInflater().inflate(R.menu.menu_main, menu);
-        else getMenuInflater().inflate(R.menu.menu_signed_out,menu);
+        else getMenuInflater().inflate(R.menu.menu_main_anonymous_login,menu);
         RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
-        cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count); updateCartCount();
+        cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count); Actions.updateCartCount(cartCount);
+        cartCountLayout.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { intent = new Intent(ComboDescriptionActivity.this, CartActivity.class); startActivity(intent); } });
         return true;
     }
 
@@ -162,13 +163,6 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         updatePrice();
     }
 
-    private void updateCartCount() {
-        if(cartCount==null) return;
-        int count = cart.getCount();
-        if(count>0) { cartCount.setText(String.valueOf(count)); Animations.fadeInOnlyIfInvisible(cartCount, 500); }
-        else Animations.fadeOut(cartCount,500);
-    }
-
     private void updatePrice() {
         float price = 0;
         for(ComboDish comboDish: combo.getComboDishes())
@@ -184,7 +178,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             case R.id.back: finish(); break;
             case R.id.buy:
                 cart.addToCart(new Combo(combo));
-                updateCartCount();
+                Actions.updateCartCount(cartCount);
                 break;
         }
     }

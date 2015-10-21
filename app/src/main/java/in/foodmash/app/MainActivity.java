@@ -59,9 +59,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if(Info.isLoggedIn(MainActivity.this)) getMenuInflater().inflate(R.menu.menu_main, menu);
-        else getMenuInflater().inflate(R.menu.menu_signed_out,menu);
+        else getMenuInflater().inflate(R.menu.menu_main_anonymous_login,menu);
         RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
-        cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count); updateCartCount();
+        cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count); Actions.updateCartCount(cartCount);
         cartCountLayout.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { intent = new Intent(MainActivity.this, CartActivity.class); startActivity(intent); } });
         return true;
     }
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPostResume() {
         super.onPostResume();
         System.out.println("Resumed");
-        updateCartCount();
+        Actions.updateCartCount(cartCount);
         updateFillLayout();
     }
 
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     cart.addToCart(new Combo(combo));
                     count.setText(String.valueOf(cart.getCount(combo.getId())));
-                    updateCartCount();
+                    Actions.updateCartCount(cartCount);
                 }
             });
             minus.setOnClickListener(new View.OnClickListener() {
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
                         Animations.fadeOut(countLayout, 200);
                         Animations.fadeIn(addToCartLayout, 200);
                     }
-                    updateCartCount();
+                    Actions.updateCartCount(cartCount);
                 }
             });
             addToCartLayout.setOnClickListener(new View.OnClickListener() {
@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
                     Animations.fadeOut(addToCartLayout, 200);
                     Animations.fadeIn(countLayout, 200);
                     count.setText(String.valueOf(cart.getCount(combo.getId())));
-                    updateCartCount();
+                    Actions.updateCartCount(cartCount);
                 }
             });
 
@@ -238,13 +238,6 @@ public class MainActivity extends AppCompatActivity {
         }
         for (int n : comboTreeMap.navigableKeySet())
             fillLayout.addView(comboTreeMap.get(n));
-    }
-
-    private void updateCartCount() {
-        if(cartCount==null) return;
-        int count = cart.getCount();
-        if(count>0) { cartCount.setText(String.valueOf(count)); Animations.fadeInOnlyIfInvisible(cartCount, 500); }
-        else Animations.fadeOut(cartCount,500);
     }
 
     private String getImageUrl() {
