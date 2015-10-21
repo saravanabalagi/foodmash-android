@@ -107,23 +107,20 @@ public class Combo {
         if (o == this) { return true; }
         Combo combo = (Combo) o;
         if(this.getId() == combo.getId()) {
-            System.out.println("Checking if equal...!");
             if(!(this.comboDishes.equals(((Combo) o).comboDishes))) return false;
-            System.out.println("Equal combo dishes");
             if(this.comboOptions.size()!=0) if (!(comboOptions.equals(((Combo) o).comboOptions))) return false;
-            System.out.println("Equal combo options");
             return true;
         } else return false;
     }
 
     @Override
     public int hashCode() {
-        int hash = 13;
-        hash = 7*hash + this.getId();
+        int hash = 5;
+        hash = 3*hash + this.getId();
         for(ComboOption comboOption: comboOptions)
-            hash = 7*hash + comboOption.getSelectedComboDish().getId();
+            hash = 3*hash + comboOption.getSelectedComboDish().getId();
         for(ComboDish comboDish: comboDishes)
-            hash = 7*hash + comboDish.getCount();
+            hash = 3*hash + comboDish.getCount();
         return hash;
     }
 }

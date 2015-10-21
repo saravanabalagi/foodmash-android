@@ -43,9 +43,9 @@ public class ComboDish {
 
     @Override
     public int hashCode() {
-        int hash =13;
-        hash = 7*hash + this.getId();
-        hash = 7*hash + this.getCount();
+        int hash =7;
+        hash = 3*hash + this.getId();
+        hash = 3*hash + this.getCount();
         return hash;
     }
 }

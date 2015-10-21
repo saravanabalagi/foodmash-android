@@ -138,7 +138,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             }
             LinearLayout countLayout = (LinearLayout) comboDishLayout.findViewById(R.id.count_layout);
             final TextView count = (TextView) countLayout.findViewById(R.id.count);
-            count.setText(String.valueOf(comboDish.getMinCount()));
+            count.setText(String.valueOf(comboDish.getCount()));
             countLayout.findViewById(R.id.plus).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

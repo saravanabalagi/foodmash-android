@@ -77,10 +77,10 @@ public class ComboOption {
 
     @Override
     public int hashCode() {
-        int hash = 13;
-        hash = 7*hash + this.getId();
-        hash = 7*hash + this.getCount();
-        hash = 7*hash + this.selectedComboDish.getId();
+        int hash = 7;
+        hash = 3*hash + this.getId();
+        hash = 3*hash + this.getCount();
+        hash = 3*hash + this.selectedComboDish.getId();
         return hash;
     }
 }
