@@ -80,7 +80,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:id="@+id/fill_layout">
+                android:id="@+id/fill_layout"
+                android:paddingBottom="10dp">
 
 
             </LinearLayout>

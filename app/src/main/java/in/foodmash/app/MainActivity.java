@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
         fillLayout.removeAllViews();
         TreeMap<Integer,LinearLayout> comboTreeMap = new TreeMap<>();
         for (final Combo combo: combos) {
+            View.OnClickListener showDescription = new View.OnClickListener() { @Override public void onClick(View v) { intent = new Intent(MainActivity.this, ComboDescriptionActivity.class); intent.putExtra("combo_id",combo.getId()); startActivity(intent); } };
             final LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo, fillLayout, false);
             ((TextView) comboLayout.findViewById(R.id.id)).setText(String.valueOf(combo.getId()));
             ((NetworkImageView) comboLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(), imageLoader);
@@ -163,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
             for(int n:contents.navigableKeySet()) {
                 LinearLayout contentTextView = (LinearLayout) getLayoutInflater().inflate(R.layout.main_combo_content,contentsLayout,false);
                 ((TextView)contentTextView.findViewById(R.id.content)).setText(contents.get(n));
+                contentTextView.findViewById(R.id.content).setOnClickListener(showDescription);
                 contentsLayout.addView(contentTextView);
             }
             ((TextView) comboLayout.findViewById(R.id.price)).setText(String.valueOf((int)combo.getPrice()));
@@ -172,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
                 case "veg": foodLabel.setColorFilter(getResources().getColor(R.color.veg)); break;
                 case "non-veg": foodLabel.setColorFilter(getResources().getColor(R.color.non_veg)); break;
             }
-            View.OnClickListener showDescription = new View.OnClickListener() { @Override public void onClick(View v) { intent = new Intent(MainActivity.this, ComboDescriptionActivity.class); intent.putExtra("combo_id",combo.getId()); startActivity(intent); } };
             comboLayout.findViewById(R.id.clickable_layout).setOnClickListener(showDescription);
             comboLayout.findViewById(R.id.image).setOnClickListener(showDescription);
             final LinearLayout addToCartLayout = (LinearLayout) comboLayout.findViewById(R.id.add_to_cart_layout);
