@@ -41,16 +41,44 @@
                 android:gravity="center_vertical"
                 android:layout_margin="5dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/combo_name_lorem_ipsum"
-                    android:id="@+id/name"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginTop="0dp"
-                    android:textSize="15sp"
-                    android:layout_marginRight="5dp"
-                    android:paddingBottom="5dp" />
+                    android:gravity="center_vertical">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical" >
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:id="@+id/label"
+                            android:src="@mipmap/food_label"
+                            android:contentDescription="@string/label" />
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:id="@+id/taste"
+                            android:src="@mipmap/hot_and_spicy"
+                            android:contentDescription="@string/taste"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/combo_name_lorem_ipsum"
+                        android:id="@+id/name"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="0dp"
+                        android:textSize="15sp"
+                        android:layout_marginRight="5dp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -169,28 +197,6 @@
         android:gravity="center_vertical"
         android:background="@color/black_222"
         android:baselineAligned="false">
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical" >
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:id="@+id/label"
-                android:src="@mipmap/food_label"
-                android:contentDescription="@string/label" />
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:id="@+id/taste"
-                android:src="@mipmap/hot_and_spicy"
-                android:contentDescription="@string/taste"
-                android:visibility="gone" />
-        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
