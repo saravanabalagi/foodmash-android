@@ -80,8 +80,14 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
             ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
             ((TextView) comboLayout.findViewById(R.id.dishes)).setText(combo.getDishNames());
+            ImageView foodLabel = (ImageView) comboLayout.findViewById(R.id.label);
+            switch(combo.getLabel()) {
+                case "egg": foodLabel.setColorFilter(getResources().getColor(R.color.egg)); break;
+                case "veg": foodLabel.setColorFilter(getResources().getColor(R.color.veg)); break;
+                case "non-veg": foodLabel.setColorFilter(getResources().getColor(R.color.non_veg)); break;
+            }
             ((TextView) comboLayout.findViewById(R.id.quantity_display)).setText(String.valueOf(order.getValue()));
-            final TextView price = (TextView) comboLayout.findViewById(R.id.price); price.setText(String.valueOf((int)combo.getPrice()));
+            final TextView price = (TextView) comboLayout.findViewById(R.id.price); price.setText(String.valueOf((int)combo.calculatePrice()));
             final EditText quantity = (EditText) comboLayout.findViewById(R.id.quantity); quantity.setText(String.valueOf(order.getValue())); quantity.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -102,14 +108,14 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                             cart.changeQuantity(combo, Integer.parseInt(s.toString()));
                             total.setText(cart.getTotal());
                             ((TextView) comboLayout.findViewById(R.id.quantity_display)).setText(s.toString());
-                            ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int) combo.getPrice() * Integer.parseInt(s.toString())));
+                            ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int) combo.calculatePrice() * Integer.parseInt(s.toString())));
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
                 }
             });
-            ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.getPrice() * order.getValue()));
+            ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.calculatePrice() * order.getValue()));
             comboLayout.findViewById(R.id.remove).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

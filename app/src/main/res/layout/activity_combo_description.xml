@@ -99,78 +99,52 @@
                 android:singleLine="true" />
         </LinearLayout>
 
-        <RelativeLayout
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:paddingRight="20dp"
+            android:background="@drawable/button_flat_large_background"
+            android:id="@+id/buy">
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|center_horizontal"
-                android:paddingRight="20dp"
-                android:background="@drawable/button_flat_large_background"
-                android:id="@+id/buy">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/cart"
-                    android:contentDescription="@string/buy"
-                    android:tint="@color/color_accent"
-                    android:paddingRight="5dp" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/combo_description_price_background"
+                android:paddingLeft="15dp"
+                android:paddingTop="5dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="5dp"
+                android:layout_marginLeft="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/buy"
-                    android:textSize="20sp"
+                    android:text="@string/rupee"
                     android:textColor="@color/abc_primary_text_material_dark"
-                    android:singleLine="true" />
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|center_horizontal"
-                android:id="@+id/count_layout"
-                android:visibility="gone"
-                android:layout_centerHorizontal="true"
-                android:background="@drawable/button_flat_large_background">
-
-                <in.foodmash.app.custom.TouchableImageButton
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:id="@+id/minus"
-                    android:tint="@color/color_accent"
-                    android:src="@mipmap/subtract"
-                    android:contentDescription="@string/decrement"
-                    android:scaleType="centerInside"
-                    android:background="@color/transparent"
-                    android:padding="10dp" />
+                    android:layout_marginRight="1dp"
+                    android:textSize="12sp" />
 
                 <TextView
-                    android:layout_width="35dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/count_ipsum_lorem"
-                    android:id="@+id/count"
-                    android:textSize="30sp"
-                    android:gravity="center_horizontal"
+                    android:text="@string/price_lorem_ipsum"
+                    android:textSize="15sp"
+                    android:id="@+id/price"
                     android:textColor="@color/abc_primary_text_material_dark" />
-
-                <in.foodmash.app.custom.TouchableImageButton
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:id="@+id/plus"
-                    android:src="@mipmap/add"
-                    android:tint="@color/color_accent"
-                    android:contentDescription="@string/increment"
-                    android:scaleType="centerInside"
-                    android:background="@color/transparent"
-                    android:padding="10dp" />
-
             </LinearLayout>
-        </RelativeLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/cart"
+                android:contentDescription="@string/back_icon"
+                android:tint="@color/color_accent" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

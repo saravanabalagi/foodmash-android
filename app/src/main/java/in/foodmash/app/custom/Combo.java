@@ -10,11 +10,12 @@ public class Combo {
     private int id;
     private int groupSize;
     private int noOfPurchases;
-    private float price;
     private String label;
     private String name;
     private String description;
     private boolean special;
+    private boolean available;
+    private float price;
 
     private ArrayList<ComboDish> comboDishes = new ArrayList<>();
     private ArrayList<ComboOption> comboOptions = new ArrayList<>();
@@ -29,7 +30,12 @@ public class Combo {
         this.name = c.name;
         this.description = c.description;
         this.special = c.special;
-        this.comboDishes = c.comboDishes;
+        this.available = c.available;
+        this.comboDishes = new ArrayList<>();
+        for (ComboDish entry: c.getComboDishes()) {
+            ComboDish comboDish = new ComboDish(entry);
+            this.comboDishes.add(comboDish);
+        }
         this.comboOptions = new ArrayList<>();
         for (ComboOption entry: c.getComboOptions()) {
             ComboOption comboOption = new ComboOption(entry);
@@ -44,24 +50,22 @@ public class Combo {
     public String getName() { return name; }
     public String getDescription() { return description; }
     public boolean isSpecial() { return special; }
+    public boolean isAvailable() { return available; }
     public ArrayList<ComboDish> getComboDishes() { return comboDishes; }
     public ArrayList<ComboOption> getComboOptions() { return comboOptions; }
-    public float getPrice() {
-        //TODO change the below line
-        return this.price;
-        /*
+    public float getPrice() { return price; }
+    public float calculatePrice() {
         float price = 0;
-        for (ComboDish comboDish : this.getComboDishes()) price+=(comboDish.getPrice()*comboDish.getCount());
-        for (ComboOption comboOption : this.getComboOptions()) price+=(comboOption.getSelectedDish().getPrice()*comboOption.getSelectedDish().getCount());
+        for (ComboDish comboDish : this.getComboDishes()) price+=(comboDish.getDish().getPrice()*comboDish.getCount());
+        for (ComboOption comboOption : this.getComboOptions()) price+=(comboOption.getSelectedDish().getDish().getPrice()*comboOption.getCount());
         return price;
-        */
     }
     public String getDishNames() {
         String dishNames = "";
         for (ComboOption comboOption : this.getComboOptions())
             dishNames += comboOption.getSelectedDish().getDish().getName() + (comboOption.isFromSameRestaurant()?"":" ("+comboOption.getSelectedDish().getDish().getRestaurant().getName()+") ") + ", ";
         for (ComboDish comboDish : this.getComboDishes())
-            dishNames += comboDish.getDish().getName() + ", ";
+            dishNames += comboDish.getDish().getName() + ((comboDish.getCount()==1)?"":(" x " + comboDish.getCount())) + ", ";
         return dishNames.substring(0,dishNames.length()-2);
     }
 
@@ -88,11 +92,12 @@ public class Combo {
     public void setId(int id) { this.id = id; }
     public void setGroupSize(int groupSize) { this.groupSize = groupSize; }
     public void setNoOfPurchases(int noOfPurchases) { this.noOfPurchases = noOfPurchases; }
-    public void setPrice(float price) { this.price = price; }
     public void setLabel(String label) { this.label = label; }
     public void setName(String name) { this.name = name; }
+    public void setPrice(float price) { this.price = price; }
     public void setDescription(String description) { this.description = description; }
     public void setSpecial(boolean special) { this.special = special; }
+    public void setAvailable(boolean available) { this.available = available; }
     public void setComboDishes(ArrayList<ComboDish> comboDishes) { this.comboDishes = comboDishes; }
     public void setComboOptions(ArrayList<ComboOption> comboOptions) { this.comboOptions = comboOptions; }
 
@@ -102,10 +107,12 @@ public class Combo {
         if (o == this) { return true; }
         Combo combo = (Combo) o;
         if(this.getId() == combo.getId()) {
-            boolean equal = true;
-            if(!(comboOptions==((Combo) o).comboOptions)) equal=false;
-            if(!(comboDishes==((Combo) o).comboDishes)) equal=false;
-            return equal;
+            System.out.println("Checking if equal...!");
+            if(!(this.comboDishes.equals(((Combo) o).comboDishes))) return false;
+            System.out.println("Equal combo dishes");
+            if(this.comboOptions.size()!=0) if (!(comboOptions.equals(((Combo) o).comboOptions))) return false;
+            System.out.println("Equal combo options");
+            return true;
         } else return false;
     }
 

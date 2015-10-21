@@ -35,7 +35,7 @@ public class Cart {
     public String getTotal() {
         float total = 0;
         for (HashMap.Entry<Combo,Integer> order: orders.entrySet() )
-            total += order.getKey().getPrice() * order.getValue();
+            total += order.getKey().calculatePrice() * order.getValue();
         return String.format("%.2f",total);
     }
 

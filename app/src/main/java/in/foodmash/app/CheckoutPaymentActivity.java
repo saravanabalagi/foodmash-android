@@ -82,6 +82,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
             }
         });
         paymentMode.check(R.id.cash_on_delivery);
+        paymentMethod="cash_on_delivery";
     }
 
     public void onClick(View v) {

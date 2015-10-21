@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         else getMenuInflater().inflate(R.menu.menu_signed_out,menu);
         RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
         cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count); updateCartCount();
-        cartCountLayout.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { intent = new Intent(MainActivity.this,CartActivity.class); startActivity(intent); } });
+        cartCountLayout.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { intent = new Intent(MainActivity.this, CartActivity.class); startActivity(intent); } });
         return true;
     }
 
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     if (response.getBoolean("success")) {
                         ObjectMapper mapper = new ObjectMapper();
                         mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-                        Cache.setCombos(Arrays.asList(mapper.readValue(response.getJSONArray("data").toString(), Combo[].class)));
+                        Cache.setCombos(Arrays.asList(mapper.readValue(response.getJSONObject("data").getJSONArray("combos").toString(), Combo[].class)));
                         combos = Cache.getCombos();
                         updateFillLayout();
                     } else if (!response.getBoolean("success")) {

@@ -200,7 +200,6 @@
             android:textSize="10sp"
             android:textAllCaps="true"
             android:padding="5dp"
-            android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:fontFamily="sans-serif-light" />
     </LinearLayout>

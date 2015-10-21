@@ -35,6 +35,7 @@ import in.foodmash.app.custom.ComboOption;
 public class ComboDescriptionActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView cartCount;
+    private TextView currentPrice;
     private Cart cart = Cart.getInstance();
     private Intent intent;
     private Combo combo;
@@ -42,10 +43,6 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
     private LinearLayout back;
     private LinearLayout buy;
     private LinearLayout fillLayout;
-    private LinearLayout countLayout;
-    private TextView count;
-    private ImageView plus;
-    private ImageView minus;
     private ImageLoader imageLoader;
 
 
@@ -78,17 +75,10 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         combo = Cache.getCombo(getIntent().getIntExtra("combo_id", -1));
         if(combo==null) { Alerts.unknownErrorAlert(ComboDescriptionActivity.this); return; }
 
-        count = (TextView) findViewById(R.id.count);
-        int quantity = cart.getCount(combo.getId());
-        count.setText(String.valueOf(quantity));
-        if (quantity>0) { buy.setVisibility(View.GONE); countLayout.setVisibility(View.VISIBLE); }
-
-        countLayout = (LinearLayout) findViewById(R.id.count_layout);
         buy = (LinearLayout) findViewById(R.id.buy); buy.setOnClickListener(this);
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
-        plus = (ImageView) countLayout.findViewById(R.id.plus); plus.setOnClickListener(this);
-        minus = (ImageView) countLayout.findViewById(R.id.minus); minus.setOnClickListener(this);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
+        currentPrice = (TextView) findViewById(R.id.price);
 
         imageLoader = Swift.getInstance(ComboDescriptionActivity.this).getImageLoader();
         final TreeMap<Integer,LinearLayout> layoutOrderTreeMap = new TreeMap<>();
@@ -140,6 +130,12 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             ((TextView) comboDishLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
             ((TextView) comboDishLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());
             ((NetworkImageView) comboDishLayout.findViewById(R.id.restaurant_logo)).setImageUrl(getRestaurantImageUrl(), imageLoader);
+            ImageView foodLabel = (ImageView) comboDishLayout.findViewById(R.id.label);
+            switch(comboDish.getDish().getLabel()) {
+                case "egg": foodLabel.setColorFilter(getResources().getColor(R.color.egg)); break;
+                case "veg": foodLabel.setColorFilter(getResources().getColor(R.color.veg)); break;
+                case "non-veg": foodLabel.setColorFilter(getResources().getColor(R.color.non_veg)); break;
+            }
             LinearLayout countLayout = (LinearLayout) comboDishLayout.findViewById(R.id.count_layout);
             final TextView count = (TextView) countLayout.findViewById(R.id.count);
             count.setText(String.valueOf(comboDish.getMinCount()));
@@ -148,6 +144,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                 public void onClick(View v) {
                     if(!comboDish.incrementCount()) Alerts.maxCountAlert(ComboDescriptionActivity.this, comboDish);
                     count.setText(String.valueOf(comboDish.getCount()));
+                    updatePrice();
                 }
             });
             countLayout.findViewById(R.id.minus).setOnClickListener(new View.OnClickListener() {
@@ -155,12 +152,14 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                 public void onClick(View v) {
                     if(!comboDish.decrementCount()) Alerts.minCountAlert(ComboDescriptionActivity.this, comboDish);
                     count.setText(String.valueOf(comboDish.getCount()));
+                    updatePrice();
                 }
             });
             layoutOrderTreeMap.put(comboDish.getPriority(), comboDishLayout);
         }
         for (LinearLayout comboFoodLayout : layoutOrderTreeMap.values())
             fillLayout.addView(comboFoodLayout);
+        updatePrice();
     }
 
     private void updateCartCount() {
@@ -170,29 +169,21 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         else Animations.fadeOut(cartCount,500);
     }
 
+    private void updatePrice() {
+        float price = 0;
+        for(ComboDish comboDish: combo.getComboDishes())
+            price += comboDish.getDish().getPrice() * comboDish.getCount();
+        for(ComboOption comboOption: combo.getComboOptions())
+            price += comboOption.getSelectedDish().getDish().getPrice();
+        currentPrice.setText(String.valueOf((int)price));
+    }
+
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.clear_combo_from_cart: break;
             case R.id.back: finish(); break;
-            case R.id.plus:
-                cart.addToCart(new Combo(combo));
-                count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
-                updateCartCount();
-                break;
-            case R.id.minus:
-                if(count.getText().toString().equals("0")) return;
-                cart.decrementFromCart(combo);
-                count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) - 1));
-                if(Integer.parseInt(count.getText().toString())==0) {
-                    Animations.fadeOut(countLayout, 200);
-                    Animations.fadeIn(buy, 200);
-                }
-                updateCartCount();
-                break;
             case R.id.buy:
                 cart.addToCart(new Combo(combo));
-                Animations.fadeIn(countLayout, 200);
-                count.setText(String.valueOf(Integer.parseInt(count.getText().toString()) + 1));
                 updateCartCount();
                 break;
         }
