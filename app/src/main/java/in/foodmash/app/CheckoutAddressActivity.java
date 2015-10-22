@@ -27,6 +27,7 @@ import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.custom.Cart;
 
 /**
  * Created by Zeke on Jul 19 2015.
@@ -116,12 +117,14 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         try {
             JSONObject dataJson = new JSONObject();
             dataJson.put("delivery_address_id",addressId);
+            JSONArray cartJsonArray = Cart.getInstance().getCartOrders();
+            dataJson.put("cart",cartJsonArray);
             requestJson.put("data",dataJson);
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;
     }
     private void makeConfirmRequest() {
-        confirmOrderRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/addAddress", getConfirmRequestJson(), new Response.Listener<JSONObject>() {
+        confirmOrderRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/addCart", getConfirmRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {

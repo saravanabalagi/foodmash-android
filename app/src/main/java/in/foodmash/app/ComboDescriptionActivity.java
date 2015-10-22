@@ -139,20 +139,20 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             }
             LinearLayout countLayout = (LinearLayout) comboDishLayout.findViewById(R.id.count_layout);
             final TextView count = (TextView) countLayout.findViewById(R.id.count);
-            count.setText(String.valueOf(comboDish.getCount()));
+            count.setText(String.valueOf(comboDish.getQuantity()));
             countLayout.findViewById(R.id.plus).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(!comboDish.incrementCount()) Alerts.maxCountAlert(ComboDescriptionActivity.this, comboDish);
-                    count.setText(String.valueOf(comboDish.getCount()));
+                    if(!comboDish.incrementQuantity()) Alerts.maxCountAlert(ComboDescriptionActivity.this, comboDish);
+                    count.setText(String.valueOf(comboDish.getQuantity()));
                     updatePrice();
                 }
             });
             countLayout.findViewById(R.id.minus).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(!comboDish.decrementCount()) Alerts.minCountAlert(ComboDescriptionActivity.this, comboDish);
-                    count.setText(String.valueOf(comboDish.getCount()));
+                    if(!comboDish.decrementQuantity()) Alerts.minCountAlert(ComboDescriptionActivity.this, comboDish);
+                    count.setText(String.valueOf(comboDish.getQuantity()));
                     updatePrice();
                 }
             });
@@ -166,7 +166,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
     private void updatePrice() {
         float price = 0;
         for(ComboDish comboDish: combo.getComboDishes())
-            price += comboDish.getDish().getPrice() * comboDish.getCount();
+            price += comboDish.getDish().getPrice() * comboDish.getQuantity();
         for(ComboOption comboOption: combo.getComboOptions())
             price += comboOption.getSelectedDish().getDish().getPrice();
         currentPrice.setText(String.valueOf((int)price));

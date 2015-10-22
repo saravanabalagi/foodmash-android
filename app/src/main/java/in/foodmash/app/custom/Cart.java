@@ -1,5 +1,10 @@
 package in.foodmash.app.custom;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeMap;
@@ -90,6 +95,16 @@ public class Cart {
         }
         printOrdersContents();
         printTimestampsContents();
+    }
+
+    public JSONArray getCartOrders() {
+        JSONArray cartJsonArray = new JSONArray();
+        ObjectMapper mapper = new ObjectMapper();
+        for (HashMap.Entry<Combo, Integer> entry : orders.entrySet()) {
+            try { cartJsonArray.put(new JSONObject(mapper.writeValueAsString(entry.getKey())).put("quantity",entry.getValue())); }
+            catch (Exception e) { e.printStackTrace(); }
+        }
+        return cartJsonArray;
     }
 
     public void printTimestampsContents() {

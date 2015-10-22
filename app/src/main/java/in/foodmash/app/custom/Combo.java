@@ -56,8 +56,8 @@ public class Combo {
     public float getPrice() { return price; }
     public float calculatePrice() {
         float price = 0;
-        for (ComboDish comboDish : this.getComboDishes()) price+=(comboDish.getDish().getPrice()*comboDish.getCount());
-        for (ComboOption comboOption : this.getComboOptions()) price+=(comboOption.getSelectedDish().getDish().getPrice()*comboOption.getCount());
+        for (ComboDish comboDish : this.getComboDishes()) price+=(comboDish.getDish().getPrice()*comboDish.getQuantity());
+        for (ComboOption comboOption : this.getComboOptions()) price+=(comboOption.getSelectedDish().getDish().getPrice()*comboOption.getQuantity());
         return price;
     }
     public String getDishNames() {
@@ -65,7 +65,7 @@ public class Combo {
         for (ComboOption comboOption : this.getComboOptions())
             dishNames += comboOption.getSelectedDish().getDish().getName() + (comboOption.isFromSameRestaurant()?"":" ("+comboOption.getSelectedDish().getDish().getRestaurant().getName()+") ") + ", ";
         for (ComboDish comboDish : this.getComboDishes())
-            dishNames += comboDish.getDish().getName() + ((comboDish.getCount()==1)?"":(" x " + comboDish.getCount())) + ", ";
+            dishNames += comboDish.getDish().getName() + ((comboDish.getQuantity()==1)?"":(" x " + comboDish.getQuantity())) + ", ";
         return dishNames.substring(0,dishNames.length()-2);
     }
 
@@ -120,7 +120,7 @@ public class Combo {
         for(ComboOption comboOption: comboOptions)
             hash = 3*hash + comboOption.getSelectedComboDish().getId();
         for(ComboDish comboDish: comboDishes)
-            hash = 3*hash + comboDish.getCount();
+            hash = 3*hash + comboDish.getQuantity();
         return hash;
     }
 }
