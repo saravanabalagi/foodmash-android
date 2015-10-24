@@ -35,6 +35,7 @@ public class ComboDish {
     @JsonProperty public void setMinCount(int minCount) { this.minCount = minCount; this.quantity = minCount; }
     public boolean incrementQuantity() { if(quantity +1<10) { quantity++; return true;} else return false; }
     public boolean decrementQuantity() { if(quantity -1<minCount) return false; else { quantity--; return true; } }
+    public void resetQuantity() { quantity=minCount; }
 
     @Override
     public boolean equals(Object o) {

@@ -5,6 +5,7 @@
     <color name="color_accent_white_bg">#ffcd0c00</color>
 
     <color name="transparent">#00000000</color>
+    <color name="white">#ffffffff</color>
     <color name="black">#ff000000</color>
     <color name="black_111">#ff111111</color>
     <color name="black_222">#ff222222</color>

@@ -3,7 +3,6 @@ package in.foodmash.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -88,31 +87,99 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             final LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.description_combo_option, fillLayout, false);
             final LinearLayout optionsLayout = (LinearLayout) currentComboFoodLayout.findViewById(R.id.combo_dishes_layout);
 
-            int i=0;
             for (final ComboDish comboDish: comboOption.getComboOptionDishes()) {
-                LinearLayout comboOptionsLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.description_combo_option_dish, currentComboFoodLayout, false);
+                final LinearLayout comboOptionsLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.description_combo_option_dish, currentComboFoodLayout, false);
                 final ImageView selected = (ImageView) comboOptionsLayout.findViewById(R.id.selected);
-                if (i==0 && comboOption.getSelectedComboDish()==null) { comboOption.setSelected(comboDish); selected.setVisibility(View.VISIBLE); }
-                else if(comboOption.getSelectedComboDish().getId()==comboDish.getId()) { selected.setVisibility(View.VISIBLE); }
+                if (comboOption.getSelectedComboOptionDishes().contains(comboDish)) { selected.setColorFilter(getResources().getColor(R.color.transparent)); }
+                else { selected.setColorFilter(getResources().getColor(R.color.white)); }
+                ImageView foodLabel = (ImageView) comboOptionsLayout.findViewById(R.id.label);
+                switch(comboDish.getDish().getLabel()) {
+                    case "egg": foodLabel.setColorFilter(getResources().getColor(R.color.egg)); break;
+                    case "veg": foodLabel.setColorFilter(getResources().getColor(R.color.veg)); break;
+                    case "non-veg": foodLabel.setColorFilter(getResources().getColor(R.color.non_veg)); break;
+                }
+                ((TextView) comboOptionsLayout.findViewById(R.id.id)).setText(String.valueOf(comboDish.getId()));
                 ((TextView) comboOptionsLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
                 ((NetworkImageView) comboOptionsLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(), imageLoader);
                 ((TextView) comboOptionsLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
                 ((TextView) comboOptionsLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());
-                ((NetworkImageView) comboOptionsLayout.findViewById(R.id.restaurant_logo)).setImageUrl(getRestaurantImageUrl(),imageLoader);
+                ((NetworkImageView) comboOptionsLayout.findViewById(R.id.restaurant_logo)).setImageUrl(getRestaurantImageUrl(), imageLoader);
+                final LinearLayout addExtraLayout = (LinearLayout) comboOptionsLayout.findViewById(R.id.add_extra_layout);
+                final LinearLayout countLayout = (LinearLayout) comboOptionsLayout.findViewById(R.id.count_layout);
+                final TextView count = (TextView) countLayout.findViewById(R.id.count);
+                int quantity = comboDish.getQuantity();
+                count.setText(String.valueOf(quantity));
+                if (quantity>1 || comboOption.getSelectedComboOptionDishes().contains(comboDish)) { addExtraLayout.setVisibility(View.GONE); countLayout.setVisibility(View.VISIBLE); }
+                ImageView plus = (ImageView) countLayout.findViewById(R.id.plus);
+                ImageView minus = (ImageView) countLayout.findViewById(R.id.minus);
+                plus.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!comboOption.incrementQuantity(comboDish))
+                            Alerts.maxCountAlert(ComboDescriptionActivity.this, comboOption);
+                        count.setText(String.valueOf(comboDish.getQuantity()));
+                        updatePrice();
+                    }
+                });
+                minus.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(count.getText().toString().equals("0")) return;
+                        if(!comboOption.decrementQuantity(comboDish))
+                            Alerts.minCountAlert(ComboDescriptionActivity.this, comboOption);
+                        count.setText(String.valueOf(comboDish.getQuantity()));
+                        if(comboDish.getQuantity()==1 && !comboOption.getSelectedComboOptionDishes().contains(comboDish)) {
+                            selected.setColorFilter(getResources().getColor(R.color.white));
+                            Animations.fadeOut(countLayout, 200);
+                            Animations.fadeIn(addExtraLayout, 200);
+                        }
+                        updatePrice();
+                    }
+                });
+                addExtraLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        comboOption.addToSelected(comboDish);
+                        Animations.fadeOut(addExtraLayout, 200);
+                        Animations.fadeIn(countLayout, 200);
+                        count.setText(String.valueOf(comboDish.getQuantity()));
+                        selected.setColorFilter(getResources().getColor(R.color.transparent));
+                        updatePrice();
+                    }
+                });
+
+                ((View) comboOptionsLayout.findViewById(R.id.count_layout).getParent()).setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { } });
                 comboOptionsLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        comboOption.setSelected(comboDish);
-                        System.out.println("Combo Options: "+comboOption.getComboOptionDishes().size());
-                        for (int l = 0; l < comboOption.getComboOptionDishes().size(); l++)
-                            optionsLayout.getChildAt(l).findViewById(R.id.selected).setVisibility(View.INVISIBLE);
-                        selected.setVisibility(View.VISIBLE);
+                        comboOption.addToSelectedAfterClear(comboDish);
+                        for (int l = 0; l < comboOption.getComboOptionDishes().size(); l++) {
+                            LinearLayout comboOptionsLayout = (LinearLayout) optionsLayout.getChildAt(l);
+                            ImageView selected = (ImageView) comboOptionsLayout.findViewById(R.id.selected);
+                            LinearLayout addExtraLayout = (LinearLayout) comboOptionsLayout.findViewById(R.id.add_extra_layout);
+                            LinearLayout countLayout = (LinearLayout) comboOptionsLayout.findViewById(R.id.count_layout);
+                            TextView id = (TextView) comboOptionsLayout.findViewById(R.id.id);
+                            ComboDish comboDish = comboOption.fetch(Integer.parseInt(id.getText().toString()));
+                            TextView count = (TextView) countLayout.findViewById(R.id.count);
+                            if (comboOption.getSelectedComboOptionDishes().contains(comboDish)) {
+                                Animations.fadeOut(addExtraLayout, 200);
+                                Animations.fadeIn(countLayout, 200);
+                                selected.setColorFilter(getResources().getColor(R.color.transparent));
+                            } else {
+                                comboDish.resetQuantity();
+                                Animations.fadeIn(addExtraLayout, 200);
+                                Animations.fadeOut(countLayout, 200);
+                                selected.setColorFilter(getResources().getColor(R.color.white));
+                            }
+                            count.setText(String.valueOf(comboDish.getQuantity()));
+                        }
+                        Animations.fadeOut(addExtraLayout, 200);
+                        Animations.fadeIn(countLayout, 200);
+                        selected.setColorFilter(getResources().getColor(R.color.transparent));
+                        updatePrice();
                     }
                 });
-                if (i == comboOption.getComboOptionDishes().size() - 1)
-                    Animations.bottomMargin(comboOptionsLayout, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()), 0);
                 optionsLayout.addView(comboOptionsLayout);
-                i++;
             }
 
             if (comboOption.isFromSameRestaurant()) {
@@ -168,7 +235,8 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         for(ComboDish comboDish: combo.getComboDishes())
             price += comboDish.getDish().getPrice() * comboDish.getQuantity();
         for(ComboOption comboOption: combo.getComboOptions())
-            price += comboOption.getSelectedComboDish().getDish().getPrice();
+            for(ComboDish comboDish: comboOption.getSelectedComboOptionDishes())
+                price += comboDish.getDish().getPrice()*comboDish.getQuantity();
         currentPrice.setText(String.valueOf((int)price));
     }
 

@@ -14,11 +14,10 @@ public class ComboOption {
 
     private int id;
     private int priority;
-    private int quantity=1;
     private int minCount=1;
     private String name;
     private String description;
-    private ComboDish selectedComboDish;
+    private ArrayList<ComboDish> selectedComboOptionDishes;
     private ArrayList<ComboDish> comboOptionDishes = new ArrayList<>();
 
     public ComboOption() {}
@@ -27,19 +26,24 @@ public class ComboOption {
         this.priority = c.priority;
         this.name = c.name;
         this.description = c.description;
-        this.quantity = c.quantity;
         this.minCount = c.minCount;
-        this.selectedComboDish  = c.selectedComboDish;
+        this.selectedComboOptionDishes = c.selectedComboOptionDishes;
         this.comboOptionDishes = c.comboOptionDishes;
     }
 
     @JsonIgnore public int getMinCount() { return minCount; }
-    public int getQuantity() { return quantity; }
+    public int getQuantity() {
+        int quantity=0;
+        for(ComboDish comboDish: this.selectedComboOptionDishes)
+            quantity+=comboDish.getQuantity();
+        if(quantity<minCount) return -1;
+        return quantity;
+    }
     public int getId() { return id; }
     @JsonIgnore public int getPriority() { return priority; }
     @JsonIgnore public String getName() { return name; }
     @JsonIgnore public String getDescription() { return description; }
-    @JsonProperty("ComboOptionDish") public ComboDish getSelectedComboDish() { return selectedComboDish; }
+    @JsonProperty("ComboOptionDishes") public ArrayList<ComboDish> getSelectedComboOptionDishes() { return selectedComboOptionDishes; }
     @JsonIgnore public ArrayList<ComboDish> getComboOptionDishes() { return new ArrayList<>(comboOptionDishes); }
     @JsonIgnore public boolean isFromSameRestaurant() {
         Set<Integer> restaurantIdSet = new HashSet<>();
@@ -48,17 +52,44 @@ public class ComboOption {
         return restaurantIdSet.size()==1;
     }
 
-    @JsonProperty public void setMinCount(int minCount) { this.minCount = minCount; this.quantity = minCount; }
-    public boolean incrementQuantity() { if(quantity +1<10) { quantity++; return true;} else return false; }
-    public boolean decrementQuantity() { if(quantity -1<minCount) return false; else { quantity--; return true; }}
+    @JsonProperty public void setMinCount(int minCount) { this.minCount = minCount; }
     @JsonProperty public void setId(int id) { this.id = id; }
     @JsonProperty public void setPriority(int priority) { this.priority = priority; }
     @JsonProperty public void setName(String name) { this.name = name; }
     @JsonProperty public void setDescription(String description) { this.description = description; }
-    public void setSelected(ComboDish selectedComboDish) { this.selectedComboDish = selectedComboDish; }
+    public ComboDish fetch(int id) {
+        ComboDish requiredComboDish = null;
+        for(ComboDish comboDish: this.comboOptionDishes)
+            if(comboDish.getId()==id) requiredComboDish = comboDish;
+        return requiredComboDish;
+    }
+    public String getContents(){
+        String contents = "";
+        for(ComboDish comboDish: this.comboOptionDishes)
+            contents += comboDish.getDish().getName() + (this.isFromSameRestaurant()?"":"("+ comboDish.getDish().getRestaurant().getName() +")") + "/ ";
+        return contents.substring(0,contents.length()-2);
+    }
+    public boolean incrementQuantity(ComboDish comboDish) {
+        if(this.getQuantity()+1>=10) return false;
+        if(!getSelectedComboOptionDishes().contains(comboDish)) return false;
+        comboDish.incrementQuantity();
+        return true;
+    }
+    public boolean decrementQuantity(ComboDish comboDish) {
+        if(this.getQuantity()-1<minCount) return false;
+        if(!getSelectedComboOptionDishes().contains(comboDish)) return false;
+        if(comboDish.getQuantity()==1) return removeFromSelected(comboDish);
+        comboDish.decrementQuantity();
+        return true;
+    }
+    public boolean addToSelected(ComboDish comboDish) { if(!this.selectedComboOptionDishes.contains(comboDish)) { this.selectedComboOptionDishes.add(comboDish); return true; } else return false; }
+    public boolean addToSelectedAfterClear(ComboDish comboDish) { this.selectedComboOptionDishes.clear(); if(!this.selectedComboOptionDishes.contains(comboDish)) { for(int i=0; i<this.minCount-1; i++) comboDish.incrementQuantity(); this.selectedComboOptionDishes.add(comboDish); return true; } else return false; }
+    public boolean removeFromSelected(ComboDish comboDish) { if(this.selectedComboOptionDishes.contains(comboDish))  { this.selectedComboOptionDishes.remove(comboDish); return true; } else return false;}
     @JsonProperty public void setComboOptionDishes(ArrayList<ComboDish> comboOptionDishes) {
+        this.selectedComboOptionDishes = new ArrayList<>();
         this.comboOptionDishes = comboOptionDishes;
-        this.selectedComboDish = comboOptionDishes.get(0);
+        for(int i=0; i<this.minCount-1; i++) comboOptionDishes.get(0).incrementQuantity();
+        this.selectedComboOptionDishes.add(comboOptionDishes.get(0));
     }
 
     @Override
@@ -69,7 +100,7 @@ public class ComboOption {
         if (this.comboOptionDishes.size() != comboOption.comboOptionDishes.size()) return false;
         ArrayList<ComboDish> compareComboOptionDishes = comboOption.getComboOptionDishes();
         compareComboOptionDishes.removeAll(this.comboOptionDishes);
-        return compareComboOptionDishes.size() == 0 && selectedComboDish == comboOption.selectedComboDish;
+        return compareComboOptionDishes.size() == 0 && selectedComboOptionDishes == comboOption.selectedComboOptionDishes;
     }
 
     @Override
@@ -77,7 +108,8 @@ public class ComboOption {
         int hash = 7;
         hash = 3*hash + this.getId();
         hash = 3*hash + this.getQuantity();
-        hash = 3*hash + this.selectedComboDish.getId();
+        for (ComboDish comboDish : this.selectedComboOptionDishes)
+            hash = 3*hash + comboDish.getId();
         return hash;
     }
 }

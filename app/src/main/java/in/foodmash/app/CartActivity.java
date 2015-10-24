@@ -152,7 +152,11 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                         }).setNegativeButton("No, don't remove", new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialog, int which) { }
                 }).show(); break;
-            case R.id.back: finish(); break;
+            case R.id.back:
+                intent  = new Intent(CartActivity.this,MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                break;
             case R.id.buy:
                 if(cart.getCount()==0) Alerts.commonErrorAlert(CartActivity.this,"Empty Cart","Your cart is empty. Add some combos and we'll proceed!","Okay");
                 else if(isEverythingValid()) {

@@ -59,14 +59,18 @@ public class Combo {
     @JsonIgnore public float getPrice() { return price; }
     @JsonIgnore public float calculatePrice() {
         float price = 0;
-        for (ComboDish comboDish : this.getComboDishes()) price+=(comboDish.getDish().getPrice()*comboDish.getQuantity());
-        for (ComboOption comboOption : this.getComboOptions()) price+=(comboOption.getSelectedComboDish().getDish().getPrice()*comboOption.getQuantity());
+        for (ComboDish comboDish : this.getComboDishes())
+            price+=(comboDish.getDish().getPrice()*comboDish.getQuantity());
+        for (ComboOption comboOption : this.getComboOptions())
+            for(ComboDish comboDish: comboOption.getSelectedComboOptionDishes())
+                price+=(comboDish.getDish().getPrice()*comboDish.getQuantity());
         return price;
     }
     @JsonIgnore public String getDishNames() {
         String dishNames = "";
         for (ComboOption comboOption : this.getComboOptions())
-            dishNames += comboOption.getSelectedComboDish().getDish().getName() + (comboOption.isFromSameRestaurant()?"":" ("+comboOption.getSelectedComboDish().getDish().getRestaurant().getName()+") ") + ", ";
+            for(ComboDish comboDish: comboOption.getSelectedComboOptionDishes())
+                dishNames += comboDish.getDish().getName() + (comboOption.isFromSameRestaurant()?"":" ("+comboDish.getDish().getRestaurant().getName()+") ") + ", ";
         for (ComboDish comboDish : this.getComboDishes())
             dishNames += comboDish.getDish().getName() + ((comboDish.getQuantity()==1)?"":(" x " + comboDish.getQuantity())) + ", ";
         return dishNames.substring(0,dishNames.length()-2);
@@ -81,15 +85,8 @@ public class Combo {
             contents.put(comboOption.getPriority(),comboOptions.substring(0,comboOptions.length()-2));
         }
         for (ComboDish comboDish : this.getComboDishes())
-            contents.put(comboDish.getPriority(),comboDish.getDish().getName());
+            contents.put(comboDish.getPriority(), comboDish.getDish().getName());
         return contents;
-    }
-
-    @JsonIgnore public ArrayList<ComboDish> getSelectedComboDishes() {
-        ArrayList<ComboDish> selectedList = new ArrayList<>();
-        for (ComboOption comboOption : this.getComboOptions())
-            selectedList.add(comboOption.getSelectedComboDish());
-        return selectedList;
     }
 
     @JsonProperty public void setId(int id) { this.id = id; }
@@ -121,7 +118,8 @@ public class Combo {
         int hash = 5;
         hash = 3*hash + this.getId();
         for(ComboOption comboOption: comboOptions)
-            hash = 3*hash + comboOption.getSelectedComboDish().getId();
+            for(ComboDish comboDish: comboOption.getSelectedComboOptionDishes())
+                hash = 3*hash + comboDish.getId();
         for(ComboDish comboDish: comboDishes)
             hash = 3*hash + comboDish.getQuantity();
         return hash;

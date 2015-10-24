@@ -110,13 +110,13 @@ public class Cart {
     public void printTimestampsContents() {
         System.out.println("Treemap contents: ");
         for (TreeMap.Entry<Long, Combo> entry : timestamps.entrySet())
-            System.out.println("Timestamp: "+entry.getKey()+" Combo Hash: "+entry.getValue().hashCode()+ " Selected: "+entry.getValue().getSelectedComboDishes()+" Combo ID: "+entry.getValue().getId());
+            System.out.println("Timestamp: "+entry.getKey()+" Combo Hash: "+entry.getValue().hashCode() +" Combo ID: "+entry.getValue().getId());
     }
 
     public void printOrdersContents() {
         System.out.println("Orders hashmap contents: ");
         for (HashMap.Entry<Combo, Integer> entry: orders.entrySet())
-            System.out.println("Combo Hash: "+entry.getKey().hashCode()+ " Selected: "+entry.getKey().getSelectedComboDishes()+" Quantity: "+entry.getValue()+" Contents: "+entry.getKey().getDishNames());
+            System.out.println("Combo Hash: "+entry.getKey().hashCode()+ " Quantity: "+entry.getValue()+" Contents: "+entry.getKey().getDishNames());
     }
 
 }
