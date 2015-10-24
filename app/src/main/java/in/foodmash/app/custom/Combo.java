@@ -1,5 +1,8 @@
 package in.foodmash.app.custom;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -44,32 +47,32 @@ public class Combo {
     }
 
     public int getId() { return id; }
-    public int getGroupSize() { return groupSize; }
-    public int getNoOfPurchases() { return noOfPurchases; }
-    public String getLabel() { return label; }
-    public String getName() { return name; }
-    public String getDescription() { return description; }
-    public boolean isSpecial() { return special; }
-    public boolean isAvailable() { return available; }
+    @JsonIgnore public int getGroupSize() { return groupSize; }
+    @JsonIgnore public int getNoOfPurchases() { return noOfPurchases; }
+    @JsonIgnore public String getLabel() { return label; }
+    @JsonIgnore public String getName() { return name; }
+    @JsonIgnore public String getDescription() { return description; }
+    @JsonIgnore public boolean isSpecial() { return special; }
+    @JsonIgnore public boolean isAvailable() { return available; }
     public ArrayList<ComboDish> getComboDishes() { return comboDishes; }
     public ArrayList<ComboOption> getComboOptions() { return comboOptions; }
-    public float getPrice() { return price; }
-    public float calculatePrice() {
+    @JsonIgnore public float getPrice() { return price; }
+    @JsonIgnore public float calculatePrice() {
         float price = 0;
         for (ComboDish comboDish : this.getComboDishes()) price+=(comboDish.getDish().getPrice()*comboDish.getQuantity());
-        for (ComboOption comboOption : this.getComboOptions()) price+=(comboOption.getSelectedDish().getDish().getPrice()*comboOption.getQuantity());
+        for (ComboOption comboOption : this.getComboOptions()) price+=(comboOption.getSelectedComboDish().getDish().getPrice()*comboOption.getQuantity());
         return price;
     }
-    public String getDishNames() {
+    @JsonIgnore public String getDishNames() {
         String dishNames = "";
         for (ComboOption comboOption : this.getComboOptions())
-            dishNames += comboOption.getSelectedDish().getDish().getName() + (comboOption.isFromSameRestaurant()?"":" ("+comboOption.getSelectedDish().getDish().getRestaurant().getName()+") ") + ", ";
+            dishNames += comboOption.getSelectedComboDish().getDish().getName() + (comboOption.isFromSameRestaurant()?"":" ("+comboOption.getSelectedComboDish().getDish().getRestaurant().getName()+") ") + ", ";
         for (ComboDish comboDish : this.getComboDishes())
             dishNames += comboDish.getDish().getName() + ((comboDish.getQuantity()==1)?"":(" x " + comboDish.getQuantity())) + ", ";
         return dishNames.substring(0,dishNames.length()-2);
     }
 
-    public TreeMap<Integer,String> getContents() {
+    @JsonIgnore public TreeMap<Integer,String> getContents() {
         TreeMap<Integer,String> contents = new TreeMap<>();
         for (ComboOption comboOption : this.getComboOptions()) {
             String comboOptions = "";
@@ -82,24 +85,24 @@ public class Combo {
         return contents;
     }
 
-    public ArrayList<ComboDish> getSelectedComboDishes() {
+    @JsonIgnore public ArrayList<ComboDish> getSelectedComboDishes() {
         ArrayList<ComboDish> selectedList = new ArrayList<>();
         for (ComboOption comboOption : this.getComboOptions())
             selectedList.add(comboOption.getSelectedComboDish());
         return selectedList;
     }
 
-    public void setId(int id) { this.id = id; }
-    public void setGroupSize(int groupSize) { this.groupSize = groupSize; }
-    public void setNoOfPurchases(int noOfPurchases) { this.noOfPurchases = noOfPurchases; }
-    public void setLabel(String label) { this.label = label; }
-    public void setName(String name) { this.name = name; }
-    public void setPrice(float price) { this.price = price; }
-    public void setDescription(String description) { this.description = description; }
-    public void setSpecial(boolean special) { this.special = special; }
-    public void setAvailable(boolean available) { this.available = available; }
-    public void setComboDishes(ArrayList<ComboDish> comboDishes) { this.comboDishes = comboDishes; }
-    public void setComboOptions(ArrayList<ComboOption> comboOptions) { this.comboOptions = comboOptions; }
+    @JsonProperty public void setId(int id) { this.id = id; }
+    @JsonProperty public void setGroupSize(int groupSize) { this.groupSize = groupSize; }
+    @JsonProperty public void setNoOfPurchases(int noOfPurchases) { this.noOfPurchases = noOfPurchases; }
+    @JsonProperty public void setLabel(String label) { this.label = label; }
+    @JsonProperty public void setName(String name) { this.name = name; }
+    @JsonProperty public void setPrice(float price) { this.price = price; }
+    @JsonProperty public void setDescription(String description) { this.description = description; }
+    @JsonProperty public void setSpecial(boolean special) { this.special = special; }
+    @JsonProperty public void setAvailable(boolean available) { this.available = available; }
+    @JsonProperty public void setComboDishes(ArrayList<ComboDish> comboDishes) { this.comboDishes = comboDishes; }
+    @JsonProperty public void setComboOptions(ArrayList<ComboOption> comboOptions) { this.comboOptions = comboOptions; }
 
     @Override
     public boolean equals(Object o) {

@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,7 +36,6 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     Intent intent;
     JSONArray addressesJson;
     int addressId;
-    String payableAmount;
     JsonObjectRequest getAddressesRequest;
     JsonObjectRequest confirmOrderRequest;
     JsonObjectRequest deleteRequest;
@@ -77,21 +75,6 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout_address);
-        payableAmount = getIntent().getStringExtra("payable_amount");
-        if(payableAmount==null) {
-            new AlertDialog.Builder(CheckoutAddressActivity.this)
-                    .setCancelable(false)
-                    .setIconAttribute(android.R.attr.alertDialogIcon)
-                    .setTitle("Unable to process your cart")
-                    .setMessage("Something went wrong. We are unable to process your request. Try again!")
-                    .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    }).show();
-            return;
-        }
 
         cart = (LinearLayout) findViewById(R.id.cart); cart.setOnClickListener(this);
         confirm = (LinearLayout) findViewById(R.id.confirm); confirm.setOnClickListener(this);
@@ -121,6 +104,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
             dataJson.put("cart",cartJsonArray);
             requestJson.put("data",dataJson);
         } catch (JSONException e) { e.printStackTrace(); }
+        System.out.println(requestJson);
         return requestJson;
     }
     private void makeConfirmRequest() {
@@ -130,7 +114,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                 try {
                     if(response.getBoolean("success")) {
                         intent = new Intent(CheckoutAddressActivity.this, CheckoutPaymentActivity.class);
-                        intent.putExtra("payable_amount",payableAmount);
+                        intent.putExtra("payable_amount",response.getJSONObject("data").getJSONObject("cart").getDouble("total"));
                         startActivity(intent);
                     } else if(response.getBoolean("success")) {
                         Alerts.requestUnauthorisedAlert(CheckoutAddressActivity.this);

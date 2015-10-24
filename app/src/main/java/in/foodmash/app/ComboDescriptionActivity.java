@@ -168,7 +168,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         for(ComboDish comboDish: combo.getComboDishes())
             price += comboDish.getDish().getPrice() * comboDish.getQuantity();
         for(ComboOption comboOption: combo.getComboOptions())
-            price += comboOption.getSelectedDish().getDish().getPrice();
+            price += comboOption.getSelectedComboDish().getDish().getPrice();
         currentPrice.setText(String.valueOf((int)price));
     }
 

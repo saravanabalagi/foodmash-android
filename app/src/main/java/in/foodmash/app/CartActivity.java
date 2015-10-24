@@ -157,7 +157,6 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 if(cart.getCount()==0) Alerts.commonErrorAlert(CartActivity.this,"Empty Cart","Your cart is empty. Add some combos and we'll proceed!","Okay");
                 else if(isEverythingValid()) {
                     intent = new Intent(this, CheckoutAddressActivity.class);
-                    intent.putExtra("payable_amount", cart.getTotal());
                     startActivity(intent);
                 } else {
                     Alerts.validityAlert(CartActivity.this);

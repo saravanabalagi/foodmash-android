@@ -1,5 +1,8 @@
 package in.foodmash.app.custom;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,7 +14,7 @@ public class ComboOption {
 
     private int id;
     private int priority;
-    private int quantity =1;
+    private int quantity=1;
     private int minCount=1;
     private String name;
     private String description;
@@ -30,36 +33,30 @@ public class ComboOption {
         this.comboOptionDishes = c.comboOptionDishes;
     }
 
-    public int getMinCount() { return minCount; }
+    @JsonIgnore public int getMinCount() { return minCount; }
     public int getQuantity() { return quantity; }
     public int getId() { return id; }
-    public int getPriority() { return priority; }
-    public String getName() { return name; }
-    public String getDescription() { return description; }
-    public ComboDish getSelectedComboDish() { return selectedComboDish; }
-    public ArrayList<ComboDish> getComboOptionDishes() { return new ArrayList<>(comboOptionDishes); }
-    public boolean isFromSameRestaurant() {
+    @JsonIgnore public int getPriority() { return priority; }
+    @JsonIgnore public String getName() { return name; }
+    @JsonIgnore public String getDescription() { return description; }
+    @JsonProperty("ComboOptionDish") public ComboDish getSelectedComboDish() { return selectedComboDish; }
+    @JsonIgnore public ArrayList<ComboDish> getComboOptionDishes() { return new ArrayList<>(comboOptionDishes); }
+    @JsonIgnore public boolean isFromSameRestaurant() {
         Set<Integer> restaurantIdSet = new HashSet<>();
         for (ComboDish comboDish:comboOptionDishes)
             restaurantIdSet.add(comboDish.getDish().getRestaurant().getId());
         return restaurantIdSet.size()==1;
     }
-    public ComboDish getSelectedDish() {
-        for (ComboDish comboDish:comboOptionDishes)
-            if(selectedComboDish.getId()==comboDish.getId())
-                return comboDish;
-        return null;
-    }
 
-    public void setMinCount(int minCount) { this.minCount = minCount; this.quantity = minCount; }
+    @JsonProperty public void setMinCount(int minCount) { this.minCount = minCount; this.quantity = minCount; }
     public boolean incrementQuantity() { if(quantity +1<10) { quantity++; return true;} else return false; }
     public boolean decrementQuantity() { if(quantity -1<minCount) return false; else { quantity--; return true; }}
-    public void setId(int id) { this.id = id; }
-    public void setPriority(int priority) { this.priority = priority; }
-    public void setName(String name) { this.name = name; }
-    public void setDescription(String description) { this.description = description; }
+    @JsonProperty public void setId(int id) { this.id = id; }
+    @JsonProperty public void setPriority(int priority) { this.priority = priority; }
+    @JsonProperty public void setName(String name) { this.name = name; }
+    @JsonProperty public void setDescription(String description) { this.description = description; }
     public void setSelected(ComboDish selectedComboDish) { this.selectedComboDish = selectedComboDish; }
-    public void setComboOptionDishes(ArrayList<ComboDish> comboOptionDishes) {
+    @JsonProperty public void setComboOptionDishes(ArrayList<ComboDish> comboOptionDishes) {
         this.comboOptionDishes = comboOptionDishes;
         this.selectedComboDish = comboOptionDishes.get(0);
     }
