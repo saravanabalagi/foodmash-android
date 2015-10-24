@@ -1,5 +1,7 @@
 package in.foodmash.app;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +29,7 @@ import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
 import in.foodmash.app.custom.ComboDish;
 import in.foodmash.app.custom.ComboOption;
+import in.foodmash.app.custom.TouchableImageButton;
 
 /**
  * Created by sarav on Sep 30 2015.
@@ -35,6 +38,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
 
     private TextView cartCount;
     private TextView currentPrice;
+    private TouchableImageButton resetCombo;
     private Cart cart = Cart.getInstance();
     private Intent intent;
     private Combo combo;
@@ -77,10 +81,16 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
 
         buy = (LinearLayout) findViewById(R.id.buy); buy.setOnClickListener(this);
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
+        resetCombo = (TouchableImageButton) findViewById(R.id.reset_combo); resetCombo.setOnClickListener(this);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
         currentPrice = (TextView) findViewById(R.id.price);
 
         imageLoader = Swift.getInstance(ComboDescriptionActivity.this).getImageLoader();
+        updateFillLayout();
+    }
+
+    private void updateFillLayout() {
+        fillLayout.removeAllViews();
         final TreeMap<Integer,LinearLayout> layoutOrderTreeMap = new TreeMap<>();
 
         for (final ComboOption comboOption: combo.getComboOptions()) {
@@ -109,7 +119,15 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                 final TextView count = (TextView) countLayout.findViewById(R.id.count);
                 int quantity = comboDish.getQuantity();
                 count.setText(String.valueOf(quantity));
-                if (quantity>1 || comboOption.getSelectedComboOptionDishes().contains(comboDish)) { addExtraLayout.setVisibility(View.GONE); countLayout.setVisibility(View.VISIBLE); }
+                if (comboOption.getSelectedComboOptionDishes().contains(comboDish)) {
+                    Animations.fadeOut(addExtraLayout, 200);
+                    Animations.fadeIn(countLayout, 200);
+                    selected.setColorFilter(getResources().getColor(R.color.transparent));
+                } else {
+                    Animations.fadeIn(addExtraLayout, 200);
+                    Animations.fadeOut(countLayout, 200);
+                    selected.setColorFilter(getResources().getColor(R.color.white));
+                }
                 ImageView plus = (ImageView) countLayout.findViewById(R.id.plus);
                 ImageView minus = (ImageView) countLayout.findViewById(R.id.minus);
                 plus.setOnClickListener(new View.OnClickListener() {
@@ -242,7 +260,25 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear_combo_from_cart: break;
+            case R.id.reset_combo:
+                new AlertDialog.Builder(ComboDescriptionActivity.this)
+                        .setCancelable(false)
+                        .setIconAttribute(android.R.attr.alertDialogIcon)
+                        .setTitle("Do you want to reset the combo ?")
+                        .setMessage("This will reset the combo to the original state discarding all changes you have made.")
+                        .setPositiveButton("Reset", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) {
+                            for(ComboOption comboOption: combo.getComboOptions()) {
+                                for (ComboDish comboDish : comboOption.getComboOptionDishes())
+                                    comboDish.resetQuantity();
+                                comboOption.resetSelectedComboOptionDishes();
+                            }
+                            for(ComboDish comboDish: combo.getComboDishes())
+                                comboDish.resetQuantity();
+                            updateFillLayout();
+                        } })
+                        .setNegativeButton("No, Don't", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) {} })
+                        .show();
+                break;
             case R.id.back: finish(); break;
             case R.id.buy:
                 cart.addToCart(new Combo(combo));
