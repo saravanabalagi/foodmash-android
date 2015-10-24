@@ -63,7 +63,7 @@ public class ComboOption {
             if(comboDish.getId()==id) requiredComboDish = comboDish;
         return requiredComboDish;
     }
-    public String getContents(){
+    @JsonIgnore public String getContents(){
         String contents = "";
         for(ComboDish comboDish: this.comboOptionDishes)
             contents += comboDish.getDish().getName() + (this.isFromSameRestaurant()?"":"("+ comboDish.getDish().getRestaurant().getName() +")") + "/ ";

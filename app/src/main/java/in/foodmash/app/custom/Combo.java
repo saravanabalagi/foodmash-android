@@ -70,7 +70,7 @@ public class Combo {
         String dishNames = "";
         for (ComboOption comboOption : this.getComboOptions())
             for(ComboDish comboDish: comboOption.getSelectedComboOptionDishes())
-                dishNames += comboDish.getDish().getName() + (comboOption.isFromSameRestaurant()?"":" ("+comboDish.getDish().getRestaurant().getName()+") ") + ", ";
+                dishNames += comboDish.getDish().getName() + (comboOption.isFromSameRestaurant()?"":" ("+comboDish.getDish().getRestaurant().getName()+") ") + ((comboDish.getQuantity()==1)?"":(" x " + comboDish.getQuantity())) + ", ";
         for (ComboDish comboDish : this.getComboDishes())
             dishNames += comboDish.getDish().getName() + ((comboDish.getQuantity()==1)?"":(" x " + comboDish.getQuantity())) + ", ";
         return dishNames.substring(0,dishNames.length()-2);
