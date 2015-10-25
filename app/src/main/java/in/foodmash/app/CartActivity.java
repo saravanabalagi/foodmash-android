@@ -16,11 +16,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+
 import java.util.HashMap;
+import java.util.Random;
 
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
 import in.foodmash.app.custom.TouchableImageButton;
@@ -31,17 +36,18 @@ import in.foodmash.app.utils.NumberUtils;
  */
 public class CartActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Intent intent;
-    Handler handler=new Handler();
-    Cart cart = Cart.getInstance();
+    private Intent intent;
+    private Handler handler=new Handler();
+    private Cart cart = Cart.getInstance();
 
-    LinearLayout back;
-    LinearLayout buy;
-    LinearLayout fillLayout;
-    LinearLayout emptyCartLayout;
+    private LinearLayout back;
+    private LinearLayout buy;
+    private LinearLayout fillLayout;
+    private LinearLayout emptyCartLayout;
 
-    TextView total;
-    TouchableImageButton clearCart;
+    private TextView total;
+    private TouchableImageButton clearCart;
+    private ImageLoader imageLoader;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,6 +72,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
+        imageLoader = Swift.getInstance(CartActivity.this).getImageLoader();
         total = (TextView) findViewById(R.id.total);
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         buy = (LinearLayout) findViewById(R.id.buy); buy.setOnClickListener(this);
@@ -78,7 +85,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         for(final HashMap.Entry<Combo,Integer> order: cart.getOrders().entrySet()){
             final Combo combo = order.getKey();
             final LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.cart_combo, fillLayout, false);
-            ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
+            ((NetworkImageView) comboLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(), imageLoader);
             ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
             ((TextView) comboLayout.findViewById(R.id.dishes)).setText(combo.getDishNames());
             ImageView foodLabel = (ImageView) comboLayout.findViewById(R.id.label);
@@ -176,6 +183,16 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             if(!(((EditText) linearLayout.findViewById(R.id.quantity)).getText().toString().equals(((TextView) linearLayout.findViewById(R.id.quantity_display)).getText().toString()))) valid=false;
         }
         return valid;
+    }
+
+    private String getImageUrl() {
+        int randomNumber = new Random().nextInt(3 - 1 + 1) + 1;
+        switch (randomNumber) {
+            case 1: return "http://s19.postimg.org/mbcpkaupf/92t8_Zu_KH.jpg";
+            case 2: return "http://s19.postimg.org/cs7m4kwkz/qka9d_YR.jpg";
+            case 3: return "http://s19.postimg.org/e8j4mpzhv/zgdz_Ur_DV.jpg";
+            default: return "http://s19.postimg.org/mbcpkaupf/92t8_Zu_KH.jpg";
+        }
     }
 
 }

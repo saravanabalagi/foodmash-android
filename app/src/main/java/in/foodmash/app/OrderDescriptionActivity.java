@@ -17,11 +17,15 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.NetworkImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Random;
 
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
@@ -52,6 +56,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
     private LinearLayout mainLayout;
 
     private JsonObjectRequest orderDescriptionRequest;
+    private ImageLoader imageLoader;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -86,6 +91,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_description);
 
+        imageLoader = Swift.getInstance(OrderDescriptionActivity.this).getImageLoader();
         cart = getIntent().getBooleanExtra("cart", false);
         orderId = getIntent().getStringExtra("order_id");
         orderHistory = (LinearLayout) findViewById(R.id.order_history); orderHistory.setOnClickListener(this);
@@ -125,7 +131,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
                                 dishes += dishJson.getString("name") + ((j==comboDishesJson.length()-1)?"":",  ");
                             }
                             LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.order_combo, fillLayout, false);
-                            ((ImageView) comboLayout.findViewById(R.id.image)).setImageResource(R.mipmap.image_default);
+                            ((NetworkImageView) comboLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(), imageLoader);
                             ((TextView) comboLayout.findViewById(R.id.name)).setText(productJson.getString("name"));
                             TextView price = (TextView) comboLayout.findViewById(R.id.price); price.setText(productJson.getString("price"));
                             TextView quantity = (TextView) comboLayout.findViewById(R.id.quantity); quantity.setText(subOrderJson.getString("quantity"));
@@ -188,6 +194,16 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
         switch (status) {
             case "delivered": statusImageView.setImageResource(R.mipmap.tick); statusImageView.setColorFilter(getResources().getColor(R.color.okay_green)); break;
             case "cancelled": statusImageView.setImageResource(R.mipmap.cancel); statusImageView.setColorFilter(getResources().getColor(R.color.color_accent)); break;
+        }
+    }
+
+    private String getImageUrl() {
+        int randomNumber = new Random().nextInt(3 - 1 + 1) + 1;
+        switch (randomNumber) {
+            case 1: return "http://s19.postimg.org/mbcpkaupf/92t8_Zu_KH.jpg";
+            case 2: return "http://s19.postimg.org/cs7m4kwkz/qka9d_YR.jpg";
+            case 3: return "http://s19.postimg.org/e8j4mpzhv/zgdz_Ur_DV.jpg";
+            default: return "http://s19.postimg.org/mbcpkaupf/92t8_Zu_KH.jpg";
         }
     }
 }
