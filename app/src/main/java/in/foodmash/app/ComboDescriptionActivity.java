@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -47,6 +48,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
     private LinearLayout buy;
     private LinearLayout fillLayout;
     private ImageLoader imageLoader;
+    private LinearLayout addedToCartLayout;
 
 
     @Override
@@ -91,14 +93,15 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
 
     private void updateFillLayout() {
         fillLayout.removeAllViews();
+        updateAddedToCartLayout();
         final TreeMap<Integer,LinearLayout> layoutOrderTreeMap = new TreeMap<>();
 
         for (final ComboOption comboOption: combo.getComboOptions()) {
-            final LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.description_combo_option, fillLayout, false);
+            final LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.combo_description_combo_option, fillLayout, false);
             final LinearLayout optionsLayout = (LinearLayout) currentComboFoodLayout.findViewById(R.id.combo_dishes_layout);
 
             for (final ComboDish comboDish: comboOption.getComboOptionDishes()) {
-                final LinearLayout comboOptionsLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.description_combo_option_dish, currentComboFoodLayout, false);
+                final LinearLayout comboOptionsLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.combo_description_combo_option_dish, currentComboFoodLayout, false);
                 final ImageView selected = (ImageView) comboOptionsLayout.findViewById(R.id.selected);
                 if (comboOption.getSelectedComboOptionDishes().contains(comboDish)) { selected.setColorFilter(getResources().getColor(R.color.transparent)); }
                 else { selected.setColorFilter(getResources().getColor(R.color.white)); }
@@ -210,7 +213,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
 
         }
         for (final ComboDish comboDish: combo.getComboDishes()) {
-            final LinearLayout comboDishLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.description_combo_dish, fillLayout, false);
+            final LinearLayout comboDishLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.combo_description_combo_dish, fillLayout, false);
             ((NetworkImageView) comboDishLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(), imageLoader);
             ((TextView) comboDishLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
             ((TextView) comboDishLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
@@ -248,6 +251,13 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         updatePrice();
     }
 
+    private void updateAddedToCartLayout() {
+        if(cart.hasCombo(combo)) {
+            addedToCartLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.combo_description_combo_in_cart, fillLayout, false);
+            fillLayout.addView(addedToCartLayout, 0);
+        } else fillLayout.removeView(addedToCartLayout);
+    }
+
     private void updatePrice() {
         float price = 0;
         for(ComboDish comboDish: combo.getComboDishes())
@@ -282,7 +292,9 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             case R.id.back: finish(); break;
             case R.id.buy:
                 cart.addToCart(new Combo(combo));
+                Toast.makeText(ComboDescriptionActivity.this, "Combo added to cart", Toast.LENGTH_SHORT).show();
                 Actions.updateCartCount(cartCount);
+                updateAddedToCartLayout();
                 break;
         }
     }

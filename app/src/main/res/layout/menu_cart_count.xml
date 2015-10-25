@@ -14,7 +14,8 @@
         android:cropToPadding="true"
         android:paddingLeft="5dp"
         android:paddingRight="10dp"
-        android:id="@+id/cart_icon" />
+        android:id="@+id/cart_icon"
+        android:contentDescription="@string/cart" />
 
     <!-- Badge Count -->
     <TextView
@@ -22,7 +23,7 @@
         android:layout_width="15dp"
         android:layout_height="wrap_content"
         android:padding="2dp"
-        android:text="0"
+        android:text="@string/cart_count_lorem_ipsum"
         android:textColor="@color/abc_primary_text_material_dark"
         android:background="@drawable/cart_count_background"
         android:textSize="7sp"

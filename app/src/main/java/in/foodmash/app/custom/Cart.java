@@ -53,6 +53,11 @@ public class Cart {
         printTimestampsContents();
       }
 
+    public boolean hasCombo(Combo combo) {
+        for(Combo entry: this.orders.keySet())
+            if(entry.getId()==combo.getId()) return true;
+        return false;
+    }
     public void decrementFromCart(Combo combo) {
         for(Long timestamp: timestamps.descendingKeySet()) {
             Combo comboEntry = timestamps.get(timestamp);
