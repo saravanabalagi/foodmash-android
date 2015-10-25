@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.utils.WordUtils;
@@ -47,6 +48,8 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
     private LinearLayout orderHistory;
     private LinearLayout home;
     private LinearLayout fillLayout;
+    private LinearLayout loadingLayout;
+    private LinearLayout mainLayout;
 
     private JsonObjectRequest orderDescriptionRequest;
 
@@ -93,6 +96,8 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
         paymentMethod = (TextView) findViewById(R.id.payment_method);
         statusIcon = (ImageView) findViewById(R.id.status_icon);
 
+        loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
+        mainLayout = (LinearLayout) findViewById(R.id.main_layout);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
 
         orderDescriptionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/show", getRequestJson(), new Response.Listener<JSONObject>() {
@@ -100,6 +105,8 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
             public void onResponse(JSONObject response) {
                 try {
                     if (response.getBoolean("success")) {
+                        Animations.fadeOut(loadingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
                         JSONObject orderJson = response.getJSONObject("data");
                         total.setText(String.format("%.2f",Float.parseFloat(orderJson.getString("total"))));
                         paymentMethod.setText(WordUtils.titleize(orderJson.getString("payment_method")));
@@ -127,7 +134,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
                             ((TextView) comboLayout.findViewById(R.id.dishes)).setText(dishes);
                             fillLayout.addView(comboLayout);
                         }
-                    } else if (!response.getBoolean("success")) {
+                    } else {
                         Alerts.requestUnauthorisedAlert(OrderDescriptionActivity.this);
                         System.out.println(response.getString("error"));
                     }
@@ -143,11 +150,13 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
                     }
                 };
                 if (error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(OrderDescriptionActivity.this, onClickTryAgain);
-                if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(OrderDescriptionActivity.this, onClickTryAgain);
+                else if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(OrderDescriptionActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(OrderDescriptionActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
+        Animations.fadeIn(loadingLayout, 500);
+        Animations.fadeOut(mainLayout, 500);
         Swift.getInstance(OrderDescriptionActivity.this).addToRequestQueue(orderDescriptionRequest);
 
     }

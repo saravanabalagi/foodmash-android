@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
@@ -52,6 +53,8 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     LinearLayout call;
     LinearLayout sendEmail;
     LinearLayout notLoggedInLayout;
+    LinearLayout connectingLayout;
+    ScrollView mainLayout;
 
     JsonObjectRequest contactUsRequest;
 
@@ -110,6 +113,8 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         issueList.add("Bug Report");
         issueList.add("Feedback");
 
+        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
+        mainLayout = (ScrollView) findViewById(R.id.main_layout);
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         call = (LinearLayout) findViewById(R.id.call); call.setOnClickListener(this);
         sendEmail = (LinearLayout) findViewById(R.id.send_email); sendEmail.setOnClickListener(this);
@@ -161,7 +166,9 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
                 try {
                     if(response.getBoolean("success")) {
                         finish();
-                    } else if(!response.getBoolean("success")) {
+                    } else {
+                        Animations.fadeOut(connectingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
                         Alerts.requestUnauthorisedAlert(ContactUsActivity.this);
                         System.out.println(response.getString("error"));
                     }
@@ -170,18 +177,24 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Animations.fadeOut(connectingLayout,500);
+                Animations.fadeIn(mainLayout,500);
                 DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Animations.fadeIn(connectingLayout,500);
+                        Animations.fadeOut(mainLayout, 500);
                         Swift.getInstance(ContactUsActivity.this).addToRequestQueue(contactUsRequest);
                     }
                 };
                 if(error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ContactUsActivity.this, onClickTryAgain);
-                if(error instanceof NoConnectionError) Alerts.timeoutErrorAlert(ContactUsActivity.this, onClickTryAgain);
+                else if(error instanceof NoConnectionError) Alerts.timeoutErrorAlert(ContactUsActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(ContactUsActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
+        Animations.fadeIn(connectingLayout,500);
+        Animations.fadeOut(mainLayout, 500);
         Swift.getInstance(ContactUsActivity.this).addToRequestQueue(contactUsRequest);
     }
 

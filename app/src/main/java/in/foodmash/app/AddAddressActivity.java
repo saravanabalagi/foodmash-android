@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -49,41 +50,43 @@ import in.foodmash.app.custom.TouchableImageButton;
  */
 public class AddAddressActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
-    Intent intent;
-    LatLng latLng;
-    boolean edit = false;
-    boolean cart = false;
-    JSONObject jsonObject;
-    JsonObjectRequest addAddressRequest;
+    private Intent intent;
+    private LatLng latLng;
+    private boolean edit = false;
+    private boolean cart = false;
+    private JSONObject jsonObject;
+    private JsonObjectRequest addAddressRequest;
 
-    RadioGroup phoneRadioGroup;
+    private RadioGroup phoneRadioGroup;
 
-    EditText name;
-    EditText addressLine1;
-    EditText addressLine2;
-    EditText pincode;
-    EditText city;
-    EditText phone;
-    EditText landline;
-    AutoCompleteTextView area;
-    Switch primaryAddress;
-    int id;
+    private EditText name;
+    private EditText addressLine1;
+    private EditText addressLine2;
+    private EditText pincode;
+    private EditText city;
+    private EditText phone;
+    private EditText landline;
+    private AutoCompleteTextView area;
+    private Switch primaryAddress;
+    private int id;
 
-    ImageView nameValidate;
-    ImageView addressLine1Validate;
-    ImageView addressLine2Validate;
-    ImageView pincodeValidate;
-    ImageView areaValidate;
-    ImageView phoneValidate;
-    ImageView landlineValidate;
+    private ImageView nameValidate;
+    private ImageView addressLine1Validate;
+    private ImageView addressLine2Validate;
+    private ImageView pincodeValidate;
+    private ImageView areaValidate;
+    private ImageView phoneValidate;
+    private ImageView landlineValidate;
 
-    ArrayList<String> areaList;
-    TouchableImageButton clearFields;
+    private ArrayList<String> areaList;
+    private TouchableImageButton clearFields;
 
-    LinearLayout mobileLayout;
-    LinearLayout landlineLayout;
-    LinearLayout back;
-    LinearLayout save;
+    private LinearLayout mobileLayout;
+    private LinearLayout landlineLayout;
+    private LinearLayout back;
+    private LinearLayout save;
+    private LinearLayout savingLayout;
+    private ScrollView mainLayout;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -131,6 +134,8 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         areaList.add("RA Puram");
         areaList.add("Nandanam");
 
+        savingLayout = (LinearLayout) findViewById(R.id.saving_layout);
+        mainLayout = (ScrollView) findViewById(R.id.main_layout);
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         save = (LinearLayout) findViewById(R.id.save); save.setOnClickListener(this);
         mobileLayout = (LinearLayout) findViewById(R.id.mobile_layout);
@@ -187,9 +192,9 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
             try {
                 Geocoder geocoder = new Geocoder(this);
                 List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                if(addresses.get(0)!=null)
-                    if(addresses.get(0).getPostalCode().length()==6) {
-                        pincode.setText(addresses.get(0).getPostalCode());
+                if(addresses.get(0)!=null) {
+                        if(addresses.get(0).getPostalCode().length()==6)
+                            pincode.setText(addresses.get(0).getPostalCode());
                         addressLine2.setText(addresses.get(0).getAddressLine(0));
                     }
             } catch (Exception e) { e.printStackTrace(); }
@@ -265,7 +270,9 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
-                    } else if(!(response.getBoolean("success"))) {
+                    } else {
+                        Animations.fadeOut(savingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(AddAddressActivity.this, "Address Invalid", "We are unable to process your Address Details. Try Again!", "Okay");
                         System.out.println("Error: " + response.getString("error"));
                     }
@@ -274,9 +281,13 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Animations.fadeOut(savingLayout,500);
+                Animations.fadeIn(mainLayout,500);
                 DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Animations.fadeIn(savingLayout,500);
+                        Animations.fadeOut(mainLayout,500);
                         Swift.getInstance(AddAddressActivity.this).addToRequestQueue(addAddressRequest);
                     }
                 };
@@ -286,6 +297,8 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
                 System.out.println("JSON Error: " + error);
             }
         });
+        Animations.fadeIn(savingLayout,500);
+        Animations.fadeOut(mainLayout, 500);
         Swift.getInstance(AddAddressActivity.this).addToRequestQueue(addAddressRequest);
     }
 

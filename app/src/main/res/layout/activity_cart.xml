@@ -62,16 +62,18 @@
                     android:src="@drawable/empty_cart"
                     android:cropToPadding="true"
                     android:paddingLeft="30dp"
-                    android:paddingRight="30dp" />
+                    android:paddingRight="30dp"
+                    android:contentDescription="@string/empty_cart" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/empty_cart"
+                    android:text="@string/empty_cart_title"
                     android:gravity="center_horizontal"
                     android:textSize="25sp"
                     android:fontFamily="sans-serif-light"
-                    android:layout_margin="5dp" />
+                    android:layout_margin="5dp"
+                    android:singleLine="true" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -79,7 +81,8 @@
                     android:text="@string/empty_cart_description"
                     android:gravity="center_horizontal"
                     android:fontFamily="sans-serif-light"
-                    android:layout_margin="5dp" />
+                    android:layout_margin="5dp"
+                    android:singleLine="true" />
             </LinearLayout>
 
             <LinearLayout

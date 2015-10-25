@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
@@ -25,6 +26,7 @@ import org.json.JSONObject;
 
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.utils.WordUtils;
@@ -38,6 +40,8 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
 
     private LinearLayout back;
     private LinearLayout fillLayout;
+    private LinearLayout loadingLayout;
+    private ScrollView mainLayout;
 
     private JsonObjectRequest orderHistoryRequest;
 
@@ -75,6 +79,8 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_order_history);
 
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
+        loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
+        mainLayout = (ScrollView) findViewById(R.id.main_layout);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
 
         orderHistoryRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/history", JsonProvider.getStandardRequestJson(OrderHistoryActivity.this), new Response.Listener<JSONObject>() {
@@ -82,6 +88,8 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
             public void onResponse(JSONObject response) {
                 try {
                     if (response.getBoolean("success")) {
+                        Animations.fadeOut(loadingLayout,500);
+                        Animations.fadeIn(mainLayout, 500);
                         JSONArray ordersJson = response.getJSONArray("data");
                         for(int i=0;i<ordersJson.length();i++) {
                             final JSONObject orderJson = ordersJson.getJSONObject(i);
@@ -104,7 +112,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
                             });
                             fillLayout.addView(orderLayout);
                         }
-                    } else if (!response.getBoolean("success")) {
+                    } else {
                         Alerts.requestUnauthorisedAlert(OrderHistoryActivity.this);
                         System.out.println(response.getString("error"));
                     }
@@ -120,11 +128,13 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
                     }
                 };
                 if (error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(OrderHistoryActivity.this, onClickTryAgain);
-                if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(OrderHistoryActivity.this, onClickTryAgain);
+                else if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(OrderHistoryActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(OrderHistoryActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
+        Animations.fadeIn(loadingLayout, 500);
+        Animations.fadeOut(mainLayout, 500);
         Swift.getInstance(OrderHistoryActivity.this).addToRequestQueue(orderHistoryRequest);
 
     }

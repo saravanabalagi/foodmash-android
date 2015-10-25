@@ -292,7 +292,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             case R.id.back: finish(); break;
             case R.id.buy:
                 cart.addToCart(new Combo(combo));
-                Toast.makeText(ComboDescriptionActivity.this, "Combo added to cart", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ComboDescriptionActivity.this, combo.getName() + " worth Rs. "+combo.calculatePrice()+" added to cart", Toast.LENGTH_SHORT).show();
                 Actions.updateCartCount(cartCount);
                 updateAddedToCartLayout();
                 break;

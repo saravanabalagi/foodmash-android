@@ -37,29 +37,160 @@
 
     </RelativeLayout>
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_weight="1">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:id="@+id/connecting_layout"
+            android:visibility="gone">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/connecting"
+                android:gravity="center_horizontal"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-light"
+                android:layout_margin="5dp"
+                android:singleLine="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/connecting_description"
+                android:gravity="center_horizontal"
+                android:fontFamily="sans-serif-light"
+                android:layout_margin="5dp"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/main_layout">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
                 android:padding="10dp">
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/not_logged_in_layout">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:padding="10dp">
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/not_logged_in_layout">
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textEmailAddress"
+                                android:ems="10"
+                                android:id="@+id/email"
+                                android:layout_margin="5dp"
+                                android:hint="@string/email_edit_text_hint"
+                                android:singleLine="true"
+                                android:layout_weight="1" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:id="@+id/email_validate"
+                                android:src="@mipmap/tick"
+                                android:tint="@color/okay_green"
+                                android:layout_gravity="bottom"
+                                android:layout_marginBottom="7dp"
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical">
+
+                            <EditText
+                                android:layout_width="50dp"
+                                android:layout_height="wrap_content"
+                                android:inputType="none"
+                                android:ems="10"
+                                android:text="@string/phone_prefix_edit_text_hint"
+                                android:focusable="false"
+                                android:focusableInTouchMode="false"
+                                android:editable="false"
+                                android:gravity="center_horizontal"
+                                android:singleLine="true" />
+
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="phone"
+                                android:ems="10"
+                                android:id="@+id/phone"
+                                android:layout_margin="5dp"
+                                android:hint="@string/phone_edit_text_hint"
+                                android:singleLine="true"
+                                android:layout_weight="1" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:id="@+id/phone_validate"
+                                android:src="@mipmap/tick"
+                                android:tint="@color/okay_green"
+                                android:layout_gravity="bottom"
+                                android:layout_marginBottom="7dp"
+                                android:visibility="gone" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <AutoCompleteTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/issue"
+                            android:hint="@string/issue_feedback"
+                            android:layout_weight="1"
+                            android:layout_margin="5dp" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:id="@+id/issue_validate"
+                            android:src="@mipmap/error"
+                            android:tint="@color/color_accent"
+                            android:layout_gravity="bottom"
+                            android:layout_marginBottom="7dp"
+                            android:visibility="gone" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:orientation="horizontal"
@@ -69,154 +200,63 @@
                         <EditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="textEmailAddress"
+                            android:inputType="textMultiLine"
                             android:ems="10"
-                            android:id="@+id/email"
-                            android:layout_margin="5dp"
-                            android:hint="@string/email_edit_text_hint"
-                            android:singleLine="true"
-                            android:layout_weight="1" />
+                            android:id="@+id/description"
+                            android:hint="@string/description"
+                            android:minLines="3"
+                            android:gravity="top|left"
+                            android:scrollbars="vertical"
+                            android:layout_weight="1"
+                            android:layout_margin="5dp" />
 
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:id="@+id/email_validate"
-                            android:src="@mipmap/tick"
-                            android:tint="@color/okay_green"
+                            android:id="@+id/description_validate"
+                            android:src="@mipmap/error"
+                            android:tint="@color/color_accent"
                             android:layout_gravity="bottom"
                             android:layout_marginBottom="7dp"
                             android:visibility="gone" />
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical">
-
-                        <EditText
-                            android:layout_width="50dp"
-                            android:layout_height="wrap_content"
-                            android:inputType="none"
-                            android:ems="10"
-                            android:text="@string/phone_prefix_edit_text_hint"
-                            android:focusable="false"
-                            android:focusableInTouchMode="false"
-                            android:editable="false"
-                            android:gravity="center_horizontal"
-                            android:singleLine="true" />
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="phone"
-                            android:ems="10"
-                            android:id="@+id/phone"
-                            android:layout_margin="5dp"
-                            android:hint="@string/phone_edit_text_hint"
-                            android:singleLine="true"
-                            android:layout_weight="1" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:id="@+id/phone_validate"
-                            android:src="@mipmap/tick"
-                            android:tint="@color/okay_green"
-                            android:layout_gravity="bottom"
-                            android:layout_marginBottom="7dp"
-                            android:visibility="gone" />
-                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/issue"
-                        android:hint="@string/issue_feedback"
-                        android:layout_weight="1"
-                        android:layout_margin="5dp" />
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:id="@+id/issue_validate"
-                        android:src="@mipmap/error"
-                        android:tint="@color/color_accent"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="7dp"
-                        android:visibility="gone" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textMultiLine"
-                        android:ems="10"
-                        android:id="@+id/description"
-                        android:hint="@string/description"
-                        android:minLines="3"
-                        android:gravity="top|left"
-                        android:scrollbars="vertical"
-                        android:layout_weight="1"
-                        android:layout_margin="5dp" />
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:id="@+id/description_validate"
-                        android:src="@mipmap/error"
-                        android:tint="@color/color_accent"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="7dp"
-                        android:visibility="gone" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:background="@drawable/button_flat_large_background"
-                android:paddingTop="5dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_gravity="center_horizontal"
-                android:id="@+id/send_email" >
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@mipmap/mail"
-                    android:scaleType="centerCrop"
-                    android:tint="@color/abc_primary_text_material_dark"
-                    android:contentDescription="@string/add_icon" />
-
-                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Send Mail"
-                    android:padding="5dp"
-                    android:textSize="12sp"
-                    android:textColor="@color/abc_primary_text_disable_only_material_dark" />
-            </LinearLayout>
+                    android:gravity="center_vertical"
+                    android:background="@drawable/button_flat_large_background"
+                    android:paddingTop="5dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/send_email" >
 
-        </LinearLayout>
-    </ScrollView>
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@mipmap/mail"
+                        android:scaleType="centerCrop"
+                        android:tint="@color/abc_primary_text_material_dark"
+                        android:contentDescription="@string/add_icon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Send Mail"
+                        android:padding="5dp"
+                        android:textSize="12sp"
+                        android:textColor="@color/abc_primary_text_disable_only_material_dark" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+    </RelativeLayout>
 
     <LinearLayout
         android:orientation="horizontal"

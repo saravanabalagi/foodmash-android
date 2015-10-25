@@ -25,57 +25,131 @@
 
     </RelativeLayout>
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_weight="1">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:id="@+id/loading_layout"
+            android:visibility="gone">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loading"
+                android:gravity="center_horizontal"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-light"
+                android:layout_margin="5dp"
+                android:singleLine="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loading_description"
+                android:gravity="center_horizontal"
+                android:fontFamily="sans-serif-light"
+                android:layout_margin="5dp"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:id="@+id/connecting_layout"
+            android:visibility="gone">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/connecting"
+                android:gravity="center_horizontal"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-light"
+                android:layout_margin="5dp"
+                android:singleLine="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/connecting_description"
+                android:gravity="center_horizontal"
+                android:fontFamily="sans-serif-light"
+                android:layout_margin="5dp"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/main_layout">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/fill_layout">
+                android:layout_height="wrap_content">
 
-            </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/fill_layout">
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:background="@drawable/button_flat_large_background"
-                android:paddingTop="5dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_gravity="center_horizontal"
-                android:id="@+id/add_address"
-                android:layout_marginBottom="15dp">
+                </LinearLayout>
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@mipmap/add"
-                    android:scaleType="centerCrop"
-                    android:tint="@color/abc_primary_text_material_dark"
-                    android:contentDescription="@string/add_icon" />
-
-                <TextView
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/add_address"
-                    android:padding="5dp"
-                    android:textSize="12sp"
-                    android:textColor="@color/abc_primary_text_disable_only_material_dark" />
+                    android:gravity="center_vertical"
+                    android:background="@drawable/button_flat_large_background"
+                    android:paddingTop="5dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/add_address"
+                    android:layout_marginBottom="15dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@mipmap/add"
+                        android:scaleType="centerCrop"
+                        android:tint="@color/abc_primary_text_material_dark"
+                        android:contentDescription="@string/add_icon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/add_address"
+                        android:padding="5dp"
+                        android:textSize="12sp"
+                        android:textColor="@color/abc_primary_text_disable_only_material_dark" />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
+        </ScrollView>
+    </RelativeLayout>
 
     <LinearLayout
         android:orientation="horizontal"

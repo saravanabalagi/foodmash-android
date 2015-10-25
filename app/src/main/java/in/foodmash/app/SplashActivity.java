@@ -25,8 +25,8 @@ import in.foodmash.app.commons.Swift;
  */
 public class SplashActivity extends Activity {
 
-    Intent intent;
-    JsonObjectRequest checkConnectionRequest;
+    private Intent intent;
+    private JsonObjectRequest checkConnectionRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

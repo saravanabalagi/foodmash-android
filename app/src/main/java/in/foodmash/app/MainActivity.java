@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private Intent intent;
 
     private LinearLayout fillLayout;
+    private LinearLayout loadingLayout;
     private List<Combo> combos;
     private TextView cartCount;
     private Cart cart = Cart.getInstance();
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
+        loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
         imageLoader = Swift.getInstance(MainActivity.this).getImageLoader();
 
         getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", JsonProvider.getStandardRequestJson(MainActivity.this) ,new Response.Listener<JSONObject>() {
@@ -104,8 +106,9 @@ public class MainActivity extends AppCompatActivity {
                         mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
                         Cache.setCombos(Arrays.asList(mapper.readValue(response.getJSONObject("data").getJSONArray("combos").toString(), Combo[].class)));
                         combos = Cache.getCombos();
+                        Animations.fadeOut(loadingLayout,500);
                         updateFillLayout();
-                    } else if (!response.getBoolean("success")) {
+                    } else {
                         Alerts.requestUnauthorisedAlert(MainActivity.this);
                         System.out.println(response.getString("error"));
                     }
@@ -121,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
                 if (error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(MainActivity.this, onClickTryAgain);
-                if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(MainActivity.this, onClickTryAgain);
+                else if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(MainActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(MainActivity.this);
             }
         });

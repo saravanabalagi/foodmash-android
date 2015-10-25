@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
@@ -24,6 +25,7 @@ import org.json.JSONObject;
 
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.Cart;
@@ -33,17 +35,20 @@ import in.foodmash.app.custom.Cart;
  */
 public class CheckoutAddressActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Intent intent;
-    JSONArray addressesJson;
-    int addressId;
-    JsonObjectRequest getAddressesRequest;
-    JsonObjectRequest confirmOrderRequest;
-    JsonObjectRequest deleteRequest;
+    private Intent intent;
+    private JSONArray addressesJson;
+    private int addressId;
+    private JsonObjectRequest getAddressesRequest;
+    private JsonObjectRequest confirmOrderRequest;
+    private JsonObjectRequest deleteRequest;
 
-    LinearLayout cart;
-    LinearLayout confirm;
-    LinearLayout addAddress;
-    LinearLayout fillLayout;
+    private LinearLayout cart;
+    private LinearLayout confirm;
+    private LinearLayout addAddress;
+    private LinearLayout fillLayout;
+    private LinearLayout loadingLayout;
+    private LinearLayout connectingLayout;
+    private ScrollView mainLayout;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -80,6 +85,9 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         confirm = (LinearLayout) findViewById(R.id.confirm); confirm.setOnClickListener(this);
         addAddress = (LinearLayout) findViewById(R.id.add_address); addAddress.setOnClickListener(this);
 
+        loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
+        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
+        mainLayout = (ScrollView) findViewById(R.id.main_layout);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout); fillLayout();
     }
 
@@ -116,7 +124,9 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                         intent = new Intent(CheckoutAddressActivity.this, CheckoutPaymentActivity.class);
                         intent.putExtra("payable_amount",response.getJSONObject("data").getJSONObject("cart").getDouble("total"));
                         startActivity(intent);
-                    } else if(response.getBoolean("success")) {
+                    } else {
+                        Animations.fadeOut(connectingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
                         Alerts.requestUnauthorisedAlert(CheckoutAddressActivity.this);
                         System.out.println(response.getString("error"));
                     }
@@ -125,18 +135,24 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Animations.fadeOut(connectingLayout,500);
+                Animations.fadeIn(mainLayout,500);
                 DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Animations.fadeIn(connectingLayout,500);
+                        Animations.fadeOut(mainLayout, 500);
                         Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(confirmOrderRequest);
                     }
                 };
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(CheckoutAddressActivity.this, onClickTryAgain);
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this, onClickTryAgain);
+                else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(CheckoutAddressActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
+        Animations.fadeIn(connectingLayout,500);
+        Animations.fadeOut(mainLayout, 500);
         Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(confirmOrderRequest);
     }
 
@@ -158,6 +174,8 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
+                        Animations.fadeOut(loadingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
                         addressesJson = response.getJSONArray("data");
                         for (int i = 0; i < addressesJson.length(); i++) {
                             final JSONObject addressJson = addressesJson.getJSONObject(i);
@@ -236,7 +254,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                             });
                             fillLayout.addView(addressLayout);
                         }
-                    } else if(!response.getBoolean("success")) {
+                    } else {
                         Alerts.requestUnauthorisedAlert(CheckoutAddressActivity.this);
                         System.out.println(response.getString("error"));
                     }
@@ -252,11 +270,13 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                     }
                 };
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(CheckoutAddressActivity.this, onClickTryAgain);
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this, onClickTryAgain);
+                else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutAddressActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(CheckoutAddressActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
+        Animations.fadeIn(loadingLayout, 500);
+        Animations.fadeOut(mainLayout, 500);
         Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(getAddressesRequest);
     }
 

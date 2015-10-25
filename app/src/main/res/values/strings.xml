@@ -86,7 +86,7 @@
     <string name="restaurant">Restaurant</string>
     <string name="dish_name">Dish Name</string>
     <string name="selected">selected</string>
-    <string name="empty_cart">Aren\'t you hungry?</string>
+    <string name="empty_cart_title">Aren\'t you hungry?</string>
     <string name="empty_cart_description">You didn\'t add any combos to the cart</string>
     <string name="email_edit_text_hint">someone@mailbox.com</string>
     <string name="cash_on_delivery">Cash on Delivery</string>
@@ -105,4 +105,12 @@
     <string name="restaurant_name">Restaurant Name</string>
     <string name="add_extra">Add Extra</string>
     <string name="cart_count_lorem_ipsum">0</string>
+    <string name="empty_cart">Empty Cart</string>
+    <string name="loading">Loading...</string>
+    <string name="loading_description">We\'re loading as fast as we can</string>
+    <string name="connecting">Connecting...</string>
+    <string name="connecting_description">We\'re contacting the server</string>
+    <string name="saving">Saving...</string>
+    <string name="saving_description">We\'re saving your info in the server</string>
+    <string name="contents">Contents</string>
 </resources>

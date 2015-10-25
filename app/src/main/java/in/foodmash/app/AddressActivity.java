@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
@@ -24,6 +25,7 @@ import org.json.JSONObject;
 
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 
@@ -32,14 +34,17 @@ import in.foodmash.app.commons.Swift;
  */
 public class AddressActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Intent intent;
-    JSONArray jsonArray;
-    JsonObjectRequest deleteAddressRequest;
-    JsonObjectRequest getAddressesRequest;
+    private Intent intent;
+    private JSONArray jsonArray;
+    private JsonObjectRequest deleteAddressRequest;
+    private JsonObjectRequest getAddressesRequest;
 
-    LinearLayout back;
-    LinearLayout addAddress;
-    LinearLayout fillLayout;
+    private LinearLayout back;
+    private LinearLayout addAddress;
+    private LinearLayout fillLayout;
+    private LinearLayout loadingLayout;
+    private LinearLayout connectingLayout;
+    private ScrollView mainLayout;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,9 +77,13 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addresses);
 
+        loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
+        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
+
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         addAddress = (LinearLayout) findViewById(R.id.add_address); addAddress.setOnClickListener(this);
 
+        mainLayout = (ScrollView) findViewById(R.id.main_layout);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout); fillLayout();
     }
 
@@ -86,11 +95,14 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void fillLayout() {
+        fillLayout.removeAllViews();
         getAddressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses", JsonProvider.getStandardRequestJson(AddressActivity.this),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
+                        Animations.fadeOut(loadingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
                         jsonArray = response.getJSONArray("data");
                         for (int i = 0; i < jsonArray.length(); i++) {
                             final JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -129,34 +141,44 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                         public void onResponse(JSONObject response) {
                                             try {
                                                 if (response.getBoolean("success")) {
-                                                    fillLayout.removeView(addressLayout);
+                                                    Animations.fadeOut(connectingLayout,500);
+                                                    Animations.fadeIn(mainLayout,500);
                                                     fillLayout();
                                                 }
-                                                else if (response.getBoolean("success"))
+                                                else {
+                                                    Animations.fadeOut(connectingLayout,500);
+                                                    Animations.fadeIn(mainLayout,500);
                                                     Alerts.commonErrorAlert(AddressActivity.this, "Could not delete !", "The address that you want to remove could not be removed. Try again!", "Okay");
+                                                }
                                             } catch (JSONException e) { e.printStackTrace(); }
                                         }
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
+                                            Animations.fadeOut(connectingLayout,500);
+                                            Animations.fadeIn(mainLayout,500);
                                             DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
+                                                    Animations.fadeIn(connectingLayout,500);
+                                                    Animations.fadeOut(mainLayout, 500);
                                                     Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteAddressRequest);
                                                 }
                                             };
                                             if (error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddressActivity.this, onClickTryAgain);
-                                            if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this, onClickTryAgain);
+                                            else if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this, onClickTryAgain);
                                             else Alerts.unknownErrorAlert(AddressActivity.this);
                                             System.out.println("Response Error: " + error);
                                         }
                                     });
+                                    Animations.fadeIn(connectingLayout,500);
+                                    Animations.fadeOut(mainLayout, 500);
                                     Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteAddressRequest);
                                 }
                             });
                             fillLayout.addView(addressLayout);
                         }
-                    } else if(!response.getBoolean("success")) {
+                    } else {
                         Alerts.requestUnauthorisedAlert(AddressActivity.this);
                         System.out.println(response.getString("error"));
                     }
@@ -177,6 +199,8 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                 System.out.println("Response Error: " + error);
             }
         });
+        Animations.fadeIn(loadingLayout, 500);
+        Animations.fadeOut(mainLayout, 500);
         Swift.getInstance(AddressActivity.this).addToRequestQueue(getAddressesRequest);
     }
 

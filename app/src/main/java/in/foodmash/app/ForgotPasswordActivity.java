@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
@@ -37,22 +38,24 @@ import in.foodmash.app.custom.TouchableImageButton;
  */
 public class ForgotPasswordActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
-    LinearLayout back;
-    LinearLayout forgot;
-    LinearLayout phoneLayout;
-    LinearLayout emailLayout;
+    private LinearLayout back;
+    private LinearLayout forgot;
+    private LinearLayout phoneLayout;
+    private LinearLayout emailLayout;
+    private LinearLayout connectingLayout;
+    private ScrollView mainLayout;
 
-    JsonObjectRequest forgotRequest;
+    private JsonObjectRequest forgotRequest;
 
-    EditText phone;
-    EditText email;
+    private EditText phone;
+    private EditText email;
 
-    ImageView phoneValidate;
-    ImageView emailValidate;
+    private ImageView phoneValidate;
+    private ImageView emailValidate;
 
-    RadioGroup otpMethodRadioGroup;
-    TouchableImageButton clearAllFields;
-    Intent intent;
+    private RadioGroup otpMethodRadioGroup;
+    private TouchableImageButton clearAllFields;
+    private Intent intent;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -77,6 +80,8 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         forgot = (LinearLayout) findViewById(R.id.forgot); forgot.setOnClickListener(this);
         phoneLayout = (LinearLayout) findViewById(R.id.phone_layout);
         emailLayout = (LinearLayout) findViewById(R.id.email_layout);
+        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
+        mainLayout = (ScrollView) findViewById(R.id.main_layout);
 
         phoneValidate = (ImageView) findViewById(R.id.phone_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
@@ -129,7 +134,9 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
                         intent.putExtra("type",(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)?"phone":"email");
                         intent.putExtra("value",(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)?phone.getText().toString().trim():email.getText().toString().trim());
                         startActivity(intent);
-                    } else if(!(response.getBoolean("success"))) {
+                    } else {
+                        Animations.fadeOut(connectingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(ForgotPasswordActivity.this, "Could not send OTP", "We are unable to send you OTP as the details you entered are invalid. Try Again!", "Okay");
                         System.out.println("Error: " + response.getString("error"));
                     }
@@ -138,18 +145,24 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Animations.fadeOut(connectingLayout,500);
+                Animations.fadeIn(mainLayout,500);
                 DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Animations.fadeIn(connectingLayout,500);
+                        Animations.fadeOut(mainLayout, 500);
                         Swift.getInstance(ForgotPasswordActivity.this).addToRequestQueue(forgotRequest);
                     }
                 };
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ForgotPasswordActivity.this, onClickTryAgain);
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ForgotPasswordActivity.this, onClickTryAgain);
+                else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ForgotPasswordActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(ForgotPasswordActivity.this);
                 System.out.println("JSON Error: " + error);
             }
         });
+        Animations.fadeIn(connectingLayout,500);
+        Animations.fadeOut(mainLayout, 500);
         Swift.getInstance(ForgotPasswordActivity.this).addToRequestQueue(forgotRequest);
     }
 

@@ -14,6 +14,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Switch;
 
 import com.android.volley.NoConnectionError;
@@ -44,22 +45,24 @@ import in.foodmash.app.utils.NumberUtils;
  */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher{
 
-    LinearLayout register;
-    LinearLayout forgotPassword;
-    LinearLayout skip;
-    LinearLayout login;
+    private LinearLayout register;
+    private LinearLayout forgotPassword;
+    private LinearLayout skip;
+    private LinearLayout login;
+    private LinearLayout connectingLayout;
+    private ScrollView mainLayout;
 
-    TouchableImageButton clearAllFields;
-    boolean isEmail = true;
-    EditText email;
-    EditText password;
-    EditText phonePrefix;
-    ImageView emailValidate;
-    ImageView passwordValidate;
-    Switch keepLoggedIn;
+    private TouchableImageButton clearAllFields;
+    private boolean isEmail = true;
+    private EditText email;
+    private EditText password;
+    private EditText phonePrefix;
+    private ImageView emailValidate;
+    private ImageView passwordValidate;
+    private Switch keepLoggedIn;
 
-    JsonObjectRequest loginRequest;
-    Intent intent;
+    private JsonObjectRequest loginRequest;
+    private Intent intent;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,6 +84,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         setContentView(R.layout.activity_login);
 
+        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
+        mainLayout = (ScrollView) findViewById(R.id.main_layout);
         register = (LinearLayout) findViewById(R.id.register); register.setOnClickListener(this);
         forgotPassword = (LinearLayout) findViewById(R.id.forgot_password); forgotPassword.setOnClickListener(this);
         skip = (LinearLayout) findViewById(R.id.skip); skip.setOnClickListener(this);
@@ -155,7 +160,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         editor.apply();
                         startActivity(intent);
                         finish();
-                    } else if(!(response.getBoolean("success"))) {
+                    } else {
+                        Animations.fadeOut(connectingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(LoginActivity.this,
                                 "Invalid username or password",
                                 "We are unable to log you in with the entered credentials. Please try again!",
@@ -167,9 +174,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Animations.fadeOut(connectingLayout,500);
+                Animations.fadeIn(mainLayout,500);
                 DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Animations.fadeIn(connectingLayout,500);
+                        Animations.fadeOut(mainLayout, 500);
                         Swift.getInstance(LoginActivity.this).addToRequestQueue(loginRequest);
                     }
                 };
@@ -179,6 +190,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 System.out.println("Response Error: " + error);
             }
         });
+        Animations.fadeIn(connectingLayout,500);
+        Animations.fadeOut(mainLayout, 500);
         Swift.getInstance(LoginActivity.this).addToRequestQueue(loginRequest);
     }
 

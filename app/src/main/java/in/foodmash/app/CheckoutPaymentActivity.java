@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
@@ -24,6 +25,7 @@ import org.json.JSONObject;
 
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 
@@ -32,16 +34,18 @@ import in.foodmash.app.commons.Swift;
  */
 public class CheckoutPaymentActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Intent intent;
+    private Intent intent;
 
-    LinearLayout address;
-    LinearLayout pay;
-    TextView total;
-    String payableAmount;
-    String paymentMethod;
+    private LinearLayout address;
+    private LinearLayout pay;
+    private LinearLayout connectingLayout;
+    private ScrollView mainLayout;
+    private TextView total;
+    private String payableAmount;
+    private String paymentMethod;
 
-    RadioGroup paymentMode;
-    JsonObjectRequest makePurchaseRequest;
+    private RadioGroup paymentMode;
+    private JsonObjectRequest makePurchaseRequest;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -76,6 +80,8 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
 
         payableAmount = getIntent().getStringExtra("payable_amount");
         address = (LinearLayout) findViewById(R.id.address); address.setOnClickListener(this);
+        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
+        mainLayout = (ScrollView) findViewById(R.id.main_layout);
         pay = (LinearLayout) findViewById(R.id.pay); pay.setOnClickListener(this);
         total = (TextView) findViewById(R.id.total); total.setText(payableAmount);
 
@@ -126,7 +132,9 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
-                    } else if(!response.getBoolean("success")) {
+                    } else {
+                        Animations.fadeOut(connectingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
                         Alerts.requestUnauthorisedAlert(CheckoutPaymentActivity.this);
                         System.out.println(response.getString("error"));
                     }
@@ -135,18 +143,24 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Animations.fadeOut(connectingLayout,500);
+                Animations.fadeIn(mainLayout,500);
                 DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Animations.fadeIn(connectingLayout,500);
+                        Animations.fadeOut(mainLayout, 500);
                         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makePurchaseRequest);
                     }
                 };
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(CheckoutPaymentActivity.this, onClickTryAgain);
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutPaymentActivity.this, onClickTryAgain);
+                else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutPaymentActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(CheckoutPaymentActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
+        Animations.fadeIn(connectingLayout, 500);
+        Animations.fadeOut(mainLayout, 500);
         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makePurchaseRequest);
     }
 

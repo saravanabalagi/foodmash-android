@@ -69,69 +69,109 @@
 
     </LinearLayout>
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_weight="1">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:id="@+id/connecting_layout"
+            android:visibility="gone">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/connecting"
+                android:gravity="center_horizontal"
+                android:textSize="25sp"
+                android:fontFamily="sans-serif-light"
+                android:layout_margin="5dp"
+                android:singleLine="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/connecting_description"
+                android:gravity="center_horizontal"
+                android:fontFamily="sans-serif-light"
+                android:layout_margin="5dp"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/main_layout">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="20dp">
 
-                <RadioGroup
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/payment_mode_radio_group">
+                    android:layout_height="wrap_content">
 
-                    <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/credit_card"
-                        android:id="@+id/credit_card"
-                        android:textSize="15sp"
-                        android:padding="5dp"
-                        android:singleLine="true" />
+                    <RadioGroup
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/payment_mode_radio_group">
 
-                    <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/debit_card"
-                        android:id="@+id/debit_card"
-                        android:textSize="15sp"
-                        android:padding="5dp"
-                        android:singleLine="true" />
+                        <RadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/credit_card"
+                            android:id="@+id/credit_card"
+                            android:textSize="15sp"
+                            android:padding="5dp"
+                            android:singleLine="true" />
 
-                    <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/net_banking"
-                        android:id="@+id/netbanking"
-                        android:textSize="15sp"
-                        android:padding="5dp"
-                        android:singleLine="true" />
+                        <RadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/debit_card"
+                            android:id="@+id/debit_card"
+                            android:textSize="15sp"
+                            android:padding="5dp"
+                            android:singleLine="true" />
 
-                    <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/cash_on_delivery"
-                        android:id="@+id/cash_on_delivery"
-                        android:textSize="15sp"
-                        android:padding="5dp"
-                        android:singleLine="true"
-                        android:checked="true" />
-                </RadioGroup>
+                        <RadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/net_banking"
+                            android:id="@+id/netbanking"
+                            android:textSize="15sp"
+                            android:padding="5dp"
+                            android:singleLine="true" />
+
+                        <RadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cash_on_delivery"
+                            android:id="@+id/cash_on_delivery"
+                            android:textSize="15sp"
+                            android:padding="5dp"
+                            android:singleLine="true"
+                            android:checked="true" />
+                    </RadioGroup>
+
+                </LinearLayout>
 
             </LinearLayout>
-
-        </LinearLayout>
-    </ScrollView>
+        </ScrollView>
+    </RelativeLayout>
 
     <LinearLayout
         android:orientation="horizontal"

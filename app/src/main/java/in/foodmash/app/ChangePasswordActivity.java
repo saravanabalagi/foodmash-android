@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
@@ -41,23 +42,25 @@ import in.foodmash.app.custom.TouchableImageButton;
  */
 public class ChangePasswordActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
-    EditText oldPassword;
-    EditText newPassword;
-    EditText confirmPassword;
-    JsonObjectRequest changePasswordRequest;
+    private EditText oldPassword;
+    private EditText newPassword;
+    private EditText confirmPassword;
+    private JsonObjectRequest changePasswordRequest;
 
-    boolean forgot = false;
-    String otpToken;
+    private boolean forgot = false;
+    private String otpToken;
 
-    ImageView oldPasswordValidate;
-    ImageView newPasswordValidate;
-    ImageView confirmPasswordValidate;
+    private ImageView oldPasswordValidate;
+    private ImageView newPasswordValidate;
+    private ImageView confirmPasswordValidate;
 
-    LinearLayout back;
-    LinearLayout change;
+    private LinearLayout back;
+    private LinearLayout change;
+    private LinearLayout savingLayout;
+    private ScrollView mainLayout;
 
-    Intent intent;
-    TouchableImageButton clearFields;
+    private Intent intent;
+    private TouchableImageButton clearFields;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -91,6 +94,8 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_change_password);
         if(getIntent().getBooleanExtra("forgot",false)) { forgot = true; otpToken = getIntent().getStringExtra("otp_token"); }
 
+        savingLayout = (LinearLayout) findViewById(R.id.saving_layout);
+        mainLayout = (ScrollView) findViewById(R.id.main_layout);
         oldPasswordValidate = (ImageView) findViewById(R.id.old_password_validate);
         newPasswordValidate = (ImageView) findViewById(R.id.new_password_validate);
         confirmPasswordValidate = (ImageView) findViewById(R.id.confirm_password_validate);
@@ -155,14 +160,14 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                             editor.putString("android_token", Cryptography.getEncryptedAndroidId(ChangePasswordActivity.this, userToken));
                             editor.apply();
                             intent = new Intent(ChangePasswordActivity.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
-                            finish();
                         } else {
-                            intent = new Intent(ChangePasswordActivity.this, ProfileActivity.class);
-                            startActivity(intent);
                             finish();
                         }
-                    } else if(!response.getBoolean("success")) {
+                    } else {
+                        Animations.fadeOut(savingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
                         if(forgot) Alerts.commonErrorAlert(ChangePasswordActivity.this,"OTP Error","There's a problem processing the OTP that you've sent","Okay");
                         else Alerts.commonErrorAlert(ChangePasswordActivity.this,"Invalid Old Password","We are unable to change your password as Old Password entered by you is Invalid","Okay");
                         System.out.println(response.getString("error"));
@@ -172,9 +177,13 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Animations.fadeOut(savingLayout,500);
+                Animations.fadeIn(mainLayout,500);
                 DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Animations.fadeIn(savingLayout,500);
+                        Animations.fadeOut(mainLayout, 500);
                         Swift.getInstance(ChangePasswordActivity.this).addToRequestQueue(changePasswordRequest);
                     }
                 };
@@ -184,6 +193,8 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                 System.out.println("Response Error: " + error);
             }
         });
+        Animations.fadeIn(savingLayout,500);
+        Animations.fadeOut(mainLayout, 500);
         Swift.getInstance(ChangePasswordActivity.this).addToRequestQueue(changePasswordRequest);
     }
 
@@ -207,7 +218,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                     Animations.fadeOut(newPasswordValidate,500);
         } else if(s==newPassword.getEditableText()) {
             if(newPassword.getText().toString().length()<8
-                    || (!forgot && !newPassword.getText().toString().equals(oldPassword.getText().toString())))
+                    || (!forgot && newPassword.getText().toString().equals(oldPassword.getText().toString())))
                 Animations.fadeInOnlyIfInvisible(newPasswordValidate,500);
             else Animations.fadeOut(newPasswordValidate,500);
             if(confirmPassword.getText().length()>0 && !confirmPassword.getText().toString().equals(newPassword.getText().toString()))

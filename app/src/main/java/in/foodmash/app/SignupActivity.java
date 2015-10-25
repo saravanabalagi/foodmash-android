@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Switch;
 
 import com.android.volley.NoConnectionError;
@@ -43,39 +44,41 @@ import in.foodmash.app.custom.TouchableImageButton;
  */
 public class SignupActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
-    Intent intent;
+    private Intent intent;
 
-    LinearLayout login;
-    LinearLayout create;
+    private LinearLayout login;
+    private LinearLayout create;
+    private LinearLayout connectingLayout;
+    private ScrollView mainLayout;
 
-    EditText name;
-    EditText email;
-    EditText phone;
-    EditText password;
-    EditText passwordConfirmation;
+    private EditText name;
+    private EditText email;
+    private EditText phone;
+    private EditText password;
+    private EditText passwordConfirmation;
 
-    ImageView nameValidate;
-    ImageView emailValidate;
-    ImageView phoneValidate;
-    ImageView passwordValidate;
-    ImageView passwordConfirmationValidate;
+    private ImageView nameValidate;
+    private ImageView emailValidate;
+    private ImageView phoneValidate;
+    private ImageView passwordValidate;
+    private ImageView passwordConfirmationValidate;
 
-    ProgressBar emailProgressBar;
-    ProgressBar phoneProgressBar;
+    private ProgressBar emailProgressBar;
+    private ProgressBar phoneProgressBar;
 
-    boolean isEmailAvailable = false;
-    boolean isPhoneAvailable = false;
-    boolean isEmailValidationInProgress = false;
-    boolean isPhoneValidationInProgress = false;
+    private boolean isEmailAvailable = false;
+    private boolean isPhoneAvailable = false;
+    private boolean isEmailValidationInProgress = false;
+    private boolean isPhoneValidationInProgress = false;
 
-    Switch acceptTerms;
+    private Switch acceptTerms;
 
-    boolean termsAccepted = false;
-    JsonObjectRequest checkEmailRequest;
-    JsonObjectRequest checkPhoneRequest;
-    JsonObjectRequest registerRequest;
+    private boolean termsAccepted = false;
+    private JsonObjectRequest checkEmailRequest;
+    private JsonObjectRequest checkPhoneRequest;
+    private JsonObjectRequest registerRequest;
 
-    TouchableImageButton clearFields;
+    private TouchableImageButton clearFields;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,6 +99,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
+        mainLayout = (ScrollView) findViewById(R.id.main_layout);
         login = (LinearLayout) findViewById(R.id.login); login.setOnClickListener(this);
         create = (LinearLayout) findViewById(R.id.create); create.setOnClickListener(this);
         clearFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
@@ -117,7 +122,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         phone = (EditText) findViewById(R.id.phone); phone.addTextChangedListener(this);
         password = (EditText) findViewById(R.id.password); password.addTextChangedListener(this);
         passwordConfirmation = (EditText) findViewById(R.id.password_confirmation); passwordConfirmation.addTextChangedListener(this);
-
 
         emailProgressBar = (ProgressBar) findViewById(R.id.email_loader);
         phoneProgressBar = (ProgressBar) findViewById(R.id.phone_loader);
@@ -184,6 +188,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         startActivity(intent);
                         finish();
                     } else {
+                        Animations.fadeOut(connectingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(SignupActivity.this,"Registration Invalid", "We are unable to sign you up. Please try again!","Okay");
                         System.out.println("Error Details: " + response.getString("info"));
                     }
@@ -192,18 +198,24 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Animations.fadeOut(connectingLayout,500);
+                Animations.fadeIn(mainLayout,500);
                 DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Animations.fadeIn(connectingLayout,500);
+                        Animations.fadeOut(mainLayout, 500);
                         Swift.getInstance(SignupActivity.this).addToRequestQueue(registerRequest);
                     }
                 };
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
+                else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(SignupActivity.this);
                 System.out.println("Response Error: " + error);
             }
         });
+        Animations.fadeIn(connectingLayout,500);
+        Animations.fadeOut(mainLayout, 500);
         Swift.getInstance(SignupActivity.this).addToRequestQueue(registerRequest);
     }
 
@@ -237,7 +249,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                                 isEmailAvailable = true;
                                 setOkayOnImageView(emailValidate);
                                 Animations.fadeOutAndFadeIn(emailProgressBar,emailValidate,500);
-                            } else if(!(response.getBoolean("success"))) {
+                            } else {
                                 isEmailAvailable = false;
                                 setCancelOnImageView(emailValidate);
                                 Animations.fadeOutAndFadeIn(emailProgressBar,emailValidate,500);
@@ -254,7 +266,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                             }
                         };
                         if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
-                        if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
+                        else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
                         else Alerts.unknownErrorAlert(SignupActivity.this);
                         System.out.println("Email response error: "+error);
                         isEmailValidationInProgress = false;
@@ -285,7 +297,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                                 isPhoneAvailable = true;
                                 setOkayOnImageView(phoneValidate);
                                 Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);
-                            } else if(!(response.getBoolean("success"))) {
+                            } else {
                                 isPhoneAvailable = false;
                                 setCancelOnImageView(phoneValidate);
                                 Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);
@@ -302,7 +314,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                             }
                         };
                         if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
-                        if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
+                        else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
                         else Alerts.unknownErrorAlert(SignupActivity.this);
                         System.out.println("Phone response error: "+error);
                         isPhoneValidationInProgress = false;
