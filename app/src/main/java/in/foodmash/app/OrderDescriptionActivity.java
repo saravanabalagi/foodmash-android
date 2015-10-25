@@ -133,6 +133,12 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
                             LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.order_combo, fillLayout, false);
                             ((NetworkImageView) comboLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(), imageLoader);
                             ((TextView) comboLayout.findViewById(R.id.name)).setText(productJson.getString("name"));
+                            ImageView foodLabel = (ImageView) comboLayout.findViewById(R.id.label);
+                            switch(productJson.getString("label")) {
+                                case "egg": foodLabel.setColorFilter(getResources().getColor(R.color.egg)); break;
+                                case "veg": foodLabel.setColorFilter(getResources().getColor(R.color.veg)); break;
+                                case "non-veg": foodLabel.setColorFilter(getResources().getColor(R.color.non_veg)); break;
+                            }
                             TextView price = (TextView) comboLayout.findViewById(R.id.price); price.setText(productJson.getString("price"));
                             TextView quantity = (TextView) comboLayout.findViewById(R.id.quantity); quantity.setText(subOrderJson.getString("quantity"));
                             ((TextView) comboLayout.findViewById(R.id.quantity_display)).setText(subOrderJson.getString("quantity"));
