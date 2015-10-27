@@ -56,6 +56,16 @@ public class Alerts {
                 .show();
     }
 
+    public static void commonErrorAlert(Context context, String title, String message, String buttonName, DialogInterface.OnClickListener onClickPositiveButton, boolean cancelable) {
+        new AlertDialog.Builder(context)
+                .setCancelable(cancelable)
+                .setIconAttribute(android.R.attr.alertDialogIcon)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(buttonName,onClickPositiveButton)
+                .show();
+    }
+
     public static void commonErrorAlert(Context context, String title, String message, String buttonName, DialogInterface.OnClickListener onClickPositiveButton) {
         new AlertDialog.Builder(context)
                 .setIconAttribute(android.R.attr.alertDialogIcon)

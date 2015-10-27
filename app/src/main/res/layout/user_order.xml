@@ -26,7 +26,8 @@
             android:textSize="17sp"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:clickable="false" />
 
         <in.foodmash.app.custom.TouchableImageButton
             android:layout_width="40dp"
@@ -38,7 +39,8 @@
             android:tint="@color/color_accent_white_bg"
             android:background="@color/transparent"
             android:cropToPadding="true"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:visibility="invisible" />
 
     </LinearLayout>
 
@@ -71,7 +73,8 @@
                 android:text="Aug 04, 06:15 pm"
                 android:id="@+id/date"
                 android:textSize="14sp"
-                android:paddingBottom="5dp" />
+                android:paddingBottom="5dp"
+                android:clickable="false" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -93,7 +96,8 @@
                     android:text="Delivered"
                     android:id="@+id/status"
                     android:textSize="14sp"
-                    android:inputType="textCapWords" />
+                    android:inputType="textCapWords"
+                    android:clickable="false" />
             </LinearLayout>
 
         </LinearLayout>

@@ -29,6 +29,7 @@ import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.utils.DateUtils;
 import in.foodmash.app.utils.WordUtils;
 
 /**
@@ -95,7 +96,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
                             final JSONObject orderJson = ordersJson.getJSONObject(i);
                             LinearLayout orderLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.user_order,fillLayout,false);
                             ((TextView) orderLayout.findViewById(R.id.order_id)).setText(orderJson.getString("order_id"));
-                            ((TextView) orderLayout.findViewById(R.id.date)).setText(orderJson.getString("updated_at"));
+                            ((TextView) orderLayout.findViewById(R.id.date)).setText(DateUtils.railsDateToLocalTime(orderJson.getString("updated_at")));
                             ((TextView) orderLayout.findViewById(R.id.status)).setText(WordUtils.titleize(orderJson.getString("aasm_state")));
                             ((TextView) orderLayout.findViewById(R.id.price)).setText(orderJson.getString("total"));
                             setStatus((ImageView) orderLayout.findViewById(R.id.statusIcon), orderJson.getString("aasm_state"));

@@ -32,6 +32,7 @@ import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.utils.DateUtils;
 import in.foodmash.app.utils.WordUtils;
 
 
@@ -111,14 +112,14 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
             public void onResponse(JSONObject response) {
                 try {
                     if (response.getBoolean("success")) {
-                        Animations.fadeOut(loadingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
+                        Animations.fadeOut(loadingLayout, 500);
+                        Animations.fadeIn(mainLayout, 500);
                         JSONObject orderJson = response.getJSONObject("data");
-                        total.setText(String.format("%.2f",Float.parseFloat(orderJson.getString("total"))));
+                        total.setText(String.format("%.2f", Float.parseFloat(orderJson.getString("total"))));
                         paymentMethod.setText(WordUtils.titleize(orderJson.getString("payment_method")));
                         setStatus(statusIcon, orderJson.getString("aasm_state"));
-                        date.setText(orderJson.getString("updated_at"));
-                        status.setText(orderJson.getString("aasm_state"));
+                        date.setText(DateUtils.railsDateToLocalTime(orderJson.getString("updated_at")));
+                        status.setText(WordUtils.titleize(orderJson.getString("aasm_state")));
                         JSONArray subOrdersJson = orderJson.getJSONArray("orders");
                         for(int i=0; i<subOrdersJson.length(); i++) {
                             JSONObject subOrderJson = subOrdersJson.getJSONObject(i);
@@ -150,7 +151,7 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
                         Alerts.requestUnauthorisedAlert(OrderDescriptionActivity.this);
                         System.out.println(response.getString("error"));
                     }
-                } catch (JSONException e) { e.printStackTrace(); }
+                } catch (Exception e) { e.printStackTrace(); }
             }
         }, new Response.ErrorListener() {
             @Override

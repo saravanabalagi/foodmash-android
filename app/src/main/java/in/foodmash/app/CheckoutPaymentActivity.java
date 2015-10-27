@@ -28,6 +28,7 @@ import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.custom.Cart;
 
 /**
  * Created by Zeke on Jul 19 2015.
@@ -78,7 +79,9 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout_payment);
 
-        payableAmount = getIntent().getStringExtra("payable_amount");
+        if(getIntent().getDoubleExtra("payable_amount", 0)!=0) payableAmount = String.valueOf(getIntent().getDoubleExtra("payable_amount",0));
+        else Alerts.commonErrorAlert(CheckoutPaymentActivity.this, "Transaction not authorized", "We found something suspecious about your current order. Try again!", "Back", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { finish(); } }, false);
+
         address = (LinearLayout) findViewById(R.id.address); address.setOnClickListener(this);
         connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
         mainLayout = (ScrollView) findViewById(R.id.main_layout);
@@ -130,8 +133,16 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                         intent.putExtra("order_id",orderId);
                         intent.putExtra("cart",true);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        Cart.getInstance().removeAllOrders();
                         startActivity(intent);
                         finish();
+                    } else if(!response.getBoolean("success")){
+                        Alerts.commonErrorAlert(CheckoutPaymentActivity.this, "Payment Failed", "Paymment you made was not successful. Please try again!", "Try Again", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //Do nothing
+                            }
+                        },false);
                     } else {
                         Animations.fadeOut(connectingLayout,500);
                         Animations.fadeIn(mainLayout,500);

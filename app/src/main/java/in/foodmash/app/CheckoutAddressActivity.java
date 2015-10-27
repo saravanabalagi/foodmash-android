@@ -122,7 +122,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                 try {
                     if(response.getBoolean("success")) {
                         intent = new Intent(CheckoutAddressActivity.this, CheckoutPaymentActivity.class);
-                        intent.putExtra("payable_amount",response.getJSONObject("data").getJSONObject("cart").getDouble("total"));
+                        intent.putExtra("payable_amount",response.getJSONObject("data").getDouble("total"));
                         startActivity(intent);
                     } else {
                         Animations.fadeOut(connectingLayout,500);
