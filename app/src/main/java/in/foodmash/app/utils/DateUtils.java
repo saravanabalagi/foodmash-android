@@ -14,10 +14,12 @@ public class DateUtils {
 
     public static String railsDateToLocalTime(String railsUtcDateFormat) {
         try {
-            Date utcDate  = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(railsUtcDateFormat);
-            DateFormat istDate = new SimpleDateFormat("MMM dd hh:mm aa", Locale.getDefault());
-            istDate.setTimeZone(TimeZone.getTimeZone("IST"));
-            return istDate.format(utcDate);
+            DateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+            utcDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date date  = utcDateFormat.parse(railsUtcDateFormat);
+            DateFormat istDateFormat = new SimpleDateFormat("MMM dd hh:mm aa", Locale.getDefault());
+            istDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
+            return istDateFormat.format(date);
         } catch (ParseException e) { e.printStackTrace(); return null; }
     }
 
