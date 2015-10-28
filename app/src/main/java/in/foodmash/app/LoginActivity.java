@@ -24,7 +24,6 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import org.apache.commons.validator.routines.EmailValidator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,6 +37,7 @@ import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.TouchableImageButton;
+import in.foodmash.app.utils.EmailUtils;
 import in.foodmash.app.utils.NumberUtils;
 
 /**
@@ -196,7 +196,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private boolean isEverythingValid() {
-        return (isEmail)?EmailValidator.getInstance().isValid(email.getText().toString().trim()):email.getText().toString().trim().length()==10
+        return (isEmail)? EmailUtils.isValidEmailAddress(email.getText().toString().trim()):email.getText().toString().trim().length()==10
                 && password.getText().length()>=8;
     }
 
@@ -212,7 +212,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
             else {
                 Animations.fadeOut(phonePrefix, 500);
-                if (EmailValidator.getInstance().isValid(s.toString().trim()))
+                if (EmailUtils.isValidEmailAddress(s.toString().trim()))
                     Animations.fadeOut(emailValidate, 500);
                 else Animations.fadeInOnlyIfInvisible(emailValidate, 500);
                 isEmail = true;

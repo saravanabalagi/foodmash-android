@@ -2,16 +2,20 @@ package in.foodmash.app;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
@@ -19,16 +23,33 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.payu.india.Model.PaymentParams;
+import com.payu.india.Model.PayuConfig;
+import com.payu.india.Model.PayuHashes;
+import com.payu.india.Payu.PayuConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.util.Calendar;
+import java.util.Iterator;
+
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.Cart;
+import in.foodmash.app.payment.CashOnDeliveryFragment;
+import in.foodmash.app.payment.CreditDebitCardFragment;
+import in.foodmash.app.payment.NetbankingFragment;
 
 /**
  * Created by Zeke on Jul 19 2015.
@@ -40,13 +61,19 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     private LinearLayout address;
     private LinearLayout pay;
     private LinearLayout connectingLayout;
-    private ScrollView mainLayout;
+    private ViewPager mainLayout;
     private TextView total;
     private String payableAmount;
     private String paymentMethod;
 
-    private RadioGroup paymentMode;
     private JsonObjectRequest makePurchaseRequest;
+    private PaymentParams paymentParams = new PaymentParams();
+    private PayuConfig payuConfig = new PayuConfig();
+    private PayuHashes payuHashes = new PayuHashes();
+
+    public PaymentParams getPaymentParams() { return paymentParams; }
+    public PayuConfig getPayuConfig() { return payuConfig; }
+    public PayuHashes getPayuHashes() { return payuHashes; }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -84,24 +111,58 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
 
         address = (LinearLayout) findViewById(R.id.address); address.setOnClickListener(this);
         connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
-        mainLayout = (ScrollView) findViewById(R.id.main_layout);
+        mainLayout = (ViewPager) findViewById(R.id.main_layout);
         pay = (LinearLayout) findViewById(R.id.pay); pay.setOnClickListener(this);
         total = (TextView) findViewById(R.id.total); total.setText(payableAmount);
 
-        paymentMode = (RadioGroup) findViewById(R.id.payment_mode_radio_group);
-        paymentMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.credit_card: paymentMethod="credit_card"; break;
-                    case R.id.debit_card:  paymentMethod="debit_card"; break;
-                    case R.id.netbanking:  paymentMethod="netbanking"; break;
-                    case R.id.cash_on_delivery:  paymentMethod="cash_on_delivery"; break;
+        class PaymentPagerAdapter extends FragmentPagerAdapter {
+            public PaymentPagerAdapter(FragmentManager fm) { super(fm); }
+            @Override public int getCount() { return 3; }
+            @Override public Fragment getItem(int position) {
+                switch (position) {
+                    case 0: return new CashOnDeliveryFragment();
+                    case 1: return new CreditDebitCardFragment();
+                    case 2: return new NetbankingFragment();
+                    default:
+                        Toast.makeText(CheckoutPaymentActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                        return new CashOnDeliveryFragment();
                 }
             }
-        });
-        paymentMode.check(R.id.cash_on_delivery);
-        paymentMethod="cash_on_delivery";
+            @Override
+            public CharSequence getPageTitle(int position) {
+                switch (position) {
+                    case 0: return getResources().getString(R.string.cash_on_delivery);
+                    case 1: return getResources().getString(R.string.credit_debit_cart);
+                    case 2: return getResources().getString(R.string.net_banking);
+                    default: return getResources().getString(R.string.cash_on_delivery);
+                }
+            }
+        }
+
+        fillPaymentParamsAndPayuEnv();
+        PaymentPagerAdapter paymentPagerAdapter = new PaymentPagerAdapter(getSupportFragmentManager());
+        mainLayout.setAdapter(paymentPagerAdapter);
+
+    }
+
+    public void fillPaymentParamsAndPayuEnv() {
+        paymentParams.setKey("0MQaQP");
+        paymentParams.setAmount(payableAmount);
+        paymentParams.setProductInfo("Foodmash Order");
+        paymentParams.setFirstName("Somename");
+        paymentParams.setEmail(Info.getEmail(CheckoutPaymentActivity.this));
+        paymentParams.setTxnId("OD" + Calendar.getInstance().getTimeInMillis());
+        paymentParams.setSurl("https://payu.herokuapp.com/success");
+        paymentParams.setFurl("https://payu.herokuapp.com/failure");
+        paymentParams.setUdf1("");
+        paymentParams.setUdf2("");
+        paymentParams.setUdf3("");
+        paymentParams.setUdf4("");
+        paymentParams.setUdf5("");
+        paymentParams.setUserCredentials("0MQaQP:payutest@payu.in");
+        paymentParams.setOfferKey("");
+        payuConfig.setEnvironment(PayuConstants.PRODUCTION_ENV);
+        generateHashFromServer(paymentParams);
     }
 
     public void onClick(View v) {
@@ -178,4 +239,90 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     private boolean isEverythingValid() {
         return !(paymentMethod.length()<1);
     }
+
+    public void generateHashFromServer(PaymentParams mPaymentParams){
+        // lets create the post params
+        StringBuffer postParamsBuffer = new StringBuffer();
+        postParamsBuffer.append(concatParams(PayuConstants.KEY, mPaymentParams.getKey()));
+        postParamsBuffer.append(concatParams(PayuConstants.AMOUNT, mPaymentParams.getAmount()));
+        postParamsBuffer.append(concatParams(PayuConstants.TXNID, mPaymentParams.getTxnId()));
+        postParamsBuffer.append(concatParams(PayuConstants.EMAIL, null == mPaymentParams.getEmail() ? "" : mPaymentParams.getEmail()));
+        postParamsBuffer.append(concatParams(PayuConstants.PRODUCT_INFO, mPaymentParams.getProductInfo()));
+        postParamsBuffer.append(concatParams(PayuConstants.FIRST_NAME, null == mPaymentParams.getFirstName() ? "" : mPaymentParams.getFirstName()));
+        postParamsBuffer.append(concatParams(PayuConstants.UDF1, mPaymentParams.getUdf1() == null ? "" : mPaymentParams.getUdf1()));
+        postParamsBuffer.append(concatParams(PayuConstants.UDF2, mPaymentParams.getUdf2() == null ? "" : mPaymentParams.getUdf2()));
+        postParamsBuffer.append(concatParams(PayuConstants.UDF3, mPaymentParams.getUdf3() == null ? "" : mPaymentParams.getUdf3()));
+        postParamsBuffer.append(concatParams(PayuConstants.UDF4, mPaymentParams.getUdf4() == null ? "" : mPaymentParams.getUdf4()));
+        postParamsBuffer.append(concatParams(PayuConstants.UDF5, mPaymentParams.getUdf5() == null ? "" : mPaymentParams.getUdf5()));
+        postParamsBuffer.append(concatParams(PayuConstants.USER_CREDENTIALS, mPaymentParams.getUserCredentials() == null ? PayuConstants.DEFAULT : mPaymentParams.getUserCredentials()));
+
+        if(null != mPaymentParams.getOfferKey())  postParamsBuffer.append(concatParams(PayuConstants.OFFER_KEY, mPaymentParams.getOfferKey()));
+        String postParams = postParamsBuffer.charAt(postParamsBuffer.length() - 1) == '&' ? postParamsBuffer.substring(0, postParamsBuffer.length() - 1).toString() : postParamsBuffer.toString();
+        // make api call
+        GetHashesFromServerTask getHashesFromServerTask = new GetHashesFromServerTask();
+        getHashesFromServerTask.execute(postParams);
+    }
+
+
+    protected String concatParams(String key, String value) {
+        return key + "=" + value + "&";
+    }
+    class GetHashesFromServerTask extends AsyncTask<String, String, PayuHashes> {
+
+        @Override
+        protected PayuHashes doInBackground(String ... postParams) {
+            payuHashes = new PayuHashes();
+            try {
+//              URL url = new URL(PayuConstants.MOBILE_TEST_FETCH_DATA_URL);
+//              URL url = new URL("http://10.100.81.49:80/merchant/postservice?form=2");;
+
+                URL url = new URL("https://payu.herokuapp.com/get_hash");
+
+                // get the payuConfig first
+                String postParam = postParams[0];
+
+                byte[] postParamsByte = postParam.getBytes("UTF-8");
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestProperty("Content-Length", String.valueOf(postParamsByte.length));
+                conn.setDoOutput(true);
+                conn.getOutputStream().write(postParamsByte);
+
+                InputStream responseInputStream = conn.getInputStream();
+                StringBuffer responseStringBuffer = new StringBuffer();
+                byte[] byteContainer = new byte[1024];
+                for (int i; (i = responseInputStream.read(byteContainer)) != -1; ) {
+                    responseStringBuffer.append(new String(byteContainer, 0, i));
+                }
+
+                JSONObject response = new JSONObject(responseStringBuffer.toString());
+
+                Iterator<String> payuHashIterator = response.keys();
+                while(payuHashIterator.hasNext()){
+                    String key = payuHashIterator.next();
+                    switch (key){
+                        case "payment_hash": payuHashes.setPaymentHash(response.getString(key)); break;
+                        case "get_merchant_ibibo_codes_hash": /**/ payuHashes.setMerchantIbiboCodesHash(response.getString(key)); break;
+                        case "vas_for_mobile_sdk_hash": payuHashes.setVasForMobileSdkHash(response.getString(key)); break;
+                        case "payment_related_details_for_mobile_sdk_hash": payuHashes.setPaymentRelatedDetailsForMobileSdkHash(response.getString(key)); break;
+                        case "delete_user_card_hash": payuHashes.setDeleteCardHash(response.getString(key)); break;
+                        case "get_user_cards_hash": payuHashes.setStoredCardsHash(response.getString(key)); break;
+                        case "edit_user_card_hash": payuHashes.setEditCardHash(response.getString(key)); break;
+                        case "save_user_card_hash": payuHashes.setSaveCardHash(response.getString(key)); break;
+                        case "check_offer_status_hash": payuHashes.setCheckOfferStatusHash(response.getString(key)); break;
+                        case "check_isDomestic_hash": payuHashes.setCheckIsDomesticHash(response.getString(key)); break;
+                        default: break;
+                    }
+                }
+
+            } catch (MalformedURLException e) { e.printStackTrace(); }
+            catch (ProtocolException e) { e.printStackTrace(); }
+            catch (IOException e) { e.printStackTrace(); }
+            catch (JSONException e) { e.printStackTrace(); }
+            return payuHashes;
+        }
+    }
+
 }

@@ -45,8 +45,8 @@
     <string name="payment_method">Payment Method</string>
     <string name="credit_card">Credit Card</string>
     <string name="debit_card">Debit Card</string>
+    <string name="credit_debit_cart">Credit / Debit Card</string>
     <string name="net_banking">Netbanking</string>
-    <string name="paytm_wallet">Paytm Wallet</string>
     <string name="address">address</string>
     <string name="pay_icon">Pay Icon</string>
     <string name="pay">pay</string>
@@ -113,4 +113,12 @@
     <string name="saving">Saving...</string>
     <string name="saving_description">We\'re saving your info in the server</string>
     <string name="contents">Contents</string>
+    <string name="payment_credit_card">credit_card</string>
+    <string name="payment_debit_card">debit_card</string>
+    <string name="payment_netbanking">netbanking</string>
+    <string name="payment_cod">cash_on_delivery</string>
+    <string name="ok">Ok</string>
+    <string name="click_here">Click here</string>
+    <string name="if_cvv_and_expiry_on_card"> &#160;if you have CVV and Expiry on your card</string>
+    <string name="if_dont_cvv_and_expiry_on_card"> &#160;if you don\'t have CVV and Expiry on your card</string>
 </resources>

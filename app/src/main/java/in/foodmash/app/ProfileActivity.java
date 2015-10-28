@@ -28,7 +28,6 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import org.apache.commons.validator.routines.EmailValidator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,6 +42,7 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.TouchableImageButton;
+import in.foodmash.app.utils.EmailUtils;
 import in.foodmash.app.utils.NumberUtils;
 
 /**
@@ -283,14 +283,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) {  }
     @Override public void afterTextChanged(Editable s) {
         if(s==name.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(nameValidate, 500); else Animations.fadeOut(nameValidate,500); }
-        else if(s==email.getEditableText()) { if(!EmailValidator.getInstance().isValid(s.toString().trim())) Animations.fadeInOnlyIfInvisible(emailValidate, 500); else Animations.fadeOut(emailValidate,500); }
+        else if(s==email.getEditableText()) { if(!EmailUtils.isValidEmailAddress(s.toString().trim())) Animations.fadeInOnlyIfInvisible(emailValidate, 500); else Animations.fadeOut(emailValidate,500); }
         else if(s==phone.getEditableText()) { if(s.toString().trim().length()!=10) Animations.fadeInOnlyIfInvisible(phoneValidate, 500); else Animations.fadeOut(phoneValidate,500); }
     }
 
     private boolean isDobFilled() { return dob.getText().toString().length()>0; }
     private boolean isEverythingValid() {
         return name.getText().toString().trim().length()>=2 &&
-                EmailValidator.getInstance().isValid(email.getText().toString().trim()) &&
+                EmailUtils.isValidEmailAddress(email.getText().toString().trim()) &&
                 phone.getText().toString().trim().length()==10 &&
                 NumberUtils.isInteger(phone.getText().toString().trim());
     }

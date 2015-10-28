@@ -22,7 +22,6 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import org.apache.commons.validator.routines.EmailValidator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,6 +31,7 @@ import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.TouchableImageButton;
+import in.foodmash.app.utils.EmailUtils;
 
 /**
  * Created by sarav on Aug 08 2015.
@@ -169,13 +169,13 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     private boolean isEverythingValid() {
          return (otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)
                  ?phone.getText().toString().trim().length()==10
-                 : EmailValidator.getInstance().isValid(email.getText().toString().trim());
+                 : EmailUtils.isValidEmailAddress(email.getText().toString().trim());
     }
 
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {  }
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) {  }
     @Override public void afterTextChanged(Editable s) {
         if(s==phone.getEditableText()) { if(s.toString().trim().length()!=10) Animations.fadeInOnlyIfInvisible(phoneValidate, 500); else Animations.fadeOut(phoneValidate,500); }
-        else if(s==email.getEditableText()) { if(!EmailValidator.getInstance().isValid(s.toString())) Animations.fadeInOnlyIfInvisible(emailValidate, 500); else Animations.fadeOut(emailValidate,500); }
+        else if(s==email.getEditableText()) { if(!EmailUtils.isValidEmailAddress(s.toString())) Animations.fadeInOnlyIfInvisible(emailValidate, 500); else Animations.fadeOut(emailValidate,500); }
     }
 }

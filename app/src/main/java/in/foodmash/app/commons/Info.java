@@ -26,4 +26,9 @@ public class Info {
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         return sharedPreferences.getString("phone",null);
     }
+
+    public static String getFirstName(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
+        return sharedPreferences.getString("firstName",null);
+    }
 }

@@ -26,7 +26,6 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import org.apache.commons.validator.routines.EmailValidator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,6 +39,7 @@ import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.TouchableImageButton;
+import in.foodmash.app.utils.EmailUtils;
 import in.foodmash.app.utils.NumberUtils;
 
 /**
@@ -140,7 +140,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.clear_fields: issue.setText(null); description.setText(null); break;
-            case R.id.call: Intent callIntent = new Intent(Intent.ACTION_CALL); callIntent.setData(Uri.parse("tel:+918056249612")); startActivity(callIntent); break;
+            case R.id.call: Intent callIntent = new Intent(Intent.ACTION_CALL); callIntent.setData(Uri.parse("tel:+918056249612")); try { startActivity(callIntent); } catch (SecurityException e) { e.printStackTrace(); } ; break;
             case R.id.back: finish(); break;
             case R.id.send_email: if(isEverythingValid()) makeRequest(); else Alerts.validityAlert(ContactUsActivity.this); break;
         }
@@ -199,7 +199,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     }
 
     private boolean isEverythingValid() {
-        return (Info.isLoggedIn(ContactUsActivity.this) || (EmailValidator.getInstance().isValid(email.getText().toString()) && NumberUtils.isInteger(phone.getText().toString()) && phone.getText().toString().length() == 10)) &&
+        return (Info.isLoggedIn(ContactUsActivity.this) || (EmailUtils.isValidEmailAddress(email.getText().toString()) && NumberUtils.isInteger(phone.getText().toString()) && phone.getText().toString().length() == 10)) &&
                 issue.getText().length()>=2 &&
                 description.getText().length()>=2;
     }
@@ -209,7 +209,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     @Override public void afterTextChanged(Editable s) {
         if(s==issue.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(issueValidate, 500); else Animations.fadeOut(issueValidate,500); }
         else if(s==description.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(descriptionValidate, 500); else Animations.fadeOut(descriptionValidate,500); }
-        else if(s==email.getEditableText()) { if(!EmailValidator.getInstance().isValid(s.toString())) Animations.fadeInOnlyIfInvisible(emailValidate, 500); else Animations.fadeOut(emailValidate,500); }
+        else if(s==email.getEditableText()) { if(!EmailUtils.isValidEmailAddress(s.toString())) Animations.fadeInOnlyIfInvisible(emailValidate, 500); else Animations.fadeOut(emailValidate,500); }
         else if(s==phone.getEditableText()) { if(!(NumberUtils.isInteger(s.toString()) && s.length()==10)) Animations.fadeInOnlyIfInvisible(phoneValidate, 500); else Animations.fadeOut(phoneValidate,500); }
     }
 

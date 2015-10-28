@@ -26,7 +26,6 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import org.apache.commons.validator.routines.EmailValidator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,6 +37,7 @@ import in.foodmash.app.commons.Cryptography;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.TouchableImageButton;
+import in.foodmash.app.utils.EmailUtils;
 
 /**
  * Created by sarav on Aug 08 2015.
@@ -231,7 +231,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             if(nameValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(nameValidate, 500);
         }
         if(s==email.getEditableText()) {
-            if(EmailValidator.getInstance().isValid(s.toString())) {
+            if(EmailUtils.isValidEmailAddress(s.toString())) {
                 JSONObject requestJson = new JSONObject();
                 try{
                     JSONObject dataJson = new JSONObject();
