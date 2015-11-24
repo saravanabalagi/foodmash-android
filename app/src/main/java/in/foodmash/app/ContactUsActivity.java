@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -38,7 +39,6 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
-import in.foodmash.app.custom.TouchableImageButton;
 import in.foodmash.app.utils.EmailUtils;
 import in.foodmash.app.utils.NumberUtils;
 
@@ -69,7 +69,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     EditText email;
     EditText phone;
 
-    TouchableImageButton clearFields;
+    ImageButton clearFields;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -118,7 +118,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         call = (LinearLayout) findViewById(R.id.call); call.setOnClickListener(this);
         sendEmail = (LinearLayout) findViewById(R.id.send_email); sendEmail.setOnClickListener(this);
-        clearFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
+        clearFields = (ImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
         notLoggedInLayout = (LinearLayout) findViewById(R.id.not_logged_in_layout);
         if(Info.isLoggedIn(ContactUsActivity.this)) notLoggedInLayout.setVisibility(View.GONE);
 

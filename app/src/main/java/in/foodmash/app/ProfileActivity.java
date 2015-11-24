@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -41,7 +42,6 @@ import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
-import in.foodmash.app.custom.TouchableImageButton;
 import in.foodmash.app.utils.EmailUtils;
 import in.foodmash.app.utils.NumberUtils;
 
@@ -69,7 +69,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private ImageView emailValidate;
     private ImageView phoneValidate;
 
-    private TouchableImageButton clearFields;
+    private ImageButton clearFields;
     private JsonObjectRequest profileRequest;
     private JsonObjectRequest jsonObjectRequest;
 
@@ -112,7 +112,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         cancel = (LinearLayout) findViewById(R.id.cancel); cancel.setOnClickListener(this);
         save = (LinearLayout) findViewById(R.id.save); save.setOnClickListener(this);
         changePassword = (LinearLayout) findViewById(R.id.change_password); changePassword.setOnClickListener(this);
-        clearFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
+        clearFields = (ImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
 
         nameValidate = (ImageView) findViewById(R.id.name_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);

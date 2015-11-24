@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -36,7 +37,6 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
-import in.foodmash.app.custom.TouchableImageButton;
 import in.foodmash.app.utils.EmailUtils;
 
 /**
@@ -78,7 +78,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private JsonObjectRequest checkPhoneRequest;
     private JsonObjectRequest registerRequest;
 
-    private TouchableImageButton clearFields;
+    private ImageButton clearFields;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,7 +103,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         mainLayout = (ScrollView) findViewById(R.id.main_layout);
         login = (LinearLayout) findViewById(R.id.login); login.setOnClickListener(this);
         create = (LinearLayout) findViewById(R.id.create); create.setOnClickListener(this);
-        clearFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
+        clearFields = (ImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
         acceptTerms = (Switch) findViewById(R.id.accept_terms); acceptTerms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -125,7 +125,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
         emailProgressBar = (ProgressBar) findViewById(R.id.email_loader);
         phoneProgressBar = (ProgressBar) findViewById(R.id.phone_loader);
-
     }
 
     public void onClick(View v) {

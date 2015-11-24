@@ -9,6 +9,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -37,11 +38,11 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile(name: 'pay-u', ext: 'aar')
     compile(name: 'custom-browser', ext: 'aar')
-    compile 'com.mcxiaoke.volley:library:1.0.18'
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.google.android.gms:play-services:8.1.0'
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.mcxiaoke.volley:library:1.0.19'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.google.android.gms:play-services:8.3.0'
     compile 'com.fasterxml.jackson.core:jackson-core:2.6.1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.6.1'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.6.1'
-//    compile 'commons-validator:commons-validator:1.4.0'
 }

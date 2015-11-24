@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -27,7 +28,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.custom.TouchableImageButton;
 
 
 /**
@@ -46,7 +46,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
     boolean cart = false;
 
     MapFragment mapFragment;
-    TouchableImageButton resetMap;
+    ImageButton resetMap;
     LatLng initialLocation = new LatLng(13.0220501,80.2437108);
 
     @Override
@@ -100,7 +100,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
 
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         proceed = (LinearLayout) findViewById(R.id.proceed); proceed.setOnClickListener(this);
-        resetMap = (TouchableImageButton) findViewById(R.id.reset_map); resetMap.setOnClickListener(this);
+        resetMap = (ImageButton) findViewById(R.id.reset_map); resetMap.setOnClickListener(this);
     }
 
     public void onClick(View v) {

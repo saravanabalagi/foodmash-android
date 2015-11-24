@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -30,7 +31,6 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
-import in.foodmash.app.custom.TouchableImageButton;
 import in.foodmash.app.utils.EmailUtils;
 
 /**
@@ -54,7 +54,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     private ImageView emailValidate;
 
     private RadioGroup otpMethodRadioGroup;
-    private TouchableImageButton clearAllFields;
+    private ImageButton clearAllFields;
     private Intent intent;
 
     @Override
@@ -88,7 +88,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         phone = (EditText) findViewById(R.id.phone); phone.setText(Info.getPhone(ForgotPasswordActivity.this)); phone.addTextChangedListener(this);
         email = (EditText) findViewById(R.id.email_or_phone); email.setText(Info.getEmail(ForgotPasswordActivity.this)); email.addTextChangedListener(this);
 
-        clearAllFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearAllFields.setOnClickListener(this);
+        clearAllFields = (ImageButton) findViewById(R.id.clear_fields); clearAllFields.setOnClickListener(this);
 
         otpMethodRadioGroup = (RadioGroup) findViewById(R.id.otp_method_radio_group); otpMethodRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override

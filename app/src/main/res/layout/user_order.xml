@@ -29,7 +29,7 @@
             android:textAllCaps="true"
             android:clickable="false" />
 
-        <in.foodmash.app.custom.TouchableImageButton
+        <ImageButton
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:id="@+id/clear_fields"

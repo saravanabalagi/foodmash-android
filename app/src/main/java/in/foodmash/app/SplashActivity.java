@@ -1,11 +1,23 @@
 package in.foodmash.app;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.android.volley.NoConnectionError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONObject;
+
+import in.foodmash.app.commons.Actions;
+import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Info;
+import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 
 /**
@@ -20,14 +32,6 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
-        intent = new Intent(this, CheckoutPaymentActivity.class);
-        intent.putExtra("payable_amount",250.00);
-        startActivity(intent);
-        finish();
-
-        /*
-
 
         checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/check_connection", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
@@ -69,9 +73,6 @@ public class SplashActivity extends Activity {
             }
         });
         makeRequest(checkConnectionRequest);
-
-
-        */
 
     }
 

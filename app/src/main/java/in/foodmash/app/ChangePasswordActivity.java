@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -35,7 +36,6 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
-import in.foodmash.app.custom.TouchableImageButton;
 
 /**
  * Created by sarav on Aug 08 2015.
@@ -60,7 +60,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     private ScrollView mainLayout;
 
     private Intent intent;
-    private TouchableImageButton clearFields;
+    private ImageButton clearFields;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,7 +106,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
 
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         change = (LinearLayout) findViewById(R.id.change); change.setOnClickListener(this);
-        clearFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
+        clearFields = (ImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
 
         if(getIntent().getBooleanExtra("forgot", false)) {
             oldPassword.setVisibility(View.GONE);

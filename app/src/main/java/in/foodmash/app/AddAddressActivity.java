@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -43,7 +44,6 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
-import in.foodmash.app.custom.TouchableImageButton;
 
 /**
  * Created by sarav on Aug 08 2015.
@@ -79,7 +79,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     private ImageView landlineValidate;
 
     private ArrayList<String> areaList;
-    private TouchableImageButton clearFields;
+    private ImageButton clearFields;
 
     private LinearLayout mobileLayout;
     private LinearLayout landlineLayout;
@@ -200,7 +200,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
             } catch (Exception e) { e.printStackTrace(); }
         }
 
-        clearFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
+        clearFields = (ImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
     }
 
     public void onClick(View v) {

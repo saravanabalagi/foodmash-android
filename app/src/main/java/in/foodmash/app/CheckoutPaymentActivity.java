@@ -23,22 +23,22 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.payu.india.Interfaces.PaymentRelatedDetailsListener;
+import com.payu.india.Model.MerchantWebService;
 import com.payu.india.Model.PaymentParams;
 import com.payu.india.Model.PayuConfig;
 import com.payu.india.Model.PayuHashes;
+import com.payu.india.Model.PayuResponse;
+import com.payu.india.Model.PostData;
 import com.payu.india.Payu.PayuConstants;
+import com.payu.india.Payu.PayuErrors;
+import com.payu.india.PostParams.MerchantWebServicePostParams;
+import com.payu.india.Tasks.GetPaymentRelatedDetailsTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.Calendar;
-import java.util.Iterator;
 
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
@@ -54,26 +54,31 @@ import in.foodmash.app.payment.NetbankingFragment;
 /**
  * Created by Zeke on Jul 19 2015.
  */
-public class CheckoutPaymentActivity extends AppCompatActivity implements View.OnClickListener {
+public class CheckoutPaymentActivity extends AppCompatActivity implements View.OnClickListener, PaymentRelatedDetailsListener {
 
     private Intent intent;
 
     private LinearLayout address;
     private LinearLayout pay;
     private LinearLayout connectingLayout;
+    private LinearLayout loadingLayout;
     private ViewPager mainLayout;
     private TextView total;
     private String payableAmount;
     private String paymentMethod;
 
     private JsonObjectRequest makePurchaseRequest;
+    private JsonObjectRequest makeHashRequest;
     private PaymentParams paymentParams = new PaymentParams();
     private PayuConfig payuConfig = new PayuConfig();
     private PayuHashes payuHashes = new PayuHashes();
+    private PayuResponse payuResponse;
 
     public PaymentParams getPaymentParams() { return paymentParams; }
     public PayuConfig getPayuConfig() { return payuConfig; }
     public PayuHashes getPayuHashes() { return payuHashes; }
+    public LinearLayout getPayButton() { return pay; }
+    public PayuResponse getPayuResponse() { return payuResponse; }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -111,8 +116,9 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
 
         address = (LinearLayout) findViewById(R.id.address); address.setOnClickListener(this);
         connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
+        loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
         mainLayout = (ViewPager) findViewById(R.id.main_layout);
-        pay = (LinearLayout) findViewById(R.id.pay); pay.setOnClickListener(this);
+        pay = (LinearLayout) findViewById(R.id.pay); setPayDefaultOnClickListener();
         total = (TextView) findViewById(R.id.total); total.setText(payableAmount);
 
         class PaymentPagerAdapter extends FragmentPagerAdapter {
@@ -139,6 +145,8 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
             }
         }
 
+        Animations.fadeIn(loadingLayout, 500);
+        Animations.fadeOut(mainLayout, 500);
         fillPaymentParamsAndPayuEnv();
         PaymentPagerAdapter paymentPagerAdapter = new PaymentPagerAdapter(getSupportFragmentManager());
         mainLayout.setAdapter(paymentPagerAdapter);
@@ -146,20 +154,20 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     }
 
     public void fillPaymentParamsAndPayuEnv() {
-        paymentParams.setKey("0MQaQP");
+        paymentParams.setKey("0Wccsp");
         paymentParams.setAmount(payableAmount);
         paymentParams.setProductInfo("Foodmash Order");
         paymentParams.setFirstName("Somename");
         paymentParams.setEmail(Info.getEmail(CheckoutPaymentActivity.this));
         paymentParams.setTxnId("OD" + Calendar.getInstance().getTimeInMillis());
-        paymentParams.setSurl("https://payu.herokuapp.com/success");
-        paymentParams.setFurl("https://payu.herokuapp.com/failure");
+        paymentParams.setSurl(getString(R.string.api_root_path)+"/payment/success");
+        paymentParams.setFurl(getString(R.string.api_root_path)+"/payment/failure");
         paymentParams.setUdf1("");
         paymentParams.setUdf2("");
         paymentParams.setUdf3("");
         paymentParams.setUdf4("");
         paymentParams.setUdf5("");
-        paymentParams.setUserCredentials("0MQaQP:payutest@payu.in");
+        paymentParams.setUserCredentials("0Wccsp:payutest@payu.in");
         paymentParams.setOfferKey("");
         payuConfig.setEnvironment(PayuConstants.PRODUCTION_ENV);
         generateHashFromServer(paymentParams);
@@ -168,8 +176,17 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.address: intent = new Intent(CheckoutPaymentActivity.this,CheckoutPaymentActivity.class); intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); break;
-            case R.id.pay: if(isEverythingValid()) makePaymentRequest(); break;
+            case R.id.pay: paymentMethod=getResources().getString(R.string.payment_cod); if(isEverythingValid()) makePaymentRequest(); break;
         }
+    }
+
+    public void setPayDefaultOnClickListener() {
+        pay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                paymentMethod=getResources().getString(R.string.payment_cod); if(isEverythingValid()) makePaymentRequest();
+            }
+        });
     }
 
     private JSONObject getPaymentJson() {
@@ -231,9 +248,51 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                 System.out.println("Response Error: " + error);
             }
         });
+
         Animations.fadeIn(connectingLayout, 500);
         Animations.fadeOut(mainLayout, 500);
         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makePurchaseRequest);
+    }
+
+    private void makeHashRequest() {
+        makeHashRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/payments/getHash", JsonProvider.getStandardRequestJson(CheckoutPaymentActivity.this), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    if(response.getBoolean("success")) {
+                        payuHashes.setPaymentHash(response.getJSONObject("data").getString("hash"));
+                    } else {
+                        Animations.fadeOut(connectingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
+                        Alerts.requestUnauthorisedAlert(CheckoutPaymentActivity.this);
+                        System.out.println(response.getString("error"));
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Animations.fadeOut(connectingLayout, 500);
+                Animations.fadeIn(mainLayout, 500);
+                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Animations.fadeIn(connectingLayout, 500);
+                        Animations.fadeOut(mainLayout, 500);
+                        Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makeHashRequest);
+                    }
+                };
+                if (error instanceof TimeoutError)
+                    Alerts.timeoutErrorAlert(CheckoutPaymentActivity.this, onClickTryAgain);
+                else if (error instanceof NoConnectionError)
+                    Alerts.internetConnectionErrorAlert(CheckoutPaymentActivity.this, onClickTryAgain);
+                else Alerts.unknownErrorAlert(CheckoutPaymentActivity.this);
+                System.out.println("Response Error: " + error);
+            }
+        });
+        Animations.fadeIn(connectingLayout, 500);
+        Animations.fadeOut(mainLayout, 500);
+        Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makeHashRequest);
     }
 
     private boolean isEverythingValid() {
@@ -273,12 +332,10 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
         protected PayuHashes doInBackground(String ... postParams) {
             payuHashes = new PayuHashes();
             try {
-//              URL url = new URL(PayuConstants.MOBILE_TEST_FETCH_DATA_URL);
-//              URL url = new URL("http://10.100.81.49:80/merchant/postservice?form=2");;
 
-                URL url = new URL("https://payu.herokuapp.com/get_hash");
-
-                // get the payuConfig first
+                makeHashRequest();
+                /*
+                URL url = new URL(getString(R.string.api_root_path)+"/getHash");
                 String postParam = postParams[0];
 
                 byte[] postParamsByte = postParam.getBytes("UTF-8");
@@ -304,7 +361,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                     String key = payuHashIterator.next();
                     switch (key){
                         case "payment_hash": payuHashes.setPaymentHash(response.getString(key)); break;
-                        case "get_merchant_ibibo_codes_hash": /**/ payuHashes.setMerchantIbiboCodesHash(response.getString(key)); break;
+                        case "get_merchant_ibibo_codes_hash": payuHashes.setMerchantIbiboCodesHash(response.getString(key)); break;
                         case "vas_for_mobile_sdk_hash": payuHashes.setVasForMobileSdkHash(response.getString(key)); break;
                         case "payment_related_details_for_mobile_sdk_hash": payuHashes.setPaymentRelatedDetailsForMobileSdkHash(response.getString(key)); break;
                         case "delete_user_card_hash": payuHashes.setDeleteCardHash(response.getString(key)); break;
@@ -316,13 +373,42 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                         default: break;
                     }
                 }
+                */
 
-            } catch (MalformedURLException e) { e.printStackTrace(); }
-            catch (ProtocolException e) { e.printStackTrace(); }
-            catch (IOException e) { e.printStackTrace(); }
-            catch (JSONException e) { e.printStackTrace(); }
+            } catch(Exception e) { e.printStackTrace(); }
             return payuHashes;
         }
+
+        @Override
+        protected void onPostExecute(PayuHashes payuHashes) {
+            super.onPostExecute(payuHashes);
+            MerchantWebService merchantWebService = new MerchantWebService();
+            merchantWebService.setKey(paymentParams.getKey());
+            merchantWebService.setCommand(PayuConstants.PAYMENT_RELATED_DETAILS_FOR_MOBILE_SDK);
+            merchantWebService.setVar1(paymentParams.getUserCredentials());
+            merchantWebService.setHash(payuHashes.getPaymentRelatedDetailsForMobileSdkHash());
+
+//            if(null == savedInstanceState){ // dont fetch the data if its been called from payment activity.
+                PostData postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
+                if(postData.getCode() == PayuErrors.NO_ERROR){
+                    payuConfig.setData(postData.getResult());
+                    //findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
+                    GetPaymentRelatedDetailsTask paymentRelatedDetailsForMobileSdkTask = new GetPaymentRelatedDetailsTask(CheckoutPaymentActivity.this);
+                    paymentRelatedDetailsForMobileSdkTask.execute(payuConfig);
+                } else {
+                    Toast.makeText(CheckoutPaymentActivity.this, postData.getResult(), Toast.LENGTH_LONG).show();
+                    //findViewById(R.id.progress_bar).setVisibility(View.GONE);
+                }
+//            }
+
+        }
+    }
+
+    @Override
+    public void onPaymentRelatedDetailsResponse(PayuResponse payuResponse) {
+        this.payuResponse = payuResponse;
+        Animations.fadeOut(loadingLayout,500);
+        Animations.fadeIn(mainLayout, 500);
     }
 
 }

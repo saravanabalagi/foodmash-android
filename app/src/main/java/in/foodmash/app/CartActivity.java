@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,7 +29,6 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
-import in.foodmash.app.custom.TouchableImageButton;
 import in.foodmash.app.utils.NumberUtils;
 
 /**
@@ -46,7 +46,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayout emptyCartLayout;
 
     private TextView total;
-    private TouchableImageButton clearCart;
+    private ImageButton clearCart;
     private ImageLoader imageLoader;
 
     @Override
@@ -76,7 +76,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         total = (TextView) findViewById(R.id.total);
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
         buy = (LinearLayout) findViewById(R.id.buy); buy.setOnClickListener(this);
-        clearCart = (TouchableImageButton) findViewById(R.id.clear_cart); clearCart.setOnClickListener(this);
+        clearCart = (ImageButton) findViewById(R.id.clear_cart); clearCart.setOnClickListener(this);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
         emptyCartLayout = (LinearLayout) findViewById(R.id.empty_cart_layout);
 

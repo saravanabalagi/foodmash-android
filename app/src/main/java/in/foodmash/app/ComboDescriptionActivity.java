@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -30,7 +31,6 @@ import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
 import in.foodmash.app.custom.ComboDish;
 import in.foodmash.app.custom.ComboOption;
-import in.foodmash.app.custom.TouchableImageButton;
 
 /**
  * Created by sarav on Sep 30 2015.
@@ -39,7 +39,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
 
     private TextView cartCount;
     private TextView currentPrice;
-    private TouchableImageButton resetCombo;
+    private ImageButton resetCombo;
     private Cart cart = Cart.getInstance();
     private Intent intent;
     private Combo combo;
@@ -83,7 +83,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
 
         buy = (LinearLayout) findViewById(R.id.buy); buy.setOnClickListener(this);
         back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
-        resetCombo = (TouchableImageButton) findViewById(R.id.reset_combo); resetCombo.setOnClickListener(this);
+        resetCombo = (ImageButton) findViewById(R.id.reset_combo); resetCombo.setOnClickListener(this);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
         currentPrice = (TextView) findViewById(R.id.price);
 

@@ -170,7 +170,7 @@
                     android:layout_centerHorizontal="true"
                     android:gravity="center_vertical|center_horizontal">
 
-                    <in.foodmash.app.custom.TouchableImageButton
+                    <ImageButton
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:id="@+id/minus"
@@ -189,7 +189,7 @@
                         android:textSize="16sp"
                         android:gravity="center_horizontal" />
 
-                    <in.foodmash.app.custom.TouchableImageButton
+                    <ImageButton
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:id="@+id/plus"

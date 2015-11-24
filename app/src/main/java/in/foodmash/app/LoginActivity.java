@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -36,7 +37,6 @@ import in.foodmash.app.commons.Cryptography;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
-import in.foodmash.app.custom.TouchableImageButton;
 import in.foodmash.app.utils.EmailUtils;
 import in.foodmash.app.utils.NumberUtils;
 
@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private LinearLayout connectingLayout;
     private ScrollView mainLayout;
 
-    private TouchableImageButton clearAllFields;
+    private ImageButton clearAllFields;
     private boolean isEmail = true;
     private EditText email;
     private EditText password;
@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         skip = (LinearLayout) findViewById(R.id.skip); skip.setOnClickListener(this);
         login = (LinearLayout) findViewById(R.id.login); login.setOnClickListener(this);
 
-        clearAllFields = (TouchableImageButton) findViewById(R.id.clear_fields); clearAllFields.setOnClickListener(this);
+        clearAllFields = (ImageButton) findViewById(R.id.clear_fields); clearAllFields.setOnClickListener(this);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
         passwordValidate = (ImageView) findViewById(R.id.password_validate);
         phonePrefix = (EditText) findViewById(R.id.phone_prefix);
