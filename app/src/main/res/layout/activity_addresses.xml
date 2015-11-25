@@ -138,7 +138,7 @@
                         android:layout_height="20dp"
                         android:src="@mipmap/add"
                         android:scaleType="centerCrop"
-                        android:tint="@color/abc_primary_text_material_dark"
+                        android:tint="@color/primary_text_dark"
                         android:contentDescription="@string/add_icon" />
 
                     <TextView
@@ -147,7 +147,7 @@
                         android:text="@string/add_address"
                         android:padding="5dp"
                         android:textSize="12sp"
-                        android:textColor="@color/abc_primary_text_disable_only_material_dark" />
+                        android:textColor="@color/primary_text_disable_dark" />
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
@@ -181,7 +181,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/back"
                 android:textSize="20sp"
-                android:textColor="@color/abc_primary_text_material_dark"
+                android:textColor="@color/primary_text_dark"
                 android:singleLine="true" />
         </LinearLayout>
 

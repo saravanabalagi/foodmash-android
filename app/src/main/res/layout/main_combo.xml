@@ -61,7 +61,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/rupee"
-                            android:textColor="@color/abc_primary_text_material_dark"
+                            android:textColor="@color/primary_text_dark"
                             android:layout_marginRight="1dp"
                             android:textSize="12sp" />
 
@@ -71,7 +71,7 @@
                             android:text="@string/price_lorem_ipsum"
                             android:textSize="15sp"
                             android:id="@+id/price"
-                            android:textColor="@color/abc_primary_text_material_dark" />
+                            android:textColor="@color/primary_text_dark" />
                     </LinearLayout>
 
                     <ImageView
@@ -247,7 +247,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/added_to_cart"
-            android:textColor="@color/abc_primary_text_material_dark"
+            android:textColor="@color/primary_text_dark"
             android:textSize="12sp"
             android:fontFamily="sans-serif-light" />
 

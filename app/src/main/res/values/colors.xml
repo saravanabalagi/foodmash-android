@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_accent">#ffd70d00</color>
-    <color name="color_accent_dark_bg">#ff1e11</color>
-    <color name="color_accent_white_bg">#ffcd0c00</color>
+    <color name="color_accent">#d70d00</color>
+    <color name="color_accent_dark_bg">#1e11</color>
+    <color name="color_accent_white_bg">#cd0c00</color>
 
     <color name="transparent">#00000000</color>
-    <color name="white">#ffffffff</color>
-    <color name="black">#ff000000</color>
-    <color name="black_111">#ff111111</color>
-    <color name="black_222">#ff222222</color>
-    <color name="black_333">#ff333333</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="black_111">#111111</color>
+    <color name="black_222">#222222</color>
+    <color name="black_333">#333333</color>
 
-    <color name="button_large_flat_background">#ff111111</color>
-    <color name="button_large_flat_background_focused_pressed">#ff333333</color>
+    <color name="primary_text_dark">#fcfcfc</color>
+    <color name="primary_text_disable_dark">#f0f0f0</color>
+    <color name="primary_text_light">#0f0f0f</color>
+    <color name="primary_text_disable_light">#1f1f1f</color>
 
-    <color name="focus_foreground">#ffffffff</color>
-    <color name="combo_background">#ffffffff</color>
-    <color name="combo_food_background">#ffffffff</color>
+    <color name="button_large_flat_background">#111111</color>
+    <color name="button_large_flat_background_focused_pressed">#333333</color>
+
+    <color name="focus_foreground">#ffffff</color>
+    <color name="combo_background">#ffffff</color>
+    <color name="combo_food_background">#ffffff</color>
     <color name="combo_overlay">#222222</color>
 
     <color name="veg">#39b54a</color>

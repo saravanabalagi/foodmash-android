@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/back"
                 android:textSize="20sp"
-                android:textColor="@color/abc_primary_text_material_dark"
+                android:textColor="@color/primary_text_dark"
                 android:singleLine="true" />
         </LinearLayout>
 
@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:text="proceed"
                 android:textSize="20sp"
-                android:textColor="@color/abc_primary_text_material_dark"
+                android:textColor="@color/primary_text_dark"
                 android:singleLine="true" />
         </LinearLayout>
     </LinearLayout>

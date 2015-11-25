@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:text="@string/added_to_cart"
         android:background="@drawable/combo_description_added_to_cart_text_background"
-        android:textColor="@color/abc_primary_text_material_dark"
+        android:textColor="@color/primary_text_dark"
         android:paddingTop="7dp"
         android:paddingRight="10dp"
         android:paddingBottom="7dp"

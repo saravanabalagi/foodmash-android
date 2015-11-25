@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:padding="2dp"
         android:text="@string/cart_count_lorem_ipsum"
-        android:textColor="@color/abc_primary_text_material_dark"
+        android:textColor="@color/primary_text_dark"
         android:background="@drawable/cart_count_background"
         android:textSize="7sp"
         android:gravity="center_horizontal"
