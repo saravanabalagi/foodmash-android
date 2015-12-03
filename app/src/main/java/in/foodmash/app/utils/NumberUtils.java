@@ -1,7 +1,7 @@
 package in.foodmash.app.utils;
 
 /**
- * Created by sarav on Sep 04 2015.
+ * Created by Zeke on Sep 04 2015.
  */
 public class NumberUtils {
     public static boolean isInteger(String string) {

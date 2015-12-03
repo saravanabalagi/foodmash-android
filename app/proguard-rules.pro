@@ -15,3 +15,12 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-keepnames class com.fasterxml.jackson.** { *; }
+-keepnames interface com.fasterxml.jackson.** { *; }
+-keepclassmembers class in.foodmash.app.custom.** { *; }
+-keepattributes Signature,*Annotation*,EnclosingMethod
+
+-dontwarn com.android.volley.toolbox.**
+-dontwarn com.fasterxml.jackson.**
+-dontwarn com.payu.custombrowser.**

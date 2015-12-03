@@ -37,7 +37,7 @@ import in.foodmash.app.utils.WordUtils;
 
 
 /**
- * Created by sarav on Aug 08 2015.
+ * Created by Zeke on Aug 08 2015.
  */
 public class OrderDescriptionActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -176,14 +176,14 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
 
     @Override
     public void onBackPressed() {
-        if(cart) { intent = new Intent(OrderDescriptionActivity.this,MainActivity.class); startActivity(intent); }
+        if(cart) { intent = new Intent(OrderDescriptionActivity.this,MainActivity.class); intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); }
         else super.onBackPressed();
     }
 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.order_history: if(cart) { intent = new Intent(OrderDescriptionActivity.this,OrderHistoryActivity.class); startActivity(intent); } else finish(); break;
-            case R.id.home: intent = new Intent(OrderDescriptionActivity.this,MainActivity.class); startActivity(intent); break;
+            case R.id.home: intent = new Intent(OrderDescriptionActivity.this,MainActivity.class); intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); break;
         }
     }
 

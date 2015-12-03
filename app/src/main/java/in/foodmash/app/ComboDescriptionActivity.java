@@ -33,7 +33,7 @@ import in.foodmash.app.custom.ComboDish;
 import in.foodmash.app.custom.ComboOption;
 
 /**
- * Created by sarav on Sep 30 2015.
+ * Created by Zeke on Sep 30 2015.
  */
 public class ComboDescriptionActivity extends AppCompatActivity implements View.OnClickListener {
 

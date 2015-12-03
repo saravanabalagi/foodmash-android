@@ -30,7 +30,7 @@ import in.foodmash.app.CheckoutPaymentActivity;
 import in.foodmash.app.R;
 
 /**
- * Created by sarav on Oct 28 2015.
+ * Created by Zeke on Oct 28 2015.
  */
 public class NetbankingFragment extends Fragment {
 

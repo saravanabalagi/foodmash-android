@@ -38,7 +38,11 @@ import com.payu.india.Tasks.GetPaymentRelatedDetailsTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Calendar;
+import java.util.Iterator;
 
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
@@ -112,7 +116,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
         setContentView(R.layout.activity_checkout_payment);
 
         if(getIntent().getDoubleExtra("payable_amount", 0)!=0) payableAmount = String.valueOf(getIntent().getDoubleExtra("payable_amount",0));
-        else Alerts.commonErrorAlert(CheckoutPaymentActivity.this, "Transaction not authorized", "We found something suspecious about your current order. Try again!", "Back", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { finish(); } }, false);
+        else Alerts.commonErrorAlert(CheckoutPaymentActivity.this, "Transaction not authorized", "We found something suspicious about your current order. Try again!", "Back", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { finish(); } }, false);
 
         address = (LinearLayout) findViewById(R.id.address); address.setOnClickListener(this);
         connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
@@ -123,7 +127,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
 
         class PaymentPagerAdapter extends FragmentPagerAdapter {
             public PaymentPagerAdapter(FragmentManager fm) { super(fm); }
-            @Override public int getCount() { return 3; }
+            @Override public int getCount() { return 1; }
             @Override public Fragment getItem(int position) {
                 switch (position) {
                     case 0: return new CashOnDeliveryFragment();
@@ -145,16 +149,16 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
             }
         }
 
-        Animations.fadeIn(loadingLayout, 500);
-        Animations.fadeOut(mainLayout, 500);
-        fillPaymentParamsAndPayuEnv();
+        //Animations.fadeIn(loadingLayout, 500);
+        //Animations.fadeOut(mainLayout, 500);
+        //fillPaymentParamsAndPayuEnv();
         PaymentPagerAdapter paymentPagerAdapter = new PaymentPagerAdapter(getSupportFragmentManager());
         mainLayout.setAdapter(paymentPagerAdapter);
 
     }
 
     public void fillPaymentParamsAndPayuEnv() {
-        paymentParams.setKey("0Wccsp");
+        paymentParams.setKey("0MQaQP");
         paymentParams.setAmount(payableAmount);
         paymentParams.setProductInfo("Foodmash Order");
         paymentParams.setFirstName("Somename");
@@ -167,7 +171,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
         paymentParams.setUdf3("");
         paymentParams.setUdf4("");
         paymentParams.setUdf5("");
-        paymentParams.setUserCredentials("0Wccsp:payutest@payu.in");
+        paymentParams.setUserCredentials("0MQaQP:payutest@payu.in");
         paymentParams.setOfferKey("");
         payuConfig.setEnvironment(PayuConstants.PRODUCTION_ENV);
         generateHashFromServer(paymentParams);
@@ -175,7 +179,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.address: intent = new Intent(CheckoutPaymentActivity.this,CheckoutPaymentActivity.class); intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); break;
+            case R.id.address: intent = new Intent(CheckoutPaymentActivity.this, CheckoutAddressActivity.class); intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); break;
             case R.id.pay: paymentMethod=getResources().getString(R.string.payment_cod); if(isEverythingValid()) makePaymentRequest(); break;
         }
     }
@@ -333,9 +337,8 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
             payuHashes = new PayuHashes();
             try {
 
-                makeHashRequest();
-                /*
-                URL url = new URL(getString(R.string.api_root_path)+"/getHash");
+                //makeHashRequest();
+                URL url = new URL("https://payu.herokuapp.com/get_hash");
                 String postParam = postParams[0];
 
                 byte[] postParamsByte = postParam.getBytes("UTF-8");
@@ -373,7 +376,6 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                         default: break;
                     }
                 }
-                */
 
             } catch(Exception e) { e.printStackTrace(); }
             return payuHashes;

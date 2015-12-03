@@ -34,7 +34,7 @@ import in.foodmash.app.commons.Swift;
 import in.foodmash.app.utils.EmailUtils;
 
 /**
- * Created by sarav on Aug 08 2015.
+ * Created by Zeke on Aug 08 2015.
  */
 public class ForgotPasswordActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 

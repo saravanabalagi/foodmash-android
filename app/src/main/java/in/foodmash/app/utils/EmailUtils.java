@@ -1,7 +1,7 @@
 package in.foodmash.app.utils;
 
 /**
- * Created by sarav on Oct 28 2015.
+ * Created by Zeke on Oct 28 2015.
  */
 public class EmailUtils {
     public static boolean isValidEmailAddress(String email) {

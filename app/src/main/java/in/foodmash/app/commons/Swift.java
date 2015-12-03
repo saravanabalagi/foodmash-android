@@ -10,7 +10,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
 /**
- * Created by sarav on Aug 19 2015.
+ * Created by Zeke on Aug 19 2015.
  */
 public class Swift {
     private static Swift mInstance;

@@ -1,7 +1,7 @@
 package in.foodmash.app.custom;
 
 /**
- * Created by sarav on Sep 11 2015.
+ * Created by Zeke on Sep 11 2015.
  */
 public class Restaurant {
 

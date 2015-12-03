@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -28,7 +29,7 @@ import in.foodmash.app.CheckoutPaymentActivity;
 import in.foodmash.app.R;
 
 /**
- * Created by sarav on Oct 28 2015.
+ * Created by Zeke on Oct 28 2015.
  */
 public class CreditDebitCardFragment extends Fragment {
 
@@ -155,36 +156,18 @@ public class CreditDebitCardFragment extends Fragment {
     }
 
     private Drawable getIssuerDrawable(String issuer){
-
-        if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-            switch (issuer) {
-                case PayuConstants.VISA: return getResources().getDrawable(R.drawable.visa);
-                case PayuConstants.LASER: return getResources().getDrawable(R.drawable.laser);
-                case PayuConstants.DISCOVER: return getResources().getDrawable(R.drawable.discover);
-                case PayuConstants.MAES: return getResources().getDrawable(R.drawable.maestro);
-                case PayuConstants.MAST: return getResources().getDrawable(R.drawable.master);
-                case PayuConstants.AMEX: return getResources().getDrawable(R.drawable.amex);
-                case PayuConstants.DINR: return getResources().getDrawable(R.drawable.diner);
-                case PayuConstants.JCB: return getResources().getDrawable(R.drawable.jcb);
-                case PayuConstants.SMAE: return getResources().getDrawable(R.drawable.maestro);
-                case PayuConstants.RUPAY: return getResources().getDrawable(R.drawable.rupay);
-            }
-            return null;
-        }else {
-
-            switch (issuer) {
-                case PayuConstants.VISA: return getResources().getDrawable(R.drawable.visa, null);
-                case PayuConstants.LASER: return getResources().getDrawable(R.drawable.laser, null);
-                case PayuConstants.DISCOVER: return getResources().getDrawable(R.drawable.discover, null);
-                case PayuConstants.MAES: return getResources().getDrawable(R.drawable.maestro, null);
-                case PayuConstants.MAST: return getResources().getDrawable(R.drawable.master, null);
-                case PayuConstants.AMEX: return getResources().getDrawable(R.drawable.amex, null);
-                case PayuConstants.DINR: return getResources().getDrawable(R.drawable.diner, null);
-                case PayuConstants.JCB: return getResources().getDrawable(R.drawable.jcb, null);
-                case PayuConstants.SMAE: return getResources().getDrawable(R.drawable.maestro, null);
-                case PayuConstants.RUPAY: return getResources().getDrawable(R.drawable.rupay, null);
-            }
-            return null;
+        switch (issuer) {
+            case PayuConstants.VISA: return ContextCompat.getDrawable(getActivity(), R.drawable.visa);
+            case PayuConstants.LASER: return ContextCompat.getDrawable(getActivity(), R.drawable.laser);
+            case PayuConstants.DISCOVER: return ContextCompat.getDrawable(getActivity(), R.drawable.discover);
+            case PayuConstants.MAES: return ContextCompat.getDrawable(getActivity(), R.drawable.maestro);
+            case PayuConstants.MAST: return ContextCompat.getDrawable(getActivity(), R.drawable.master);
+            case PayuConstants.AMEX: return ContextCompat.getDrawable(getActivity(), R.drawable.amex);
+            case PayuConstants.DINR: return ContextCompat.getDrawable(getActivity(), R.drawable.diner);
+            case PayuConstants.JCB: return ContextCompat.getDrawable(getActivity(), R.drawable.jcb);
+            case PayuConstants.SMAE: return ContextCompat.getDrawable(getActivity(), R.drawable.maestro);
+            case PayuConstants.RUPAY: return ContextCompat.getDrawable(getActivity(), R.drawable.rupay);
         }
+        return null;
     }
 }
