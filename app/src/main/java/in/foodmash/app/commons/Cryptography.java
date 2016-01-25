@@ -36,7 +36,7 @@ public class Cryptography {
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             System.out.println("String to encrypt: "+strToEncrypt);
-            System.out.println("Base64: " +Base64.encode(cipher.doFinal(hexToByte(strToEncrypt))));
+            //System.out.println("Base64: " +Base64.encode(cipher.doFinal(hexToByte(strToEncrypt))));
             return Base64.encode(cipher.doFinal(hexToByte(strToEncrypt)));
         } catch (Exception e) {  System.out.println("Error while encrypting: " + e.toString()); e.printStackTrace(); }
         return null;
@@ -54,6 +54,7 @@ public class Cryptography {
 
     public static String getEncryptedAndroidId(Context context, String key) {
         String androidId = Settings.Secure.getString(context.getContentResolver(),Settings.Secure.ANDROID_ID);
+        System.out.println("Android ID: "+androidId);
         return encrypt(androidId,key);
     }
 

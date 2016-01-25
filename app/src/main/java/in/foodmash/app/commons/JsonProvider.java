@@ -18,6 +18,7 @@ public class JsonProvider {
         hashMap.put("auth_user_token", sharedPreferences.getString("user_token",null));
         hashMap.put("auth_session_token", sharedPreferences.getString("session_token", null));
         hashMap.put("auth_android_token", sharedPreferences.getString("android_token", null));
+        System.out.println(new JSONObject(hashMap));
         return new JSONObject(hashMap);
     }
 

@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,6 +34,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
@@ -44,12 +48,12 @@ import in.foodmash.app.utils.EmailUtils;
  */
 public class SignupActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
-    private Intent intent;
+    @Bind(R.id.create) FloatingActionButton create;
+    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
+    @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.accept_terms) Switch acceptTerms;
 
-    private LinearLayout login;
-    private LinearLayout create;
-    private LinearLayout connectingLayout;
-    private ScrollView mainLayout;
+    private Intent intent;
 
     private EditText name;
     private EditText email;
@@ -70,8 +74,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private boolean isPhoneAvailable = false;
     private boolean isEmailValidationInProgress = false;
     private boolean isPhoneValidationInProgress = false;
-
-    private Switch acceptTerms;
 
     private boolean termsAccepted = false;
     private JsonObjectRequest checkEmailRequest;
@@ -98,18 +100,10 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        ButterKnife.bind(this);
 
-        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
-        mainLayout = (ScrollView) findViewById(R.id.main_layout);
-        login = (LinearLayout) findViewById(R.id.login); login.setOnClickListener(this);
-        create = (LinearLayout) findViewById(R.id.create); create.setOnClickListener(this);
-        clearFields = (ImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
-        acceptTerms = (Switch) findViewById(R.id.accept_terms); acceptTerms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                termsAccepted = isChecked;
-            }
-        });
+        create.setOnClickListener(this);
+        acceptTerms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() { @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) { termsAccepted = isChecked; } });
 
         nameValidate = (ImageView) findViewById(R.id.name_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
@@ -129,8 +123,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear_fields: name.setText(null); email.setText(null); phone.setText(null); password.setText(null); passwordConfirmation.setText(null); acceptTerms.setChecked(false); break;
-            case R.id.login: finish(); break;
             case R.id.create:
                 if(termsAccepted) {
                     if(isEverythingValid()) makeJsonRequest();
@@ -218,8 +210,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         Swift.getInstance(SignupActivity.this).addToRequestQueue(registerRequest);
     }
 
-    private void setCancelOnImageView(ImageView imageView) { imageView.setColorFilter(getResources().getColor(R.color.color_accent)); imageView.setImageResource(R.mipmap.error); }
-    private void setOkayOnImageView(ImageView imageView) { imageView.setColorFilter(getResources().getColor(R.color.okay_green)); imageView.setImageResource(R.mipmap.tick); }
+    private void setCancelOnImageView(ImageView imageView) { imageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); imageView.setImageResource(R.drawable.svg_close); }
+    private void setOkayOnImageView(ImageView imageView) { imageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); imageView.setImageResource(R.drawable.svg_tick); }
 
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }

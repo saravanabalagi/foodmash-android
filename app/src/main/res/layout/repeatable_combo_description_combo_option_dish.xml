@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="10dp"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/image"
+            android:contentDescription="@string/food_image"
+            android:src="@drawable/png_image_default"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/svg_circle_filled"
+            android:contentDescription="@string/selected"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:tint="@color/white" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/selected"
+            android:src="@drawable/svg_tick_filled"
+            android:contentDescription="@string/selected"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:tint="@color/okay_green" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:id="@+id/restaurant_layout"
+            android:padding="10dp"
+            android:layout_marginBottom="-10dp">
+            <com.android.volley.toolbox.NetworkImageView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:id="@+id/restaurant_logo"
+                android:contentDescription="@string/restaurant_logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/restaurant_name"
+                android:id="@+id/restaurant_name"
+                android:visibility="gone" />
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:id="@+id/taste"
+                android:src="@drawable/svg_spicy"
+                android:contentDescription="@string/taste"
+                android:visibility="gone" />
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:id="@+id/label"
+                android:src="@drawable/svg_label"
+                android:contentDescription="@string/label" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/food_name_lorem_ipsum"
+                android:id="@+id/name"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="0dp"
+                android:textSize="14sp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="5dp" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:id="@+id/scrollView" >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/food_description_lorem_ipsum"
+                    android:id="@+id/description"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginTop="0dp"
+                    android:textSize="11sp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:fontFamily="sans-serif-light"
+                    android:gravity="center_horizontal" />
+            </ScrollView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_extra"
+                    android:textAllCaps="true"
+                    android:textSize="12sp"
+                    android:singleLine="true"
+                    android:background="@drawable/button_rounded_background"
+                    android:textColor="@color/primary_text_dark"
+                    android:id="@+id/add_extra"
+                    android:gravity="center_horizontal"
+                    android:layout_centerInParent="true" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/count_layout"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="35dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/minus"
+                        android:id="@+id/minus"
+                        android:textSize="12sp"
+                        android:background="@drawable/button_rounded_left_background"
+                        android:textColor="@color/white"
+                        android:gravity="center_horizontal" />
+
+                    <TextView
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/count_ipsum_lorem"
+                        android:id="@+id/count"
+                        android:textSize="12sp"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/white"
+                        android:background="@drawable/button_dark_background" />
+
+                    <TextView
+                        android:layout_width="35dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/plus"
+                        android:id="@+id/plus"
+                        android:textSize="12sp"
+                        android:textColor="@color/white"
+                        android:background="@drawable/button_rounded_right_background"
+                        android:gravity="center_horizontal" />
+
+                </LinearLayout>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/id"
+        android:visibility="gone" />
+
+</LinearLayout>

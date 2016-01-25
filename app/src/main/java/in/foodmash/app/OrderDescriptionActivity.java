@@ -3,6 +3,7 @@ package in.foodmash.app;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +28,8 @@ import org.json.JSONObject;
 
 import java.util.Random;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
@@ -39,22 +42,20 @@ import in.foodmash.app.utils.WordUtils;
 /**
  * Created by Zeke on Aug 08 2015.
  */
-public class OrderDescriptionActivity extends AppCompatActivity implements View.OnClickListener {
+public class OrderDescriptionActivity extends AppCompatActivity {
+
+    @Bind(R.id.main_layout) LinearLayout mainLayout;
+    @Bind(R.id.loading_layout) LinearLayout loadingLayout;
+    @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.status) TextView status;
+    @Bind(R.id.date) TextView date;
+    @Bind(R.id.total) TextView total;
+    @Bind(R.id.payment_method) TextView paymentMethod;
+    @Bind(R.id.status_icon) ImageView statusIcon;
 
     private Intent intent;
     private String orderId;
     private boolean cart;
-
-    private TextView status;
-    private TextView date;
-    private TextView total;
-    private TextView paymentMethod;
-    private ImageView statusIcon;
-    private LinearLayout orderHistory;
-    private LinearLayout home;
-    private LinearLayout fillLayout;
-    private LinearLayout loadingLayout;
-    private LinearLayout mainLayout;
 
     private JsonObjectRequest orderDescriptionRequest;
     private ImageLoader imageLoader;
@@ -91,21 +92,11 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_description);
+        ButterKnife.bind(this);
 
         imageLoader = Swift.getInstance(OrderDescriptionActivity.this).getImageLoader();
         cart = getIntent().getBooleanExtra("cart", false);
         orderId = getIntent().getStringExtra("order_id");
-        orderHistory = (LinearLayout) findViewById(R.id.order_history); orderHistory.setOnClickListener(this);
-        home = (LinearLayout) findViewById(R.id.home); home.setOnClickListener(this);
-        status = (TextView) findViewById(R.id.status);
-        date = (TextView) findViewById(R.id.date);
-        total = (TextView) findViewById(R.id.total);
-        paymentMethod = (TextView) findViewById(R.id.payment_method);
-        statusIcon = (ImageView) findViewById(R.id.status_icon);
-
-        loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
-        mainLayout = (LinearLayout) findViewById(R.id.main_layout);
-        fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
 
         orderDescriptionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/show", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
@@ -131,14 +122,14 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
                                 JSONObject dishJson = comboDishJson.getJSONObject("item");
                                 dishes += dishJson.getString("name") + ((j==comboDishesJson.length()-1)?"":",  ");
                             }
-                            LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.order_combo, fillLayout, false);
+                            LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_order_description_item, fillLayout, false);
                             ((NetworkImageView) comboLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(), imageLoader);
                             ((TextView) comboLayout.findViewById(R.id.name)).setText(productJson.getString("name"));
                             ImageView foodLabel = (ImageView) comboLayout.findViewById(R.id.label);
                             switch(productJson.getString("label")) {
-                                case "egg": foodLabel.setColorFilter(getResources().getColor(R.color.egg)); break;
-                                case "veg": foodLabel.setColorFilter(getResources().getColor(R.color.veg)); break;
-                                case "non-veg": foodLabel.setColorFilter(getResources().getColor(R.color.non_veg)); break;
+                                case "egg": foodLabel.setColorFilter(ContextCompat.getColor(OrderDescriptionActivity.this, R.color.egg)); break;
+                                case "veg": foodLabel.setColorFilter(ContextCompat.getColor(OrderDescriptionActivity.this, R.color.veg)); break;
+                                case "non-veg": foodLabel.setColorFilter(ContextCompat.getColor(OrderDescriptionActivity.this, R.color.non_veg)); break;
                             }
                             TextView price = (TextView) comboLayout.findViewById(R.id.price); price.setText(productJson.getString("price"));
                             TextView quantity = (TextView) comboLayout.findViewById(R.id.quantity); quantity.setText(subOrderJson.getString("quantity"));
@@ -176,15 +167,8 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
 
     @Override
     public void onBackPressed() {
-        if(cart) { intent = new Intent(OrderDescriptionActivity.this,MainActivity.class); intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); }
-        else super.onBackPressed();
-    }
-
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.order_history: if(cart) { intent = new Intent(OrderDescriptionActivity.this,OrderHistoryActivity.class); startActivity(intent); } else finish(); break;
-            case R.id.home: intent = new Intent(OrderDescriptionActivity.this,MainActivity.class); intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); break;
-        }
+        if(cart) { intent = new Intent(OrderDescriptionActivity.this, MainActivity.class); intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); }
+        else { intent = new Intent(OrderDescriptionActivity.this, OrderHistoryActivity.class); intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); }
     }
 
     private JSONObject getRequestJson() {
@@ -199,8 +183,8 @@ public class OrderDescriptionActivity extends AppCompatActivity implements View.
 
     private void setStatus (ImageView statusImageView, String status) {
         switch (status) {
-            case "delivered": statusImageView.setImageResource(R.mipmap.tick); statusImageView.setColorFilter(getResources().getColor(R.color.okay_green)); break;
-            case "cancelled": statusImageView.setImageResource(R.mipmap.cancel); statusImageView.setColorFilter(getResources().getColor(R.color.color_accent)); break;
+            case "delivered": statusImageView.setImageResource(R.drawable.svg_tick); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); break;
+            case "cancelled": statusImageView.setImageResource(R.drawable.svg_close); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); break;
         }
     }
 

@@ -157,16 +157,16 @@ public class CreditDebitCardFragment extends Fragment {
 
     private Drawable getIssuerDrawable(String issuer){
         switch (issuer) {
-            case PayuConstants.VISA: return ContextCompat.getDrawable(getActivity(), R.drawable.visa);
-            case PayuConstants.LASER: return ContextCompat.getDrawable(getActivity(), R.drawable.laser);
-            case PayuConstants.DISCOVER: return ContextCompat.getDrawable(getActivity(), R.drawable.discover);
-            case PayuConstants.MAES: return ContextCompat.getDrawable(getActivity(), R.drawable.maestro);
-            case PayuConstants.MAST: return ContextCompat.getDrawable(getActivity(), R.drawable.master);
-            case PayuConstants.AMEX: return ContextCompat.getDrawable(getActivity(), R.drawable.amex);
-            case PayuConstants.DINR: return ContextCompat.getDrawable(getActivity(), R.drawable.diner);
-            case PayuConstants.JCB: return ContextCompat.getDrawable(getActivity(), R.drawable.jcb);
-            case PayuConstants.SMAE: return ContextCompat.getDrawable(getActivity(), R.drawable.maestro);
-            case PayuConstants.RUPAY: return ContextCompat.getDrawable(getActivity(), R.drawable.rupay);
+            case PayuConstants.VISA: return ContextCompat.getDrawable(getActivity(), R.drawable.png_payment_visa);
+            case PayuConstants.LASER: return ContextCompat.getDrawable(getActivity(), R.drawable.png_payment_laser);
+            case PayuConstants.DISCOVER: return ContextCompat.getDrawable(getActivity(), R.drawable.png_payment_discover);
+            case PayuConstants.MAES: return ContextCompat.getDrawable(getActivity(), R.drawable.png_payment_maestro);
+            case PayuConstants.MAST: return ContextCompat.getDrawable(getActivity(), R.drawable.png_payment_master);
+            case PayuConstants.AMEX: return ContextCompat.getDrawable(getActivity(), R.drawable.png_payment_amex);
+            case PayuConstants.DINR: return ContextCompat.getDrawable(getActivity(), R.drawable.png_payment_diner);
+            case PayuConstants.JCB: return ContextCompat.getDrawable(getActivity(), R.drawable.png_payment_jcb);
+            case PayuConstants.SMAE: return ContextCompat.getDrawable(getActivity(), R.drawable.png_payment_maestro);
+            case PayuConstants.RUPAY: return ContextCompat.getDrawable(getActivity(), R.drawable.png_payment_rupay);
         }
         return null;
     }

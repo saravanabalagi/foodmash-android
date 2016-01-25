@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,6 +31,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
@@ -42,6 +45,10 @@ import in.foodmash.app.commons.Swift;
  */
 public class ChangePasswordActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
+    @Bind(R.id.change) FloatingActionButton change;
+    @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.saving_layout) LinearLayout savingLayout;
+
     private EditText oldPassword;
     private EditText newPassword;
     private EditText confirmPassword;
@@ -53,11 +60,6 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     private ImageView oldPasswordValidate;
     private ImageView newPasswordValidate;
     private ImageView confirmPasswordValidate;
-
-    private LinearLayout back;
-    private LinearLayout change;
-    private LinearLayout savingLayout;
-    private ScrollView mainLayout;
 
     private Intent intent;
     private ImageButton clearFields;
@@ -92,10 +94,9 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
+        ButterKnife.bind(this);
         if(getIntent().getBooleanExtra("forgot",false)) { forgot = true; otpToken = getIntent().getStringExtra("otp_token"); }
 
-        savingLayout = (LinearLayout) findViewById(R.id.saving_layout);
-        mainLayout = (ScrollView) findViewById(R.id.main_layout);
         oldPasswordValidate = (ImageView) findViewById(R.id.old_password_validate);
         newPasswordValidate = (ImageView) findViewById(R.id.new_password_validate);
         confirmPasswordValidate = (ImageView) findViewById(R.id.confirm_password_validate);
@@ -104,22 +105,13 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         newPassword = (EditText) findViewById(R.id.new_password); newPassword.addTextChangedListener(this);
         confirmPassword = (EditText) findViewById(R.id.confirm_password); confirmPassword.addTextChangedListener(this);
 
-        back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
-        change = (LinearLayout) findViewById(R.id.change); change.setOnClickListener(this);
-        clearFields = (ImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
-
-        if(getIntent().getBooleanExtra("forgot", false)) {
-            oldPassword.setVisibility(View.GONE);
-            back.setVisibility(View.GONE);
-        }
-
+        change.setOnClickListener(this);
+        if(getIntent().getBooleanExtra("forgot", false)) oldPassword.setVisibility(View.GONE);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear_fields: oldPassword.setText(null); newPassword.setText(null); confirmPassword.setText(null); break;
-            case R.id.back: finish(); break;
             case R.id.change: if (isEverythingValid()) makeRequest(); else Alerts.validityAlert(ChangePasswordActivity.this); break;
         }
     }

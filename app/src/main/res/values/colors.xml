@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_accent">#d70d00</color>
-    <color name="color_accent_dark_bg">#1e11</color>
-    <color name="color_accent_white_bg">#cd0c00</color>
+    <color name="primary">#111111</color>
+    <color name="primary_dark">#222222</color>
+    <color name="accent">#d70d00</color>
+    <color name="accent_dark_bg">#cd1e11</color>
+    <color name="accent_white_bg">#cd0c00</color>
 
     <color name="transparent">#00000000</color>
     <color name="white">#ffffff</color>
@@ -10,19 +12,17 @@
     <color name="black_111">#111111</color>
     <color name="black_222">#222222</color>
     <color name="black_333">#333333</color>
+    <color name="black_444">#444444</color>
+    <color name="black_555">#555555</color>
+    <color name="window_background">#dadada</color>
+    <color name="browser_background">#59000000</color>
 
     <color name="primary_text_dark">#fcfcfc</color>
     <color name="primary_text_disable_dark">#f0f0f0</color>
     <color name="primary_text_light">#0f0f0f</color>
     <color name="primary_text_disable_light">#1f1f1f</color>
 
-    <color name="button_large_flat_background">#111111</color>
-    <color name="button_large_flat_background_focused_pressed">#333333</color>
-
-    <color name="focus_foreground">#ffffff</color>
-    <color name="combo_background">#ffffff</color>
-    <color name="combo_food_background">#ffffff</color>
-    <color name="combo_overlay">#222222</color>
+    <color name="material_button_tint">#ffffff</color>
 
     <color name="veg">#39b54a</color>
     <color name="non_veg">#bc6231</color>

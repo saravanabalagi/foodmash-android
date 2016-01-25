@@ -3,6 +3,8 @@ package in.foodmash.app;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +25,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
@@ -35,6 +40,10 @@ import in.foodmash.app.custom.Cart;
  */
 public class CheckoutAddressActivity extends AppCompatActivity implements View.OnClickListener {
 
+    @Bind(R.id.parent_layout) View parentLayout;
+    @Bind(R.id.confirm) FloatingActionButton confirm;
+    @Bind(R.id.add_address) TextView addAddress;
+
     private Intent intent;
     private JSONArray addressesJson;
     private int addressId;
@@ -42,9 +51,6 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     private JsonObjectRequest confirmOrderRequest;
     private JsonObjectRequest deleteRequest;
 
-    private LinearLayout cart;
-    private LinearLayout confirm;
-    private LinearLayout addAddress;
     private LinearLayout fillLayout;
     private LinearLayout loadingLayout;
     private LinearLayout connectingLayout;
@@ -80,10 +86,10 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout_address);
+        ButterKnife.bind(this);
 
-        cart = (LinearLayout) findViewById(R.id.cart); cart.setOnClickListener(this);
-        confirm = (LinearLayout) findViewById(R.id.confirm); confirm.setOnClickListener(this);
-        addAddress = (LinearLayout) findViewById(R.id.add_address); addAddress.setOnClickListener(this);
+        confirm.setOnClickListener(this);
+        addAddress.setOnClickListener(this);
 
         loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
         connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
@@ -93,7 +99,6 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.cart: finish(); break;
             case R.id.add_address: intent = new Intent(this, PinYourLocationActivity.class); intent.putExtra("cart",true); startActivity(intent); break;
             case R.id.confirm:
                 if(isEverythingValid()) makeConfirmRequest();
@@ -180,7 +185,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                         for (int i = 0; i < addressesJson.length(); i++) {
                             final JSONObject addressJson = addressesJson.getJSONObject(i);
                             JSONObject addressDetailsJson = addressJson.getJSONObject("address");
-                            final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.user_address, fillLayout, false);
+                            final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_user_address, fillLayout, false);
                             final String address = addressDetailsJson.getString("line1") + ",\n" +
                                     addressDetailsJson.getString("line2") + ",\n" +
                                     addressDetailsJson.getString("area") + ",\n" +
@@ -240,10 +245,12 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                                     Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(deleteRequest);
                                 }
                             });
+                            final int cardinalNumber = i+1;
                             addressLayout.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     try {
+                                        Snackbar.make(parentLayout, "Address "+cardinalNumber+" Selected", Snackbar.LENGTH_SHORT).show();
                                         addressId = addressJson.getInt("id");
                                         for(int i=0; i<fillLayout.getChildCount(); i++)
                                             fillLayout.getChildAt(i).findViewById(R.id.selected).setVisibility(View.INVISIBLE);

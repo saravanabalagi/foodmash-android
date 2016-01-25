@@ -44,13 +44,14 @@ public class Cart {
         return String.format("%.2f",total);
     }
 
-    public void addToCart(Combo combo) {
+    public int addToCart(Combo combo) {
         timestamps.put(System.currentTimeMillis(),combo);
         System.out.println("Combo Hash: "+combo.hashCode());
         if(orders.containsKey(combo)) { System.out.println("Existing quantity: "+orders.get(combo)); orders.put(combo, orders.get(combo) + 1); System.out.println("Increasing quantity by 1");}
         else { orders.put(combo, 1); System.out.println("Adding a new order"); }
         printOrdersContents();
         printTimestampsContents();
+        return getCount(combo.getId());
       }
 
     public boolean hasCombo(Combo combo) {
@@ -58,7 +59,8 @@ public class Cart {
             if(entry.getId()==combo.getId()) return true;
         return false;
     }
-    public void decrementFromCart(Combo combo) {
+
+    public int decrementFromCart(Combo combo) {
         for(Long timestamp: timestamps.descendingKeySet()) {
             Combo comboEntry = timestamps.get(timestamp);
             if (combo.getId() == comboEntry.getId()) {
@@ -67,9 +69,10 @@ public class Cart {
                 timestamps.remove(timestamp);
                 printOrdersContents();
                 printTimestampsContents();
-                return;
+                break;
             }
         }
+        return getCount(combo.getId());
     }
 
     public HashMap<Combo,Integer> getOrders() { return orders; }

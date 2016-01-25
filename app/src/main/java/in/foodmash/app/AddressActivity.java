@@ -3,6 +3,7 @@ package in.foodmash.app;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +24,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
@@ -34,17 +37,16 @@ import in.foodmash.app.commons.Swift;
  */
 public class AddressActivity extends AppCompatActivity implements View.OnClickListener {
 
+    @Bind(R.id.add_address) FloatingActionButton addAddress;
+    @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.loading_layout) LinearLayout loadingLayout;
+    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
+    @Bind(R.id.main_layout) ScrollView mainLayout;
+
     private Intent intent;
     private JSONArray jsonArray;
     private JsonObjectRequest deleteAddressRequest;
     private JsonObjectRequest getAddressesRequest;
-
-    private LinearLayout back;
-    private LinearLayout addAddress;
-    private LinearLayout fillLayout;
-    private LinearLayout loadingLayout;
-    private LinearLayout connectingLayout;
-    private ScrollView mainLayout;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -76,20 +78,13 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addresses);
-
-        loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
-        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
-
-        back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
-        addAddress = (LinearLayout) findViewById(R.id.add_address); addAddress.setOnClickListener(this);
-
-        mainLayout = (ScrollView) findViewById(R.id.main_layout);
-        fillLayout = (LinearLayout) findViewById(R.id.fill_layout); fillLayout();
+        ButterKnife.bind(this);
+        addAddress.setOnClickListener(this);
+        fillLayout();
     }
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.back: finish(); break;
             case R.id.add_address: intent = new Intent(this, PinYourLocationActivity.class); startActivity(intent); break;
         }
     }
@@ -107,7 +102,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                         for (int i = 0; i < jsonArray.length(); i++) {
                             final JSONObject jsonObject = jsonArray.getJSONObject(i);
                             JSONObject addressJson = jsonObject.getJSONObject("address");
-                            final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.user_address, fillLayout, false);
+                            final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_user_address, fillLayout, false);
                             String address = addressJson.getString("line1") + ",\n" +
                                     addressJson.getString("line2") + ",\n" +
                                     addressJson.getString("area") + ",\n" +

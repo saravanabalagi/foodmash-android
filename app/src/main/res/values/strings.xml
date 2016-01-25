@@ -77,7 +77,7 @@
     <string name="landline">landline</string>
     <string name="receive_promotional_offers">Receive promotional offers</string>
     <string name="order_history">Order History</string>
-    <string name="api_root_path">http://192.168.42.51:3000/api/v1</string>
+    <string name="api_root_path">http://foodmash.herokuapp.com/api/v1</string>
     <string name="login_later">Login Later</string>
     <string name="name">name</string>
     <string name="issue_feedback">Issue or Feedback</string>
@@ -121,4 +121,12 @@
     <string name="click_here">Click here</string>
     <string name="if_cvv_and_expiry_on_card"> &#160;if you have CVV and Expiry on your card</string>
     <string name="if_dont_cvv_and_expiry_on_card"> &#160;if you don\'t have CVV and Expiry on your card</string>
+    <string name="price_of_combo">Price of Combo</string>
+    <string name="cart_amount">Cart Amount</string>
+    <string name="change_password">Change Password</string>
+    <string name="reset">Reset</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
+    <string name="open_navbar">Open navbar</string>
+    <string name="close_navbar">Close navbar</string>
 </resources>

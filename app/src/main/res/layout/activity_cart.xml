@@ -1,48 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <RelativeLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="-5dp">
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/cart_header"
-            android:textSize="25sp"
-            android:layout_gravity="center_horizontal"
-            android:padding="15dp"
-            android:gravity="center_horizontal"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="0dp"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="0dp"
-            android:singleLine="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true" />
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/clear_cart"
-            android:src="@android:drawable/ic_input_delete"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:padding="15dp"
-            android:tint="@color/color_accent_white_bg"
-            android:layout_marginRight="5dp"
-            android:background="@color/transparent" />
-    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_height="match_parent"
+        android:id="@+id/main_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,7 +25,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/empty_cart"
+                    android:src="@drawable/png_empty_cart"
                     android:cropToPadding="true"
                     android:paddingLeft="30dp"
                     android:paddingRight="30dp"
@@ -99,106 +65,62 @@
 
     </ScrollView>
 
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:background="#555"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="15dp" />
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:gravity="center_vertical|center_horizontal">
+        android:layout_height="50dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:background="@color/black_333"
+        app:layout_anchor="@id/main_layout"
+        app:layout_anchorGravity="bottom">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total"
-            android:textSize="17sp"
-            android:layout_margin="15dp"
-            android:textColor="@color/color_accent_white_bg" />
+            android:text="@string/cart_amount"
+            android:textSize="13sp"
+            android:textColor="@color/primary_text_dark"
+            android:fontFamily="sans-serif-light"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textAllCaps="true" />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:background="@drawable/bg_combo_description_price_background"
+            android:paddingLeft="15dp"
+            android:paddingTop="5dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="5dp"
+            android:layout_marginRight="50dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/rupee"
-                android:textSize="20sp"
-                android:layout_marginRight="2dp" />
+                android:textColor="@color/primary_text_dark"
+                android:layout_marginRight="1dp"
+                android:textSize="12sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/price_lorem_ipsum"
+                android:textSize="15sp"
                 android:id="@+id/total"
-                android:textSize="25sp" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:baselineAligned="false">
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingRight="20dp"
-            android:background="@drawable/button_flat_large_background"
-            android:id="@+id/back">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/back"
-                android:contentDescription="@string/back_icon"
-                android:tint="@color/color_accent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/back"
-                android:textSize="20sp"
-                android:textColor="@color/primary_text_dark"
-                android:singleLine="true" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingRight="20dp"
-            android:background="@drawable/button_flat_large_background"
-            android:id="@+id/buy">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/cart"
-                android:contentDescription="@string/buy_icon"
-                android:tint="@color/color_accent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/buy"
-                android:textSize="20sp"
-                android:textColor="@color/primary_text_dark"
-                android:singleLine="true" />
+                android:textColor="@color/primary_text_dark" />
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:src="@drawable/svg_cart"
+        android:id="@+id/buy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_gravity="bottom|end"
+        android:tint="@color/material_button_tint" />
+
+</android.support.design.widget.CoordinatorLayout>

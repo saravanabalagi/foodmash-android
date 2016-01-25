@@ -1,221 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.design.widget.CoordinatorLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
-        android:orientation="horizontal"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|center_horizontal"
+        android:id="@+id/loading_layout"
+        android:visibility="gone">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/payment_method"
-            android:textSize="25sp"
-            android:layout_gravity="center_horizontal"
-            android:padding="15dp"
+            android:text="@string/loading"
             android:gravity="center_horizontal"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="0dp"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="0dp"
+            android:textSize="25sp"
+            android:fontFamily="sans-serif-light"
+            android:layout_margin="5dp"
             android:singleLine="true" />
 
-    </RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loading_description"
+            android:gravity="center_horizontal"
+            android:fontFamily="sans-serif-light"
+            android:layout_margin="5dp"
+            android:singleLine="true" />
+    </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|center_horizontal"
+        android:id="@+id/connecting_layout"
+        android:visibility="gone">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/connecting"
+            android:gravity="center_horizontal"
+            android:textSize="25sp"
+            android:fontFamily="sans-serif-light"
+            android:layout_margin="5dp"
+            android:singleLine="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/connecting_description"
+            android:gravity="center_horizontal"
+            android:fontFamily="sans-serif-light"
+            android:layout_margin="5dp"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main_layout">
+
+        <android.support.v4.view.PagerTabStrip
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|center_horizontal"
-            android:id="@+id/loading_layout"
-            android:visibility="gone">
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:paddingBottom="15dp"
+            android:paddingTop="15dp"
+            android:textColor="#000000" />
 
-            <ProgressBar
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/loading"
-                android:gravity="center_horizontal"
-                android:textSize="25sp"
-                android:fontFamily="sans-serif-light"
-                android:layout_margin="5dp"
-                android:singleLine="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/loading_description"
-                android:gravity="center_horizontal"
-                android:fontFamily="sans-serif-light"
-                android:layout_margin="5dp"
-                android:singleLine="true" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|center_horizontal"
-            android:id="@+id/connecting_layout"
-            android:visibility="gone">
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/connecting"
-                android:gravity="center_horizontal"
-                android:textSize="25sp"
-                android:fontFamily="sans-serif-light"
-                android:layout_margin="5dp"
-                android:singleLine="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/connecting_description"
-                android:gravity="center_horizontal"
-                android:fontFamily="sans-serif-light"
-                android:layout_margin="5dp"
-                android:singleLine="true" />
-        </LinearLayout>
-
-        <android.support.v4.view.ViewPager
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/main_layout">
-
-            <android.support.v4.view.PagerTabStrip
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:paddingBottom="15dp"
-                android:paddingTop="15dp"
-                android:textColor="#000000" />
-
-        </android.support.v4.view.ViewPager>
-
-    </RelativeLayout>
-
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:background="#555"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp" />
+    </android.support.v4.view.ViewPager>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:gravity="center_vertical|center_horizontal">
+        android:layout_height="50dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:background="@color/black_333"
+        app:layout_anchor="@id/main_layout"
+        app:layout_anchorGravity="bottom">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/payable_amount"
-            android:textSize="17sp"
-            android:layout_margin="15dp"
-            android:textColor="@color/color_accent_white_bg" />
+            android:textSize="13sp"
+            android:textColor="@color/primary_text_dark"
+            android:fontFamily="sans-serif-light"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textAllCaps="true" />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:background="@drawable/bg_combo_description_price_background"
+            android:paddingLeft="15dp"
+            android:paddingTop="5dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="5dp"
+            android:layout_marginRight="50dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/rupee"
-                android:textSize="20sp"
-                android:layout_marginRight="2dp" />
+                android:textColor="@color/primary_text_dark"
+                android:layout_marginRight="1dp"
+                android:textSize="12sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/price_lorem_ipsum"
+                android:textSize="15sp"
                 android:id="@+id/total"
-                android:textSize="25sp" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:baselineAligned="false">
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingRight="20dp"
-            android:background="@drawable/button_flat_large_background"
-            android:id="@+id/address">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/back"
-                android:contentDescription="@string/back_icon"
-                android:tint="@color/color_accent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/address"
-                android:textSize="20sp"
-                android:textColor="@color/primary_text_dark"
-                android:singleLine="true" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingRight="20dp"
-            android:background="@drawable/button_flat_large_background"
-            android:id="@+id/pay">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/pay"
-                android:paddingRight="10dp"
-                android:contentDescription="@string/pay_icon"
-                android:tint="@color/color_accent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/pay"
-                android:textSize="20sp"
-                android:textColor="@color/primary_text_dark"
-                android:singleLine="true" />
+                android:textColor="@color/primary_text_dark" />
         </LinearLayout>
     </LinearLayout>
 
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:src="@drawable/svg_cards"
+        android:id="@+id/pay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_gravity="bottom|end"
+        android:tint="@color/material_button_tint" />
+
+</android.support.design.widget.CoordinatorLayout>

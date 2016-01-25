@@ -22,6 +22,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
@@ -32,18 +34,17 @@ import in.foodmash.app.commons.Swift;
  */
 public class ForgotPasswordOtpActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private LinearLayout back;
-    private LinearLayout proceed;
-    private LinearLayout otpTimeLayout;
-    private LinearLayout otpExpiredLayout;
-    private LinearLayout otpFillLayout;
-    private LinearLayout resendOtp;
-    private LinearLayout connectingLayout;
-    private LinearLayout mainLayout;
+    @Bind(R.id.proceed) LinearLayout proceed;
+    @Bind(R.id.otp_time_layout) LinearLayout otpTimeLayout;
+    @Bind(R.id.otp_expired_layout) LinearLayout otpExpiredLayout;
+    @Bind(R.id.otp_fill_layout) LinearLayout otpFillLayout;
+    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
+    @Bind(R.id.main_layout) LinearLayout mainLayout;
+    @Bind(R.id.resend_otp) TextView resendOtp;
+    @Bind(R.id.otp_time) TextView otpTime;
+    @Bind(R.id.otp_info) TextView otpInfo;
 
     private EditText otp;
-    private TextView otpTime;
-    private TextView otpInfo;
     private String recoveryKey=null;
     private String type;
 
@@ -74,39 +75,30 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password_otp);
+        ButterKnife.bind(this);
 
-        back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
-        proceed = (LinearLayout) findViewById(R.id.proceed); proceed.setOnClickListener(this);
-        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
-        mainLayout = (LinearLayout) findViewById(R.id.main_layout);
-        otpTimeLayout = (LinearLayout) findViewById(R.id.otp_time_layout);
-        otpExpiredLayout = (LinearLayout) findViewById(R.id.otp_expired_layout);
-        otpFillLayout = (LinearLayout) findViewById(R.id.otp_fill_layout);
-        resendOtp = (LinearLayout) findViewById(R.id.resend_otp); resendOtp.setOnClickListener(this);
-
+        proceed.setOnClickListener(this);
+        resendOtp.setOnClickListener(this);
         otp = (EditText) findViewById(R.id.otp);
-        otpTime = (TextView) findViewById(R.id.otp_time);
-        otpInfo = (TextView) findViewById(R.id.otp_info);
 
         recoveryKey=getIntent().getStringExtra("value");
         type = getIntent().getStringExtra("type");
         if(type.equals("email")) otpInfo.setText("We have sent an OTP (One Time Password) to your email '"+recoveryKey+"', enter it below to reset your account password. You can resend the OTP once the timer expires.");
         else if(type.equals("phone")) otpInfo.setText("We have sent an OTP (One Time Password) to your phone "+"+91"+recoveryKey+" via a private message, enter it below to reset your account password. You can resend the OTP once the timer expires.");
 
-        handler.removeCallbacks(initiateOtpTimer);
-        handler.postDelayed(initiateOtpTimer, 1000);
+        handler.removeCallbacks(setOtpTime);
+        handler.postDelayed(setOtpTime, 1000);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.resend_otp: if(otpExpired) resendOtpRequest(); break;
-            case R.id.back: finish(); break;
             case R.id.proceed: if(isEverythingValid()) makeRequest(); else Alerts.validityAlert(ForgotPasswordOtpActivity.this); break;
         }
     }
 
-    private Runnable initiateOtpTimer= new Runnable() {
+    private Runnable setOtpTime = new Runnable() {
         @Override
         public void run() {
             if(timerSeconds==0)
@@ -114,13 +106,14 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                     if(!otpExpired) {
                         otpExpired=true;
                         Animations.fadeOutAndFadeIn(otpTimeLayout, otpExpiredLayout, 500);
-                        Animations.fadeOutAndFadeIn(otpFillLayout, resendOtp, 500);
+                        Animations.fadeOut(otpFillLayout, 500);
                         return;
                     } return; }
                 else { timerMinutes--; timerSeconds=59; }
             else timerSeconds--;
-            otpTime.setText(timerMinutes+":"+String.format("%02d",timerSeconds));
-            handler.postDelayed(initiateOtpTimer, 1000);
+            String otpTimeString = timerMinutes+":"+String.format("%02d",timerSeconds);
+            otpTime.setText(otpTimeString);
+            handler.postDelayed(setOtpTime, 1000);
         }
     };
 
@@ -207,9 +200,9 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                         otpExpired = false;
                         timerMinutes = 3; timerSeconds = 0;
                         Animations.fadeOutAndFadeIn(otpExpiredLayout, otpTimeLayout, 500);
-                        Animations.fadeOutAndFadeIn(resendOtp, otpFillLayout, 500);
-                        handler.removeCallbacks(initiateOtpTimer);
-                        handler.postDelayed(initiateOtpTimer, 1000);
+                        Animations.fadeIn(otpFillLayout, 500);
+                        handler.removeCallbacks(setOtpTime);
+                        handler.postDelayed(setOtpTime, 1000);
                     } else {
                         Animations.fadeOut(connectingLayout,500);
                         Animations.fadeIn(mainLayout,500);

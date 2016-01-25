@@ -8,11 +8,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -27,6 +27,8 @@ import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 
 
@@ -35,18 +37,17 @@ import in.foodmash.app.commons.Actions;
  */
 public class PinYourLocationActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback {
 
+    @Bind(R.id.proceed) FloatingActionButton proceed;
+
     Intent intent;
     LocationManager locationManager;
     LocationListener locationListener;
     JSONObject jsonObject;
 
-    LinearLayout back;
-    LinearLayout proceed;
     boolean edit = false;
     boolean cart = false;
 
     MapFragment mapFragment;
-    ImageButton resetMap;
     LatLng initialLocation = new LatLng(13.0220501,80.2437108);
 
     @Override
@@ -73,6 +74,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
             case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true;
             case R.id.menu_log_out: Actions.logout(PinYourLocationActivity.this); return true;
             case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_reset: mapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation,15)); return true;
             default: return super.onOptionsItemSelected(item);
         }
     }
@@ -81,6 +83,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_your_location);
+        ButterKnife.bind(this);
 
         cart = getIntent().getBooleanExtra("cart",false);
         if(getIntent().getBooleanExtra("edit",false)) {
@@ -98,15 +101,11 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
-        proceed = (LinearLayout) findViewById(R.id.proceed); proceed.setOnClickListener(this);
-        resetMap = (ImageButton) findViewById(R.id.reset_map); resetMap.setOnClickListener(this);
+        proceed.setOnClickListener(this);
     }
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.reset_map: mapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation,15));break;
-            case R.id.back: finish(); break;
             case R.id.proceed:
                 locationManager.removeUpdates(locationListener);
                 intent = new Intent(this, AddAddressActivity.class);

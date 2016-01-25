@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -33,6 +34,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
@@ -47,15 +50,13 @@ import in.foodmash.app.utils.NumberUtils;
  */
 public class ContactUsActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
+    @Bind(R.id.call) FloatingActionButton call;
+    @Bind(R.id.send_email) TextView sendEmail;
+    @Bind(R.id.not_logged_in_layout) LinearLayout notLoggedInLayout;
+    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
+    @Bind(R.id.main_layout) ScrollView mainLayout;
+
     Intent intent;
-
-    LinearLayout back;
-    LinearLayout call;
-    LinearLayout sendEmail;
-    LinearLayout notLoggedInLayout;
-    LinearLayout connectingLayout;
-    ScrollView mainLayout;
-
     JsonObjectRequest contactUsRequest;
 
     ImageView issueValidate;
@@ -102,6 +103,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_us);
+        ButterKnife.bind(this);
 
         issueList = new ArrayList<>();
         issueList.add("Not Delivered");
@@ -113,13 +115,8 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         issueList.add("Bug Report");
         issueList.add("Feedback");
 
-        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
-        mainLayout = (ScrollView) findViewById(R.id.main_layout);
-        back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
-        call = (LinearLayout) findViewById(R.id.call); call.setOnClickListener(this);
-        sendEmail = (LinearLayout) findViewById(R.id.send_email); sendEmail.setOnClickListener(this);
-        clearFields = (ImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
-        notLoggedInLayout = (LinearLayout) findViewById(R.id.not_logged_in_layout);
+        call.setOnClickListener(this);
+        sendEmail.setOnClickListener(this);
         if(Info.isLoggedIn(ContactUsActivity.this)) notLoggedInLayout.setVisibility(View.GONE);
 
         issueValidate = (ImageView) findViewById(R.id.issue_validate);
@@ -139,9 +136,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear_fields: issue.setText(null); description.setText(null); break;
             case R.id.call: Intent callIntent = new Intent(Intent.ACTION_CALL); callIntent.setData(Uri.parse("tel:+918056249612")); try { startActivity(callIntent); } catch (SecurityException e) { e.printStackTrace(); } ; break;
-            case R.id.back: finish(); break;
             case R.id.send_email: if(isEverythingValid()) makeRequest(); else Alerts.validityAlert(ContactUsActivity.this); break;
         }
     }

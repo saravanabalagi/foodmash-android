@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
     <item android:id="@+id/menu_contact_us"
         android:title="@string/menu_contact_us"
-        android:icon="@mipmap/contact_us"
+        android:icon="@drawable/svg_help"
         android:orderInCategory="1"
         app:showAsAction="always" />
 </menu>

@@ -80,7 +80,7 @@ public class NetbankingFragment extends Fragment {
                 NetbankingViewHolder netbankingViewHolder = null;
                 if (convertView == null) {
                     LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-                    convertView = mInflater.inflate(R.layout.netbanking_list_item, null);
+                    convertView = mInflater.inflate(android.R.layout.simple_list_item_1, null);
                     netbankingViewHolder = new NetbankingViewHolder(convertView);
                     convertView.setTag(netbankingViewHolder);
                 } else netbankingViewHolder = (NetbankingViewHolder) convertView.getTag();
@@ -91,7 +91,7 @@ public class NetbankingFragment extends Fragment {
 
             class NetbankingViewHolder {
                 TextView netbankingTextView;
-                NetbankingViewHolder(View view) { netbankingTextView = (TextView) view.findViewById(R.id.text_view_netbanking); }
+                NetbankingViewHolder(View view) { netbankingTextView = (TextView) ((ViewGroup)view).getChildAt(0); }
             }
         }
 

@@ -1,0 +1,76 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ActivityMap">
+
+    <group android:checkableBehavior="single">
+
+
+        <item
+            android:id="@+id/category_all"
+            android:icon="@drawable/svg_hashtag"
+            android:title="All Categories" />
+        <item
+            android:id="@+id/category_budget"
+            android:icon="@drawable/svg_coffee"
+            android:title="Budget" />
+        <item
+            android:id="@+id/category_corporate"
+            android:icon="@drawable/svg_sitemap"
+            android:title="Corporate" />
+        <item
+            android:id="@+id/category_health"
+            android:icon="@drawable/svg_heartbeat"
+            android:title="Health" />
+
+        <item android:title="Size">
+            <menu>
+
+                <item
+                    android:id="@+id/size_micro"
+                    android:icon="@drawable/svg_user1"
+                    android:title="Micro" />
+                <item
+                    android:id="@+id/size_medium"
+                    android:icon="@drawable/svg_user2"
+                    android:title="Medium" />
+                <item
+                    android:id="@+id/size_mega"
+                    android:icon="@drawable/svg_user3"
+                    android:title="Mega" />
+
+            </menu>
+        </item>
+        <item android:title="Preference">
+            <menu>
+                <item
+                    android:id="@+id/preference_all"
+                    android:icon="@drawable/svg_hashtag"
+                    android:title="All" />
+                <item
+                    android:id="@+id/preference_veg"
+                    android:icon="@drawable/svg_leaf"
+                    android:title="Veg" />
+                <item
+                    android:id="@+id/preference_egg"
+                    android:icon="@drawable/svg_egg"
+                    android:title="Egg" />
+                <item
+                    android:id="@+id/preference_non_veg"
+                    android:icon="@drawable/svg_meat"
+                    android:title="Non Veg" />
+            </menu>
+        </item>
+        <item android:title="Price">
+            <menu>
+                <item
+                    android:id="@+id/price_low_to_high"
+                    android:icon="@drawable/svg_sort_amount_asc"
+                    android:title="Low to High" />
+                <item
+                    android:id="@+id/price_high_to_low"
+                    android:icon="@drawable/svg_sort_amount_desc"
+                    android:title="High to Low" />
+            </menu>
+        </item>
+    </group>
+</menu>

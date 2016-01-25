@@ -16,11 +16,20 @@
 #   public *;
 #}
 
+# Jackson
+-dontwarn com.fasterxml.jackson.**
 -keepnames class com.fasterxml.jackson.** { *; }
 -keepnames interface com.fasterxml.jackson.** { *; }
 -keepclassmembers class in.foodmash.app.custom.** { *; }
 -keepattributes Signature,*Annotation*,EnclosingMethod
 
+# ButterKnife
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
+-keepclasseswithmembernames class * { @butterknife.* <fields>; }
+-keepclasseswithmembernames class * { @butterknife.* <methods>; }
+
+# Others
 -dontwarn com.android.volley.toolbox.**
--dontwarn com.fasterxml.jackson.**
 -dontwarn com.payu.custombrowser.**

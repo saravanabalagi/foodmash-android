@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -44,6 +45,8 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.Iterator;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
@@ -60,14 +63,13 @@ import in.foodmash.app.payment.NetbankingFragment;
  */
 public class CheckoutPaymentActivity extends AppCompatActivity implements View.OnClickListener, PaymentRelatedDetailsListener {
 
-    private Intent intent;
+    @Bind(R.id.pay) FloatingActionButton pay;
+    @Bind(R.id.total) TextView total;
+    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
+    @Bind(R.id.loading_layout) LinearLayout loadingLayout;
+    @Bind(R.id.main_layout) ViewPager mainLayout;
 
-    private LinearLayout address;
-    private LinearLayout pay;
-    private LinearLayout connectingLayout;
-    private LinearLayout loadingLayout;
-    private ViewPager mainLayout;
-    private TextView total;
+    private Intent intent;
     private String payableAmount;
     private String paymentMethod;
 
@@ -81,7 +83,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     public PaymentParams getPaymentParams() { return paymentParams; }
     public PayuConfig getPayuConfig() { return payuConfig; }
     public PayuHashes getPayuHashes() { return payuHashes; }
-    public LinearLayout getPayButton() { return pay; }
+    public View getPayButton() { return pay; }
     public PayuResponse getPayuResponse() { return payuResponse; }
 
     @Override
@@ -114,16 +116,13 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout_payment);
+        ButterKnife.bind(this);
 
         if(getIntent().getDoubleExtra("payable_amount", 0)!=0) payableAmount = String.valueOf(getIntent().getDoubleExtra("payable_amount",0));
         else Alerts.commonErrorAlert(CheckoutPaymentActivity.this, "Transaction not authorized", "We found something suspicious about your current order. Try again!", "Back", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { finish(); } }, false);
 
-        address = (LinearLayout) findViewById(R.id.address); address.setOnClickListener(this);
-        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
-        loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
-        mainLayout = (ViewPager) findViewById(R.id.main_layout);
-        pay = (LinearLayout) findViewById(R.id.pay); setPayDefaultOnClickListener();
-        total = (TextView) findViewById(R.id.total); total.setText(payableAmount);
+        setPayDefaultOnClickListener();
+        total.setText(payableAmount);
 
         class PaymentPagerAdapter extends FragmentPagerAdapter {
             public PaymentPagerAdapter(FragmentManager fm) { super(fm); }
@@ -179,7 +178,6 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.address: intent = new Intent(CheckoutPaymentActivity.this, CheckoutAddressActivity.class); intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); break;
             case R.id.pay: paymentMethod=getResources().getString(R.string.payment_cod); if(isEverythingValid()) makePaymentRequest(); break;
         }
     }

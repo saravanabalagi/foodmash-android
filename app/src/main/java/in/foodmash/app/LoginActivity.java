@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
@@ -30,6 +32,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
@@ -45,12 +49,12 @@ import in.foodmash.app.utils.NumberUtils;
  */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher{
 
-    private LinearLayout register;
-    private LinearLayout forgotPassword;
-    private LinearLayout skip;
-    private LinearLayout login;
-    private LinearLayout connectingLayout;
-    private ScrollView mainLayout;
+    @Bind(R.id.login) FloatingActionButton login;
+    @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
+    @Bind(R.id.skip) TextView skip;
+    @Bind(R.id.register) TextView register;
+    @Bind(R.id.forgot_password) TextView forgotPassword;
 
     private ImageButton clearAllFields;
     private boolean isEmail = true;
@@ -83,15 +87,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
 
-        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
-        mainLayout = (ScrollView) findViewById(R.id.main_layout);
-        register = (LinearLayout) findViewById(R.id.register); register.setOnClickListener(this);
-        forgotPassword = (LinearLayout) findViewById(R.id.forgot_password); forgotPassword.setOnClickListener(this);
-        skip = (LinearLayout) findViewById(R.id.skip); skip.setOnClickListener(this);
-        login = (LinearLayout) findViewById(R.id.login); login.setOnClickListener(this);
+        register.setOnClickListener(this);
+        forgotPassword.setOnClickListener(this);
+        skip.setOnClickListener(this);
+        login.setOnClickListener(this);
 
-        clearAllFields = (ImageButton) findViewById(R.id.clear_fields); clearAllFields.setOnClickListener(this);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
         passwordValidate = (ImageView) findViewById(R.id.password_validate);
         phonePrefix = (EditText) findViewById(R.id.phone_prefix);
@@ -116,7 +118,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear_fields: email.setText(null); password.setText(null); keepLoggedIn.setChecked(true); break;
             case R.id.register: intent = new Intent(this, SignupActivity.class); startActivity(intent); break;
             case R.id.forgot_password: intent = new Intent(this, ForgotPasswordActivity.class); startActivity(intent); break;
             case R.id.login: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(LoginActivity.this); break;

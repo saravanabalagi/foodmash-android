@@ -3,6 +3,7 @@ package in.foodmash.app;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +25,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
@@ -35,15 +38,13 @@ import in.foodmash.app.utils.WordUtils;
 /**
  * Created by Zeke on Aug 08 2015.
  */
-public class OrderHistoryActivity extends AppCompatActivity implements View.OnClickListener {
+public class OrderHistoryActivity extends AppCompatActivity {
+
+    @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.loading_layout) LinearLayout loadingLayout;
 
     private Intent intent;
-
-    private LinearLayout back;
-    private LinearLayout fillLayout;
-    private LinearLayout loadingLayout;
-    private ScrollView mainLayout;
-
     private JsonObjectRequest orderHistoryRequest;
 
     @Override
@@ -78,11 +79,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_history);
-
-        back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
-        loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
-        mainLayout = (ScrollView) findViewById(R.id.main_layout);
-        fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
+        ButterKnife.bind(this);
 
         orderHistoryRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/history", JsonProvider.getStandardRequestJson(OrderHistoryActivity.this), new Response.Listener<JSONObject>() {
             @Override
@@ -94,7 +91,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
                         JSONArray ordersJson = response.getJSONArray("data");
                         for(int i=0;i<ordersJson.length();i++) {
                             final JSONObject orderJson = ordersJson.getJSONObject(i);
-                            LinearLayout orderLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.user_order,fillLayout,false);
+                            LinearLayout orderLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_order_history_item,fillLayout,false);
                             ((TextView) orderLayout.findViewById(R.id.order_id)).setText(orderJson.getString("order_id"));
                             ((TextView) orderLayout.findViewById(R.id.date)).setText(DateUtils.railsDateToLocalTime(orderJson.getString("updated_at")));
                             ((TextView) orderLayout.findViewById(R.id.status)).setText(WordUtils.titleize(orderJson.getString("aasm_state")));
@@ -140,16 +137,10 @@ public class OrderHistoryActivity extends AppCompatActivity implements View.OnCl
 
     }
 
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.back: finish(); break;
-        }
-    }
-
     private void setStatus (ImageView statusImageView, String status) {
         switch (status) {
-            case "delivered": statusImageView.setImageResource(R.mipmap.tick); statusImageView.setColorFilter(getResources().getColor(R.color.okay_green)); break;
-            case "cancelled": statusImageView.setImageResource(R.mipmap.cancel); statusImageView.setColorFilter(getResources().getColor(R.color.color_accent)); break;
+            case "delivered": statusImageView.setImageResource(R.drawable.svg_tick); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); break;
+            case "cancelled": statusImageView.setImageResource(R.drawable.svg_close); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); break;
         }
     }
 

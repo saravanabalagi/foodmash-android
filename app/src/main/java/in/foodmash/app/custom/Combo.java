@@ -70,10 +70,10 @@ public class Combo {
         String dishNames = "";
         for (ComboOption comboOption : this.getComboOptions())
             for(ComboDish comboDish: comboOption.getSelectedComboOptionDishes())
-                dishNames += comboDish.getDish().getName() + (comboOption.isFromSameRestaurant()?"":" ("+comboDish.getDish().getRestaurant().getName()+") ") + ((comboDish.getQuantity()==1)?"":(" x " + comboDish.getQuantity())) + ", ";
+                dishNames += ((comboDish.getQuantity()==1)?"":(comboDish.getQuantity() + " x ")) + comboDish.getDish().getName() + (comboOption.isFromSameRestaurant()?"":" ("+comboDish.getDish().getRestaurant().getName()+") ") +  "\n";
         for (ComboDish comboDish : this.getComboDishes())
-            dishNames += comboDish.getDish().getName() + ((comboDish.getQuantity()==1)?"":(" x " + comboDish.getQuantity())) + ", ";
-        return dishNames.substring(0,dishNames.length()-2);
+            dishNames += ((comboDish.getQuantity()==1)?"":(comboDish.getQuantity() + " x ")) + comboDish.getDish().getName() +  "\n";
+        return dishNames.substring(0,dishNames.length()-1);
     }
 
     @JsonIgnore public TreeMap<Integer,String> getContents() {
@@ -107,9 +107,9 @@ public class Combo {
         if (o == this) { return true; }
         Combo combo = (Combo) o;
         if(this.getId() == combo.getId()) {
-            if(!(this.comboDishes.equals(((Combo) o).comboDishes))) return false;
-            if(this.comboOptions.size()!=0) if (!(comboOptions.equals(((Combo) o).comboOptions))) return false;
-            return true;
+            //if(!(this.comboDishes.equals(((Combo) o).comboDishes))) return false;
+            //if(this.comboOptions.size()!=0) if (!(comboOptions.equals(((Combo) o).comboOptions))) return false;
+            return this.hashCode()==combo.hashCode();
         } else return false;
     }
 

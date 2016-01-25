@@ -1,196 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.design.widget.CoordinatorLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout
-        android:orientation="horizontal"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|center_horizontal"
+        android:id="@+id/connecting_layout"
+        android:visibility="gone">
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textSize="25sp"
-            android:layout_gravity="center_horizontal"
-            android:padding="15dp"
-            android:gravity="center_horizontal"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="0dp"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="0dp"
-            android:text="Contact Us"
-            android:singleLine="true" />
-
-        <ImageButton
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/clear_fields"
-            android:src="@android:drawable/ic_input_delete"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:padding="15dp"
-            android:tint="@color/color_accent_white_bg"
-            android:layout_marginRight="5dp"
-            android:background="@color/transparent" />
+            android:indeterminate="true" />
 
-    </RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/connecting"
+            android:gravity="center_horizontal"
+            android:textSize="25sp"
+            android:fontFamily="sans-serif-light"
+            android:layout_margin="5dp"
+            android:singleLine="true" />
 
-    <RelativeLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/connecting_description"
+            android:gravity="center_horizontal"
+            android:fontFamily="sans-serif-light"
+            android:layout_margin="5dp"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:id="@+id/main_layout">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|center_horizontal"
-            android:id="@+id/connecting_layout"
-            android:visibility="gone">
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/connecting"
-                android:gravity="center_horizontal"
-                android:textSize="25sp"
-                android:fontFamily="sans-serif-light"
-                android:layout_margin="5dp"
-                android:singleLine="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/connecting_description"
-                android:gravity="center_horizontal"
-                android:fontFamily="sans-serif-light"
-                android:layout_margin="5dp"
-                android:singleLine="true" />
-        </LinearLayout>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/main_layout">
+            android:layout_height="wrap_content"
+            android:padding="10dp">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 android:padding="10dp">
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:padding="10dp">
-
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/not_logged_in_layout">
-
-                        <LinearLayout
-                            android:orientation="horizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <EditText
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="textEmailAddress"
-                                android:ems="10"
-                                android:id="@+id/email"
-                                android:layout_margin="5dp"
-                                android:hint="@string/email_edit_text_hint"
-                                android:singleLine="true"
-                                android:layout_weight="1" />
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:id="@+id/email_validate"
-                                android:src="@mipmap/tick"
-                                android:tint="@color/okay_green"
-                                android:layout_gravity="bottom"
-                                android:layout_marginBottom="7dp"
-                                android:visibility="gone" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:orientation="horizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center_vertical">
-
-                            <EditText
-                                android:layout_width="50dp"
-                                android:layout_height="wrap_content"
-                                android:inputType="none"
-                                android:ems="10"
-                                android:text="@string/phone_prefix_edit_text_hint"
-                                android:focusable="false"
-                                android:focusableInTouchMode="false"
-                                android:editable="false"
-                                android:gravity="center_horizontal"
-                                android:singleLine="true" />
-
-                            <EditText
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="phone"
-                                android:ems="10"
-                                android:id="@+id/phone"
-                                android:layout_margin="5dp"
-                                android:hint="@string/phone_edit_text_hint"
-                                android:singleLine="true"
-                                android:layout_weight="1" />
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:id="@+id/phone_validate"
-                                android:src="@mipmap/tick"
-                                android:tint="@color/okay_green"
-                                android:layout_gravity="bottom"
-                                android:layout_marginBottom="7dp"
-                                android:visibility="gone" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <AutoCompleteTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/issue"
-                            android:hint="@string/issue_feedback"
-                            android:layout_weight="1"
-                            android:layout_margin="5dp" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:id="@+id/issue_validate"
-                            android:src="@mipmap/error"
-                            android:tint="@color/color_accent"
-                            android:layout_gravity="bottom"
-                            android:layout_marginBottom="7dp"
-                            android:visibility="gone" />
-                    </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:id="@+id/not_logged_in_layout">
 
                     <LinearLayout
                         android:orientation="horizontal"
@@ -200,148 +70,142 @@
                         <EditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="textMultiLine"
+                            android:inputType="textEmailAddress"
                             android:ems="10"
-                            android:id="@+id/description"
-                            android:hint="@string/description"
-                            android:minLines="3"
-                            android:gravity="top|left"
-                            android:scrollbars="vertical"
-                            android:layout_weight="1"
-                            android:layout_margin="5dp" />
+                            android:id="@+id/email"
+                            android:layout_margin="5dp"
+                            android:hint="@string/email_edit_text_hint"
+                            android:singleLine="true"
+                            android:layout_weight="1" />
 
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:id="@+id/description_validate"
-                            android:src="@mipmap/error"
-                            android:tint="@color/color_accent"
+                            android:id="@+id/email_validate"
+                            android:src="@drawable/svg_tick"
+                            android:tint="@color/okay_green"
                             android:layout_gravity="bottom"
                             android:layout_marginBottom="7dp"
                             android:visibility="gone" />
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical">
+
+                        <EditText
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:ems="10"
+                            android:text="@string/phone_prefix_edit_text_hint"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:editable="false"
+                            android:gravity="center_horizontal"
+                            android:singleLine="true" />
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="phone"
+                            android:ems="10"
+                            android:id="@+id/phone"
+                            android:layout_margin="5dp"
+                            android:hint="@string/phone_edit_text_hint"
+                            android:singleLine="true"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:id="@+id/phone_validate"
+                            android:src="@drawable/svg_tick"
+                            android:tint="@color/okay_green"
+                            android:layout_gravity="bottom"
+                            android:layout_marginBottom="7dp"
+                            android:visibility="gone" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/button_flat_large_background"
-                    android:paddingTop="5dp"
-                    android:paddingRight="10dp"
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="10dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_gravity="center_horizontal"
-                    android:id="@+id/send_email" >
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <AutoCompleteTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/issue"
+                        android:hint="@string/issue_feedback"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp" />
 
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@mipmap/mail"
-                        android:scaleType="centerCrop"
-                        android:tint="@color/primary_text_dark"
-                        android:contentDescription="@string/add_icon" />
+                        android:id="@+id/issue_validate"
+                        android:src="@drawable/svg_no"
+                        android:tint="@color/accent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
+                </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Send Mail"
-                        android:padding="5dp"
-                        android:textSize="12sp"
-                        android:textColor="@color/primary_text_disable_dark" />
+                        android:inputType="textMultiLine"
+                        android:ems="10"
+                        android:id="@+id/description"
+                        android:hint="@string/description"
+                        android:minLines="3"
+                        android:gravity="top|left"
+                        android:scrollbars="vertical"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/description_validate"
+                        android:src="@drawable/svg_no"
+                        android:tint="@color/accent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
                 </LinearLayout>
 
             </LinearLayout>
-        </ScrollView>
-    </RelativeLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:baselineAligned="false">
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingRight="20dp"
-            android:background="@drawable/button_flat_large_background"
-            android:id="@+id/back" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/back"
-                android:contentDescription="@string/user"
-                android:tint="@color/color_accent" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/back"
-                android:textSize="20sp"
-                android:textColor="@color/primary_text_dark"
-                android:singleLine="true" />
+                android:text="Send Mail"
+                android:textSize="12sp"
+                android:textColor="@color/primary_text_disable_dark"
+                android:id="@+id/send_email"
+                android:background="@drawable/button_rounded_background"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp" />
+
         </LinearLayout>
+    </ScrollView>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingRight="20dp"
-            android:background="@drawable/button_flat_large_background"
-            android:id="@+id/call">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/call"
-                android:contentDescription="@string/user"
-                android:tint="@color/color_accent" />
+    <android.support.design.widget.FloatingActionButton
+        android:src="@drawable/svg_call_filled"
+        android:id="@+id/call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_gravity="bottom|end"
+        android:tint="@color/material_button_tint" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="call"
-                android:textSize="20sp"
-                android:textColor="@color/primary_text_dark"
-                android:singleLine="true" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingRight="20dp"
-            android:background="@drawable/button_flat_large_background"
-            android:id="@+id/mail"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/mail"
-                android:contentDescription="@string/user"
-                android:tint="@color/color_accent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="email"
-                android:textSize="20sp"
-                android:textColor="@color/primary_text_dark"
-                android:singleLine="true" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,6 +39,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
@@ -49,6 +52,8 @@ import in.foodmash.app.commons.Swift;
  * Created by Zeke on Aug 08 2015.
  */
 public class AddAddressActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
+
+    @Bind(R.id.save) FloatingActionButton save;
 
     private Intent intent;
     private LatLng latLng;
@@ -83,8 +88,6 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
 
     private LinearLayout mobileLayout;
     private LinearLayout landlineLayout;
-    private LinearLayout back;
-    private LinearLayout save;
     private LinearLayout savingLayout;
     private ScrollView mainLayout;
 
@@ -118,6 +121,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_address);
+        ButterKnife.bind(this);
 
         cart = getIntent().getBooleanExtra("cart",false);
         if(getIntent().getBooleanExtra("edit",false)) {
@@ -136,8 +140,8 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
 
         savingLayout = (LinearLayout) findViewById(R.id.saving_layout);
         mainLayout = (ScrollView) findViewById(R.id.main_layout);
-        back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
-        save = (LinearLayout) findViewById(R.id.save); save.setOnClickListener(this);
+
+        save.setOnClickListener(this);
         mobileLayout = (LinearLayout) findViewById(R.id.mobile_layout);
         landlineLayout = (LinearLayout) findViewById(R.id.landline_layout);
 
@@ -199,14 +203,10 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
                     }
             } catch (Exception e) { e.printStackTrace(); }
         }
-
-        clearFields = (ImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
     }
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear_fields: name.setText(null); pincode.setText(null); addressLine1.setText(null); addressLine2.setText(null); area.setText(null);  break;
-            case R.id.back: finish(); break;
             case R.id.save: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(AddAddressActivity.this); break;
         }
     }

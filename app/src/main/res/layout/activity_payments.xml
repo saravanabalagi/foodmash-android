@@ -22,6 +22,6 @@ android:gravity="center_horizontal">
         android:id="@+id/trans_overlay"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:background="@drawable/background_drawable">
+        android:background="@color/browser_background">
     </LinearLayout>
 </RelativeLayout>

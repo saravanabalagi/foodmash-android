@@ -26,6 +26,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
@@ -38,12 +40,11 @@ import in.foodmash.app.utils.EmailUtils;
  */
 public class ForgotPasswordActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
-    private LinearLayout back;
-    private LinearLayout forgot;
-    private LinearLayout phoneLayout;
-    private LinearLayout emailLayout;
-    private LinearLayout connectingLayout;
-    private ScrollView mainLayout;
+    @Bind(R.id.forgot) LinearLayout forgot;
+    @Bind(R.id.phone_layout) LinearLayout phoneLayout;
+    @Bind(R.id.email_layout) LinearLayout emailLayout;
+    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
+    @Bind(R.id.main_layout) ScrollView mainLayout;
 
     private JsonObjectRequest forgotRequest;
 
@@ -75,20 +76,14 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
+        ButterKnife.bind(this);
 
-        back = (LinearLayout) findViewById(R.id.back); back.setOnClickListener(this);
-        forgot = (LinearLayout) findViewById(R.id.forgot); forgot.setOnClickListener(this);
-        phoneLayout = (LinearLayout) findViewById(R.id.phone_layout);
-        emailLayout = (LinearLayout) findViewById(R.id.email_layout);
-        connectingLayout = (LinearLayout) findViewById(R.id.connecting_layout);
-        mainLayout = (ScrollView) findViewById(R.id.main_layout);
+        forgot.setOnClickListener(this);
 
         phoneValidate = (ImageView) findViewById(R.id.phone_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
         phone = (EditText) findViewById(R.id.phone); phone.setText(Info.getPhone(ForgotPasswordActivity.this)); phone.addTextChangedListener(this);
         email = (EditText) findViewById(R.id.email_or_phone); email.setText(Info.getEmail(ForgotPasswordActivity.this)); email.addTextChangedListener(this);
-
-        clearAllFields = (ImageButton) findViewById(R.id.clear_fields); clearAllFields.setOnClickListener(this);
 
         otpMethodRadioGroup = (RadioGroup) findViewById(R.id.otp_method_radio_group); otpMethodRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -104,8 +99,6 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear_fields: email.setText(null); phone.setText(null); break;
-            case R.id.back: finish(); break;
             case R.id.forgot: if(isEverythingValid()) makeRequest(); else Alerts.validityAlert(ForgotPasswordActivity.this); break;
         }
     }

@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:indeterminate="true"
             android:layout_marginTop="40dp"
-            android:progressTint="@color/color_accent" />
+            android:progressTint="@color/accent" />
     </LinearLayout>
 
 </RelativeLayout>

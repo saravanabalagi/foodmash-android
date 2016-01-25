@@ -1,45 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <RelativeLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Pin your Location"
-            android:textSize="25sp"
-            android:layout_gravity="center_horizontal"
-            android:padding="15dp"
-            android:gravity="center_horizontal"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="0dp"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="0dp"
-            android:singleLine="true" />
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/reset_map"
-            android:src="@android:drawable/ic_input_delete"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:padding="15dp"
-            android:tint="@color/color_accent_white_bg"
-            android:layout_marginRight="5dp"
-            android:background="@color/transparent" />
-    </RelativeLayout>
+<android.support.design.widget.CoordinatorLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_height="match_parent">
 
         <fragment
             android:id="@+id/map"
@@ -57,70 +24,19 @@
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@mipmap/marker"
+                android:src="@drawable/svg_marker"
                 android:scaleType="centerCrop"
-                android:tint="@color/color_accent_white_bg" />
+                android:tint="@color/accent_white_bg" />
         </FrameLayout>
-
     </RelativeLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:baselineAligned="false">
+    <android.support.design.widget.FloatingActionButton
+        android:src="@drawable/svg_tick"
+        android:id="@+id/proceed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_gravity="bottom|end"
+        android:tint="@color/material_button_tint" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingRight="20dp"
-            android:background="@drawable/button_flat_large_background"
-            android:id="@+id/back">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/back"
-                android:contentDescription="@string/back_icon"
-                android:tint="@color/color_accent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/back"
-                android:textSize="20sp"
-                android:textColor="@color/primary_text_dark"
-                android:singleLine="true" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:paddingRight="20dp"
-            android:background="@drawable/button_flat_large_background"
-            android:id="@+id/proceed">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/tick"
-                android:contentDescription="@string/user"
-                android:tint="@color/color_accent"
-                android:paddingRight="5dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="proceed"
-                android:textSize="20sp"
-                android:textColor="@color/primary_text_dark"
-                android:singleLine="true" />
-        </LinearLayout>
-    </LinearLayout>
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -37,6 +38,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
@@ -50,6 +53,12 @@ import in.foodmash.app.utils.NumberUtils;
  */
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
+    @Bind(R.id.save) FloatingActionButton save;
+    @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.loading_layout) LinearLayout loadingLayout;
+    @Bind(R.id.saving_layout) LinearLayout savingLayout;
+    @Bind(R.id.change_password) TextView changePassword;
+
     private Intent intent;
 
     private EditText name;
@@ -57,13 +66,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private EditText email;
     private EditText phone;
     private Switch promotionOffers;
-
-    private LinearLayout cancel;
-    private LinearLayout save;
-    private LinearLayout changePassword;
-    private LinearLayout savingLayout;
-    private LinearLayout loadingLayout;
-    private ScrollView mainLayout;
 
     private ImageView nameValidate;
     private ImageView emailValidate;
@@ -97,6 +99,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true;
             case R.id.menu_log_out: Actions.logout(ProfileActivity.this); return true;
             case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); finish(); return true;
+            case R.id.menu_reset: name.setText(null); dob.setText(null); email.setText(null); phone.setText(null); promotionOffers.setChecked(true); return true;
             default: return super.onOptionsItemSelected(item);
         }
     }
@@ -105,14 +108,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        ButterKnife.bind(this);
 
-        savingLayout = (LinearLayout) findViewById(R.id.saving_layout);
-        loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
-        mainLayout = (ScrollView) findViewById(R.id.main_layout);
-        cancel = (LinearLayout) findViewById(R.id.cancel); cancel.setOnClickListener(this);
-        save = (LinearLayout) findViewById(R.id.save); save.setOnClickListener(this);
-        changePassword = (LinearLayout) findViewById(R.id.change_password); changePassword.setOnClickListener(this);
-        clearFields = (ImageButton) findViewById(R.id.clear_fields); clearFields.setOnClickListener(this);
+        save.setOnClickListener(this);
+        changePassword.setOnClickListener(this);
 
         nameValidate = (ImageView) findViewById(R.id.name_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
@@ -208,9 +207,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear_fields: name.setText(null); dob.setText(null); email.setText(null); phone.setText(null); promotionOffers.setChecked(true); break;
             case R.id.change_password: intent = new Intent(this, ChangePasswordActivity.class); startActivity(intent); break;
-            case R.id.cancel: finish(); break;
             case R.id.save: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(ProfileActivity.this); break;
         }
     }
@@ -236,7 +233,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void makeJsonRequest() {
-        profileRequest = new JsonObjectRequest(Request.Method.PATCH, getString(R.string.api_root_path) + "/profile", getRequestJson(), new Response.Listener<JSONObject>() {
+        profileRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/profile/update", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
