@@ -89,6 +89,7 @@ public class OrderDescriptionActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
                     if (response.getBoolean("success")) {
+                        System.out.println(response);
                         Animations.fadeOut(loadingLayout, 500);
                         Animations.fadeIn(mainLayout, 500);
                         JSONObject orderJson = response.getJSONObject("data");
@@ -106,20 +107,12 @@ public class OrderDescriptionActivity extends AppCompatActivity {
                             for(int j=0; j<comboDishesJson.length(); j++) {
                                 JSONObject comboDishJson = comboDishesJson.getJSONObject(j);
                                 JSONObject dishJson = comboDishJson.getJSONObject("item");
-                                dishes += dishJson.getString("name") + ((j==comboDishesJson.length()-1)?"":",  ");
+                                dishes += dishJson.getString("name") + ((j==comboDishesJson.length()-1)?"":"\n");
                             }
                             LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_order_description_item, fillLayout, false);
-                            ((NetworkImageView) comboLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(), imageLoader);
-                            ((TextView) comboLayout.findViewById(R.id.name)).setText(productJson.getString("name"));
-                            ImageView foodLabel = (ImageView) comboLayout.findViewById(R.id.label);
-                            switch(productJson.getString("label")) {
-                                case "egg": foodLabel.setColorFilter(ContextCompat.getColor(OrderDescriptionActivity.this, R.color.egg)); break;
-                                case "veg": foodLabel.setColorFilter(ContextCompat.getColor(OrderDescriptionActivity.this, R.color.veg)); break;
-                                case "non-veg": foodLabel.setColorFilter(ContextCompat.getColor(OrderDescriptionActivity.this, R.color.non_veg)); break;
-                            }
-                            TextView price = (TextView) comboLayout.findViewById(R.id.price); price.setText(productJson.getString("price"));
-                            TextView quantity = (TextView) comboLayout.findViewById(R.id.quantity); quantity.setText(subOrderJson.getString("quantity"));
-                            ((TextView) comboLayout.findViewById(R.id.quantity_display)).setText(subOrderJson.getString("quantity"));
+                            int quantity = Integer.parseInt(subOrderJson.getString("quantity"));
+                            if(quantity > 1) ((TextView) comboLayout.findViewById(R.id.name)).setText(quantity+" x "+productJson.getString("name"));
+                            else ((TextView) comboLayout.findViewById(R.id.name)).setText(productJson.getString("name"));
                             ((TextView) comboLayout.findViewById(R.id.amount)).setText(subOrderJson.getString("total"));
                             ((TextView) comboLayout.findViewById(R.id.dishes)).setText(dishes);
                             fillLayout.addView(comboLayout);
@@ -171,16 +164,6 @@ public class OrderDescriptionActivity extends AppCompatActivity {
         switch (status) {
             case "delivered": statusImageView.setImageResource(R.drawable.svg_tick); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); break;
             case "cancelled": statusImageView.setImageResource(R.drawable.svg_close); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); break;
-        }
-    }
-
-    private String getImageUrl() {
-        int randomNumber = new Random().nextInt(3 - 1 + 1) + 1;
-        switch (randomNumber) {
-            case 1: return "http://s19.postimg.org/mbcpkaupf/92t8_Zu_KH.jpg";
-            case 2: return "http://s19.postimg.org/cs7m4kwkz/qka9d_YR.jpg";
-            case 3: return "http://s19.postimg.org/e8j4mpzhv/zgdz_Ur_DV.jpg";
-            default: return "http://s19.postimg.org/mbcpkaupf/92t8_Zu_KH.jpg";
         }
     }
 }
