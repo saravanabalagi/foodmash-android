@@ -19,6 +19,7 @@ public class Alerts {
     public static void internetConnectionErrorAlert(final Context context, DialogInterface.OnClickListener onClickTryAgainButton) {
         String message = "Sometimes the internet gets a bit sleepy and takes a nap. Make sure its up and running then we'll give it another go";
         new AlertDialog.Builder(context)
+                .setCancelable(false)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Network Error")
                 .setMessage(message)
@@ -36,6 +37,7 @@ public class Alerts {
     public static void timeoutErrorAlert(Context context, DialogInterface.OnClickListener onClickTryAgainButton) {
         String message = "Are you connected to internet? We guess you aren't. Turn it on and we'll rock and roll!";
         new AlertDialog.Builder(context)
+                .setCancelable(false)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Network Error")
                 .setMessage(message)
@@ -45,6 +47,7 @@ public class Alerts {
 
     public static void unknownErrorAlert(Context context) {
         new AlertDialog.Builder(context)
+                .setCancelable(false)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Server Error")
                 .setMessage("We all have bad days! We'll fix this soon...")
@@ -68,6 +71,7 @@ public class Alerts {
 
     public static void commonErrorAlert(Context context, String title, String message, String buttonName, DialogInterface.OnClickListener onClickPositiveButton) {
         new AlertDialog.Builder(context)
+                .setCancelable(false)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle(title)
                 .setMessage(message)
@@ -77,6 +81,7 @@ public class Alerts {
 
     public static void commonErrorAlert(Context context, String title, String message, String buttonName) {
         new AlertDialog.Builder(context)
+                .setCancelable(false)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle(title)
                 .setMessage(message)
@@ -86,6 +91,7 @@ public class Alerts {
 
     public static void validityAlert(Context context) {
         new AlertDialog.Builder(context)
+                .setCancelable(false)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Invalid Data Found")
                 .setMessage("One or more data you have entered is invalid. Correct the fields with error sign before proceeding.")

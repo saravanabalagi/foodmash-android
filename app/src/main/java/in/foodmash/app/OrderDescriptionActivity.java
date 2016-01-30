@@ -63,6 +63,12 @@ public class OrderDescriptionActivity extends AppCompatActivity {
     private ImageLoader imageLoader;
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home) onBackPressed();
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_description);
@@ -148,7 +154,7 @@ public class OrderDescriptionActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if(cart) { intent = new Intent(OrderDescriptionActivity.this, MainActivity.class); intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); }
-        else { intent = new Intent(OrderDescriptionActivity.this, OrderHistoryActivity.class); intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); }
+        else { finish(); }
     }
 
     private JSONObject getRequestJson() {
