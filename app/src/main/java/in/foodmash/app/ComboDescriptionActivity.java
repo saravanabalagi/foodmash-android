@@ -1,5 +1,6 @@
 package in.foodmash.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -33,6 +34,7 @@ import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
 import in.foodmash.app.custom.ComboDish;
 import in.foodmash.app.custom.ComboOption;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * Created by Zeke on Sep 30 2015.
@@ -52,8 +54,13 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
     private ImageLoader imageLoader;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_activity_combo_description, menu);
+        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
         RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
         cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count);
         Actions.updateCartCount(cartCount);
@@ -70,6 +77,11 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_profile: intent = new Intent(this, ProfileActivity.class); startActivity(intent); return true;
+            case R.id.menu_addresses: intent = new Intent(this, AddressActivity.class); startActivity(intent); return true;
+            case R.id.menu_order_history: intent = new Intent(this, OrderHistoryActivity.class); startActivity(intent); return true;
+            case R.id.menu_contact_us: intent = new Intent(this, ContactUsActivity.class); startActivity(intent); return true;
+            case R.id.menu_log_out: Actions.logout(ComboDescriptionActivity.this); return true;
             case R.id.menu_cart: intent = new Intent(this, CartActivity.class); startActivity(intent); return true;
             default: return super.onOptionsItemSelected(item);
         }
