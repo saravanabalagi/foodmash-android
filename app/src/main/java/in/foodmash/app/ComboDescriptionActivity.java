@@ -52,6 +52,30 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
     private ImageLoader imageLoader;
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_activity_combo_description, menu);
+        RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
+        cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count);
+        Actions.updateCartCount(cartCount);
+        cartCountLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(ComboDescriptionActivity.this, CartActivity.class);
+                startActivity(intent);
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_cart: intent = new Intent(this, CartActivity.class); startActivity(intent); return true;
+            default: return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_combo_description);

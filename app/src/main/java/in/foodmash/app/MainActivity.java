@@ -112,7 +112,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_addresses: intent = new Intent(this, AddressActivity.class); startActivity(intent); return true;
             case R.id.menu_order_history: intent = new Intent(this, OrderHistoryActivity.class); startActivity(intent); return true;
             case R.id.menu_contact_us: intent = new Intent(this, ContactUsActivity.class); startActivity(intent); return true;
-            case R.id.menu_log_out: Actions.logout(MainActivity.this); return true; case R.id.menu_cart: intent = new Intent(this, CartActivity.class); startActivity(intent); return true;
+            case R.id.menu_log_out: Actions.logout(MainActivity.this); return true;
+            case R.id.menu_cart: intent = new Intent(this, CartActivity.class); startActivity(intent); return true;
             default: return super.onOptionsItemSelected(item);
         }
     }
@@ -123,12 +124,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
         setSupportActionBar(toolbar);
-        try {
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        try { getSupportActionBar().setDisplayShowTitleEnabled(false); }
+        catch (Exception e) { e.printStackTrace(); }
 
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
         loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);

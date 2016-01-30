@@ -80,7 +80,10 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.add_address: intent = new Intent(this, PinYourLocationActivity.class); intent.putExtra("cart",true); startActivity(intent); break;
+            case R.id.add_address:
+                intent = new Intent(this, PinYourLocationActivity.class);
+                intent.putExtra("cart",true);
+                startActivity(intent); break;
             case R.id.confirm:
                 if(isEverythingValid()) makeConfirmRequest();
                 else if(getSelectedAddressCount()==0) Alerts.commonErrorAlert(CheckoutAddressActivity.this, "No Address Selected", "You have not selected any delivery address. Select one of the listed addresses or add new address to proceed", "Okay");
