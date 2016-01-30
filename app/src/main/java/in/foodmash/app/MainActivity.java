@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
     @Bind(R.id.navigation_view) NavigationView navigationView;
+    @Bind(R.id.toolbar) Toolbar toolbar;
 
     private Intent intent;
     private List<Combo> combos;
@@ -75,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (Info.isLoggedIn(MainActivity.this)) getMenuInflater().inflate(R.menu.menu_main, menu);
+        if (Info.isLoggedIn(MainActivity.this)) getMenuInflater().inflate(R.menu.menu_activity_main, menu);
         else getMenuInflater().inflate(R.menu.menu_main_anonymous_login, menu);
         RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
         cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count);
@@ -122,45 +124,31 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        setSupportActionBar(toolbar);
+        try {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e) { e.printStackTrace(); }
+
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
         loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
         imageLoader = Swift.getInstance(MainActivity.this).getImageLoader();
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
+                toolbar,
                 R.string.open_navbar,
-                R.string.close_navbar) {
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
-                super.onDrawerClosed(drawerView);
-            }
+                R.string.close_navbar) {};
 
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
-
-                super.onDrawerOpened(drawerView);
-            }
-        };
-
-        //Setting the actionbarToggle to drawer layout
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
-
-        //calling sync state is necessay or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                //Checking if the item is in checked state or not, if not make it in checked state
                 if (menuItem.isChecked()) menuItem.setChecked(false);
                 else menuItem.setChecked(true);
-
-                //Closing drawer on item click
                 drawerLayout.closeDrawers();
                 return true;
             }

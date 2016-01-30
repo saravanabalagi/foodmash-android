@@ -77,6 +77,7 @@
     <string name="landline">landline</string>
     <string name="receive_promotional_offers">Receive promotional offers</string>
     <string name="order_history">Order History</string>
+    <!--<string name="api_root_path">http://192.168.56.1:3000/api/v1</string>-->
     <string name="api_root_path">http://foodmash.herokuapp.com/api/v1</string>
     <string name="login_later">Login Later</string>
     <string name="name">name</string>
@@ -129,4 +130,5 @@
     <string name="minus">-</string>
     <string name="open_navbar">Open navbar</string>
     <string name="close_navbar">Close navbar</string>
+    <string name="menu_delete_cart">Delete Cart</string>
 </resources>

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -48,6 +49,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     @Bind(R.id.change) FloatingActionButton change;
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.saving_layout) LinearLayout savingLayout;
+    @Bind(R.id.toolbar) Toolbar toolbar;
 
     private EditText oldPassword;
     private EditText newPassword;
@@ -62,39 +64,19 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     private ImageView confirmPasswordValidate;
 
     private Intent intent;
-    private ImageButton clearFields;
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
-        TextView cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count); Actions.updateCartCount(cartCount);
-        cartCountLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(ChangePasswordActivity.this, CartActivity.class);
-                startActivity(intent);
-            }
-        });
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_log_out) { Actions.logout(ChangePasswordActivity.this); return true; }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        try {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e) { e.printStackTrace(); }
+
         if(getIntent().getBooleanExtra("forgot",false)) { forgot = true; otpToken = getIntent().getStringExtra("otp_token"); }
 
         oldPasswordValidate = (ImageView) findViewById(R.id.old_password_validate);

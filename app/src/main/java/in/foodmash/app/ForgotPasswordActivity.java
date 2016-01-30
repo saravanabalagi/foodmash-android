@@ -3,14 +3,15 @@ package in.foodmash.app;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -40,11 +41,12 @@ import in.foodmash.app.utils.EmailUtils;
  */
 public class ForgotPasswordActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
-    @Bind(R.id.forgot) LinearLayout forgot;
+    @Bind(R.id.forgot) FloatingActionButton forgot;
     @Bind(R.id.phone_layout) LinearLayout phoneLayout;
     @Bind(R.id.email_layout) LinearLayout emailLayout;
     @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
     @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.toolbar) Toolbar toolbar;
 
     private JsonObjectRequest forgotRequest;
 
@@ -55,22 +57,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     private ImageView emailValidate;
 
     private RadioGroup otpMethodRadioGroup;
-    private ImageButton clearAllFields;
     private Intent intent;
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_signed_out, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true;
-            default: return super.onOptionsItemSelected(item);
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +65,11 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_forgot_password);
         ButterKnife.bind(this);
 
+        setSupportActionBar(toolbar);
+        try {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e) { e.printStackTrace(); }
         forgot.setOnClickListener(this);
 
         phoneValidate = (ImageView) findViewById(R.id.phone_validate);

@@ -2,17 +2,14 @@ package in.foodmash.app;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -46,6 +43,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.price) TextView currentPrice;
     @Bind(R.id.buy) FloatingActionButton buy;
+    @Bind(R.id.toolbar) Toolbar toolbar;
 
     private TextView cartCount;
     private Cart cart = Cart.getInstance();
@@ -53,36 +51,18 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
     private Combo combo;
     private ImageLoader imageLoader;
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if(Info.isLoggedIn(ComboDescriptionActivity.this)) getMenuInflater().inflate(R.menu.menu_main, menu);
-        else getMenuInflater().inflate(R.menu.menu_main_anonymous_login,menu);
-        RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
-        cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count); Actions.updateCartCount(cartCount);
-        cartCountLayout.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { intent = new Intent(ComboDescriptionActivity.this, CartActivity.class); startActivity(intent); } });
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.menu_profile: intent = new Intent(this,ProfileActivity.class); startActivity(intent); return true;
-            case R.id.menu_addresses: intent = new Intent(this,AddressActivity.class); startActivity(intent); return true;
-            case R.id.menu_order_history: intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); return true;
-            case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); return true;
-            case R.id.menu_log_out: Actions.logout(ComboDescriptionActivity.this); return true;
-            case R.id.menu_cart: intent = new Intent(this,CartActivity.class); startActivity(intent); return true;
-            case R.id.menu_reset: resetLayout(); return true;
-            default: return super.onOptionsItemSelected(item);
-        }
-    }
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_combo_description);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        try {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e) { e.printStackTrace(); }
+
         combo = Cache.getCombo(getIntent().getIntExtra("combo_id", -1));
         if(combo==null) { Alerts.unknownErrorAlert(ComboDescriptionActivity.this); return; }
 

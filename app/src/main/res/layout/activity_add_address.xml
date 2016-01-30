@@ -1,364 +1,367 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.design.widget.CoordinatorLayout
-    android:layout_width="match_parent"
+<android.support.design.widget.CoordinatorLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <include layout="@layout/appbar"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|center_horizontal"
+        android:id="@+id/saving_layout"
+        android:visibility="gone">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/saving"
+            android:gravity="center_horizontal"
+            android:textSize="25sp"
+            android:fontFamily="sans-serif-light"
+            android:layout_margin="5dp"
+            android:singleLine="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/saving_description"
+            android:gravity="center_horizontal"
+            android:fontFamily="sans-serif-light"
+            android:layout_margin="5dp"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <ScrollView
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main_layout">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|center_horizontal"
-            android:id="@+id/saving_layout"
-            android:visibility="gone">
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/saving"
-                android:gravity="center_horizontal"
-                android:textSize="25sp"
-                android:fontFamily="sans-serif-light"
-                android:layout_margin="5dp"
-                android:singleLine="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/saving_description"
-                android:gravity="center_horizontal"
-                android:fontFamily="sans-serif-light"
-                android:layout_margin="5dp"
-                android:singleLine="true" />
-        </LinearLayout>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/main_layout">
+            android:layout_height="wrap_content"
+            android:padding="10dp">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp">
+                android:gravity="center_horizontal"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp">
 
                 <LinearLayout
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp">
+                    android:layout_height="match_parent">
 
-                    <LinearLayout
-                        android:orientation="horizontal"
+                    <EditText
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="textPersonName"
-                            android:ems="10"
-                            android:id="@+id/name"
-                            android:layout_margin="5dp"
-                            android:hint="@string/name_edit_text_hint"
-                            android:singleLine="true"
-                            android:layout_weight="1" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:id="@+id/name_validate"
-                            android:src="@drawable/svg_no"
-                            android:tint="@color/accent"
-                            android:layout_gravity="bottom"
-                            android:layout_marginBottom="7dp"
-                            android:visibility="gone" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ems="10"
-                            android:id="@+id/address_line_1"
-                            android:layout_margin="5dp"
-                            android:hint="Address Line 1"
-                            android:singleLine="true"
-                            android:inputType="textCapWords|textPostalAddress"
-                            android:layout_weight="1" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:id="@+id/address_line_1_validate"
-                            android:src="@drawable/svg_no"
-                            android:tint="@color/accent"
-                            android:layout_gravity="bottom"
-                            android:layout_marginBottom="7dp"
-                            android:visibility="gone" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ems="10"
-                            android:id="@+id/address_line_2"
-                            android:layout_margin="5dp"
-                            android:hint="Address Line 2"
-                            android:singleLine="true"
-                            android:inputType="textCapWords|textPostalAddress"
-                            android:layout_weight="1" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:id="@+id/address_line_2_validate"
-                            android:src="@drawable/svg_no"
-                            android:tint="@color/accent"
-                            android:layout_gravity="bottom"
-                            android:layout_marginBottom="7dp"
-                            android:visibility="gone" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical">
-
-                        <AutoCompleteTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/area"
-                            android:layout_weight="1"
-                            android:hint="Area"
-                            android:layout_margin="5dp" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:id="@+id/area_validate"
-                            android:src="@drawable/svg_no"
-                            android:tint="@color/accent"
-                            android:layout_gravity="bottom"
-                            android:layout_marginBottom="7dp"
-                            android:visibility="gone" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical">
-
-                        <EditText
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:inputType="textPersonName"
-                            android:ems="10"
-                            android:id="@+id/city"
-                            android:layout_margin="5dp"
-                            android:hint="City"
-                            android:singleLine="true"
-                            android:layout_weight="1"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:focusableInTouchMode="false"
-                            android:text="Chennai" />
-
-                        <EditText
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:ems="10"
-                            android:id="@+id/pincode"
-                            android:layout_margin="5dp"
-                            android:hint="PIN Code"
-                            android:singleLine="true"
-                            android:inputType="number"
-                            android:numeric="integer"
-                            android:layout_weight="1" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:id="@+id/pincode_validate"
-                            android:src="@drawable/svg_no"
-                            android:tint="@color/accent"
-                            android:layout_gravity="bottom"
-                            android:layout_marginBottom="7dp"
-                            android:visibility="gone" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <RadioGroup
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:id="@+id/phone_radio_group"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp">
-
-                            <RadioButton
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="Mobile"
-                                android:id="@+id/mobile_radio"
-                                android:layout_weight="1"
-                                android:textSize="18sp"
-                                android:checked="true" />
-
-                            <RadioButton
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="Landline"
-                                android:id="@+id/landline_radio"
-                                android:layout_weight="1"
-                                android:textSize="18sp" />
-                        </RadioGroup>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:id="@+id/mobile_layout">
-
-                        <EditText
-                            android:layout_width="50dp"
-                            android:layout_height="wrap_content"
-                            android:inputType="none"
-                            android:ems="10"
-                            android:text="@string/phone_prefix_edit_text_hint"
-                            android:focusable="false"
-                            android:focusableInTouchMode="false"
-                            android:editable="false"
-                            android:gravity="center_horizontal"
-                            android:singleLine="true" />
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="phone"
-                            android:ems="10"
-                            android:id="@+id/phone"
-                            android:layout_margin="5dp"
-                            android:hint="@string/phone_edit_text_hint"
-                            android:singleLine="true"
-                            android:layout_weight="1"
-                            android:numeric="integer" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:id="@+id/phone_validate"
-                            android:src="@drawable/svg_no"
-                            android:tint="@color/accent"
-                            android:layout_gravity="bottom"
-                            android:layout_marginBottom="7dp"
-                            android:visibility="gone" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:id="@+id/landline_layout"
-                        android:visibility="gone">
-
-                        <EditText
-                            android:layout_width="50dp"
-                            android:layout_height="wrap_content"
-                            android:inputType="none"
-                            android:ems="10"
-                            android:text="@string/phone_prefix_edit_text_hint"
-                            android:focusable="false"
-                            android:focusableInTouchMode="false"
-                            android:editable="false"
-                            android:gravity="center_horizontal"
-                            android:singleLine="true" />
-
-                        <EditText
-                            android:layout_width="50dp"
-                            android:layout_height="wrap_content"
-                            android:inputType="none"
-                            android:ems="10"
-                            android:text="@string/landline_prefix_edit_text_hint"
-                            android:focusable="false"
-                            android:focusableInTouchMode="false"
-                            android:editable="false"
-                            android:gravity="center_horizontal"
-                            android:singleLine="true" />
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="phone"
-                            android:ems="10"
-                            android:id="@+id/landline"
-                            android:layout_margin="5dp"
-                            android:hint="@string/landline"
-                            android:singleLine="true"
-                            android:layout_weight="1"
-                            android:numeric="integer" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:id="@+id/landline_validate"
-                            android:src="@drawable/svg_no"
-                            android:tint="@color/accent"
-                            android:layout_gravity="bottom"
-                            android:layout_marginBottom="7dp"
-                            android:visibility="gone" />
-                    </LinearLayout>
-
-                    <Switch
-                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Primary Address"
-                        android:id="@+id/primary_address"
-                        android:padding="15dp"
-                        android:switchPadding="30dp"
-                        android:textSize="16sp"
-                        android:singleLine="true" />
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/name"
+                        android:layout_margin="5dp"
+                        android:hint="@string/name_edit_text_hint"
+                        android:singleLine="true"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/name_validate"
+                        android:src="@drawable/svg_no"
+                        android:tint="@color/accent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:id="@+id/address_line_1"
+                        android:layout_margin="5dp"
+                        android:hint="Address Line 1"
+                        android:singleLine="true"
+                        android:inputType="textCapWords|textPostalAddress"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/address_line_1_validate"
+                        android:src="@drawable/svg_no"
+                        android:tint="@color/accent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:id="@+id/address_line_2"
+                        android:layout_margin="5dp"
+                        android:hint="Address Line 2"
+                        android:singleLine="true"
+                        android:inputType="textCapWords|textPostalAddress"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/address_line_2_validate"
+                        android:src="@drawable/svg_no"
+                        android:tint="@color/accent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical">
+
+                    <AutoCompleteTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/area"
+                        android:layout_weight="1"
+                        android:hint="Area"
+                        android:layout_margin="5dp" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/area_validate"
+                        android:src="@drawable/svg_no"
+                        android:tint="@color/accent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical">
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:ems="10"
+                        android:id="@+id/city"
+                        android:layout_margin="5dp"
+                        android:hint="City"
+                        android:singleLine="true"
+                        android:layout_weight="1"
+                        android:editable="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:text="Chennai" />
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:id="@+id/pincode"
+                        android:layout_margin="5dp"
+                        android:hint="PIN Code"
+                        android:singleLine="true"
+                        android:inputType="number"
+                        android:numeric="integer"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/pincode_validate"
+                        android:src="@drawable/svg_no"
+                        android:tint="@color/accent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioGroup
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/phone_radio_group"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp">
+
+                        <RadioButton
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Mobile"
+                            android:id="@+id/mobile_radio"
+                            android:layout_weight="1"
+                            android:textSize="18sp"
+                            android:checked="true" />
+
+                        <RadioButton
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Landline"
+                            android:id="@+id/landline_radio"
+                            android:layout_weight="1"
+                            android:textSize="18sp" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:id="@+id/mobile_layout">
+
+                    <EditText
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:ems="10"
+                        android:text="@string/phone_prefix_edit_text_hint"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:editable="false"
+                        android:gravity="center_horizontal"
+                        android:singleLine="true" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="phone"
+                        android:ems="10"
+                        android:id="@+id/phone"
+                        android:layout_margin="5dp"
+                        android:hint="@string/phone_edit_text_hint"
+                        android:singleLine="true"
+                        android:layout_weight="1"
+                        android:numeric="integer" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/phone_validate"
+                        android:src="@drawable/svg_no"
+                        android:tint="@color/accent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:id="@+id/landline_layout"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:ems="10"
+                        android:text="@string/phone_prefix_edit_text_hint"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:editable="false"
+                        android:gravity="center_horizontal"
+                        android:singleLine="true" />
+
+                    <EditText
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:ems="10"
+                        android:text="@string/landline_prefix_edit_text_hint"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:editable="false"
+                        android:gravity="center_horizontal"
+                        android:singleLine="true" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="phone"
+                        android:ems="10"
+                        android:id="@+id/landline"
+                        android:layout_margin="5dp"
+                        android:hint="@string/landline"
+                        android:singleLine="true"
+                        android:layout_weight="1"
+                        android:numeric="integer" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/landline_validate"
+                        android:src="@drawable/svg_no"
+                        android:tint="@color/accent"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="7dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Primary Address"
+                    android:id="@+id/primary_address"
+                    android:padding="15dp"
+                    android:switchPadding="30dp"
+                    android:textSize="16sp"
+                    android:singleLine="true" />
+
             </LinearLayout>
-        </ScrollView>
+
+        </LinearLayout>
+    </ScrollView>
 
     <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/svg_tick"
+        android:src="@drawable/svg_android_tick"
         android:id="@+id/buy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

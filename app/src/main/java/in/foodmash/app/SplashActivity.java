@@ -77,7 +77,7 @@ public class SplashActivity extends Activity {
     }
 
     private void makeRequest(JsonObjectRequest jsonObjectRequest) {
-        Swift.getInstance(SplashActivity.this).addToRequestQueue(jsonObjectRequest);
+        Swift.getInstance(SplashActivity.this).addToRequestQueue(jsonObjectRequest, 500, 10, 2f);
     }
 
     @Override

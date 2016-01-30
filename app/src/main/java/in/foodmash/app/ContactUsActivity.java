@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -55,6 +56,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     @Bind(R.id.not_logged_in_layout) LinearLayout notLoggedInLayout;
     @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
     @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.toolbar) Toolbar toolbar;
 
     Intent intent;
     JsonObjectRequest contactUsRequest;
@@ -70,40 +72,17 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     EditText email;
     EditText phone;
 
-    ImageButton clearFields;
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if(Info.isLoggedIn(ContactUsActivity.this)) getMenuInflater().inflate(R.menu.menu_main, menu);
-        else getMenuInflater().inflate(R.menu.menu_signed_out, menu);
-        RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
-        TextView cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count); Actions.updateCartCount(cartCount);
-        cartCountLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(ContactUsActivity.this, CartActivity.class);
-                startActivity(intent);
-            }
-        });
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_log_out) { Actions.logout(ContactUsActivity.this); return true; }
-        return super.onOptionsItemSelected(item);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_us);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        try {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e) { e.printStackTrace(); }
 
         issueList = new ArrayList<>();
         issueList.add("Not Delivered");

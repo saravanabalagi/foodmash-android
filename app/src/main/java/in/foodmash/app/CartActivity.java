@@ -6,34 +6,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-
 import java.util.HashMap;
-import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
-import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
-import in.foodmash.app.utils.NumberUtils;
 
 /**
  * Created by Zeke on Jul 19 2015.
@@ -44,6 +32,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.empty_cart_layout) LinearLayout emptyCartLayout;
     @Bind(R.id.total) TextView total;
+    @Bind(R.id.toolbar) Toolbar toolbar;
 
     private Intent intent;
     private Handler handler=new Handler();
@@ -51,20 +40,14 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        menu.findItem(R.id.menu_cart).setVisible(false);
+        getMenuInflater().inflate(R.menu.menu_activity_cart, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_log_out) { Actions.logout(CartActivity.this); return true; }
-        if (id == R.id.menu_reset) {
+        if (id == R.id.menu_delete_cart) {
             new AlertDialog.Builder(CartActivity.this)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Remove all from cart ?")
@@ -92,6 +75,11 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        try {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e) { e.printStackTrace(); }
 
         buy.setOnClickListener(this);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);

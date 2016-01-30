@@ -56,7 +56,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Bind(R.id.register) TextView register;
     @Bind(R.id.forgot_password) TextView forgotPassword;
 
-    private ImageButton clearAllFields;
     private boolean isEmail = true;
     private EditText email;
     private EditText password;

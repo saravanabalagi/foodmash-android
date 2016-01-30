@@ -64,6 +64,13 @@ public class Swift {
         getRequestQueue().add(req);
     }
 
+    public <T> void addToRequestQueue(Request<T> req, int timeoutInMs, int maxRetries, float backOffMultiplier) {
+        req.setRetryPolicy(new DefaultRetryPolicy(
+                timeoutInMs,
+                maxRetries,
+                backOffMultiplier));
+        getRequestQueue().add(req);
+    }
     public ImageLoader getImageLoader() {
         return mImageLoader;
     }

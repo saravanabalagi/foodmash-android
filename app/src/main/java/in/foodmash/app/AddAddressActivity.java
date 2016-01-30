@@ -7,6 +7,7 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -54,6 +55,7 @@ import in.foodmash.app.commons.Swift;
 public class AddAddressActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
     @Bind(R.id.save) FloatingActionButton save;
+    @Bind(R.id.toolbar) Toolbar toolbar;
 
     private Intent intent;
     private LatLng latLng;
@@ -84,44 +86,22 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     private ImageView landlineValidate;
 
     private ArrayList<String> areaList;
-    private ImageButton clearFields;
-
     private LinearLayout mobileLayout;
     private LinearLayout landlineLayout;
     private LinearLayout savingLayout;
     private ScrollView mainLayout;
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
-        TextView cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count); Actions.updateCartCount(cartCount);
-        cartCountLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(AddAddressActivity.this, CartActivity.class);
-                startActivity(intent);
-            }
-        });
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.menu_profile) { intent = new Intent(this,ProfileActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_addresses) { intent = new Intent(this,AddressActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_order_history) { intent = new Intent(this,OrderHistoryActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_contact_us) { intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true; }
-        if (id == R.id.menu_log_out) { Actions.logout(AddAddressActivity.this); return true; }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_address);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        try {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e) { e.printStackTrace(); }
 
         cart = getIntent().getBooleanExtra("cart",false);
         if(getIntent().getBooleanExtra("edit",false)) {

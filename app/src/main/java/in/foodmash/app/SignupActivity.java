@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -52,6 +53,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.accept_terms) Switch acceptTerms;
+    @Bind(R.id.toolbar) Toolbar toolbar;
 
     private Intent intent;
 
@@ -80,27 +82,17 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private JsonObjectRequest checkPhoneRequest;
     private JsonObjectRequest registerRequest;
 
-    private ImageButton clearFields;
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_signed_out, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true;
-            default: return super.onOptionsItemSelected(item);
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        try {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e) { e.printStackTrace(); }
 
         create.setOnClickListener(this);
         acceptTerms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() { @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) { termsAccepted = isChecked; } });

@@ -26,11 +26,6 @@
         android:icon="@drawable/svg_logout"
         android:orderInCategory="6"
         app:showAsAction="never" />
-    <item android:id="@+id/menu_reset"
-        android:title="@string/reset"
-        android:icon="@drawable/svg_reset"
-        android:orderInCategory="7"
-        app:showAsAction="always" />
     <item android:id="@+id/menu_cart"
         android:title="@string/cart"
         app:actionLayout="@layout/menu_item_cart_count"

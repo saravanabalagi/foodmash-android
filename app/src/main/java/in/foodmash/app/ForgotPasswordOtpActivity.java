@@ -4,7 +4,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +36,7 @@ import in.foodmash.app.commons.Swift;
  */
 public class ForgotPasswordOtpActivity extends AppCompatActivity implements View.OnClickListener{
 
-    @Bind(R.id.proceed) LinearLayout proceed;
+    @Bind(R.id.proceed) FloatingActionButton proceed;
     @Bind(R.id.otp_time_layout) LinearLayout otpTimeLayout;
     @Bind(R.id.otp_expired_layout) LinearLayout otpExpiredLayout;
     @Bind(R.id.otp_fill_layout) LinearLayout otpFillLayout;
@@ -43,6 +45,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     @Bind(R.id.resend_otp) TextView resendOtp;
     @Bind(R.id.otp_time) TextView otpTime;
     @Bind(R.id.otp_info) TextView otpInfo;
+    @Bind(R.id.toolbar) Toolbar toolbar;
 
     private EditText otp;
     private String recoveryKey=null;
@@ -58,24 +61,16 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     private Intent intent;
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_signed_out, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.menu_contact_us: intent = new Intent(this,ContactUsActivity.class); startActivity(intent); finish(); return true;
-            default: return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password_otp);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        try {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e) { e.printStackTrace(); }
 
         proceed.setOnClickListener(this);
         resendOtp.setOnClickListener(this);
