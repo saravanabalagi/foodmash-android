@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -237,10 +238,19 @@ public class MainActivity extends AppCompatActivity {
             ((NetworkImageView) comboLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(), imageLoader);
             ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
             LinearLayout contentsLayout = (LinearLayout) comboLayout.findViewById(R.id.contents_layout);
-            TreeMap<Integer, String> contents = combo.getContents();
+            TreeMap<Integer, Pair<String,String>> contents = combo.getContents();
+            System.out.println("Combo contents:"+contents);
             for (int n : contents.navigableKeySet()) {
                 LinearLayout contentTextView = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_main_combo_content, contentsLayout, false);
-                ((TextView) contentTextView.findViewById(R.id.content)).setText(contents.get(n));
+                String dishNameString = contents.get(n).first;
+                String labelString = contents.get(n).second;
+                ImageView label = (ImageView) contentTextView.findViewById(R.id.label);
+                switch (labelString) {
+                    case "egg": label.setColorFilter(ContextCompat.getColor(this, R.color.egg)); break;
+                    case "veg": label.setColorFilter(ContextCompat.getColor(this, R.color.veg)); break;
+                    case "non-veg": label.setColorFilter(ContextCompat.getColor(this, R.color.non_veg)); break;
+                }
+                ((TextView) contentTextView.findViewById(R.id.content)).setText(dishNameString);
                 contentTextView.findViewById(R.id.content).setOnClickListener(showDescription);
                 contentsLayout.addView(contentTextView);
             }

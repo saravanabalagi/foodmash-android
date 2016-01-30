@@ -1,9 +1,12 @@
 package in.foodmash.app.custom;
 
+import android.util.Pair;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.TreeMap;
 
 /**
@@ -76,16 +79,16 @@ public class Combo {
         return dishNames.substring(0,dishNames.length()-1);
     }
 
-    @JsonIgnore public TreeMap<Integer,String> getContents() {
-        TreeMap<Integer,String> contents = new TreeMap<>();
+    @JsonIgnore public TreeMap<Integer,Pair<String,String>> getContents() {
+        TreeMap<Integer,Pair<String,String>> contents = new TreeMap<>();
         for (ComboOption comboOption : this.getComboOptions()) {
             String comboOptions = "";
             for(ComboDish comboDish: comboOption.getComboOptionDishes())
                 comboOptions += comboDish.getDish().getName() + "/ ";
-            contents.put(comboOption.getPriority(),comboOptions.substring(0,comboOptions.length()-2));
+            contents.put(comboOption.getPriority(), new Pair<>(comboOptions.substring(0, comboOptions.length() - 2), comboOption.getLabel()));
         }
         for (ComboDish comboDish : this.getComboDishes())
-            contents.put(comboDish.getPriority(), comboDish.getDish().getName());
+            contents.put(comboDish.getPriority(), new Pair<>(comboDish.getDish().getName(),comboDish.getDish().getLabel()));
         return contents;
     }
 
