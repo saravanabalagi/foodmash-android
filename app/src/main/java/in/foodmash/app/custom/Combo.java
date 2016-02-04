@@ -22,6 +22,9 @@ public class Combo {
     private boolean special;
     private boolean available;
     private float price;
+    private String picture;
+
+
 
     private ArrayList<ComboDish> comboDishes = new ArrayList<>();
     private ArrayList<ComboOption> comboOptions = new ArrayList<>();
@@ -59,6 +62,7 @@ public class Combo {
     @JsonIgnore public boolean isAvailable() { return available; }
     public ArrayList<ComboDish> getComboDishes() { return comboDishes; }
     public ArrayList<ComboOption> getComboOptions() { return comboOptions; }
+    @JsonIgnore public String getPicture() { return picture; }
     @JsonIgnore public float getPrice() { return price; }
     @JsonIgnore public float calculatePrice() {
         float price = 0;
@@ -103,6 +107,7 @@ public class Combo {
     @JsonProperty public void setAvailable(boolean available) { this.available = available; }
     @JsonProperty public void setComboDishes(ArrayList<ComboDish> comboDishes) { this.comboDishes = comboDishes; }
     @JsonProperty public void setComboOptions(ArrayList<ComboOption> comboOptions) { this.comboOptions = comboOptions; }
+    @JsonProperty public void setPicture(String picture) { this.picture = picture; }
 
     @Override
     public boolean equals(Object o) {

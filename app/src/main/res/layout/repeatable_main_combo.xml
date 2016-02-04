@@ -24,12 +24,11 @@
 
             <com.android.volley.toolbox.NetworkImageView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/image"
                 android:contentDescription="@string/combo_image"
                 android:src="@drawable/png_image_default"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true" />
+                android:scaleType="centerCrop" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -42,8 +41,8 @@
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:layout_alignBottom="@+id/image"
-                android:visibility="gone"
-                android:alpha="0">
+                android:alpha="0"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="25dp"
@@ -149,7 +148,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/combo_name_lorem_ipsum"
-                            android:textSize="14sp"
+                            android:textSize="16sp"
                             android:layout_marginLeft="0dp"
                             android:layout_marginTop="0dp"
                             android:id="@+id/name" />

@@ -108,6 +108,7 @@ public class PaymentsActivity extends AppCompatActivity {
         try {
             Class.forName("com.payu.custombrowser.Bank");
             final Bank bank = new Bank() {
+
                 @Override
                 public void registerBroadcast(BroadcastReceiver broadcastReceiver, IntentFilter filter) {
                     mReceiver = broadcastReceiver;

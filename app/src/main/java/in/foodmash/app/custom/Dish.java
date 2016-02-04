@@ -15,6 +15,7 @@ public class Dish {
     private Restaurant restaurant;
     private float price;
     private String label;
+    private String picture;
 
     public int getId() { return id; }
     @JsonIgnore public String getName() { return name; }
@@ -22,6 +23,7 @@ public class Dish {
     @JsonIgnore public Restaurant getRestaurant() { return restaurant; }
     @JsonIgnore public float getPrice() { return price; }
     @JsonIgnore public String getLabel() { return label; }
+    @JsonIgnore public String getPicture() { return picture; }
 
     @JsonProperty public void setId(int id) { this.id = id; }
     @JsonProperty public void setName(String name) { this.name = name; }
@@ -29,5 +31,6 @@ public class Dish {
     @JsonProperty public void setRestaurant(Restaurant restaurant) { this.restaurant = restaurant; }
     @JsonProperty public void setPrice(int price) { this.price = price; }
     @JsonProperty public void setLabel(String label) { this.label = label; }
+    @JsonProperty public void setPicture(String picture) { this.picture = picture; }
 
 }

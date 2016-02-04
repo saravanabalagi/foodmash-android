@@ -1,6 +1,9 @@
 package in.foodmash.app;
 
 import android.app.AlertDialog;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,10 +14,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -47,6 +52,7 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.custom.Cache;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
@@ -69,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private Cart cart = Cart.getInstance();
     private JsonObjectRequest getCombosRequest;
     private ImageLoader imageLoader;
+    private DisplayMetrics displayMetrics;
     ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
@@ -115,6 +122,13 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_contact_us: intent = new Intent(this, ContactUsActivity.class); startActivity(intent); return true;
             case R.id.menu_log_out: Actions.logout(MainActivity.this); return true;
             case R.id.menu_cart: intent = new Intent(this, CartActivity.class); startActivity(intent); return true;
+//            case R.id.menu_network:
+//                Fragment volleyProgressFragment = new VolleyProgressFragment();
+//                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//                fragmentTransaction.add(R.id.fragment_container, volleyProgressFragment);
+//                fragmentTransaction.commit();
+//                return true;
             default: return super.onOptionsItemSelected(item);
         }
     }
@@ -128,6 +142,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         try { getSupportActionBar().setDisplayShowTitleEnabled(false); }
         catch (Exception e) { e.printStackTrace(); }
+
+        displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
         loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
@@ -158,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 System.out.println(response);
                 try {
-                    System.out.println(response);
                     if (response.getBoolean("success")) {
                         System.out.println(response.getJSONObject("data"));
                         ObjectMapper mapper = new ObjectMapper();
@@ -235,7 +251,9 @@ public class MainActivity extends AppCompatActivity {
             };
             final LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_main_combo, fillLayout, false);
             ((TextView) comboLayout.findViewById(R.id.id)).setText(String.valueOf(combo.getId()));
-            ((NetworkImageView) comboLayout.findViewById(R.id.image)).setImageUrl(getImageUrl(), imageLoader);
+            NetworkImageView comboPicture = (NetworkImageView) comboLayout.findViewById(R.id.image);
+            comboPicture.getLayoutParams().height = displayMetrics.widthPixels/2;
+            comboPicture.setImageUrl(combo.getPicture(), imageLoader);
             ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
             LinearLayout contentsLayout = (LinearLayout) comboLayout.findViewById(R.id.contents_layout);
             TreeMap<Integer, Pair<String,String>> contents = combo.getContents();
@@ -322,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
             for (Restaurant restaurant : restaurantsList) {
                 LinearLayout restaurantLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_restaurant_logo, restaurantsLayout, false);
                 ((TextView) restaurantLayout.findViewById(R.id.name)).setText(restaurant.getName());
-                ((NetworkImageView) restaurantLayout.findViewById(R.id.logo)).setImageUrl(getRestaurantImageUrl(), imageLoader);
+                ((NetworkImageView) restaurantLayout.findViewById(R.id.logo)).setImageUrl(restaurant.getLogo(), imageLoader);
                 restaurantsLayout.addView(restaurantLayout);
             }
 
@@ -331,29 +349,4 @@ public class MainActivity extends AppCompatActivity {
         for (int n : comboTreeMap.navigableKeySet())
             fillLayout.addView(comboTreeMap.get(n));
     }
-
-    private String getImageUrl() {
-        int randomNumber = new Random().nextInt(3 - 1 + 1) + 1;
-        switch (randomNumber) {
-            case 1: return "http://s19.postimg.org/mbcpkaupf/92t8_Zu_KH.jpg";
-            case 2: return "http://s19.postimg.org/cs7m4kwkz/qka9d_YR.jpg";
-            case 3: return "http://s19.postimg.org/e8j4mpzhv/zgdz_Ur_DV.jpg";
-            default:
-                return "http://s19.postimg.org/mbcpkaupf/92t8_Zu_KH.jpg";
-        }
-    }
-
-    private String getRestaurantImageUrl() {
-        int randomNumber = new Random().nextInt(5 - 1 + 1) + 1;
-        switch (randomNumber) {
-            case 1: return "http://s19.postimg.org/4l7uv6j1v/300px_Burger_King_Logo_svg.png";
-            case 2: return "http://s19.postimg.org/kywfs2okz/Baskin_Robbins_svg.png";
-            case 3: return "http://s19.postimg.org/ptljclxir/kfc_logo.png";
-            case 4: return "http://s19.postimg.org/cj6vaklpv/logo_02.png";
-            case 5: return "http://s19.postimg.org/ank2zewvn/pizza_hut_delivery_maidenhead_logo.png";
-            default:
-                return "http://s19.postimg.org/4l7uv6j1v/300px_Burger_King_Logo_svg.png";
-        }
-    }
-
 }

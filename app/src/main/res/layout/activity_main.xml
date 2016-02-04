@@ -20,6 +20,28 @@
             android:orientation="vertical"
             tools:context=".MainActivity">
 
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="0dp">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:id="@+id/fill_layout"
+                    android:layout_marginBottom="10dp">
+
+                </LinearLayout>
+            </ScrollView>
+
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
@@ -54,26 +76,10 @@
                     android:singleLine="true" />
             </LinearLayout>
 
-            <ScrollView
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="0dp"
-                android:layout_marginStart="0dp"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="0dp">
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/fill_layout"
-                    android:layout_marginBottom="10dp">
-
-                </LinearLayout>
-            </ScrollView>
+                android:id="@+id/fragment_container" />
 
         </RelativeLayout>
 
