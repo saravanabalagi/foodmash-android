@@ -28,6 +28,9 @@ public class VolleyFailureFragment extends Fragment implements View.OnClickListe
 
     private JsonObjectRequest jsonObjectRequest;
 
+
+    private boolean setDestroyOnRetry = false;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -52,10 +55,14 @@ public class VolleyFailureFragment extends Fragment implements View.OnClickListe
         }
     }
 
+    public void setSetDestroyOnRetry(boolean setDestroyOnRetry) { this.setDestroyOnRetry = setDestroyOnRetry; }
     public void setJsonObjectRequest(JsonObjectRequest jsonObjectRequest) { this.jsonObjectRequest = jsonObjectRequest; }
     private void retry() {
+        System.out.println("Retrying...");
         Swift.getInstance(getActivity()).addToRequestQueue(jsonObjectRequest);
-        getActivity().getSupportFragmentManager().beginTransaction()
+        if(!setDestroyOnRetry) getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container,new VolleyProgressFragment()).commit();
+        else getActivity().getSupportFragmentManager().beginTransaction()
+                .remove(this).commit();
     }
 }

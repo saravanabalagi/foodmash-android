@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
         if(Cache.getCombos() == null) {
             System.out.println("combos is empty");
             ((VolleyProgressFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
-                    .setLoadingText("Hello there...", "We are loading as fast as we can");
+                    .setLoadingText("Loading Combos...", "We are loading as fast as we can");
             Animations.fadeIn(fragmentContainer, 300);
         } else { updateFillLayout(Cache.getCombos()); }
         Swift.getInstance(this).addToRequestQueue(getCombosRequest);

@@ -61,6 +61,7 @@ public class Swift {
                 10000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        System.out.println("Adding to request queue...!");
         getRequestQueue().add(req);
     }
 

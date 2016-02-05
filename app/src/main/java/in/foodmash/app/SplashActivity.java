@@ -1,29 +1,32 @@
 package in.foodmash.app;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.FrameLayout;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
 
 /**
  * Created by Zeke on Jul 19 2015.
  */
-public class SplashActivity extends Activity {
+public class SplashActivity extends AppCompatActivity {
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
 
     private Intent intent;
     private JsonObjectRequest checkConnectionRequest;
@@ -32,6 +35,7 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        ButterKnife.bind(this);
 
         checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/check_connection", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
@@ -51,25 +55,12 @@ public class SplashActivity extends Activity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        System.out.println("Trying again..!");
-                        makeRequest(checkConnectionRequest);
-                    }
-                };
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SplashActivity.this, onClickTryAgain);
-                else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SplashActivity.this, onClickTryAgain);
-                else Alerts.commonErrorAlert(SplashActivity.this,
-                        "Secure connection could not be made",
-                        "App cannot continue since connection cannot be securely established. App will exit now",
-                        "Okay",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                finish();
-                            }
-                        });
+                Animations.fadeIn(fragmentContainer,300);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyFailureFragment()).commit();
+                getSupportFragmentManager().executePendingTransactions();
+                VolleyFailureFragment volleyFailureFragment = (VolleyFailureFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                volleyFailureFragment.setSetDestroyOnRetry(true);
+                volleyFailureFragment.setJsonObjectRequest(checkConnectionRequest);
                 System.out.println("Response Error: " + error);
             }
         });
