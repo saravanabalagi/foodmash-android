@@ -69,6 +69,7 @@ public class Swift {
                 timeoutInMs,
                 maxRetries,
                 backOffMultiplier));
+        System.out.println("Adding to request queue...!");
         getRequestQueue().add(req);
     }
     public ImageLoader getImageLoader() {

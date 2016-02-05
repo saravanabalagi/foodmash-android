@@ -23,6 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
@@ -52,6 +53,7 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.custom.Cache;
 import in.foodmash.app.custom.Cart;
@@ -63,14 +65,13 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivity extends AppCompatActivity {
 
-    @Bind(R.id.loading_layout) LinearLayout loadingLayout;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
     @Bind(R.id.navigation_view) NavigationView navigationView;
     @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
 
     private Intent intent;
-    private List<Combo> combos;
     private TextView cartCount;
     private Cart cart = Cart.getInstance();
     private JsonObjectRequest getCombosRequest;
@@ -101,18 +102,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        System.out.println("Resumed");
-        if (combos == null) {
-            System.out.println("making request");
-            Swift.getInstance(this).addToRequestQueue(getCombosRequest);
-        }
-        Actions.updateCartCount(cartCount);
-        updateFillLayout();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) return true;
         switch (item.getItemId()) {
@@ -122,13 +111,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_contact_us: intent = new Intent(this, ContactUsActivity.class); startActivity(intent); return true;
             case R.id.menu_log_out: Actions.logout(MainActivity.this); return true;
             case R.id.menu_cart: intent = new Intent(this, CartActivity.class); startActivity(intent); return true;
-//            case R.id.menu_network:
-//                Fragment volleyProgressFragment = new VolleyProgressFragment();
-//                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-//                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//                fragmentTransaction.add(R.id.fragment_container, volleyProgressFragment);
-//                fragmentTransaction.commit();
-//                return true;
             default: return super.onOptionsItemSelected(item);
         }
     }
@@ -137,8 +119,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        System.out.println("Executing onCreate");
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
         try { getSupportActionBar().setDisplayShowTitleEnabled(false); }
         catch (Exception e) { e.printStackTrace(); }
@@ -146,10 +130,10 @@ public class MainActivity extends AppCompatActivity {
         displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
-        fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
-        loadingLayout = (LinearLayout) findViewById(R.id.loading_layout);
-        imageLoader = Swift.getInstance(MainActivity.this).getImageLoader();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
 
+        imageLoader = Swift.getInstance(MainActivity.this).getImageLoader();
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
@@ -176,13 +160,12 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(response);
                 try {
                     if (response.getBoolean("success")) {
+                        Animations.fadeOut(fragmentContainer,100);
                         System.out.println(response.getJSONObject("data"));
                         ObjectMapper mapper = new ObjectMapper();
                         mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
                         Cache.setCombos(Arrays.asList(mapper.readValue(response.getJSONObject("data").getJSONArray("combos").toString(), Combo[].class)));
-                        combos = Cache.getCombos();
-                        Animations.fadeOut(loadingLayout, 500);
-                        updateFillLayout();
+                        updateFillLayout(Cache.getCombos());
                     } else {
                         Alerts.requestUnauthorisedAlert(MainActivity.this);
                         System.out.println(response.getString("error"));
@@ -194,22 +177,20 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        System.out.println("Trying again...!");
-                        Swift.getInstance(MainActivity.this).addToRequestQueue(getCombosRequest);
-                    }
-                };
-                if (error instanceof TimeoutError)
-                    Alerts.internetConnectionErrorAlert(MainActivity.this, onClickTryAgain);
-                else if (error instanceof NoConnectionError)
-                    Alerts.internetConnectionErrorAlert(MainActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(MainActivity.this);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyFailureFragment()).commit();
+                getSupportFragmentManager().executePendingTransactions();
+                ((VolleyFailureFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
+                        .setJsonObjectRequest(getCombosRequest);
                 System.out.println("Response Error: " + error);
             }
         });
-        System.out.println("making request");
+
+        if(Cache.getCombos() == null) {
+            System.out.println("combos is empty");
+            ((VolleyProgressFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
+                    .setLoadingText("Hello there...", "We are loading as fast as we can");
+            Animations.fadeIn(fragmentContainer, 300);
+        } else { updateFillLayout(Cache.getCombos()); }
         Swift.getInstance(this).addToRequestQueue(getCombosRequest);
     }
 
@@ -233,12 +214,7 @@ public class MainActivity extends AppCompatActivity {
         }).show();
     }
 
-    private void updateFillLayout() {
-        if (combos == null || combos.size() == 0) {
-            Swift.getInstance(MainActivity.this).addToRequestQueue(getCombosRequest);
-            return;
-        }
-        fillLayout.removeAllViews();
+    private void updateFillLayout(List<Combo> combos) {
         TreeMap<Integer, LinearLayout> comboTreeMap = new TreeMap<>();
         for (final Combo combo : combos) {
             View.OnClickListener showDescription = new View.OnClickListener() {
@@ -255,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
             comboPicture.getLayoutParams().height = displayMetrics.widthPixels/2;
             comboPicture.setImageUrl(combo.getPicture(), imageLoader);
             ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
+            comboLayout.findViewById(R.id.contents_scroll_layout).setOnClickListener(showDescription);
             LinearLayout contentsLayout = (LinearLayout) comboLayout.findViewById(R.id.contents_layout);
             TreeMap<Integer, Pair<String,String>> contents = combo.getContents();
             System.out.println("Combo contents:"+contents);
@@ -269,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
                     case "non-veg": label.setColorFilter(ContextCompat.getColor(this, R.color.non_veg)); break;
                 }
                 ((TextView) contentTextView.findViewById(R.id.content)).setText(dishNameString);
-                contentTextView.findViewById(R.id.content).setOnClickListener(showDescription);
                 contentsLayout.addView(contentTextView);
             }
             ((TextView) comboLayout.findViewById(R.id.price)).setText(String.valueOf((int) combo.getPrice()));

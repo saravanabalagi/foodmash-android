@@ -54,6 +54,7 @@ public class SplashActivity extends Activity {
                 DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        System.out.println("Trying again..!");
                         makeRequest(checkConnectionRequest);
                     }
                 };
