@@ -38,6 +38,7 @@
         <activity android:name=".ForgotPasswordOtpActivity" android:parentActivityName=".LoginActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".LegaleseActivity" android:parentActivityName=".SignupActivity" />
         <activity android:name=".OrderDescriptionActivity" android:parentActivityName=".OrderHistoryActivity" />
         <activity android:name=".OrderHistoryActivity" android:parentActivityName=".MainActivity" />
         <activity android:name=".payment.PaymentsActivity" android:parentActivityName=".CheckoutPaymentActivity" />
