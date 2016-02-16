@@ -13,19 +13,22 @@ import java.util.TreeMap;
  * Created by Zeke on Sep 10 2015.
  */
 public class Combo {
+
     private int id;
     private int groupSize;
     private int noOfPurchases;
-    private String label;
+    private Size size;
+    private Dish.Label label;
+    private Category category;
     private String name;
     private String description;
     private boolean special;
     private boolean available;
     private float price;
+    public enum Category { REGULAR, BUDGET, CORPORATE, HEALTH }
+    public enum Size { MICRO, MEDIUM, MEGA }
+
     private String picture;
-
-
-
     private ArrayList<ComboDish> comboDishes = new ArrayList<>();
     private ArrayList<ComboOption> comboOptions = new ArrayList<>();
 
@@ -53,9 +56,11 @@ public class Combo {
     }
 
     public int getId() { return id; }
+    public Size getSize() { return size; }
     @JsonIgnore public int getGroupSize() { return groupSize; }
     @JsonIgnore public int getNoOfPurchases() { return noOfPurchases; }
-    @JsonIgnore public String getLabel() { return label; }
+    @JsonIgnore public Dish.Label getLabel() { return label; }
+    @JsonIgnore public Category getCategory() { return category; }
     @JsonIgnore public String getName() { return name; }
     @JsonIgnore public String getDescription() { return description; }
     @JsonIgnore public boolean isSpecial() { return special; }
@@ -83,8 +88,8 @@ public class Combo {
         return dishNames.substring(0,dishNames.length()-1);
     }
 
-    @JsonIgnore public TreeMap<Integer,Pair<String,String>> getContents() {
-        TreeMap<Integer,Pair<String,String>> contents = new TreeMap<>();
+    @JsonIgnore public TreeMap<Integer,Pair<String,Dish.Label>> getContents() {
+        TreeMap<Integer,Pair<String,Dish.Label>> contents = new TreeMap<>();
         for (ComboOption comboOption : this.getComboOptions()) {
             String comboOptions = "";
             for(ComboDish comboDish: comboOption.getComboOptionDishes())
@@ -97,9 +102,28 @@ public class Combo {
     }
 
     @JsonProperty public void setId(int id) { this.id = id; }
-    @JsonProperty public void setGroupSize(int groupSize) { this.groupSize = groupSize; }
+    @JsonProperty public void setGroupSize(int groupSize) {
+        this.groupSize = groupSize;
+        if( groupSize>=1) size = Size.MICRO;
+        else if( groupSize>=2 && groupSize<=4 ) size = Size.MEDIUM;
+        else if( groupSize>=4) size = Size.MEGA;
+    }
     @JsonProperty public void setNoOfPurchases(int noOfPurchases) { this.noOfPurchases = noOfPurchases; }
-    @JsonProperty public void setLabel(String label) { this.label = label; }
+    @JsonProperty public void setLabel(String label) {
+        switch (label) {
+            case "egg": this.label = Dish.Label.EGG; break;
+            case "veg": this.label = Dish.Label.VEG; break;
+            case "non-veg": this.label = Dish.Label.NON_VEG; break;
+        }
+    }
+    @JsonProperty public void setCategory(String category) {
+        switch (category) {
+            case "regular": this.category = Category.REGULAR; break;
+            case "budget": this.category = Category.BUDGET; break;
+            case "corporate": this.category = Category.CORPORATE; break;
+            case "health": this.category = Category.HEALTH; break;
+        }
+    }
     @JsonProperty public void setName(String name) { this.name = name; }
     @JsonProperty public void setPrice(float price) { this.price = price; }
     @JsonProperty public void setDescription(String description) { this.description = description; }
@@ -112,13 +136,9 @@ public class Combo {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Combo)) return false;
-        if (o == this) { return true; }
+        if (o == this) return true;
         Combo combo = (Combo) o;
-        if(this.getId() == combo.getId()) {
-            //if(!(this.comboDishes.equals(((Combo) o).comboDishes))) return false;
-            //if(this.comboOptions.size()!=0) if (!(comboOptions.equals(((Combo) o).comboOptions))) return false;
-            return this.hashCode()==combo.hashCode();
-        } else return false;
+        return this.getId() == combo.getId() && this.hashCode() == combo.hashCode();
     }
 
     @Override

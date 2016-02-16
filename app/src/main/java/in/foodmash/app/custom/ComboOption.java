@@ -39,21 +39,21 @@ public class ComboOption {
         if(quantity<minCount) return -1;
         return quantity;
     }
-    public String getLabel() {
+    public Dish.Label getLabel() {
         int veg = 0;
         int non_veg = 0;
         int egg = 0;
         for (ComboDish comboDish: comboOptionDishes) {
             switch (comboDish.getDish().getLabel()) {
-                case "egg": egg++;
-                case "veg": veg++;
-                case "non-veg": non_veg++;
+                case EGG: egg++;
+                case VEG: veg++;
+                case NON_VEG: non_veg++;
             }
         }
         if(non_veg==0)
-            if(egg==0) return "veg";
-            else return "egg";
-        else return "non_veg";
+            if(egg==0) return Dish.Label.VEG;
+            else return Dish.Label.EGG;
+        else return Dish.Label.NON_VEG;
     }
     public int getId() { return id; }
     @JsonIgnore public int getPriority() { return priority; }
