@@ -139,9 +139,9 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                 else { Animations.fadeOut(selected, 500); }
                 ImageView foodLabel = (ImageView) comboOptionsLayout.findViewById(R.id.label);
                 switch(comboDish.getDish().getLabel()) {
-                    case "egg": foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.egg)); break;
-                    case "veg": foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.veg)); break;
-                    case "non-veg": foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.non_veg)); break;
+                    case EGG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.egg)); break;
+                    case VEG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.veg)); break;
+                    case NON_VEG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.non_veg)); break;
                 }
                 ((TextView) comboOptionsLayout.findViewById(R.id.id)).setText(String.valueOf(comboDish.getId()));
                 ((TextView) comboOptionsLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
@@ -255,9 +255,9 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             ((NetworkImageView) comboDishLayout.findViewById(R.id.restaurant_logo)).setImageUrl(comboDish.getDish().getRestaurant().getLogo(), imageLoader);
             ImageView foodLabel = (ImageView) comboDishLayout.findViewById(R.id.label);
             switch(comboDish.getDish().getLabel()) {
-                case "egg": foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.egg)); break;
-                case "veg": foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.veg)); break;
-                case "non-veg": foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.non_veg)); break;
+                case EGG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.egg)); break;
+                case VEG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.veg)); break;
+                case NON_VEG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.non_veg)); break;
             }
             LinearLayout countLayout = (LinearLayout) comboDishLayout.findViewById(R.id.count_layout);
             final TextView count = (TextView) countLayout.findViewById(R.id.count);

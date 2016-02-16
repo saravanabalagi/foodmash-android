@@ -1,9 +1,6 @@
 package in.foodmash.app;
 
 import android.app.AlertDialog;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,13 +20,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -39,10 +33,10 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.TreeMap;
 
 import butterknife.Bind;
@@ -60,6 +54,7 @@ import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
 import in.foodmash.app.custom.ComboDish;
 import in.foodmash.app.custom.ComboOption;
+import in.foodmash.app.custom.Dish;
 import in.foodmash.app.custom.Restaurant;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -77,7 +72,16 @@ public class MainActivity extends AppCompatActivity {
     private JsonObjectRequest getCombosRequest;
     private ImageLoader imageLoader;
     private DisplayMetrics displayMetrics;
-    ActionBarDrawerToggle actionBarDrawerToggle;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+
+    private List<Combo.Category> categorySelected = new ArrayList<>();
+    private List<Combo.Size> sizeSelected = new ArrayList<>();
+    private List<Dish.Label> preferenceSelected = new ArrayList<>();
+
+    private boolean categoryAll = true;
+    private boolean sizeAll = true;
+    private boolean preferenceAll = true;
+    private boolean sortPriceLowToHigh = true;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -115,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,18 +142,57 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout,
                 toolbar,
                 R.string.open_navbar,
-                R.string.close_navbar) {};
+                R.string.close_navbar) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                updateFillLayout(Cache.getCombos());
+            }
+        };
 
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                if (menuItem.isChecked()) menuItem.setChecked(false);
-                else menuItem.setChecked(true);
-                drawerLayout.closeDrawers();
+                switch (menuItem.getItemId()) {
+
+                    case R.id.category_all: categorySelected.clear(); break;
+                    case R.id.size_all: sizeSelected.clear(); break;
+                    case R.id.preference_all: preferenceSelected.clear(); break;
+
+                    case R.id.category_regular: check(menuItem, Combo.Category.REGULAR); break;
+                    case R.id.category_budget: check(menuItem, Combo.Category.BUDGET); break;
+                    case R.id.category_corporate: check(menuItem, Combo.Category.CORPORATE); break;
+                    case R.id.category_health: check(menuItem, Combo.Category.HEALTH); break;
+
+                    case R.id.size_micro: check(menuItem, Combo.Size.MICRO); break;
+                    case R.id.size_medium: check(menuItem, Combo.Size.MEDIUM); break;
+                    case R.id.size_mega: check(menuItem, Combo.Size.MEGA); break;
+
+                    case R.id.preference_egg: check(menuItem, Dish.Label.EGG); break;
+                    case R.id.preference_veg: check(menuItem, Dish.Label.VEG); break;
+                    case R.id.preference_non_veg: check(menuItem, Dish.Label.NON_VEG); break;
+
+                    case R.id.price_low_to_high: sortPriceLowToHigh = true; menuItem.setChecked(true);
+                    case R.id.price_high_to_low: sortPriceLowToHigh = false; menuItem.setChecked(true);
+
+                }
                 return true;
+            }
+            private void check(MenuItem menuItem, Combo.Category category) {
+                if (menuItem.isChecked()) { categorySelected.remove(category); menuItem.setChecked(false); }
+                else { categorySelected.add(category); menuItem.setChecked(true); }
+            }
+            private void check(MenuItem menuItem, Combo.Size size) {
+                if (menuItem.isChecked()) { sizeSelected.remove(size); menuItem.setChecked(false); }
+                else { sizeSelected.add(size); menuItem.setChecked(true); }
+            }
+            private void check(MenuItem menuItem, Dish.Label preference) {
+                if (menuItem.isChecked()) { preferenceSelected.remove(preference); menuItem.setChecked(false); }
+                else { preferenceSelected.add(preference); menuItem.setChecked(true); }
             }
         });
 
@@ -200,13 +242,13 @@ public class MainActivity extends AppCompatActivity {
         new AlertDialog.Builder(MainActivity.this)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Exit App ?")
-                .setMessage("Do you really want to exit the app")
+                .setMessage("We're sad to see you go. Do you really want to exit the app?")
                 .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         MainActivity.super.onBackPressed();
                     }
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                }).setNegativeButton("No, lemme eat more", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -215,8 +257,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateFillLayout(List<Combo> combos) {
+        List<Combo> filteredCombos = applyFilters(combos);
         TreeMap<Integer, LinearLayout> comboTreeMap = new TreeMap<>();
-        for (final Combo combo : combos) {
+        for (final Combo combo : filteredCombos) {
             View.OnClickListener showDescription = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -233,17 +276,16 @@ public class MainActivity extends AppCompatActivity {
             ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
             comboLayout.findViewById(R.id.contents_scroll_layout).setOnClickListener(showDescription);
             LinearLayout contentsLayout = (LinearLayout) comboLayout.findViewById(R.id.contents_layout);
-            TreeMap<Integer, Pair<String,String>> contents = combo.getContents();
-            System.out.println("Combo contents:"+contents);
+            TreeMap<Integer, Pair<String,Dish.Label>> contents = combo.getContents();
             for (int n : contents.navigableKeySet()) {
                 LinearLayout contentTextView = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_main_combo_content, contentsLayout, false);
                 String dishNameString = contents.get(n).first;
-                String labelString = contents.get(n).second;
+                Dish.Label dishLabel = contents.get(n).second;
                 ImageView label = (ImageView) contentTextView.findViewById(R.id.label);
-                switch (labelString) {
-                    case "egg": label.setColorFilter(ContextCompat.getColor(this, R.color.egg)); break;
-                    case "veg": label.setColorFilter(ContextCompat.getColor(this, R.color.veg)); break;
-                    case "non-veg": label.setColorFilter(ContextCompat.getColor(this, R.color.non_veg)); break;
+                switch (dishLabel) {
+                    case EGG: label.setColorFilter(ContextCompat.getColor(this, R.color.egg)); break;
+                    case VEG: label.setColorFilter(ContextCompat.getColor(this, R.color.veg)); break;
+                    case NON_VEG: label.setColorFilter(ContextCompat.getColor(this, R.color.non_veg)); break;
                 }
                 ((TextView) contentTextView.findViewById(R.id.content)).setText(dishNameString);
                 contentsLayout.addView(contentTextView);
@@ -251,9 +293,9 @@ public class MainActivity extends AppCompatActivity {
             ((TextView) comboLayout.findViewById(R.id.price)).setText(String.valueOf((int) combo.getPrice()));
             ImageView foodLabel = (ImageView) comboLayout.findViewById(R.id.label);
             switch (combo.getLabel()) {
-                case "egg": foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.egg)); break;
-                case "veg": foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.veg)); break;
-                case "non-veg": foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.non_veg)); break;
+                case EGG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.egg)); break;
+                case VEG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.veg)); break;
+                case NON_VEG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.non_veg)); break;
             }
             comboLayout.findViewById(R.id.clickable_layout).setOnClickListener(showDescription);
             comboLayout.findViewById(R.id.image).setOnClickListener(showDescription);
@@ -322,7 +364,23 @@ public class MainActivity extends AppCompatActivity {
 
             comboTreeMap.put((int) combo.getPrice(), comboLayout);
         }
-        for (int n : comboTreeMap.navigableKeySet())
+
+        if(sortPriceLowToHigh)
+            for (int n : comboTreeMap.navigableKeySet())
+                fillLayout.addView(comboTreeMap.get(n));
+        else for (int n : comboTreeMap.descendingKeySet())
             fillLayout.addView(comboTreeMap.get(n));
+    }
+
+    private List<Combo> applyFilters(List<Combo> combos) {
+        List<Combo> filteredComboList = new ArrayList<>();
+        for(Combo combo: combos) {
+            boolean survived = true;
+            if(!categoryAll && !categorySelected.contains(combo.getCategory())) survived = false;
+            if(!sizeAll && !sizeSelected.contains(combo.getSize())) survived = false;
+            if(!preferenceAll && !preferenceSelected.contains(combo.getLabel())) survived = false;
+            if(survived) filteredComboList.add(combo);
+        }
+        return filteredComboList;
     }
 }
