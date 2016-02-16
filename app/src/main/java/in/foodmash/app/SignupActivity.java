@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,17 +10,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
-import android.widget.Switch;
 
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
@@ -52,10 +46,13 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     @Bind(R.id.create) FloatingActionButton create;
     @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
     @Bind(R.id.main_layout) ScrollView mainLayout;
-    @Bind(R.id.accept_terms) Switch acceptTerms;
     @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.terms_and_conditions) LinearLayout termsAndConditions;
+    @Bind(R.id.privacy_policy) LinearLayout privacyPolicy;
+    @Bind(R.id.refund_policy) LinearLayout refundPolicy;
 
     private Intent intent;
+    private LegaleseActivity.Legalese legalese;
 
     private EditText name;
     private EditText email;
@@ -77,7 +74,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private boolean isEmailValidationInProgress = false;
     private boolean isPhoneValidationInProgress = false;
 
-    private boolean termsAccepted = false;
     private JsonObjectRequest checkEmailRequest;
     private JsonObjectRequest checkPhoneRequest;
     private JsonObjectRequest registerRequest;
@@ -95,7 +91,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         } catch (Exception e) { e.printStackTrace(); }
 
         create.setOnClickListener(this);
-        acceptTerms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() { @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) { termsAccepted = isChecked; } });
 
         nameValidate = (ImageView) findViewById(R.id.name_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
@@ -111,26 +106,28 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
         emailProgressBar = (ProgressBar) findViewById(R.id.email_loader);
         phoneProgressBar = (ProgressBar) findViewById(R.id.phone_loader);
+
+        termsAndConditions.setOnClickListener(this);
+        refundPolicy.setOnClickListener(this);
+        privacyPolicy.setOnClickListener(this);
     }
 
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.terms_and_conditions: goToLegaleseActivity(LegaleseActivity.Legalese.TERMS_AND_CONDITIONS); ;break;
+            case R.id.refund_policy: goToLegaleseActivity(LegaleseActivity.Legalese.REFUND_POLICY); ;break;
+            case R.id.privacy_policy: goToLegaleseActivity(LegaleseActivity.Legalese.PRIVACY_POLICY); ;break;
             case R.id.create:
-                if(termsAccepted) {
-                    if(isEverythingValid()) makeJsonRequest();
-                    else Alerts.validityAlert(SignupActivity.this);
-                    break;
-                } else new AlertDialog.Builder(SignupActivity.this)
-                        .setIconAttribute(android.R.attr.alertDialogIcon)
-                        .setTitle("Accept Terms and Conditions")
-                        .setMessage("You should accept all terms and conditions to sign up in Foodmash")
-                        .setPositiveButton("I Understand", new DialogInterface.OnClickListener() {
-                            @Override public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        }).show();
+                if(isEverythingValid()) makeJsonRequest();
+                else Alerts.validityAlert(SignupActivity.this);
                 break;
         }
+    }
+
+    private void goToLegaleseActivity(LegaleseActivity.Legalese legalese) {
+        Intent intent = new Intent(this, LegaleseActivity.class);
+        intent.putExtra("Type", legalese);
+        startActivity(intent);
     }
 
     private JSONObject getRequestJson() {

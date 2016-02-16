@@ -58,6 +58,11 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
+    @Bind(R.id.terms_and_conditions) LinearLayout termsAndConditions;
+    @Bind(R.id.privacy_policy) LinearLayout privacyPolicy;
+    @Bind(R.id.refund_policy) LinearLayout refundPolicy;
+    @Bind(R.id.about_us) LinearLayout aboutUs;
+
     Intent intent;
     JsonObjectRequest contactUsRequest;
 
@@ -83,6 +88,11 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { e.printStackTrace(); }
+
+        termsAndConditions.setOnClickListener(this);
+        refundPolicy.setOnClickListener(this);
+        privacyPolicy.setOnClickListener(this);
+        aboutUs.setOnClickListener(this);
 
         issueList = new ArrayList<>();
         issueList.add("Not Delivered");
@@ -115,9 +125,19 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
 
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.terms_and_conditions: goToLegaleseActivity(LegaleseActivity.Legalese.TERMS_AND_CONDITIONS); ;break;
+            case R.id.refund_policy: goToLegaleseActivity(LegaleseActivity.Legalese.REFUND_POLICY); ;break;
+            case R.id.privacy_policy: goToLegaleseActivity(LegaleseActivity.Legalese.PRIVACY_POLICY); ;break;
+            case R.id.about_us: goToLegaleseActivity(LegaleseActivity.Legalese.ABOUT_US); ;break;
             case R.id.call: Intent callIntent = new Intent(Intent.ACTION_CALL); callIntent.setData(Uri.parse("tel:+918056249612")); try { startActivity(callIntent); } catch (SecurityException e) { e.printStackTrace(); } ; break;
             case R.id.send_email: if(isEverythingValid()) makeRequest(); else Alerts.validityAlert(ContactUsActivity.this); break;
         }
+    }
+
+    private void goToLegaleseActivity(LegaleseActivity.Legalese legalese) {
+        Intent intent = new Intent(this, LegaleseActivity.class);
+        intent.putExtra("Type", legalese);
+        startActivity(intent);
     }
 
     private JSONObject getRequestJson() {
