@@ -153,9 +153,10 @@
                         android:ems="10"
                         android:id="@+id/email_or_phone"
                         android:layout_margin="5dp"
-                        android:hint="@string/email_or_phone_edit_text_hint"
+                        android:hint="@string/email_edit_text_hint"
                         android:singleLine="true"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:editable="false" />
 
                     <ImageView
                         android:layout_width="20dp"
