@@ -126,6 +126,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
     private void goToLegaleseActivity(LegaleseActivity.Legalese legalese) {
         Intent intent = new Intent(this, LegaleseActivity.class);
+        intent.putExtra("SignedIn", false);
         intent.putExtra("Type", legalese);
         startActivity(intent);
     }

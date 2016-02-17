@@ -19,6 +19,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.utils.WordUtils;
@@ -54,8 +55,9 @@ public class LegaleseActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { e.printStackTrace(); }
 
+        final boolean signedIn = getIntent().getBooleanExtra("SignedIn", true);
         final Legalese legalese = (Legalese) getIntent().getSerializableExtra("Type");
-        legaleseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/legalese/" + getStringFromLegalese(legalese), new Response.Listener<JSONObject>() {
+        legaleseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/legalese/" + getStringFromLegalese(legalese), (signedIn)?JsonProvider.getStandardRequestJson(this):JsonProvider.getAnonymousRequestJson(this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -84,6 +86,8 @@ public class LegaleseActivity extends AppCompatActivity {
             }
         });
         Animations.fadeIn(fragmentContainer, 300);
+        System.out.println((signedIn)?JsonProvider.getStandardRequestJson(this):JsonProvider.getAnonymousRequestJson(this));
+        System.out.println(getString(R.string.api_root_path) + "/legalese/" + getStringFromLegalese(legalese));
         Swift.getInstance(this).addToRequestQueue(legaleseRequest);
     }
 
