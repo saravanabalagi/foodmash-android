@@ -21,6 +21,18 @@
             android:textSize="20sp"
             android:textColor="@color/accent" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sometimes Internet gets lazy and takes a nap."
+            android:padding="10dp"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="-10dp"
+            android:layout_marginBottom="10dp" />
+
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
