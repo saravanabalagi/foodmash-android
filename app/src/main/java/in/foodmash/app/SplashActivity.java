@@ -1,6 +1,7 @@
 package in.foodmash.app;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
+import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
@@ -26,41 +28,39 @@ import in.foodmash.app.commons.VolleyFailureFragment;
  * Created by Zeke on Jul 19 2015.
  */
 public class SplashActivity extends AppCompatActivity {
-    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
-
-    private Intent intent;
     private JsonObjectRequest checkConnectionRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        ButterKnife.bind(this);
 
         checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/check_connection", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                if(Info.isKeepMeLoggedInSet(SplashActivity.this) && Info.isLoggedIn(SplashActivity.this)) {
-                    intent = new Intent(SplashActivity.this,MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else if(!Info.isKeepMeLoggedInSet(SplashActivity.this) && Info.isLoggedIn(SplashActivity.this)) {
-                    Actions.logout(SplashActivity.this);
-                } else {
-                    intent = new Intent(SplashActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
+                try {
+                    int newVersion = Integer.parseInt(response.getJSONObject("data").getString("version"));
+                    int currentVersion = BuildConfig.VERSION_CODE;;
+                    if(currentVersion != newVersion) { startActivity(new Intent(SplashActivity.this, UpdateAppActivity.class)); finish(); }
+                } catch (Exception e) { Alerts.requestUnauthorisedAlert(SplashActivity.this); }
+                if(Info.isKeepMeLoggedInSet(SplashActivity.this) && Info.isLoggedIn(SplashActivity.this)) { startActivity(new Intent(SplashActivity.this,MainActivity.class)); finish(); }
+                else if(!Info.isKeepMeLoggedInSet(SplashActivity.this) && Info.isLoggedIn(SplashActivity.this)) Actions.logout(SplashActivity.this);
+                else { startActivity(new Intent(SplashActivity.this, LoginActivity.class)); finish(); }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeIn(fragmentContainer,300);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyFailureFragment()).commit();
-                getSupportFragmentManager().executePendingTransactions();
-                VolleyFailureFragment volleyFailureFragment = (VolleyFailureFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                volleyFailureFragment.setSetDestroyOnRetry(true);
-                volleyFailureFragment.setJsonObjectRequest(checkConnectionRequest);
+                Alerts.commonErrorAlert(
+                        SplashActivity.this,
+                        "No Internet",
+                        "Sometimes Internet gets sleepy and takes a nap. Turn it on and we'll give it another go.",
+                        "Exit",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        },false);
                 System.out.println("Response Error: " + error);
             }
         });

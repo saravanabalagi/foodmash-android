@@ -7,6 +7,7 @@ import android.util.LruCache;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
@@ -41,9 +42,7 @@ public class Swift {
     }
 
     public static synchronized Swift getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new Swift(context);
-        }
+        if (mInstance == null) mInstance = new Swift(context);
         return mInstance;
     }
 
