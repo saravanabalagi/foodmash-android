@@ -1,11 +1,9 @@
 package in.foodmash.app;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.FrameLayout;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -13,16 +11,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
-import in.foodmash.app.commons.Animations;
-import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
-import in.foodmash.app.commons.VolleyFailureFragment;
 
 /**
  * Created by Zeke on Jul 19 2015.
@@ -35,17 +26,17 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/check_connection", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
+        checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/versions", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    int newVersion = Integer.parseInt(response.getJSONObject("data").getString("version"));
-                    int currentVersion = BuildConfig.VERSION_CODE;;
-                    if(currentVersion != newVersion) { startActivity(new Intent(SplashActivity.this, UpdateAppActivity.class)); finish(); }
-                } catch (Exception e) { Alerts.requestUnauthorisedAlert(SplashActivity.this); }
-                if(Info.isKeepMeLoggedInSet(SplashActivity.this) && Info.isLoggedIn(SplashActivity.this)) { startActivity(new Intent(SplashActivity.this,MainActivity.class)); finish(); }
-                else if(!Info.isKeepMeLoggedInSet(SplashActivity.this) && Info.isLoggedIn(SplashActivity.this)) Actions.logout(SplashActivity.this);
-                else { startActivity(new Intent(SplashActivity.this, LoginActivity.class)); finish(); }
+                    if(response.getBoolean("success")) {
+                        int newVersion = Integer.parseInt(response.getJSONObject("data").getString("id"));
+                        int currentVersion = BuildConfig.VERSION_CODE;
+                        if(currentVersion != newVersion) { startActivity(new Intent(SplashActivity.this, UpdateAppActivity.class)); finish(); }
+                        else startActivity(new Intent(SplashActivity.this, SelectLocationActivity.class));
+                    } else Alerts.requestUnauthorisedAlert(SplashActivity.this);
+                } catch (Exception e) { e.printStackTrace(); }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -65,17 +56,10 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
         makeRequest(checkConnectionRequest);
-
     }
 
-    private void makeRequest(JsonObjectRequest jsonObjectRequest) {
-        Swift.getInstance(SplashActivity.this).addToRequestQueue(jsonObjectRequest, 500, 10, 2f);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        makeRequest(checkConnectionRequest);
-    }
+    private void makeRequest(JsonObjectRequest jsonObjectRequest) { Swift.getInstance(SplashActivity.this).addToRequestQueue(jsonObjectRequest, 500, 10, 2f); }
+    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) { makeRequest(checkConnectionRequest); }
 
 
 }

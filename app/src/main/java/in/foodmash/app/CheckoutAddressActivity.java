@@ -168,13 +168,12 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                         addressesJson = response.getJSONArray("data");
                         for (int i = 0; i < addressesJson.length(); i++) {
                             final JSONObject addressJson = addressesJson.getJSONObject(i);
-                            JSONObject addressDetailsJson = addressJson.getJSONObject("address");
                             final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_user_address, fillLayout, false);
-                            final String address = addressDetailsJson.getString("line1") + ",\n" +
-                                    addressDetailsJson.getString("line2") + ",\n" +
-                                    addressDetailsJson.getString("area") + ",\n" +
-                                    addressDetailsJson.getString("city") + " - " +
-                                    addressDetailsJson.getString("pincode");
+                            final String address = addressJson.getString("line1") + ",\n" +
+                                    addressJson.getString("line2") + ",\n" +
+                                    addressJson.getString("area") + ",\n" +
+                                    addressJson.getString("city") + " - " +
+                                    addressJson.getString("pincode");
                             ((TextView) addressLayout.findViewById(R.id.name)).setText(addressJson.getString("name"));
                             ((TextView) addressLayout.findViewById(R.id.address)).setText(address);
                             ((TextView) addressLayout.findViewById(R.id.phone)).setText(((addressJson.getString("phone").length() == 10) ? "+91 " : "+91 44 ") + addressJson.getString("phone"));

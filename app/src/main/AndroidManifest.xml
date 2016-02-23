@@ -44,6 +44,7 @@
         <activity android:name=".payment.PaymentsActivity" android:parentActivityName=".CheckoutPaymentActivity" />
         <activity android:name=".PinYourLocationActivity" android:parentActivityName=".AddressActivity" />
         <activity android:name=".ProfileActivity" android:parentActivityName=".MainActivity" />
+        <activity android:name=".SelectLocationActivity" />
         <activity android:name=".SignupActivity" android:parentActivityName=".LoginActivity" />
         <activity android:name=".UpdateAppActivity" />
 

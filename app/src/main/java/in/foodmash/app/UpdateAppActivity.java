@@ -14,10 +14,14 @@ import in.foodmash.app.commons.Info;
  * Created by Zeke on Feb 22, 2016.
  */
 public class UpdateAppActivity extends AppCompatActivity {
+
+    boolean force;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_app);
+        force = getIntent().getBooleanExtra("force", false);
 
         findViewById(R.id.update).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,21 +45,11 @@ public class UpdateAppActivity extends AppCompatActivity {
             }
         });
 
+        if(force) findViewById(R.id.back).setVisibility(View.GONE);
         findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent;
-                if(Info.isKeepMeLoggedInSet(UpdateAppActivity.this) && Info.isLoggedIn(UpdateAppActivity.this)) {
-                    intent = new Intent(UpdateAppActivity.this,MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else if(!Info.isKeepMeLoggedInSet(UpdateAppActivity.this) && Info.isLoggedIn(UpdateAppActivity.this)) {
-                    Actions.logout(UpdateAppActivity.this);
-                } else {
-                    intent = new Intent(UpdateAppActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
+                startActivity(new Intent(UpdateAppActivity.this, SelectLocationActivity.class));
             }
         });
 
