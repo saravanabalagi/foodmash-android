@@ -286,8 +286,8 @@ public class MainActivity extends AppCompatActivity {
             final LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_main_combo, fillLayout, false);
             ((TextView) comboLayout.findViewById(R.id.id)).setText(String.valueOf(combo.getId()));
             NetworkImageView comboPicture = (NetworkImageView) comboLayout.findViewById(R.id.image);
-            comboPicture.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * getResources().getDisplayMetrics().density);
             comboPicture.setImageUrl(combo.getPicture(), imageLoader);
+            comboPicture.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * getResources().getDisplayMetrics().density);
             ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
             comboLayout.findViewById(R.id.contents_scroll_layout).setOnClickListener(showDescription);
             LinearLayout contentsLayout = (LinearLayout) comboLayout.findViewById(R.id.contents_layout);

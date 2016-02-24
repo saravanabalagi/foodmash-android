@@ -159,8 +159,8 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                 ((TextView) comboOptionsLayout.findViewById(R.id.id)).setText(String.valueOf(comboDish.getId()));
                 ((TextView) comboOptionsLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
                 NetworkImageView comboDishPicture = (NetworkImageView) comboOptionsLayout.findViewById(R.id.image);
-                comboDishPicture.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * getResources().getDisplayMetrics().density);
                 comboDishPicture.setImageUrl(comboDish.getDish().getPicture(), imageLoader);
+                comboDishPicture.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * getResources().getDisplayMetrics().density);
                 ((TextView) comboOptionsLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
                 ((TextView) comboOptionsLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());
                 ((NetworkImageView) comboOptionsLayout.findViewById(R.id.restaurant_logo)).setImageUrl(comboDish.getDish().getRestaurant().getLogo(), imageLoader);
@@ -262,8 +262,8 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         for (final ComboDish comboDish: combo.getComboDishes()) {
             final LinearLayout comboDishLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_combo_description_combo_dish, fillLayout, false);
             NetworkImageView comboDishPicture = (NetworkImageView) comboDishLayout.findViewById(R.id.image);
-            comboDishPicture.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * getResources().getDisplayMetrics().density);
             comboDishPicture.setImageUrl(comboDish.getDish().getPicture(), imageLoader);
+            comboDishPicture.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * getResources().getDisplayMetrics().density);
             ((TextView) comboDishLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
             ((TextView) comboDishLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
             ((TextView) comboDishLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());
