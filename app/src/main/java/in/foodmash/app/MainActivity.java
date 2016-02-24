@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Pair;
@@ -44,8 +44,10 @@ import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Filters;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
+import in.foodmash.app.commons.LinearLayoutManager;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.commons.VolleyProgressFragment;
@@ -61,9 +63,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
-    @Bind(R.id.navigation_view) NavigationView navigationView;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
+    @Bind(R.id.filters) RecyclerView recyclerView;
 
     private Intent intent;
     private TextView cartCount;
@@ -139,6 +141,33 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().executePendingTransactions();
 
         imageLoader = Swift.getInstance(MainActivity.this).getImageLoader();
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        Filters filters = new Filters();
+
+        filters.addHeader("Type");
+        filters.addFilter("Regular", R.drawable.svg_hashtag);
+        filters.addFilter("Budget", R.drawable.svg_coffee);
+        filters.addFilter("Corporate", R.drawable.svg_sitemap);
+        filters.addFilter("Health", R.drawable.svg_heartbeat);
+
+        filters.addHeader("Size");
+        filters.addFilter("Micro", R.drawable.svg_user1);
+        filters.addFilter("Medium", R.drawable.svg_user2);
+        filters.addFilter("Mega", R.drawable.svg_user3);
+
+        filters.addHeader("Preference");
+        filters.addFilter("Veg", R.drawable.svg_leaf);
+        filters.addFilter("Egg", R.drawable.svg_egg);
+        filters.addFilter("Non-Veg", R.drawable.svg_meat);
+
+        filters.addHeader("Price");
+        filters.addFilter("Low to High", R.drawable.svg_sort_amount_asc);
+        filters.addFilter("High to Low", R.drawable.svg_sort_amount_desc);
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(filters);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
@@ -156,48 +185,48 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-
-                    case R.id.category_all: categorySelected.clear(); break;
-                    case R.id.size_all: sizeSelected.clear(); break;
-                    case R.id.preference_all: preferenceSelected.clear(); break;
-
-                    case R.id.category_regular: check(menuItem, Combo.Category.REGULAR); break;
-                    case R.id.category_budget: check(menuItem, Combo.Category.BUDGET); break;
-                    case R.id.category_corporate: check(menuItem, Combo.Category.CORPORATE); break;
-                    case R.id.category_health: check(menuItem, Combo.Category.HEALTH); break;
-
-                    case R.id.size_micro: check(menuItem, Combo.Size.MICRO); break;
-                    case R.id.size_medium: check(menuItem, Combo.Size.MEDIUM); break;
-                    case R.id.size_mega: check(menuItem, Combo.Size.MEGA); break;
-
-                    case R.id.preference_egg: check(menuItem, Dish.Label.EGG); break;
-                    case R.id.preference_veg: check(menuItem, Dish.Label.VEG); break;
-                    case R.id.preference_non_veg: check(menuItem, Dish.Label.NON_VEG); break;
-
-                    case R.id.price_low_to_high: sortPriceLowToHigh = true; menuItem.setChecked(true);
-                    case R.id.price_high_to_low: sortPriceLowToHigh = false; menuItem.setChecked(true);
-
-                }
-                return true;
-            }
-            private void check(MenuItem menuItem, Combo.Category category) {
-                if (menuItem.isChecked()) { categorySelected.remove(category); menuItem.setChecked(false); }
-                else { categorySelected.add(category); menuItem.setChecked(true); }
-            }
-            private void check(MenuItem menuItem, Combo.Size size) {
-                if (menuItem.isChecked()) { sizeSelected.remove(size); menuItem.setChecked(false); }
-                else { sizeSelected.add(size); menuItem.setChecked(true); }
-            }
-            private void check(MenuItem menuItem, Dish.Label preference) {
-                if (menuItem.isChecked()) { preferenceSelected.remove(preference); menuItem.setChecked(false); }
-                else { preferenceSelected.add(preference); menuItem.setChecked(true); }
-            }
-        });
+//        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+//
+//            @Override
+//            public boolean onNavigationItemSelected(MenuItem menuItem) {
+//                switch (menuItem.getItemId()) {
+//
+//                    case R.id.category_all: categorySelected.clear(); break;
+//                    case R.id.size_all: sizeSelected.clear(); break;
+//                    case R.id.preference_all: preferenceSelected.clear(); break;
+//
+//                    case R.id.category_regular: check(menuItem, Combo.Category.REGULAR); break;
+//                    case R.id.category_budget: check(menuItem, Combo.Category.BUDGET); break;
+//                    case R.id.category_corporate: check(menuItem, Combo.Category.CORPORATE); break;
+//                    case R.id.category_health: check(menuItem, Combo.Category.HEALTH); break;
+//
+//                    case R.id.size_micro: check(menuItem, Combo.Size.MICRO); break;
+//                    case R.id.size_medium: check(menuItem, Combo.Size.MEDIUM); break;
+//                    case R.id.size_mega: check(menuItem, Combo.Size.MEGA); break;
+//
+//                    case R.id.preference_egg: check(menuItem, Dish.Label.EGG); break;
+//                    case R.id.preference_veg: check(menuItem, Dish.Label.VEG); break;
+//                    case R.id.preference_non_veg: check(menuItem, Dish.Label.NON_VEG); break;
+//
+//                    case R.id.price_low_to_high: sortPriceLowToHigh = true; menuItem.setChecked(true);
+//                    case R.id.price_high_to_low: sortPriceLowToHigh = false; menuItem.setChecked(true);
+//
+//                }
+//                return true;
+//            }
+//            private void check(MenuItem menuItem, Combo.Category category) {
+//                if (menuItem.isChecked()) { categorySelected.remove(category); menuItem.setChecked(false); }
+//                else { categorySelected.add(category); menuItem.setChecked(true); }
+//            }
+//            private void check(MenuItem menuItem, Combo.Size size) {
+//                if (menuItem.isChecked()) { sizeSelected.remove(size); menuItem.setChecked(false); }
+//                else { sizeSelected.add(size); menuItem.setChecked(true); }
+//            }
+//            private void check(MenuItem menuItem, Dish.Label preference) {
+//                if (menuItem.isChecked()) { preferenceSelected.remove(preference); menuItem.setChecked(false); }
+//                else { preferenceSelected.add(preference); menuItem.setChecked(true); }
+//            }
+//        });
 
         getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override
@@ -289,8 +318,8 @@ public class MainActivity extends AppCompatActivity {
             comboPicture.setImageUrl(combo.getPicture(), imageLoader);
             comboPicture.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * getResources().getDisplayMetrics().density);
             ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
-            comboLayout.findViewById(R.id.contents_scroll_layout).setOnClickListener(showDescription);
             LinearLayout contentsLayout = (LinearLayout) comboLayout.findViewById(R.id.contents_layout);
+            contentsLayout.setOnClickListener(showDescription);
             TreeMap<Integer, Pair<String,Dish.Label>> contents = combo.getContents();
             for (int n : contents.navigableKeySet()) {
                 LinearLayout contentTextView = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_main_combo_content, contentsLayout, false);
@@ -397,7 +426,6 @@ public class MainActivity extends AppCompatActivity {
             if(!preferenceAll && !preferenceSelected.contains(combo.getLabel())) survived = false;
             if(survived) filteredComboList.add(combo);
         }
-        System.out.println("Filtered list: "+filteredComboList);
         return filteredComboList;
     }
 }
