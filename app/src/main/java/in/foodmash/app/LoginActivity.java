@@ -62,7 +62,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText phonePrefix;
     private ImageView emailValidate;
     private ImageView passwordValidate;
-    private Switch keepLoggedIn;
 
     private JsonObjectRequest loginRequest;
     private Intent intent;
@@ -100,17 +99,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(Info.getPhone(LoginActivity.this)!=null) { email.setText(Info.getPhone(LoginActivity.this)); }
         else if(Info.getEmail(LoginActivity.this)!=null) { email.setText(Info.getEmail(LoginActivity.this)); }
         password = (EditText) findViewById(R.id.password); password.addTextChangedListener(this);
-        keepLoggedIn = (Switch) findViewById(R.id.keep_logged_in); keepLoggedIn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!isChecked) {
-                    Actions.setKeepMeLoggedIn(LoginActivity.this, false);
-                    Alerts.commonErrorAlert(LoginActivity.this, "Logout on exit", "You will be logged out once you close the app", "Okay");
-                } else Actions.setKeepMeLoggedIn(LoginActivity.this, true);
-            }
-        });
-
-        Actions.setKeepMeLoggedIn(LoginActivity.this,true);
 
     }
 

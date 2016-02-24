@@ -12,16 +12,19 @@ import in.foodmash.app.custom.Combo;
  */
 public class Info {
 
-    private static List<Combo> combos;
+    public static int getPackagingCentreId(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache",0);
+        return sharedPreferences.getInt("packaging_centre_id",-1);
+    }
+
+    public static String getComboJsonArrayString(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
+        return sharedPreferences.getString("combo_list", null);
+    }
 
     public static boolean isLoggedIn(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("session",0);
         return sharedPreferences.getBoolean("logged_in",false);
-    }
-
-    public static boolean isKeepMeLoggedInSet(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("preferences", 0);
-        return sharedPreferences.getBoolean("keep_me_logged_in",false);
     }
 
     public static String getEmail(Context context) {
@@ -39,6 +42,4 @@ public class Info {
         return sharedPreferences.getString("firstName",null);
     }
 
-    public static List<Combo> getCombos() { return combos; }
-    public static void setCombos(List<Combo> newCombos) { combos=newCombos; }
 }

@@ -12,9 +12,12 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import java.util.List;
+
 import in.foodmash.app.LoginActivity;
 import in.foodmash.app.R;
 import in.foodmash.app.custom.Cart;
+import in.foodmash.app.custom.Combo;
 
 /**
  * Created by Zeke on Sep 20 2015.
@@ -29,10 +32,19 @@ public class Actions {
         editor.apply();
     }
 
-    public static void setKeepMeLoggedIn(Context context,boolean bool) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("preferences", 0);
+    public static void cachePackagingCentreId(Context context, int id) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("keep_me_logged_in", bool);
+        editor.putInt("packaging_centre_id", id);
+        editor.commit();
+    }
+
+    public static void cacheCombos(Context context, String comboJsonArrayString) {
+        if(Info.getComboJsonArrayString(context)!= null
+            && Info.getComboJsonArrayString(context).equals(comboJsonArrayString)) return;
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("combo_list", comboJsonArrayString);
         editor.apply();
     }
 

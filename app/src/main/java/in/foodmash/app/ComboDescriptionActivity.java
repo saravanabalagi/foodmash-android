@@ -19,8 +19,11 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
-import java.util.Random;
+import java.util.Arrays;
+import java.util.List;
 import java.util.TreeMap;
 
 import butterknife.Bind;
@@ -30,7 +33,6 @@ import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.Swift;
-import in.foodmash.app.custom.Cache;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
 import in.foodmash.app.custom.ComboDish;
@@ -62,7 +64,8 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        if (Info.isLoggedIn(ComboDescriptionActivity.this)) getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        else getMenuInflater().inflate(R.menu.menu_main_anonymous_login, menu);
         RelativeLayout cartCountLayout = (RelativeLayout) menu.findItem(R.id.menu_cart).getActionView();
         cartCount = (TextView) cartCountLayout.findViewById(R.id.cart_count);
         Actions.updateCartCount(cartCount);
@@ -104,7 +107,17 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
-        combo = Cache.getCombo(getIntent().getIntExtra("combo_id", -1));
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+
+        int comboId = getIntent().getIntExtra("combo_id", -1);
+        if(comboId==-1) { Alerts.unknownErrorAlert(ComboDescriptionActivity.this); return; }
+        List<Combo> combos = null;
+        try { combos = Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(this), Combo[].class)); }
+        catch (Exception e) { e.printStackTrace(); }
+        for (Combo c : combos)
+            if (c.getId()==comboId)
+                combo = c;
         if(combo==null) { Alerts.unknownErrorAlert(ComboDescriptionActivity.this); return; }
 
         buy.setOnClickListener(this);
@@ -146,7 +159,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                 ((TextView) comboOptionsLayout.findViewById(R.id.id)).setText(String.valueOf(comboDish.getId()));
                 ((TextView) comboOptionsLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
                 NetworkImageView comboDishPicture = (NetworkImageView) comboOptionsLayout.findViewById(R.id.image);
-                comboDishPicture.getLayoutParams().height = displayMetrics.widthPixels/2;
+                comboDishPicture.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * getResources().getDisplayMetrics().density);
                 comboDishPicture.setImageUrl(comboDish.getDish().getPicture(), imageLoader);
                 ((TextView) comboOptionsLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
                 ((TextView) comboOptionsLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());
@@ -248,7 +261,9 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         }
         for (final ComboDish comboDish: combo.getComboDishes()) {
             final LinearLayout comboDishLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_combo_description_combo_dish, fillLayout, false);
-            ((NetworkImageView) comboDishLayout.findViewById(R.id.image)).setImageUrl(comboDish.getDish().getPicture(), imageLoader);
+            NetworkImageView comboDishPicture = (NetworkImageView) comboDishLayout.findViewById(R.id.image);
+            comboDishPicture.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * getResources().getDisplayMetrics().density);
+            comboDishPicture.setImageUrl(comboDish.getDish().getPicture(), imageLoader);
             ((TextView) comboDishLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
             ((TextView) comboDishLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
             ((TextView) comboDishLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());

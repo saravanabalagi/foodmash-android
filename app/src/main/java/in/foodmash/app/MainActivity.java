@@ -49,7 +49,6 @@ import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.commons.VolleyProgressFragment;
-import in.foodmash.app.custom.Cache;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
 import in.foodmash.app.custom.ComboDish;
@@ -72,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     private JsonObjectRequest getCombosRequest;
     private ImageLoader imageLoader;
     private DisplayMetrics displayMetrics;
+    private ObjectMapper objectMapper;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
     private List<Combo.Category> categorySelected = new ArrayList<>();
@@ -132,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
 
         displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        objectMapper = new ObjectMapper();
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new VolleyProgressFragment()).commit();
         getSupportFragmentManager().executePendingTransactions();
@@ -146,7 +148,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                updateFillLayout(Cache.getCombos());
+                try {updateFillLayout(Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(MainActivity.this), Combo[].class))); }
+                catch (Exception e) { e.printStackTrace(); }
             }
         };
 
@@ -196,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", JsonProvider.getStandardRequestJson(MainActivity.this), new Response.Listener<JSONObject>() {
+        getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 System.out.println(response);
@@ -204,10 +207,9 @@ public class MainActivity extends AppCompatActivity {
                     if (response.getBoolean("success")) {
                         Animations.fadeOut(fragmentContainer,100);
                         System.out.println(response.getJSONObject("data"));
-                        ObjectMapper mapper = new ObjectMapper();
-                        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-                        Cache.setCombos(Arrays.asList(mapper.readValue(response.getJSONObject("data").getJSONArray("combos").toString(), Combo[].class)));
-                        updateFillLayout(Cache.getCombos());
+                        String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
+                        updateFillLayout(Arrays.asList(objectMapper.readValue(comboJsonArrayString, Combo[].class)));
+                        Actions.cacheCombos(MainActivity.this, comboJsonArrayString);
                     } else {
                         Alerts.requestUnauthorisedAlert(MainActivity.this);
                         System.out.println(response.getString("error"));
@@ -227,15 +229,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(Cache.getCombos() == null) {
+        if(Info.getComboJsonArrayString(this) == null) {
             System.out.println("combos is empty");
             ((VolleyProgressFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
                     .setLoadingText("Loading Combos...", "We are loading as fast as we can");
             Animations.fadeIn(fragmentContainer, 300);
-        } else { updateFillLayout(Cache.getCombos()); }
+        } else {
+            try {updateFillLayout(Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(this), Combo[].class))); }
+            catch (Exception e) { e.printStackTrace(); }
+        }
         Swift.getInstance(this).addToRequestQueue(getCombosRequest);
     }
 
+
+    private JSONObject getComboRequestJson() {
+        JSONObject comboRequestJson;
+        if(Info.isLoggedIn(this)) comboRequestJson = JsonProvider.getStandardRequestJson(this);
+        else comboRequestJson = JsonProvider.getAnonymousRequestJson(this);
+        int packagingCentreId = Info.getPackagingCentreId(this);
+        try { comboRequestJson.put("packaging_centre_id",packagingCentreId); }
+        catch (Exception e) { e.printStackTrace(); }
+        return comboRequestJson;
+    }
 
     @Override
     public void onBackPressed() {
@@ -271,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
             final LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_main_combo, fillLayout, false);
             ((TextView) comboLayout.findViewById(R.id.id)).setText(String.valueOf(combo.getId()));
             NetworkImageView comboPicture = (NetworkImageView) comboLayout.findViewById(R.id.image);
-            comboPicture.getLayoutParams().height = displayMetrics.widthPixels/2;
+            comboPicture.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * getResources().getDisplayMetrics().density);
             comboPicture.setImageUrl(combo.getPicture(), imageLoader);
             ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
             comboLayout.findViewById(R.id.contents_scroll_layout).setOnClickListener(showDescription);
@@ -365,6 +380,7 @@ public class MainActivity extends AppCompatActivity {
             comboTreeMap.put((int) combo.getPrice(), comboLayout);
         }
 
+        fillLayout.removeAllViews();
         if(sortPriceLowToHigh)
             for (int n : comboTreeMap.navigableKeySet())
                 fillLayout.addView(comboTreeMap.get(n));
@@ -381,6 +397,7 @@ public class MainActivity extends AppCompatActivity {
             if(!preferenceAll && !preferenceSelected.contains(combo.getLabel())) survived = false;
             if(survived) filteredComboList.add(combo);
         }
+        System.out.println("Filtered list: "+filteredComboList);
         return filteredComboList;
     }
 }

@@ -6,57 +6,11 @@
     android:gravity="center_vertical|center_horizontal"
     android:id="@+id/parent_layout">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_margin="30dp">
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/svg_tower"
-                android:tint="#FFCCCCCC" />
-
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/svg_signal_25"
-                android:tint="#FFCCCCCC"
-                android:id="@+id/signal_25" />
-
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/svg_signal_50"
-                android:tint="#FFCCCCCC"
-                android:id="@+id/signal_50"
-                android:visibility="gone" />
-
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/svg_signal_75"
-                android:tint="#FFCCCCCC"
-                android:id="@+id/signal_75"
-                android:visibility="gone" />
-
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/svg_signal_100"
-                android:tint="#FFCCCCCC"
-                android:id="@+id/signal_100"
-                android:visibility="gone" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/svg_hourglass"
+        android:tint="#FFCCCCCC" />
 
     <TextView
         android:layout_width="wrap_content"

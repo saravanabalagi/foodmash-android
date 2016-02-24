@@ -27,6 +27,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
@@ -91,7 +92,7 @@ public class SelectLocationActivity extends AppCompatActivity {
                                 if (position==0) return;
                                 int packagingCentreId = cities.get(citySpinner.getSelectedItemPosition() - 1).getPackagingCentreId(((TextView) view).getText().toString());
                                 Intent intent = new Intent(SelectLocationActivity.this, MainActivity.class);
-                                intent.putExtra("packaging_centre_id", packagingCentreId);
+                                Actions.cachePackagingCentreId(SelectLocationActivity.this,packagingCentreId);
                                 startActivity(intent);
                             }
                         });
