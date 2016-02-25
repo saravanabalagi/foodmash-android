@@ -94,6 +94,7 @@ public class SelectLocationActivity extends AppCompatActivity {
                                 Intent intent = new Intent(SelectLocationActivity.this, MainActivity.class);
                                 Actions.cachePackagingCentreId(SelectLocationActivity.this,packagingCentreId);
                                 startActivity(intent);
+                                finish();
                             }
                         });
 

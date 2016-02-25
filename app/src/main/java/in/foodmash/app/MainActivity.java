@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,8 +14,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Pair;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -67,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.filters) RecyclerView recyclerView;
 
+    private Snackbar snackbar;
     private Intent intent;
     private TextView cartCount;
     private Cart cart = Cart.getInstance();
@@ -79,10 +83,6 @@ public class MainActivity extends AppCompatActivity {
     private List<Combo.Category> categorySelected = new ArrayList<>();
     private List<Combo.Size> sizeSelected = new ArrayList<>();
     private List<Dish.Label> preferenceSelected = new ArrayList<>();
-
-    private boolean categoryAll = true;
-    private boolean sizeAll = true;
-    private boolean preferenceAll = true;
     private boolean sortPriceLowToHigh = true;
 
     @Override
@@ -142,6 +142,8 @@ public class MainActivity extends AppCompatActivity {
 
         imageLoader = Swift.getInstance(MainActivity.this).getImageLoader();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener(){
+            @Override public boolean onSingleTapUp(MotionEvent e) { return true; } });
         Filters filters = new Filters();
 
         filters.addHeader("Type");
@@ -167,6 +169,51 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(filters);
         recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.findViewHolderForAdapterPosition(14).itemView.setActivated(true);
+        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+
+            private void makeActive(View view, Combo.Category category) {
+                if (view.isActivated()) { categorySelected.remove(category); view.setActivated(false); }
+                else { categorySelected.add(category); view.setActivated(true); }
+            }
+            private void makeActive(View view, Combo.Size size) {
+                if (view.isActivated()) { sizeSelected.remove(size); view.setActivated(false); }
+                else { sizeSelected.add(size); view.setActivated(true); }
+            }
+            private void makeActive(View view, Dish.Label preference) {
+                if (view.isActivated()) { preferenceSelected.remove(preference); view.setActivated(false); }
+                else { preferenceSelected.add(preference); view.setActivated(true); }
+            }
+
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                if(child!=null && gestureDetector.onTouchEvent(e)) {
+                    switch(recyclerView.getChildAdapterPosition(child)) {
+                        case 1: makeActive(child, Combo.Category.REGULAR); break;
+                        case 2: makeActive(child, Combo.Category.BUDGET); break;
+                        case 3: makeActive(child, Combo.Category.CORPORATE); break;
+                        case 4: makeActive(child, Combo.Category.HEALTH); break;
+
+                        case 6: makeActive(child, Combo.Size.MICRO); break;
+                        case 7: makeActive(child, Combo.Size.MEDIUM); break;
+                        case 8: makeActive(child, Combo.Size.MEGA); break;
+
+                        case 10: makeActive(child, Dish.Label.EGG); break;
+                        case 11: makeActive(child, Dish.Label.VEG); break;
+                        case 12: makeActive(child, Dish.Label.NON_VEG); break;
+
+                        case 14: sortPriceLowToHigh = true; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(15).itemView.setActivated(false); } break;
+                        case 15: sortPriceLowToHigh = false; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(14).itemView.setActivated(false); } break;
+                    }
+                }
+                return false;
+            }
+
+            @Override public void onTouchEvent(RecyclerView rv, MotionEvent e) { }
+            @Override public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+            }
+        });
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this,
@@ -185,55 +232,13 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
-//        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-//
-//            @Override
-//            public boolean onNavigationItemSelected(MenuItem menuItem) {
-//                switch (menuItem.getItemId()) {
-//
-//                    case R.id.category_all: categorySelected.clear(); break;
-//                    case R.id.size_all: sizeSelected.clear(); break;
-//                    case R.id.preference_all: preferenceSelected.clear(); break;
-//
-//                    case R.id.category_regular: check(menuItem, Combo.Category.REGULAR); break;
-//                    case R.id.category_budget: check(menuItem, Combo.Category.BUDGET); break;
-//                    case R.id.category_corporate: check(menuItem, Combo.Category.CORPORATE); break;
-//                    case R.id.category_health: check(menuItem, Combo.Category.HEALTH); break;
-//
-//                    case R.id.size_micro: check(menuItem, Combo.Size.MICRO); break;
-//                    case R.id.size_medium: check(menuItem, Combo.Size.MEDIUM); break;
-//                    case R.id.size_mega: check(menuItem, Combo.Size.MEGA); break;
-//
-//                    case R.id.preference_egg: check(menuItem, Dish.Label.EGG); break;
-//                    case R.id.preference_veg: check(menuItem, Dish.Label.VEG); break;
-//                    case R.id.preference_non_veg: check(menuItem, Dish.Label.NON_VEG); break;
-//
-//                    case R.id.price_low_to_high: sortPriceLowToHigh = true; menuItem.setChecked(true);
-//                    case R.id.price_high_to_low: sortPriceLowToHigh = false; menuItem.setChecked(true);
-//
-//                }
-//                return true;
-//            }
-//            private void check(MenuItem menuItem, Combo.Category category) {
-//                if (menuItem.isChecked()) { categorySelected.remove(category); menuItem.setChecked(false); }
-//                else { categorySelected.add(category); menuItem.setChecked(true); }
-//            }
-//            private void check(MenuItem menuItem, Combo.Size size) {
-//                if (menuItem.isChecked()) { sizeSelected.remove(size); menuItem.setChecked(false); }
-//                else { sizeSelected.add(size); menuItem.setChecked(true); }
-//            }
-//            private void check(MenuItem menuItem, Dish.Label preference) {
-//                if (menuItem.isChecked()) { preferenceSelected.remove(preference); menuItem.setChecked(false); }
-//                else { preferenceSelected.add(preference); menuItem.setChecked(true); }
-//            }
-//        });
-
         getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 System.out.println(response);
                 try {
                     if (response.getBoolean("success")) {
+                        if (snackbar.isShown()) snackbar.dismiss();
                         Animations.fadeOut(fragmentContainer,100);
                         System.out.println(response.getJSONObject("data"));
                         String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
@@ -250,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                if (snackbar.isShown()) snackbar.setText("Update Failed!");
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyFailureFragment()).commit();
                 getSupportFragmentManager().executePendingTransactions();
                 ((VolleyFailureFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
@@ -259,13 +265,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if(Info.getComboJsonArrayString(this) == null) {
-            System.out.println("combos is empty");
             ((VolleyProgressFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
                     .setLoadingText("Loading Combos...", "We are loading as fast as we can");
             Animations.fadeIn(fragmentContainer, 300);
         } else {
             try {updateFillLayout(Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(this), Combo[].class))); }
             catch (Exception e) { e.printStackTrace(); }
+            snackbar = Snackbar.make(fillLayout, "Updating combos...", Snackbar.LENGTH_INDEFINITE).setAction("Close", new View.OnClickListener() { @Override public void onClick(View v) { snackbar.dismiss(); } });
+            snackbar.show();
         }
         Swift.getInstance(this).addToRequestQueue(getCombosRequest);
     }
@@ -421,9 +428,9 @@ public class MainActivity extends AppCompatActivity {
         List<Combo> filteredComboList = new ArrayList<>();
         for(Combo combo: combos) {
             boolean survived = true;
-            if(!categoryAll && !categorySelected.contains(combo.getCategory())) survived = false;
-            if(!sizeAll && !sizeSelected.contains(combo.getSize())) survived = false;
-            if(!preferenceAll && !preferenceSelected.contains(combo.getLabel())) survived = false;
+            if(!categorySelected.isEmpty() && !categorySelected.contains(combo.getCategory())) survived = false;
+            if(!sizeSelected.isEmpty() && !sizeSelected.contains(combo.getSize())) survived = false;
+            if(!preferenceSelected.isEmpty() && !preferenceSelected.contains(combo.getLabel())) survived = false;
             if(survived) filteredComboList.add(combo);
         }
         return filteredComboList;
