@@ -33,7 +33,7 @@ public class SplashActivity extends AppCompatActivity {
                     if(response.getBoolean("success")) {
                         int newVersion = Integer.parseInt(response.getJSONObject("data").getString("id"));
                         int currentVersion = BuildConfig.VERSION_CODE;
-                        if(currentVersion != newVersion) { startActivity(new Intent(SplashActivity.this, UpdateAppActivity.class)); finish(); }
+                        if(currentVersion < newVersion) { startActivity(new Intent(SplashActivity.this, UpdateAppActivity.class)); finish(); }
                         else startActivity(new Intent(SplashActivity.this, SelectLocationActivity.class));
                     } else Alerts.requestUnauthorisedAlert(SplashActivity.this);
                 } catch (Exception e) { e.printStackTrace(); }
