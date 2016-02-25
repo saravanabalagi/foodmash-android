@@ -33,6 +33,8 @@ public class Actions {
     }
 
     public static void cachePackagingCentreId(Context context, int id) {
+        int oldPackagingCenterId = Info.getPackagingCentreId(context);
+        if(id != oldPackagingCenterId) cacheCombos(context, null);
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("packaging_centre_id", id);
