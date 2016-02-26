@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.TreeMap;
 
 /**
@@ -37,12 +36,15 @@ public class Combo {
         this.id = c.id;
         this.groupSize = c.groupSize;
         this.noOfPurchases = c.noOfPurchases;
-        this.price = c.price;
+        this.size = c.size;
         this.label = c.label;
+        this.category = c.category;
         this.name = c.name;
         this.description = c.description;
         this.special = c.special;
         this.available = c.available;
+        this.price = c.price;
+        this.picture = c.picture;
         this.comboDishes = new ArrayList<>();
         for (ComboDish entry: c.getComboDishes()) {
             ComboDish comboDish = new ComboDish(entry);
@@ -104,9 +106,9 @@ public class Combo {
     @JsonProperty public void setId(int id) { this.id = id; }
     @JsonProperty public void setGroupSize(int groupSize) {
         this.groupSize = groupSize;
-        if( groupSize>=1) size = Size.MICRO;
-        else if( groupSize>=2 && groupSize<=4 ) size = Size.MEDIUM;
-        else if( groupSize>=4) size = Size.MEGA;
+        if( groupSize==1) size = Size.MICRO;
+        else if( groupSize>=2 && groupSize<=3 ) size = Size.MEDIUM;
+        else if( groupSize>3) size = Size.MEGA;
     }
     @JsonProperty public void setNoOfPurchases(int noOfPurchases) { this.noOfPurchases = noOfPurchases; }
     @JsonProperty public void setLabel(String label) {

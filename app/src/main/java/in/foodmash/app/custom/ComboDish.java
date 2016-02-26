@@ -10,8 +10,8 @@ public class ComboDish {
 
     private int id;
     private int priority;
-    private int minCount=1;
-    private int quantity=1;
+    private int minCount;
+    private int quantity;
     private Dish dish;
 
     public ComboDish() {}
@@ -34,8 +34,8 @@ public class ComboDish {
     @JsonProperty public void setDish(Dish dish) { this.dish = dish; }
     @JsonProperty public void setMinCount(int minCount) { this.minCount = minCount; this.quantity = minCount; }
     public boolean incrementQuantity() { if(quantity +1<10) { quantity++; return true;} else return false; }
-    public boolean decrementQuantity() { if(quantity -1<minCount) return false; else { quantity--; return true; } }
-    public void resetQuantity() { quantity=minCount; }
+    public boolean decrementQuantity() { if(quantity -1< minCount) return false; else { quantity--; return true; } }
+    public void resetQuantity() { quantity= minCount; }
 
     @Override
     public boolean equals(Object o) {

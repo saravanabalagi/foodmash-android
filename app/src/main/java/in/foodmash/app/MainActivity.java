@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(filters);
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.findViewHolderForAdapterPosition(14).itemView.setActivated(true);
+//        recyclerView.findViewHolderForAdapterPosition(14).itemView.setActivated(true);
         recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
 
             private void makeActive(View view, Combo.Category category) {
@@ -199,8 +199,8 @@ public class MainActivity extends AppCompatActivity {
                         case 7: makeActive(child, Combo.Size.MEDIUM); break;
                         case 8: makeActive(child, Combo.Size.MEGA); break;
 
-                        case 10: makeActive(child, Dish.Label.EGG); break;
-                        case 11: makeActive(child, Dish.Label.VEG); break;
+                        case 10: makeActive(child, Dish.Label.VEG); break;
+                        case 11: makeActive(child, Dish.Label.EGG); break;
                         case 12: makeActive(child, Dish.Label.NON_VEG); break;
 
                         case 14: sortPriceLowToHigh = true; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(15).itemView.setActivated(false); } break;
@@ -224,6 +224,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                System.out.println(categorySelected);
+                System.out.println(sizeSelected);
+                System.out.println(preferenceSelected);
                 try {updateFillLayout(Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(MainActivity.this), Combo[].class))); }
                 catch (Exception e) { e.printStackTrace(); }
             }
@@ -238,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(response);
                 try {
                     if (response.getBoolean("success")) {
-                        if (snackbar.isShown()) snackbar.dismiss();
+                        if (snackbar!=null && snackbar.isShown()) snackbar.dismiss();
                         Animations.fadeOut(fragmentContainer,100);
                         System.out.println(response.getJSONObject("data"));
                         String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
@@ -255,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (snackbar.isShown()) snackbar.setText("Update Failed!");
+                if (snackbar!=null && snackbar.isShown()) snackbar.setText("Update Failed!");
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyFailureFragment()).commit();
                 getSupportFragmentManager().executePendingTransactions();
                 ((VolleyFailureFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
@@ -432,6 +435,7 @@ public class MainActivity extends AppCompatActivity {
             if(!sizeSelected.isEmpty() && !sizeSelected.contains(combo.getSize())) survived = false;
             if(!preferenceSelected.isEmpty() && !preferenceSelected.contains(combo.getLabel())) survived = false;
             if(survived) filteredComboList.add(combo);
+            System.out.println(combo.getCategory()+" "+combo.getSize()+" "+combo.getLabel()+" "+survived);
         }
         return filteredComboList;
     }

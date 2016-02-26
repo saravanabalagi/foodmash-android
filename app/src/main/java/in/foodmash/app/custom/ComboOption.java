@@ -14,7 +14,7 @@ public class ComboOption {
 
     private int id;
     private int priority;
-    private int minCount=1;
+    private int minCount;
     private String name;
     private String description;
     private ArrayList<ComboDish> selectedComboOptionDishes;
@@ -36,7 +36,7 @@ public class ComboOption {
         int quantity=0;
         for(ComboDish comboDish: this.selectedComboOptionDishes)
             quantity+=comboDish.getQuantity();
-        if(quantity<minCount) return -1;
+        if(quantity< minCount) return -1;
         return quantity;
     }
     public Dish.Label getLabel() {
@@ -92,19 +92,19 @@ public class ComboOption {
         return true;
     }
     public boolean decrementQuantity(ComboDish comboDish) {
-        if(this.getQuantity()-1<minCount) return false;
+        if(this.getQuantity()-1< minCount) return false;
         if(!getSelectedComboOptionDishes().contains(comboDish)) return false;
         if(comboDish.getQuantity()==1) return removeFromSelected(comboDish);
         comboDish.decrementQuantity();
         return true;
     }
     public boolean addToSelected(ComboDish comboDish) { if(!this.selectedComboOptionDishes.contains(comboDish)) { this.selectedComboOptionDishes.add(comboDish); return true; } else return false; }
-    public boolean addToSelectedAfterClear(ComboDish comboDish) { this.selectedComboOptionDishes.clear(); if(!this.selectedComboOptionDishes.contains(comboDish)) { for(int i=0; i<this.minCount-1; i++) comboDish.incrementQuantity(); this.selectedComboOptionDishes.add(comboDish); return true; } else return false; }
+    public boolean addToSelectedAfterClear(ComboDish comboDish) { this.selectedComboOptionDishes.clear(); if(!this.selectedComboOptionDishes.contains(comboDish)) { for(int i = 0; i<this.minCount -1; i++) comboDish.incrementQuantity(); this.selectedComboOptionDishes.add(comboDish); return true; } else return false; }
     public boolean removeFromSelected(ComboDish comboDish) { if(this.selectedComboOptionDishes.contains(comboDish))  { this.selectedComboOptionDishes.remove(comboDish); return true; } else return false;}
     public void resetSelectedComboOptionDishes() {
         this.selectedComboOptionDishes.clear();
         comboOptionDishes.get(0).resetQuantity();
-        for(int i=0; i<this.minCount-1; i++) comboOptionDishes.get(0).incrementQuantity();
+        for(int i = 0; i<this.minCount -1; i++) comboOptionDishes.get(0).incrementQuantity();
         this.selectedComboOptionDishes.add(comboOptionDishes.get(0));
     }
     @JsonProperty public void setComboOptionDishes(ArrayList<ComboDish> comboOptionDishes) {
