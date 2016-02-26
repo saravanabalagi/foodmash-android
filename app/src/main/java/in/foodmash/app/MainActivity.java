@@ -277,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
             snackbar = Snackbar.make(fillLayout, "Updating combos...", Snackbar.LENGTH_INDEFINITE).setAction("Close", new View.OnClickListener() { @Override public void onClick(View v) { snackbar.dismiss(); } });
             snackbar.show();
         }
-        Swift.getInstance(this).addToRequestQueue(getCombosRequest);
+        Swift.getInstance(this).addToRequestQueue(getCombosRequest, 20000, 2, 1.0f);
     }
 
 
