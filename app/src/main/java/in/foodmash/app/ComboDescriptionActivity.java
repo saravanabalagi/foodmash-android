@@ -250,13 +250,6 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                 });
                 optionsLayout.addView(comboOptionsLayout);
             }
-
-            if (comboOption.isFromSameRestaurant()) {
-                for (int m = 0; m < comboOption.getComboOptionDishes().size(); m++)
-                    optionsLayout.getChildAt(m).findViewById(R.id.restaurant_layout).setVisibility(View.GONE);
-                ((TextView) currentComboFoodLayout.findViewById(R.id.restaurant_name)).setText(comboOption.getComboOptionDishes().get(0).getDish().getRestaurant().getName());
-                ((NetworkImageView) currentComboFoodLayout.findViewById(R.id.restaurant_logo)).setImageUrl(comboOption.getComboOptionDishes().get(0).getDish().getRestaurant().getLogo(),imageLoader);
-            } else currentComboFoodLayout.findViewById(R.id.restaurant_layout).setVisibility(View.GONE);
             layoutOrderTreeMap.put(comboOption.getPriority(), currentComboFoodLayout);
 
         }
