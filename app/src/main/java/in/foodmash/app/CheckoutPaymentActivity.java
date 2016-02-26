@@ -11,11 +11,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +46,6 @@ import java.util.Iterator;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
@@ -209,7 +206,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                         Animations.fadeOut(connectingLayout,500);
                         Animations.fadeIn(mainLayout,500);
                         Alerts.requestUnauthorisedAlert(CheckoutPaymentActivity.this);
-                        System.out.println(response.getString("error"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -229,7 +226,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(CheckoutPaymentActivity.this, onClickTryAgain);
                 else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutPaymentActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(CheckoutPaymentActivity.this);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
 
@@ -249,7 +246,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                         Animations.fadeOut(connectingLayout,500);
                         Animations.fadeIn(mainLayout,500);
                         Alerts.requestUnauthorisedAlert(CheckoutPaymentActivity.this);
-                        System.out.println(response.getString("error"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -271,7 +268,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                 else if (error instanceof NoConnectionError)
                     Alerts.internetConnectionErrorAlert(CheckoutPaymentActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(CheckoutPaymentActivity.this);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(connectingLayout, 500);

@@ -7,8 +7,6 @@ import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -138,7 +136,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                         Animations.fadeOut(connectingLayout,500);
                         Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(ForgotPasswordOtpActivity.this, "Invalid OTP", "We are unable to process the OTP you entered. Try Again!", "Okay");
-                        System.out.println("Error: " + response.getString("error"));
+                        Log.e("Success False", response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -158,7 +156,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ForgotPasswordOtpActivity.this, onClickTryAgain);
                 else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ForgotPasswordOtpActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(ForgotPasswordOtpActivity.this);
-                System.out.println("JSON Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(connectingLayout,500);
@@ -202,7 +200,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                         Animations.fadeOut(connectingLayout,500);
                         Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(ForgotPasswordOtpActivity.this, "Could not send OTP", "We are unable to send you OTP as the details you entered are invalid. Try Again!", "Okay");
-                        System.out.println("Error: " + response.getString("error"));
+                        Log.e("Success False", response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -222,7 +220,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ForgotPasswordOtpActivity.this, onClickTryAgain);
                 else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ForgotPasswordOtpActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(ForgotPasswordOtpActivity.this);
-                System.out.println("JSON Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(connectingLayout,500);

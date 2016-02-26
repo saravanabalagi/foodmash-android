@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -152,7 +153,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         registerRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations",getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                System.out.println("JSON Response: "+response);
                 intent = new Intent(SignupActivity.this, MainActivity.class);
                 try {
                     if (response.getBoolean("success")) {
@@ -172,7 +172,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         Animations.fadeOut(connectingLayout,500);
                         Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(SignupActivity.this,"Registration Invalid", "We are unable to sign you up. Please try again!","Okay");
-                        System.out.println("Error Details: " + response.getString("info"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -192,7 +192,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
                 else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(SignupActivity.this);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(connectingLayout,500);
@@ -219,12 +219,10 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                     dataJson.put("email",s.toString());
                     requestJson.put("data",dataJson);
                 } catch (JSONException e) { e.printStackTrace(); }
-                System.out.println("Request Json: "+requestJson);
                 checkEmailRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkEmail", requestJson, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            System.out.println("Email response: "+response);
                             isEmailValidationInProgress = false;
                             if(response.getBoolean("success")) {
                                 isEmailAvailable = true;
@@ -249,7 +247,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
                         else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
                         else Alerts.unknownErrorAlert(SignupActivity.this);
-                        System.out.println("Email response error: "+error);
+                        Log.e("Json Request","Email response error: "+error);
                         isEmailValidationInProgress = false;
                         setCancelOnImageView(emailValidate);
                         Animations.fadeOutAndFadeIn(emailProgressBar,emailValidate,500);
@@ -273,7 +271,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            System.out.println("Phone response: "+response);
                             if(response.getBoolean("success")) {
                                 isPhoneAvailable = true;
                                 setOkayOnImageView(phoneValidate);
@@ -297,7 +294,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
                         else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
                         else Alerts.unknownErrorAlert(SignupActivity.this);
-                        System.out.println("Phone response error: "+error);
+                        Log.e("Json Request","Phone response error: "+error);
                         isPhoneValidationInProgress = false;
                         setCancelOnImageView(phoneValidate);
                         Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);

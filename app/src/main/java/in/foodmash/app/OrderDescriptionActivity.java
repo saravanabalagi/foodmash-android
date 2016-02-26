@@ -6,12 +6,10 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
@@ -21,17 +19,13 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.NetworkImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Random;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
@@ -89,7 +83,6 @@ public class OrderDescriptionActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
                     if (response.getBoolean("success")) {
-                        System.out.println(response);
                         Animations.fadeOut(loadingLayout, 500);
                         Animations.fadeIn(mainLayout, 500);
                         JSONObject orderJson = response.getJSONObject("data");
@@ -119,7 +112,7 @@ public class OrderDescriptionActivity extends AppCompatActivity {
                         }
                     } else {
                         Alerts.requestUnauthorisedAlert(OrderDescriptionActivity.this);
-                        System.out.println(response.getString("error"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (Exception e) { e.printStackTrace(); }
             }
@@ -135,7 +128,7 @@ public class OrderDescriptionActivity extends AppCompatActivity {
                 if (error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(OrderDescriptionActivity.this, onClickTryAgain);
                 else if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(OrderDescriptionActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(OrderDescriptionActivity.this);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(loadingLayout, 500);

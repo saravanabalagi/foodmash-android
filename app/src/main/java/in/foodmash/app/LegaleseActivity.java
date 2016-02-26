@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Alerts;
@@ -66,10 +68,9 @@ public class LegaleseActivity extends AppCompatActivity {
                         String data = response.getString("data");
                         htmlContent.setText(Html.fromHtml(data));
                         title.setText(WordUtils.titleize(getStringFromLegalese(legalese)));
-                        System.out.println(data);
                     } else {
                         Alerts.requestUnauthorisedAlert(LegaleseActivity.this);
-                        System.out.println(response.getString("error"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -82,12 +83,10 @@ public class LegaleseActivity extends AppCompatActivity {
                 getSupportFragmentManager().executePendingTransactions();
                 ((VolleyFailureFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
                         .setJsonObjectRequest(legaleseRequest);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(fragmentContainer, 300);
-        System.out.println((signedIn)?JsonProvider.getStandardRequestJson(this):JsonProvider.getAnonymousRequestJson(this));
-        System.out.println(getString(R.string.api_root_path) + "/legalese/" + getStringFromLegalese(legalese));
         Swift.getInstance(this).addToRequestQueue(legaleseRequest);
     }
 

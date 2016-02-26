@@ -31,6 +31,8 @@ package in.foodmash.app.commons;
  base64
  ***************************************************************/
 
+import android.util.Log;
+
 /**
  * Base64 encoder/decoder.  Does not stream, so be careful with
  * using large amounts of data
@@ -151,27 +153,15 @@ public class Base64
         return dest;
     }
 
-    /**
-     *  A simple test that encodes and decodes the first commandline argument.
-     */
-    public static final void main(String[] args)
+    public static void main(String[] args)
     {
-        if (args.length != 1)
-        {
-            System.out.println("Usage: Base64 string");
-            System.exit(0);
-        }
-        try
-        {
+        if (args.length != 1) System.exit(0);
+        try {
             String e = Base64.encode(args[0].getBytes());
             String d = new String(Base64.decode(e));
-            System.out.println("Input   = '" + args[0] + "'");
-            System.out.println("Encoded = '" + e + "'");
-            System.out.println("Decoded = '" + d + "'");
-        }
-        catch (Exception x)
-        {
-            x.printStackTrace();
-        }
+            Log.i("Security","Input   = '" + args[0] + "'");
+            Log.i("Security","Encoded = '" + e + "'");
+            Log.i("Security","Decoded = '" + d + "'");
+        } catch (Exception e) { e.printStackTrace(); }
     }
 }

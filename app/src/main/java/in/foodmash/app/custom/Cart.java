@@ -1,5 +1,7 @@
 package in.foodmash.app.custom;
 
+import android.util.Log;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONArray;
@@ -46,9 +48,8 @@ public class Cart {
 
     public int addToCart(Combo combo) {
         timestamps.put(System.currentTimeMillis(),combo);
-        System.out.println("Combo Hash: "+combo.hashCode());
-        if(orders.containsKey(combo)) { System.out.println("Existing quantity: "+orders.get(combo)); orders.put(combo, orders.get(combo) + 1); System.out.println("Increasing quantity by 1");}
-        else { orders.put(combo, 1); System.out.println("Adding a new order"); }
+        if(orders.containsKey(combo)) orders.put(combo, orders.get(combo) + 1);
+        else orders.put(combo, 1);
         printOrdersContents();
         printTimestampsContents();
         return getCount(combo.getId());
@@ -116,15 +117,15 @@ public class Cart {
     }
 
     public void printTimestampsContents() {
-        System.out.println("Treemap contents: ");
+        Log.i("Cart","Treemap contents: ");
         for (TreeMap.Entry<Long, Combo> entry : timestamps.entrySet())
-            System.out.println("Timestamp: "+entry.getKey()+" Combo Hash: "+entry.getValue().hashCode() +" Combo ID: "+entry.getValue().getId());
+            Log.i("Cart","Timestamp: "+entry.getKey()+" Combo Hash: "+entry.getValue().hashCode() +" Combo ID: "+entry.getValue().getId());
     }
 
     public void printOrdersContents() {
-        System.out.println("Orders hashmap contents: ");
+        Log.i("Cart","Orders hashmap contents: ");
         for (HashMap.Entry<Combo, Integer> entry: orders.entrySet())
-            System.out.println("Combo Hash: "+entry.getKey().hashCode()+ " Quantity: "+entry.getValue()+" Contents: "+entry.getKey().getDishNames());
+            Log.i("Cart","Combo Hash: "+entry.getKey().hashCode()+ " Quantity: "+entry.getValue()+" Contents: "+entry.getKey().getDishNames());
     }
 
 }

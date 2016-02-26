@@ -10,20 +10,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
-import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
@@ -42,7 +38,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
@@ -110,8 +105,6 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
         }
 
         latLng = new LatLng(getIntent().getDoubleExtra("latitude", 0),getIntent().getDoubleExtra("longitude",0));
-        System.out.println("Latitude: " + latLng.latitude);
-        System.out.println("Longitude: " + latLng.longitude);
 
         areaList = new ArrayList<>();
         areaList.add("Kotturpuram");
@@ -235,7 +228,6 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
             requestJson.put("data",dataJson);
 
         } catch (JSONException e) { e.printStackTrace(); }
-        System.out.println(requestJson);
         return requestJson;
     }
 
@@ -254,7 +246,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
                         Animations.fadeOut(savingLayout,500);
                         Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(AddAddressActivity.this, "Address Invalid", "We are unable to process your Address Details. Try Again!", "Okay");
-                        System.out.println("Error: " + response.getString("error"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -274,7 +266,7 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddAddressActivity.this, onClickTryAgain);
                 else if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddAddressActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(AddAddressActivity.this);
-                System.out.println("JSON Error: " + error);
+                Log.e("Network",error.toString());
             }
         });
         Animations.fadeIn(savingLayout,500);

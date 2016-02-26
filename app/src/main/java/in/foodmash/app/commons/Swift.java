@@ -2,12 +2,12 @@ package in.foodmash.app.commons;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.LruCache;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
@@ -60,7 +60,7 @@ public class Swift {
                 10000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        System.out.println("Adding to request queue...!");
+        Log.i("Json Request","Adding to request queue...!");
         getRequestQueue().add(req);
     }
 
@@ -69,7 +69,7 @@ public class Swift {
                 timeoutInMs,
                 maxRetries,
                 backOffMultiplier));
-        System.out.println("Adding to request queue...!");
+        Log.i("Json Request","Adding to request queue...!");
         getRequestQueue().add(req);
     }
     public ImageLoader getImageLoader() {

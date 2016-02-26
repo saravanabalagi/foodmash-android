@@ -119,7 +119,6 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             if (c.getId()==comboId)
                 combo = c;
         if(combo==null) { Alerts.unknownErrorAlert(ComboDescriptionActivity.this); return; }
-        System.out.println(combo.toString());
 
         buy.setOnClickListener(this);
         imageLoader = Swift.getInstance(ComboDescriptionActivity.this).getImageLoader();

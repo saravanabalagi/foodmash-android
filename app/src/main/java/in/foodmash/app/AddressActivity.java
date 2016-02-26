@@ -6,11 +6,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -27,7 +25,6 @@ import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
@@ -146,7 +143,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                             if (error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddressActivity.this, onClickTryAgain);
                                             else if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this, onClickTryAgain);
                                             else Alerts.unknownErrorAlert(AddressActivity.this);
-                                            System.out.println("Response Error: " + error);
+                                            Log.e("Json Request Failed", error.toString());
                                         }
                                     });
                                     Animations.fadeIn(connectingLayout,500);
@@ -158,7 +155,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     } else {
                         Alerts.requestUnauthorisedAlert(AddressActivity.this);
-                        System.out.println(response.getString("error"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -174,7 +171,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddressActivity.this, onClickTryAgain);
                 if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(AddressActivity.this);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(loadingLayout, 500);

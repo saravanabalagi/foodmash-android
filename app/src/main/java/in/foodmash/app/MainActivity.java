@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -124,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("Executing onCreate");
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -224,9 +224,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                System.out.println(categorySelected);
-                System.out.println(sizeSelected);
-                System.out.println(preferenceSelected);
+                Log.i("Filters",categorySelected.toString());
+                Log.i("Filters",sizeSelected.toString());
+                Log.i("Filters",preferenceSelected.toString());
                 try {updateFillLayout(Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(MainActivity.this), Combo[].class))); }
                 catch (Exception e) { e.printStackTrace(); }
             }
@@ -238,18 +238,17 @@ public class MainActivity extends AppCompatActivity {
         getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                System.out.println(response);
                 try {
                     if (response.getBoolean("success")) {
                         if (snackbar!=null && snackbar.isShown()) snackbar.dismiss();
                         Animations.fadeOut(fragmentContainer,100);
-                        System.out.println(response.getJSONObject("data"));
+                        Log.i("Combos", response.getJSONObject("data").getJSONArray("combos").length() + " combos found");
                         String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
                         updateFillLayout(Arrays.asList(objectMapper.readValue(comboJsonArrayString, Combo[].class)));
                         Actions.cacheCombos(MainActivity.this, comboJsonArrayString);
                     } else {
                         Alerts.requestUnauthorisedAlert(MainActivity.this);
-                        System.out.println(response.getString("error"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -263,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().executePendingTransactions();
                 ((VolleyFailureFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
                         .setJsonObjectRequest(getCombosRequest);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
 
@@ -435,7 +434,6 @@ public class MainActivity extends AppCompatActivity {
             if(!sizeSelected.isEmpty() && !sizeSelected.contains(combo.getSize())) survived = false;
             if(!preferenceSelected.isEmpty() && !preferenceSelected.contains(combo.getLabel())) survived = false;
             if(survived) filteredComboList.add(combo);
-            System.out.println(combo.getCategory()+" "+combo.getSize()+" "+combo.getLabel()+" "+survived);
         }
         return filteredComboList;
     }

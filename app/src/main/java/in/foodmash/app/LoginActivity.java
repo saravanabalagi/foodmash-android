@@ -8,16 +8,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
@@ -130,7 +128,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path)+"/sessions",getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                System.out.println("JSON Response: "+response);
                 intent = new Intent(LoginActivity.this, MainActivity.class);
                 try {
                     if (response.getBoolean("success")) {
@@ -155,7 +152,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 "Invalid username or password",
                                 "We are unable to log you in with the entered credentials. Please try again!",
                                 "Okay");
-                        System.out.println("Error Details: " + response.getString("error"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -175,7 +172,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(LoginActivity.this, onClickTryAgain);
                 if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(LoginActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(LoginActivity.this);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(connectingLayout,500);

@@ -9,16 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -37,7 +34,6 @@ import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
@@ -164,7 +160,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
                         Animations.fadeOut(connectingLayout,500);
                         Animations.fadeIn(mainLayout,500);
                         Alerts.requestUnauthorisedAlert(ContactUsActivity.this);
-                        System.out.println(response.getString("error"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -184,7 +180,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
                 if(error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ContactUsActivity.this, onClickTryAgain);
                 else if(error instanceof NoConnectionError) Alerts.timeoutErrorAlert(ContactUsActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(ContactUsActivity.this);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(connectingLayout,500);
