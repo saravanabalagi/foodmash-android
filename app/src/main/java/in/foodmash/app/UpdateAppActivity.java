@@ -7,9 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Info;
-
 /**
  * Created by Zeke on Feb 22, 2016.
  */
@@ -49,7 +46,10 @@ public class UpdateAppActivity extends AppCompatActivity {
         findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(UpdateAppActivity.this, SelectLocationActivity.class));
+                Intent intent = new Intent(UpdateAppActivity.this, SplashActivity.class);
+                intent.putExtra("skip_update", true);
+                startActivity(intent);
+                finish();
             }
         });
 
