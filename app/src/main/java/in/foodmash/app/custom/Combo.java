@@ -120,10 +120,10 @@ public class Combo {
     }
     @JsonProperty public void setCategory(String category) {
         switch (category) {
-            case "regular": this.category = Category.REGULAR; break;
-            case "budget": this.category = Category.BUDGET; break;
-            case "corporate": this.category = Category.CORPORATE; break;
-            case "health": this.category = Category.HEALTH; break;
+            case "Regular": this.category = Category.REGULAR; break;
+            case "Budget": this.category = Category.BUDGET; break;
+            case "Corporate": this.category = Category.CORPORATE; break;
+            case "Health": this.category = Category.HEALTH; break;
         }
     }
     @JsonProperty public void setName(String name) { this.name = name; }
