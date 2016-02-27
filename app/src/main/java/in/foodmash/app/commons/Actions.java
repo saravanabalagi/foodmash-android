@@ -29,20 +29,24 @@ public class Actions {
         editor.apply();
     }
 
-    public static void cachePackagingCentreId(Context context, int id) {
+    public static void cacheLocationDetails(Context context, String cityName, String areaName, int id) {
         int oldPackagingCenterId = Info.getPackagingCentreId(context);
-        if(id != oldPackagingCenterId) cacheCombos(context, null);
+        if(oldPackagingCenterId != -1 && id != oldPackagingCenterId) cacheCombos(context, null);
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("city_name", cityName);
+        editor.putString("area_name", areaName);
         editor.putInt("packaging_centre_id", id);
         editor.commit();
     }
 
-    public static void cacheAreaName(Context context, String areaName) {
+    public static void cacheCities(Context context, String cityJsonArrayString) {
+        if(Info.getCityJsonArrayString(context)!= null
+                && Info.getCityJsonArrayString(context).equals(cityJsonArrayString)) return;
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("area_name", areaName);
-        editor.commit();
+        editor.putString("city_list", cityJsonArrayString);
+        editor.apply();
     }
 
     public static void cacheCombos(Context context, String comboJsonArrayString) {

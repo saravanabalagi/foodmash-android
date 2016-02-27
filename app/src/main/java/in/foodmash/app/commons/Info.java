@@ -18,6 +18,16 @@ public class Info {
         return sharedPreferences.getString("area_name", null);
     }
 
+    public static String getCityName(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
+        return sharedPreferences.getString("city_name", null);
+    }
+
+    public static String getCityJsonArrayString(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
+        return sharedPreferences.getString("city_list", null);
+    }
+
     public static String getComboJsonArrayString(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         return sharedPreferences.getString("combo_list", null);

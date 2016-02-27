@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.City;
@@ -103,7 +104,8 @@ public class SplashActivity extends AppCompatActivity {
                     if(response.getBoolean("success")) {
                         ObjectMapper objectMapper = new ObjectMapper();
                         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-                        cities = Arrays.asList(objectMapper.readValue(response.getJSONArray("data").toString(), City[].class));
+                        Actions.cacheCities(SplashActivity.this,response.getJSONArray("data").toString());
+                        cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(SplashActivity.this), City[].class));
                         for (City city : cities) citiesArrayList.add(city.getName());
                         ArrayAdapter citySpinnerAdapter = new ArrayAdapter<>(
                                 SplashActivity.this,
@@ -133,10 +135,11 @@ public class SplashActivity extends AppCompatActivity {
                             @Override public void onNothingSelected(AdapterView<?> parent) { }
                             @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                 if (position==0) return;
+                                String cityName = cities.get(citySpinner.getSelectedItemPosition()).getName();
+                                String areaName = ((TextView) view).getText().toString();
                                 int packagingCentreId = cities.get(citySpinner.getSelectedItemPosition()).getPackagingCentreId(((TextView) view).getText().toString());
                                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                                Actions.cachePackagingCentreId(SplashActivity.this,packagingCentreId);
-                                Actions.cacheAreaName(SplashActivity.this,((TextView) view).getText().toString());
+                                Actions.cacheLocationDetails(SplashActivity.this,cityName,areaName,packagingCentreId);
                                 startActivity(intent);
                                 finish();
                             }
