@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/phone_lorem_ipsum"
-            android:id="@+id/phone"
+            android:id="@+id/contact_no"
             android:textSize="14sp"
             android:padding="5dp" />
     </LinearLayout>

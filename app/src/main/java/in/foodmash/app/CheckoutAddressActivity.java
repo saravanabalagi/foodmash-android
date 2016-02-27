@@ -172,7 +172,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                                     addressJson.getString("pincode");
                             ((TextView) addressLayout.findViewById(R.id.name)).setText(addressJson.getString("name"));
                             ((TextView) addressLayout.findViewById(R.id.address)).setText(address);
-                            ((TextView) addressLayout.findViewById(R.id.phone)).setText(((addressJson.getString("phone").length() == 10) ? "+91 " : "+91 44 ") + addressJson.getString("phone"));
+                            ((TextView) addressLayout.findViewById(R.id.contact_no)).setText(((addressJson.getString("phone").length() == 10) ? "+91 " : "+91 44 ") + addressJson.getString("phone"));
                             if (addressJson.getBoolean("primary")) {
                                 addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
                                 addressId = addressJson.getInt("id");

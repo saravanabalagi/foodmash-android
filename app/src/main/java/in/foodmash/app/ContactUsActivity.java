@@ -107,11 +107,11 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         issueValidate = (ImageView) findViewById(R.id.issue_validate);
         descriptionValidate = (ImageView) findViewById(R.id.description_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
-        phoneValidate = (ImageView) findViewById(R.id.phone_validate);
+        phoneValidate = (ImageView) findViewById(R.id.contact_validate);
 
         description = (EditText) findViewById(R.id.description); description.addTextChangedListener(this);
         email = (EditText) findViewById(R.id.email); email.addTextChangedListener(this);
-        phone = (EditText) findViewById(R.id.phone); phone.addTextChangedListener(this);
+        phone = (EditText) findViewById(R.id.contact_no); phone.addTextChangedListener(this);
         issue = (AutoCompleteTextView) findViewById(R.id.issue); issue.addTextChangedListener(this);
         ArrayAdapter<String> issueAdapter = new ArrayAdapter<String>(this,android.R.layout.select_dialog_item,issueList);
         issue.setAdapter(issueAdapter);

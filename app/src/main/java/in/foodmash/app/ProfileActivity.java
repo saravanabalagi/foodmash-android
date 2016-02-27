@@ -89,7 +89,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         nameValidate = (ImageView) findViewById(R.id.name_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
-        phoneValidate = (ImageView) findViewById(R.id.phone_validate);
+        phoneValidate = (ImageView) findViewById(R.id.contact_validate);
 
         name = (EditText) findViewById(R.id.name); name.addTextChangedListener(this);
         dob = (EditText) findViewById(R.id.dob); dob.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +115,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
         email = (EditText) findViewById(R.id.email_or_phone); email.addTextChangedListener(this);
-        phone = (EditText) findViewById(R.id.phone); phone.addTextChangedListener(this);
+        phone = (EditText) findViewById(R.id.contact_no); phone.addTextChangedListener(this);
         promotionOffers = (Switch) findViewById(R.id.receive_promo); promotionOffers.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

@@ -71,9 +71,9 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         } catch (Exception e) { e.printStackTrace(); }
         forgot.setOnClickListener(this);
 
-        phoneValidate = (ImageView) findViewById(R.id.phone_validate);
+        phoneValidate = (ImageView) findViewById(R.id.contact_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
-        phone = (EditText) findViewById(R.id.phone); phone.setText(Info.getPhone(ForgotPasswordActivity.this)); phone.addTextChangedListener(this);
+        phone = (EditText) findViewById(R.id.contact_no); phone.setText(Info.getPhone(ForgotPasswordActivity.this)); phone.addTextChangedListener(this);
         email = (EditText) findViewById(R.id.email_or_phone); email.setText(Info.getEmail(ForgotPasswordActivity.this)); email.addTextChangedListener(this);
 
         otpMethodRadioGroup = (RadioGroup) findViewById(R.id.otp_method_radio_group); otpMethodRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
