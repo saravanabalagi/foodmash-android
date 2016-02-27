@@ -12,12 +12,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
-import java.util.List;
-
 import in.foodmash.app.LoginActivity;
 import in.foodmash.app.R;
 import in.foodmash.app.custom.Cart;
-import in.foodmash.app.custom.Combo;
 
 /**
  * Created by Zeke on Sep 20 2015.
@@ -38,6 +35,13 @@ public class Actions {
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("packaging_centre_id", id);
+        editor.commit();
+    }
+
+    public static void cacheAreaName(Context context, String areaName) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("area_name", areaName);
         editor.commit();
     }
 

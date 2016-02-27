@@ -128,7 +128,8 @@
     <string name="reset">Reset</string>
     <string name="plus">+</string>
     <string name="minus">-</string>
-    <string name="open_navbar">Open navbar</string>
-    <string name="close_navbar">Close navbar</string>
+    <string name="open_navbar">Open Navbar</string>
+    <string name="close_navbar">Close Navbar</string>
     <string name="menu_delete_cart">Delete Cart</string>
+    <string name="scrollable_content">scrollable_content</string>
 </resources>

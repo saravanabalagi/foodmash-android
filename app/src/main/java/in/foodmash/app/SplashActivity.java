@@ -136,6 +136,7 @@ public class SplashActivity extends AppCompatActivity {
                                 int packagingCentreId = cities.get(citySpinner.getSelectedItemPosition()).getPackagingCentreId(((TextView) view).getText().toString());
                                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                                 Actions.cachePackagingCentreId(SplashActivity.this,packagingCentreId);
+                                Actions.cacheAreaName(SplashActivity.this,((TextView) view).getText().toString());
                                 startActivity(intent);
                                 finish();
                             }

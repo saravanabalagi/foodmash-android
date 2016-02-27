@@ -146,6 +146,9 @@ public class MainActivity extends AppCompatActivity {
             @Override public boolean onSingleTapUp(MotionEvent e) { return true; } });
         Filters filters = new Filters();
 
+        filters.addHeader("Deliver to");
+        filters.addFilter(Info.getAreaName(this), R.drawable.svg_marker_filled);
+
         filters.addHeader("Type");
         filters.addFilter("Regular", R.drawable.svg_hashtag);
         filters.addFilter("Budget", R.drawable.svg_coffee);
@@ -190,21 +193,23 @@ public class MainActivity extends AppCompatActivity {
                 View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
                 if(child!=null && gestureDetector.onTouchEvent(e)) {
                     switch(recyclerView.getChildAdapterPosition(child)) {
-                        case 1: makeActive(child, Combo.Category.REGULAR); break;
-                        case 2: makeActive(child, Combo.Category.BUDGET); break;
-                        case 3: makeActive(child, Combo.Category.CORPORATE); break;
-                        case 4: makeActive(child, Combo.Category.HEALTH); break;
+                        case 1: startActivity(new Intent(MainActivity.this, SplashActivity.class));
 
-                        case 6: makeActive(child, Combo.Size.MICRO); break;
-                        case 7: makeActive(child, Combo.Size.MEDIUM); break;
-                        case 8: makeActive(child, Combo.Size.MEGA); break;
+                        case 3: makeActive(child, Combo.Category.REGULAR); break;
+                        case 4: makeActive(child, Combo.Category.BUDGET); break;
+                        case 5: makeActive(child, Combo.Category.CORPORATE); break;
+                        case 6: makeActive(child, Combo.Category.HEALTH); break;
 
-                        case 10: makeActive(child, Dish.Label.VEG); break;
-                        case 11: makeActive(child, Dish.Label.EGG); break;
-                        case 12: makeActive(child, Dish.Label.NON_VEG); break;
+                        case 8: makeActive(child, Combo.Size.MICRO); break;
+                        case 9: makeActive(child, Combo.Size.MEDIUM); break;
+                        case 10: makeActive(child, Combo.Size.MEGA); break;
 
-                        case 14: sortPriceLowToHigh = true; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(15).itemView.setActivated(false); } break;
-                        case 15: sortPriceLowToHigh = false; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(14).itemView.setActivated(false); } break;
+                        case 12: makeActive(child, Dish.Label.VEG); break;
+                        case 13: makeActive(child, Dish.Label.EGG); break;
+                        case 14: makeActive(child, Dish.Label.NON_VEG); break;
+
+                        case 16: sortPriceLowToHigh = true; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(15).itemView.setActivated(false); } break;
+                        case 17: sortPriceLowToHigh = false; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(14).itemView.setActivated(false); } break;
                     }
                 }
                 return false;
