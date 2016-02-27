@@ -13,6 +13,11 @@ public class Info {
         return sharedPreferences.getInt("packaging_centre_id",-1);
     }
 
+    public static int getAreaId(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache",0);
+        return sharedPreferences.getInt("area_id",-1);
+    }
+
     public static String getAreaName(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         return sharedPreferences.getString("area_name", null);

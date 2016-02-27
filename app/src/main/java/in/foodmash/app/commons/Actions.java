@@ -29,14 +29,15 @@ public class Actions {
         editor.apply();
     }
 
-    public static void cacheLocationDetails(Context context, String cityName, String areaName, int id) {
+    public static void cacheLocationDetails(Context context, String cityName, String areaName, int areaId,int packagingCenterId) {
         int oldPackagingCenterId = Info.getPackagingCentreId(context);
-        if(oldPackagingCenterId != -1 && id != oldPackagingCenterId) cacheCombos(context, null);
+        if(oldPackagingCenterId != -1 && packagingCenterId != oldPackagingCenterId) cacheCombos(context, null);
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("city_name", cityName);
         editor.putString("area_name", areaName);
-        editor.putInt("packaging_centre_id", id);
+        editor.putInt("area_id", areaId);
+        editor.putInt("packaging_centre_id", packagingCenterId);
         editor.commit();
     }
 

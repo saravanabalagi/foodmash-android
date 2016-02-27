@@ -138,8 +138,9 @@ public class SplashActivity extends AppCompatActivity {
                                 String cityName = cities.get(citySpinner.getSelectedItemPosition()).getName();
                                 String areaName = ((TextView) view).getText().toString();
                                 int packagingCentreId = cities.get(citySpinner.getSelectedItemPosition()).getPackagingCentreId(((TextView) view).getText().toString());
+                                int areaId = cities.get(citySpinner.getSelectedItemPosition()).getAreas().get(position-1).getId();
                                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                                Actions.cacheLocationDetails(SplashActivity.this,cityName,areaName,packagingCentreId);
+                                Actions.cacheLocationDetails(SplashActivity.this,cityName,areaName,areaId,packagingCentreId);
                                 startActivity(intent);
                                 finish();
                             }
