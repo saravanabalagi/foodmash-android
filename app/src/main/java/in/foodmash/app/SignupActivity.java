@@ -53,6 +53,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     @Bind(R.id.refund_policy) LinearLayout refundPolicy;
 
     private Intent intent;
+    private boolean fromCart;
     private LegaleseActivity.Legalese legalese;
 
     private EditText name;
@@ -91,6 +92,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { e.printStackTrace(); }
 
+        fromCart = getIntent().getBooleanExtra("from_cart", false);
         create.setOnClickListener(this);
 
         nameValidate = (ImageView) findViewById(R.id.name_validate);
@@ -153,7 +155,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         registerRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations",getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                intent = new Intent(SignupActivity.this, MainActivity.class);
+                intent = new Intent(SignupActivity.this, LoginActivity.class);
+                if(fromCart) intent.putExtra("from_cart", true);
                 try {
                     if (response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
@@ -197,7 +200,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         });
         Animations.fadeIn(connectingLayout,500);
         Animations.fadeOut(mainLayout, 500);
-        Swift.getInstance(SignupActivity.this).addToRequestQueue(registerRequest);
+        Swift.getInstance(SignupActivity.this).addToRequestQueue(registerRequest,15000,3,1.5f);
     }
 
     private void setCancelOnImageView(ImageView imageView) { imageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); imageView.setImageResource(R.drawable.svg_close); }

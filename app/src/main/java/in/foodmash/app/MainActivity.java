@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_order_history: intent = new Intent(this, OrderHistoryActivity.class); startActivity(intent); return true;
             case R.id.menu_contact_us: intent = new Intent(this, ContactUsActivity.class); startActivity(intent); return true;
             case R.id.menu_log_out: Actions.logout(MainActivity.this); return true;
+            case R.id.menu_login: intent = new Intent(this, LoginActivity.class); startActivity(intent); return true;
             case R.id.menu_cart: intent = new Intent(this, CartActivity.class); startActivity(intent); return true;
             default: return super.onOptionsItemSelected(item);
         }

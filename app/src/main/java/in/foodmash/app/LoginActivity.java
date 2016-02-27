@@ -4,7 +4,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -54,7 +56,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Bind(R.id.register) TextView register;
     @Bind(R.id.forgot_password) TextView forgotPassword;
 
+    private boolean fromCart = false;
     private boolean isEmail = true;
+    private Snackbar snackbar;
+
     private EditText email;
     private EditText password;
     private EditText phonePrefix;
@@ -84,6 +89,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        fromCart = getIntent().getBooleanExtra("from_cart", false);
+        if(fromCart) {
+            snackbar = Snackbar.make(mainLayout, "Login to continue", Snackbar.LENGTH_LONG)
+                    .setAction("Okay", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (snackbar != null && snackbar.isShown())
+                                snackbar.dismiss();
+                        }
+                    });
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    snackbar.show();
+                }
+            }, 1000);
+        }
 
         register.setOnClickListener(this);
         forgotPassword.setOnClickListener(this);
@@ -128,7 +152,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path)+"/sessions",getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                intent = new Intent(LoginActivity.this, MainActivity.class);
+                if(fromCart) intent = new Intent(LoginActivity.this, CheckoutAddressActivity.class);
+                else intent = new Intent(LoginActivity.this, MainActivity.class);
                 try {
                     if (response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");

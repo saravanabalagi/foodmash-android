@@ -20,6 +20,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
 
@@ -117,7 +118,12 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.buy:
                 if(cart.getCount()==0) Alerts.commonErrorAlert(CartActivity.this,"Empty Cart","Your cart is empty. Add some combos and we'll proceed!","Okay");
-                else { intent = new Intent(this, CheckoutAddressActivity.class); startActivity(intent); }
+                else if(Info.isLoggedIn(this)) startActivity(new Intent(CartActivity.this, CheckoutAddressActivity.class));
+                else {
+                    Intent intent = new Intent(CartActivity.this, LoginActivity.class);
+                    intent.putExtra("from_cart", true);
+                    startActivity(intent);
+                }
                 break;
         }
     }
