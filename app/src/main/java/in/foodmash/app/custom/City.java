@@ -29,4 +29,10 @@ public class City {
     public void setName(String name) { this.name = name; }
     public ArrayList<Area> getAreas() { return areas; }
     public void setAreas(ArrayList<Area> areas) { this.areas = areas; }
+    public int indexOf(int areaId) {
+        for (int i = 0; i<areas.size(); i++)
+            if(areas.get(i).getId()==areaId)
+                return i;
+        return -1;
+    }
 }

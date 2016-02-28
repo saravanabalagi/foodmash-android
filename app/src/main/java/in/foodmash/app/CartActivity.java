@@ -23,6 +23,7 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
+import in.foodmash.app.utils.NumberUtils;
 
 /**
  * Created by Zeke on Jul 19 2015.
@@ -60,7 +61,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                             handler.postDelayed(new Runnable() {
                                 @Override public void run() {
                                     fillLayout.removeViewAt(0); } }, i*500);
-                        total.setText(cart.getTotal());
+                        total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
                         Animations.fadeIn(emptyCartLayout,500);
                     }
                 }).setNegativeButton("No, don't remove", new DialogInterface.OnClickListener() {
@@ -86,7 +87,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
         emptyCartLayout = (LinearLayout) findViewById(R.id.empty_cart_layout);
 
-        total.setText(cart.getTotal());
+        total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
         if(cart.getCount()>0) emptyCartLayout.setVisibility(View.GONE);
         for(final HashMap.Entry<Combo,Integer> order: cart.getOrders().entrySet()){
             final Combo combo = order.getKey();
@@ -99,7 +100,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 @Override public void onClick(View v) {
                     ((TextView) comboLayout.findViewById(R.id.count)).setText(String.valueOf(cart.addToCart(combo)));
                     ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.calculatePrice() * order.getValue()));
-                    total.setText(cart.getTotal());
+                    total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
             }});
             comboLayout.findViewById(R.id.minus).setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
@@ -107,7 +108,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                     if(cart.getCount(combo.getId())==0) fillLayout.removeView(comboLayout);
                     if(cart.getCount()==0) Animations.fadeIn(emptyCartLayout, 500);
                     ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.calculatePrice() * order.getValue()));
-                    total.setText(cart.getTotal());
+                    total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
             }});
             fillLayout.addView(comboLayout);
         }

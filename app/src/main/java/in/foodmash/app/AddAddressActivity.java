@@ -2,7 +2,6 @@ package in.foodmash.app;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,14 +11,14 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.ScrollView;
-import android.widget.Switch;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
@@ -27,13 +26,16 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.Bind;
@@ -43,48 +45,44 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.custom.Address;
+import in.foodmash.app.custom.City;
 
 /**
  * Created by Zeke on Aug 08 2015.
  */
-public class AddAddressActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
+public class AddAddressActivity extends AppCompatActivity implements TextWatcher {
 
     @Bind(R.id.save) FloatingActionButton save;
     @Bind(R.id.toolbar) Toolbar toolbar;
+
+    @Bind(R.id.name_validate) ImageView nameValidate;
+    @Bind(R.id.address_line_1_validate) ImageView addressLine1Validate;
+    @Bind(R.id.address_line_2_validate) ImageView addressLine2Validate;
+    @Bind(R.id.contact_validate) ImageView contactValidate;
+
+    @Bind(R.id.saving_layout) LinearLayout savingLayout;
+    @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.area_city_spinner_layout) LinearLayout areaCitySpinnerLayout;
+
+    @Bind(R.id.name) EditText name;
+    @Bind(R.id.line1) EditText line1;
+    @Bind(R.id.line2) EditText line2;
+    @Bind(R.id.contact_no) EditText contactNo;
+    @Bind(R.id.locked_area_city) EditText lockedAreaCity;
+
+    @Bind(R.id.area) Spinner area;
+    @Bind(R.id.city) Spinner city;
+
+    private ArrayList<String> citiesArrayList = new ArrayList<>();
+    private List<City> cities;
+    private Address address;
 
     private Intent intent;
     private LatLng latLng;
     private boolean edit = false;
     private boolean cart = false;
-    private JSONObject jsonObject;
     private JsonObjectRequest addAddressRequest;
-
-    private RadioGroup phoneRadioGroup;
-
-    private EditText name;
-    private EditText addressLine1;
-    private EditText addressLine2;
-    private EditText pincode;
-    private EditText city;
-    private EditText phone;
-    private EditText landline;
-    private AutoCompleteTextView area;
-    private Switch primaryAddress;
-    private int id;
-
-    private ImageView nameValidate;
-    private ImageView addressLine1Validate;
-    private ImageView addressLine2Validate;
-    private ImageView pincodeValidate;
-    private ImageView areaValidate;
-    private ImageView phoneValidate;
-    private ImageView landlineValidate;
-
-    private ArrayList<String> areaList;
-    private LinearLayout mobileLayout;
-    private LinearLayout landlineLayout;
-    private LinearLayout savingLayout;
-    private ScrollView mainLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,138 +96,130 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { e.printStackTrace(); }
 
+        save.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { if (isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(AddAddressActivity.this); } });
         cart = getIntent().getBooleanExtra("cart",false);
+        latLng = new LatLng(getIntent().getDoubleExtra("latitude", 0),getIntent().getDoubleExtra("longitude",0));
+        address = new Address();
+
         if(getIntent().getBooleanExtra("edit",false)) {
-            try { jsonObject = new JSONObject(getIntent().getStringExtra("json")); edit = true; }
-            catch (JSONException e) { e.printStackTrace(); }
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+            try {
+                address = objectMapper.readValue(getIntent().getStringExtra("json"),Address.class);
+                cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(this), City[].class));
+                edit = true;
+            }
+            catch (Exception e) { e.printStackTrace(); }
         }
 
-        latLng = new LatLng(getIntent().getDoubleExtra("latitude", 0),getIntent().getDoubleExtra("longitude",0));
+        if(!cart) {
+            lockedAreaCity.setText(null);
+            lockedAreaCity.setVisibility(View.GONE);
 
-        areaList = new ArrayList<>();
-        areaList.add("Kotturpuram");
-        areaList.add("RA Puram");
-        areaList.add("Nandanam");
+            city = (Spinner) findViewById(R.id.city);
+            area = (Spinner) findViewById(R.id.area);
 
-        savingLayout = (LinearLayout) findViewById(R.id.saving_layout);
-        mainLayout = (ScrollView) findViewById(R.id.main_layout);
-
-        save.setOnClickListener(this);
-        mobileLayout = (LinearLayout) findViewById(R.id.mobile_layout);
-        landlineLayout = (LinearLayout) findViewById(R.id.landline_layout);
-
-        nameValidate = (ImageView) findViewById(R.id.name_validate);
-        addressLine1Validate = (ImageView) findViewById(R.id.address_line_1_validate);
-        addressLine2Validate = (ImageView) findViewById(R.id.address_line_2_validate);
-        pincodeValidate = (ImageView) findViewById(R.id.pincode_validate);
-        areaValidate = (ImageView) findViewById(R.id.area_validate);
-        phoneValidate = (ImageView) findViewById(R.id.phone_validate);
-        landlineValidate = (ImageView) findViewById(R.id.landline_validate);
-
-        name = (EditText) findViewById(R.id.name); name.addTextChangedListener(this);
-        pincode = (EditText) findViewById(R.id.pincode); pincode.addTextChangedListener(this);
-        addressLine1 = (EditText) findViewById(R.id.address_line_1); addressLine1.addTextChangedListener(this);
-        addressLine2 = (EditText) findViewById(R.id.address_line_2); addressLine2.addTextChangedListener(this);
-        city = (EditText) findViewById(R.id.city);
-        phone = (EditText) findViewById(R.id.phone); if(!edit) phone.setText(Info.getPhone(AddAddressActivity.this));  phone.addTextChangedListener(this);
-        landline = (EditText) findViewById(R.id.landline); landline.addTextChangedListener(this);
-        primaryAddress = (Switch) findViewById(R.id.primary_address);
-        area = (AutoCompleteTextView) findViewById(R.id.area);
-        ArrayAdapter<String> areaAdapter = new ArrayAdapter<>(this,android.R.layout.select_dialog_item,areaList);
-        area.setAdapter(areaAdapter);
-        area.setThreshold(1);
-        area.addTextChangedListener(this);
-
-
-        phoneRadioGroup = (RadioGroup) findViewById(R.id.phone_radio_group); phoneRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.mobile_radio: Animations.fadeOutAndFadeIn(landlineLayout, mobileLayout, 500); break;
-                    case R.id.landline_radio: Animations.fadeOutAndFadeIn(mobileLayout,landlineLayout,500); break;
+            for (City city : cities) citiesArrayList.add(city.getName());
+            ArrayAdapter cityAdapter = new ArrayAdapter<>(
+                    AddAddressActivity.this,
+                    R.layout.spinner_item,
+                    citiesArrayList);
+            cityAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            city.setAdapter(cityAdapter);
+            city.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override public void onNothingSelected(AdapterView<?> parent) { }
+                @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    ArrayAdapter areaAdapter = new ArrayAdapter<>(
+                            AddAddressActivity.this,
+                            R.layout.spinner_item,
+                            addStringAsFirstItem(cities.get(position).getAreaStringArrayList(),"Area"));
+                    areaAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                    area.setAdapter(areaAdapter);
                 }
-            }
-        });
+            });
+
+            ArrayAdapter areaAdapter = new ArrayAdapter<>(
+                    AddAddressActivity.this,
+                    R.layout.spinner_item,
+                    addStringAsFirstItem(cities.get(0).getAreaStringArrayList(),"Area"));
+            areaAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            area.setAdapter(areaAdapter);
+            area.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override public void onNothingSelected(AdapterView<?> parent) { }
+                @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (position==0) return;
+                    int areaId = cities.get(city.getSelectedItemPosition()).getAreas().get(position-1).getId();
+                    address.setAreaId(areaId);
+                }
+            });
+        } else {
+            areaCitySpinnerLayout.setVisibility(View.GONE);
+            String areaCityString = Info.getAreaName(this) + ", " + Info.getCityName(this);
+            lockedAreaCity.setText(areaCityString);
+            if(edit) address.setAreaId(Info.getAreaId(this));
+        }
 
         if(edit) {
-            try {
-                id = jsonObject.getInt("id");
-                JSONObject addressJson = jsonObject.getJSONObject("address");
-                name.setText(jsonObject.getString("name"));
-                pincode.setText(addressJson.getString("pincode"));
-                addressLine1.setText(addressJson.getString("line1"));
-                addressLine2.setText(addressJson.getString("line2"));
-                city.setText(addressJson.getString("city"));
-                area.setText(addressJson.getString("area"));
-                primaryAddress.setChecked(jsonObject.getBoolean("primary"));
-                if(jsonObject.getString("phone").length()==10) phone.setText(jsonObject.getString("phone"));
-                else { landline.setText(jsonObject.getString("phone")); phoneRadioGroup.check(R.id.landline_radio); Animations.fadeOutAndFadeIn(mobileLayout,landlineLayout,0); }
-            } catch (JSONException e) { e.printStackTrace(); }
+            name.setText(address.getName());
+            line1.setText(address.getLine1());
+            line2.setText(address.getLine2());
+            contactNo.setText(address.getContactNo());
+            if(!cart) {
+                int areaId = address.getId();
+                int cityPos = -1;
+                for(int i=0;i<cities.size();i++) if (cities.get(i).indexOf(areaId)!=-1) cityPos=i;
+                int areaPos = cities.get(cityPos).indexOf(areaId);
+                city.setSelection(cityPos, true);
+                area.setSelection(areaPos, true);
+            }
         } else {
             try {
                 Geocoder geocoder = new Geocoder(this);
-                List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                if(addresses.get(0)!=null) {
-                        if(addresses.get(0).getPostalCode().length()==6)
-                            pincode.setText(addresses.get(0).getPostalCode());
-                        addressLine2.setText(addresses.get(0).getAddressLine(0));
+                List<android.location.Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                if(addresses.size()>0 && addresses.get(0)!=null) {
+                        line1.setText(addresses.get(0).getAddressLine(0));
+                        line2.setText(addresses.get(0).getAddressLine(1));
                     }
             } catch (Exception e) { e.printStackTrace(); }
         }
     }
 
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.save: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(AddAddressActivity.this); break;
-        }
-    }
-
     public JSONObject getRequestJson() {
 
-        JSONObject requestJson = new JSONObject();
-        String nameVal = name.getText().toString().trim();
-        String addressLine1Temp = addressLine1.getText().toString().trim();
-        if(addressLine1Temp.charAt(addressLine1Temp.length()-1)==',')
-            addressLine1.setText(addressLine1Temp.substring(0,addressLine1Temp.length()-1));
-        String addressVal1 = addressLine1.getText().toString().trim();
-        String addressLine2Temp = addressLine2.getText().toString().trim();
-        if(addressLine2Temp.charAt(addressLine2Temp.length() - 1)==',')
-            addressLine2.setText(addressLine2Temp.substring(0,addressLine2Temp.length()-1));
-        String addressVal2 = addressLine2.getText().toString().trim();
-        String areaVal = area.getText().toString().trim();
-        String cityVal = city.getText().toString().trim();
-        String pincodeVal = pincode.getText().toString().trim();
-        String phoneVal = (phoneRadioGroup.getCheckedRadioButtonId()==R.id.mobile_radio)?phone.getText().toString().trim():landline.getText().toString().trim();
-        boolean primaryAddressVal = primaryAddress.isChecked();
+
+        String line1Temp = line1.getText().toString().trim();
+        if(line1Temp.charAt(line1Temp.length()-1)==',') {
+            line1.setText(line1Temp.substring(0,line1Temp.length()-1));
+        }
+        String line2Temp = line2.getText().toString().trim();
+        if(line2Temp.charAt(line2Temp.length() - 1)==',') {
+            line2.setText(line2Temp.substring(0,line2Temp.length()-1));
+        }
+
+        address.setName(name.getText().toString().trim());
+        address.setLine1(line1.getText().toString().trim());
+        address.setLine2(line2.getText().toString().trim());
+        address.setContactNo(contactNo.getText().toString().trim());
+        address.setLatitude(latLng.latitude);
+        address.setLongitude(latLng.longitude);
+
+        if(cart) address.setAreaId(Info.getAreaId(this));
+        else address.setAreaId(cities.get(city.getSelectedItemPosition()).getAreas().get(area.getSelectedItemPosition()-1).getId());
+
+        JSONObject requestJson = JsonProvider.getStandardRequestJson(AddAddressActivity.this);
         try {
-
-            HashMap<String,String> addressHashMap = new HashMap<>();
-            addressHashMap.put("line1", addressVal1);
-            addressHashMap.put("line2", addressVal2);
-            addressHashMap.put("area", areaVal);
-            addressHashMap.put("city", cityVal);
-            addressHashMap.put("pincode", pincodeVal);
-            JSONObject addressJson = new JSONObject(addressHashMap);
-
-            HashMap<String,Double> geolocationHashMap = new HashMap<>();
-            geolocationHashMap.put("latitude",latLng.latitude);
-            geolocationHashMap.put("longitude",latLng.longitude);
-            JSONObject geolocationJson = new JSONObject(geolocationHashMap);
-
-            JSONObject dataJson = new JSONObject();
-            dataJson.put("name", nameVal);
-            dataJson.put("address", addressJson);
-            dataJson.put("geolocation", geolocationJson);
-            dataJson.put("phone", phoneVal);
-            dataJson.put("primary", primaryAddressVal);
-            if(edit) dataJson.put("id",id);
-
-            requestJson = JsonProvider.getStandardRequestJson(AddAddressActivity.this);
-            requestJson.put("data",dataJson);
-
-        } catch (JSONException e) { e.printStackTrace(); }
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+            if(edit) requestJson.put("data", new JSONObject(objectMapper.writeValueAsString(address)));
+            else {
+                objectMapper.addMixIn(Address.class, IgnoreIdMixin.class);
+                requestJson.put("data", new JSONObject(objectMapper.writeValueAsString(address)));
+            }
+        } catch (Exception e) { e.printStackTrace(); }
         return requestJson;
     }
+
+
 
     private void makeJsonRequest() {
         addAddressRequest = new JsonObjectRequest((edit)?Request.Method.PATCH:Request.Method.POST, getString(R.string.api_root_path) + ((edit)?"/delivery_addresses":"/delivery_addresses/create"), getRequestJson(), new Response.Listener<JSONObject>() {
@@ -278,23 +268,30 @@ public class AddAddressActivity extends AppCompatActivity implements View.OnClic
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
     @Override public void afterTextChanged(Editable s) {
         if(s==name.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(nameValidate, 500); else Animations.fadeOut(nameValidate,500);}
-        else if(s==addressLine1.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(addressLine1Validate, 500); else Animations.fadeOut(addressLine1Validate,500);}
-        else if(s==addressLine2.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(addressLine2Validate, 500); else Animations.fadeOut(addressLine2Validate,500);}
-        else if(s==pincode.getEditableText()) { if(s.toString().trim().length()!=6) Animations.fadeInOnlyIfInvisible(pincodeValidate, 500); else Animations.fadeOut(pincodeValidate,500);}
-        else if(s==phone.getEditableText()) { if(s.toString().trim().length()!=10) Animations.fadeInOnlyIfInvisible(phoneValidate, 500); else Animations.fadeOut(phoneValidate,500);}
-        else if(s==landline.getEditableText()) { if(s.toString().trim().length()<7) Animations.fadeInOnlyIfInvisible(landlineValidate, 500); else Animations.fadeOut(landlineValidate,500);}
-        else if(s==area.getEditableText()) { if(!(areaList.contains(s.toString()))) Animations.fadeInOnlyIfInvisible(areaValidate, 500); else Animations.fadeOut(areaValidate,500); }
-
+        else if(s== line1.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(addressLine1Validate, 500); else Animations.fadeOut(addressLine1Validate,500);}
+        else if(s== line2.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(addressLine2Validate, 500); else Animations.fadeOut(addressLine2Validate,500);}
+        else if(s== contactNo.getEditableText()) { if(s.toString().trim().length()!=10) Animations.fadeInOnlyIfInvisible(contactValidate, 500); else Animations.fadeOut(contactValidate,500);}
     }
 
     private boolean isEverythingValid() {
         return
-                areaList.contains(area.getText().toString().trim()) &&
+                ((!cart &&
+                    (citiesArrayList.contains(((TextView) city.getSelectedView()).getText().toString()) &&
+                     cities.get(city.getSelectedItemPosition()).getAreaStringArrayList().contains(((TextView) area.getSelectedView()).getText().toString().trim()))) ||
+                (cart && lockedAreaCity.getText().toString().trim().length()>=2)) &&
                 name.getText().toString().trim().length()>=2 &&
-                addressLine1.getText().toString().trim().length()>=2 &&
-                addressLine2.getText().toString().trim().length()>=2 &&
-                pincode.getText().toString().trim().length()==6 &&
-                (phoneRadioGroup.getCheckedRadioButtonId()==R.id.mobile_radio)?phone.getText().toString().trim().length()==10:landline.getText().toString().trim().length()>=7;
+                line1.getText().toString().trim().length()>=2 &&
+                line2.getText().toString().trim().length()>=2 &&
+                (contactNo.getText().toString().trim().length()>=7 ||
+                 contactNo.getText().toString().trim().length()<=12);
     }
 
+    interface IgnoreIdMixin { @JsonIgnore int getId(); }
+    private ArrayList<String> addStringAsFirstItem(ArrayList<String> arrayList, String defaultString) {
+        ArrayList<String> resultArrayList = new ArrayList<>();
+        resultArrayList.add(0,defaultString);
+        for(String string: arrayList)
+            resultArrayList.add(string);
+        return  resultArrayList;
+    }
 }

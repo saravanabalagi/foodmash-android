@@ -167,7 +167,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                 final TextView addExtraLayout = (TextView) comboOptionsLayout.findViewById(R.id.add_extra);
                 final LinearLayout countLayout = (LinearLayout) comboOptionsLayout.findViewById(R.id.count_layout);
                 final TextView count = (TextView) countLayout.findViewById(R.id.count);
-                int quantity = comboDish.getQuantity();
+                int quantity = comboOption.getQuantity();
                 count.setText(String.valueOf(quantity));
                 if (comboOption.getSelectedComboOptionDishes().contains(comboDish)) {
                     Animations.fadeOut(addExtraLayout, 500);

@@ -18,10 +18,15 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,6 +34,8 @@ import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.custom.Address;
+import in.foodmash.app.custom.City;
 
 /**
  * Created by Zeke on Aug 08 2015.
@@ -43,8 +50,10 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     private Intent intent;
+    private List<Address> addresses;
+    private List<City> cities;
     private JSONArray jsonArray;
-    private JsonObjectRequest deleteAddressRequest;
+    private JsonObjectRequest deleteRequest;
     private JsonObjectRequest getAddressesRequest;
 
     @Override
@@ -78,77 +87,72 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                     if(response.getBoolean("success")) {
                         Animations.fadeOut(loadingLayout,500);
                         Animations.fadeIn(mainLayout,500);
-                        jsonArray = response.getJSONArray("data");
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            final JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            JSONObject addressJson = jsonObject.getJSONObject("address");
+                        final ObjectMapper objectMapper = new ObjectMapper();
+                        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+                        addresses = Arrays.asList(objectMapper.readValue(response.getJSONArray("data").toString(), Address[].class));
+                        for (final Address address: addresses) {
                             final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_user_address, fillLayout, false);
-                            String address = addressJson.getString("line1") + ",\n" +
-                                    addressJson.getString("line2") + ",\n" +
-                                    addressJson.getString("area") + ",\n" +
-                                    addressJson.getString("city") + " - " +
-                                    addressJson.getString("pincode");
-                            ((TextView) addressLayout.findViewById(R.id.name)).setText(jsonObject.getString("name"));
-                            ((TextView) addressLayout.findViewById(R.id.address)).setText(address);
-                            ((TextView) addressLayout.findViewById(R.id.contact_no)).setText(((jsonObject.getString("phone").length()==10)?"+91 ":"+91 44 ")+jsonObject.getString("phone"));
-                            if (jsonObject.getBoolean("primary"))
-                                addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
+                            ((TextView) addressLayout.findViewById(R.id.name)).setText(address.getName());
+                            ((TextView) addressLayout.findViewById(R.id.line1)).setText(address.getLine1());
+                            ((TextView) addressLayout.findViewById(R.id.line2)).setText(address.getLine2());
+                            ((TextView) addressLayout.findViewById(R.id.contact_no)).setText(address.getContactNo());
+
+                            int areaId = address.getAreaId();
+                            int cityPos = -1;
+                            for(int j=0;j<cities.size();j++) if (cities.get(j).indexOf(areaId)!=-1) cityPos = j;
+                            int areaPos = cities.get(cityPos).indexOf(areaId);
+                            String city = cities.get(cityPos).getName();
+                            String area = cities.get(cityPos).getAreas().get(areaPos).getName();
+                            String areaCity = area + ", " + city;
+                            ((TextView) addressLayout.findViewById(R.id.area_city)).setText(areaCity);
+
                             addressLayout.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     Intent intent = new Intent(AddressActivity.this, PinYourLocationActivity.class);
-                                    intent.putExtra("json", jsonObject.toString());
+                                    try { intent.putExtra("json", objectMapper.writeValueAsString(address)); }
+                                    catch (Exception e) { e.printStackTrace(); }
                                     intent.putExtra("edit", true);
                                     startActivity(intent);
                                 }
                             });
+
                             addressLayout.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     JSONObject requestJson = JsonProvider.getStandardRequestJson(AddressActivity.this);
                                     JSONObject dataJson = new JSONObject();
                                     try {
-                                        dataJson.put("id", jsonObject.getString("id"));
+                                        dataJson.put("id", address.getId());
                                         requestJson.put("data", dataJson);
                                     } catch (JSONException e) { e.printStackTrace(); }
-                                    deleteAddressRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
+                                    deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
                                         @Override
                                         public void onResponse(JSONObject response) {
                                             try {
                                                 if (response.getBoolean("success")) {
-                                                    Animations.fadeOut(connectingLayout,500);
-                                                    Animations.fadeIn(mainLayout,500);
+                                                    fillLayout.removeView(addressLayout);
                                                     fillLayout();
-                                                }
-                                                else {
-                                                    Animations.fadeOut(connectingLayout,500);
-                                                    Animations.fadeIn(mainLayout,500);
+                                                } else if (response.getBoolean("success"))
                                                     Alerts.commonErrorAlert(AddressActivity.this, "Could not delete !", "The address that you want to remove could not be removed. Try again!", "Okay");
-                                                }
                                             } catch (JSONException e) { e.printStackTrace(); }
                                         }
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            Animations.fadeOut(connectingLayout,500);
-                                            Animations.fadeIn(mainLayout,500);
                                             DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
-                                                    Animations.fadeIn(connectingLayout,500);
-                                                    Animations.fadeOut(mainLayout, 500);
-                                                    Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteAddressRequest);
+                                                    Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteRequest);
                                                 }
                                             };
                                             if (error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddressActivity.this, onClickTryAgain);
-                                            else if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this, onClickTryAgain);
+                                            if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this, onClickTryAgain);
                                             else Alerts.unknownErrorAlert(AddressActivity.this);
                                             Log.e("Json Request Failed", error.toString());
                                         }
                                     });
-                                    Animations.fadeIn(connectingLayout,500);
-                                    Animations.fadeOut(mainLayout, 500);
-                                    Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteAddressRequest);
+                                    Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteRequest);
                                 }
                             });
                             fillLayout.addView(addressLayout);
@@ -157,7 +161,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                         Alerts.requestUnauthorisedAlert(AddressActivity.this);
                         Log.e("Success False",response.getString("error"));
                     }
-                } catch (JSONException e) { e.printStackTrace(); }
+                } catch (Exception e) { e.printStackTrace(); }
             }
         }, new Response.ErrorListener() {
             @Override
