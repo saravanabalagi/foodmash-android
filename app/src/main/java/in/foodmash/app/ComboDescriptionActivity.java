@@ -167,7 +167,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                 final TextView addExtraLayout = (TextView) comboOptionsLayout.findViewById(R.id.add_extra);
                 final LinearLayout countLayout = (LinearLayout) comboOptionsLayout.findViewById(R.id.count_layout);
                 final TextView count = (TextView) countLayout.findViewById(R.id.count);
-                int quantity = comboOption.getQuantity();
+                int quantity = comboOption.getMinCount();
                 count.setText(String.valueOf(quantity));
                 if (comboOption.getSelectedComboOptionDishes().contains(comboDish)) {
                     Animations.fadeOut(addExtraLayout, 500);
@@ -210,7 +210,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                         comboOption.addToSelected(comboDish);
                         Animations.fadeOut(addExtraLayout, 500);
                         Animations.fadeIn(countLayout, 500);
-                        count.setText(String.valueOf(comboDish.getQuantity()));
+                        count.setText(String.valueOf(Math.max(comboDish.getQuantity(),1)));
                         Animations.fadeIn(selected, 500);
                         updatePrice();
                     }
@@ -239,7 +239,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                                 Animations.fadeOut(countLayout, 500);
                                 Animations.fadeOut(selected, 500);
                             }
-                            count.setText(String.valueOf(comboDish.getQuantity()));
+                            count.setText(String.valueOf(Math.max(comboDish.getQuantity(),comboOption.getMinCount())));
                         }
                         Animations.fadeOut(addExtraLayout, 500);
                         Animations.fadeIn(countLayout, 500);

@@ -32,11 +32,11 @@ public class ComboOption {
     }
 
     @JsonIgnore public int getMinCount() { return minCount; }
-    public int getQuantity() {
+    private int getComprisedDishesQuantity() {
         int quantity=0;
         for(ComboDish comboDish: this.selectedComboOptionDishes)
             quantity+=comboDish.getQuantity();
-        if(quantity< minCount) return -1;
+        if(quantity<minCount) return -1;
         return quantity;
     }
     public Dish.Label getLabel() {
@@ -86,13 +86,13 @@ public class ComboOption {
         return contents.substring(0,contents.length()-2);
     }
     public boolean incrementQuantity(ComboDish comboDish) {
-        if(this.getQuantity()+1>=10) return false;
+        if(this.getComprisedDishesQuantity()+1>=10) return false;
         if(!getSelectedComboOptionDishes().contains(comboDish)) return false;
         comboDish.incrementQuantity();
         return true;
     }
     public boolean decrementQuantity(ComboDish comboDish) {
-        if(this.getQuantity()-1< minCount) return false;
+        if(this.getComprisedDishesQuantity()-1< minCount) return false;
         if(!getSelectedComboOptionDishes().contains(comboDish)) return false;
         if(comboDish.getQuantity()==1) return removeFromSelected(comboDish);
         comboDish.decrementQuantity();
@@ -128,7 +128,7 @@ public class ComboOption {
     public int hashCode() {
         int hash = 7;
         hash = 3*hash + this.getId();
-        hash = 3*hash + this.getQuantity();
+        hash = 3*hash + this.getComprisedDishesQuantity();
         for (ComboDish comboDish : this.selectedComboOptionDishes)
             hash = 3*hash + comboDish.getId();
         return hash;
