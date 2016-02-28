@@ -210,7 +210,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                         comboOption.addToSelected(comboDish);
                         Animations.fadeOut(addExtraLayout, 500);
                         Animations.fadeIn(countLayout, 500);
-                        count.setText(String.valueOf(Math.max(comboDish.getQuantity(),1)));
+                        count.setText(String.valueOf(1));
                         Animations.fadeIn(selected, 500);
                         updatePrice();
                     }
@@ -239,7 +239,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                                 Animations.fadeOut(countLayout, 500);
                                 Animations.fadeOut(selected, 500);
                             }
-                            count.setText(String.valueOf(Math.max(comboDish.getQuantity(),comboOption.getMinCount())));
+                            count.setText(String.valueOf(comboOption.getMinCount()));
                         }
                         Animations.fadeOut(addExtraLayout, 500);
                         Animations.fadeIn(countLayout, 500);
