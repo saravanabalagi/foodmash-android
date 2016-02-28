@@ -133,4 +133,6 @@
     <string name="menu_delete_cart">Delete Cart</string>
     <string name="scrollable_content">scrollable_content</string>
     <string name="log_in">Log In</string>
+    <string name="contact_number">Contact Number</string>
+    <string name="name_hint">Name</string>
 </resources>

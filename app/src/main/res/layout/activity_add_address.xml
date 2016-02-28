@@ -73,7 +73,7 @@
                         android:ems="10"
                         android:id="@+id/name"
                         android:layout_margin="5dp"
-                        android:hint="@string/name_edit_text_hint"
+                        android:hint="@string/name_hint"
                         android:singleLine="true"
                         android:layout_weight="1" />
 
@@ -97,7 +97,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:id="@+id/address_line_1"
+                        android:id="@+id/line1"
                         android:layout_margin="5dp"
                         android:hint="Address Line 1"
                         android:singleLine="true"
@@ -125,7 +125,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:id="@+id/address_line_2"
+                        android:id="@+id/line2"
                         android:layout_margin="5dp"
                         android:hint="Address Line 2"
                         android:singleLine="true"
@@ -144,19 +144,45 @@
 
                 </LinearLayout>
 
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:id="@+id/locked_area_city"
+                    android:layout_margin="5dp"
+                    android:hint="Area, City"
+                    android:singleLine="true"
+                    android:inputType="none"
+                    android:editable="false" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/area_city_spinner_layout">
+
+                    <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/area"
+                        android:layout_weight="1"
+                        android:layout_margin="10dp"
+                        android:background="@color/transparent" />
+
+                    <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/city"
+                        android:layout_weight="1"
+                        android:layout_margin="10dp"
+                        android:background="@color/transparent" />
+                </LinearLayout>
+
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical">
-
-                    <AutoCompleteTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/area"
-                        android:layout_weight="1"
-                        android:hint="Area"
-                        android:layout_margin="5dp" />
 
                     <ImageView
                         android:layout_width="20dp"
@@ -176,33 +202,6 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical">
 
-                    <EditText
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPersonName"
-                        android:ems="10"
-                        android:id="@+id/city"
-                        android:layout_margin="5dp"
-                        android:hint="City"
-                        android:singleLine="true"
-                        android:layout_weight="1"
-                        android:editable="false"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:text="Chennai" />
-
-                    <EditText
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:id="@+id/pincode"
-                        android:layout_margin="5dp"
-                        android:hint="PIN Code"
-                        android:singleLine="true"
-                        android:inputType="number"
-                        android:numeric="integer"
-                        android:layout_weight="1" />
-
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
@@ -213,38 +212,6 @@
                         android:layout_marginBottom="7dp"
                         android:visibility="gone" />
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <RadioGroup
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:id="@+id/phone_radio_group"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp">
-
-                        <RadioButton
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:text="Mobile"
-                            android:id="@+id/mobile_radio"
-                            android:layout_weight="1"
-                            android:textSize="18sp"
-                            android:checked="true" />
-
-                        <RadioButton
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:text="Landline"
-                            android:id="@+id/landline_radio"
-                            android:layout_weight="1"
-                            android:textSize="18sp" />
-                    </RadioGroup>
                 </LinearLayout>
 
                 <LinearLayout
@@ -271,9 +238,9 @@
                         android:layout_height="wrap_content"
                         android:inputType="phone"
                         android:ems="10"
-                        android:id="@+id/phone"
+                        android:id="@+id/contact_no"
                         android:layout_margin="5dp"
-                        android:hint="@string/phone_edit_text_hint"
+                        android:hint="@string/contact_number"
                         android:singleLine="true"
                         android:layout_weight="1"
                         android:numeric="integer" />
@@ -281,7 +248,7 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:id="@+id/phone_validate"
+                        android:id="@+id/contact_validate"
                         android:src="@drawable/svg_no"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
@@ -289,72 +256,6 @@
                         android:visibility="gone" />
 
                 </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:id="@+id/landline_layout"
-                    android:visibility="gone">
-
-                    <EditText
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:inputType="none"
-                        android:ems="10"
-                        android:text="@string/phone_prefix_edit_text_hint"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:editable="false"
-                        android:gravity="center_horizontal"
-                        android:singleLine="true" />
-
-                    <EditText
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:inputType="none"
-                        android:ems="10"
-                        android:text="@string/landline_prefix_edit_text_hint"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:editable="false"
-                        android:gravity="center_horizontal"
-                        android:singleLine="true" />
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="phone"
-                        android:ems="10"
-                        android:id="@+id/landline"
-                        android:layout_margin="5dp"
-                        android:hint="@string/landline"
-                        android:singleLine="true"
-                        android:layout_weight="1"
-                        android:numeric="integer" />
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:id="@+id/landline_validate"
-                        android:src="@drawable/svg_no"
-                        android:tint="@color/accent"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="7dp"
-                        android:visibility="gone" />
-                </LinearLayout>
-
-                <Switch
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Primary Address"
-                    android:id="@+id/primary_address"
-                    android:padding="15dp"
-                    android:switchPadding="30dp"
-                    android:textSize="16sp"
-                    android:singleLine="true" />
-
             </LinearLayout>
 
         </LinearLayout>
