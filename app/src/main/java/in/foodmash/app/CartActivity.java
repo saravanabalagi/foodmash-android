@@ -33,7 +33,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     @Bind(R.id.buy) FloatingActionButton buy;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.empty_cart_layout) LinearLayout emptyCartLayout;
-    @Bind(R.id.total) TextView total;
+    @Bind(R.id.payable_amount) TextView total;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     private Intent intent;

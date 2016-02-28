@@ -44,7 +44,7 @@ public class OrderDescriptionActivity extends AppCompatActivity {
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.status) TextView status;
     @Bind(R.id.date) TextView date;
-    @Bind(R.id.total) TextView total;
+    @Bind(R.id.payable_amount) TextView total;
     @Bind(R.id.payment_method) TextView paymentMethod;
     @Bind(R.id.status_icon) ImageView statusIcon;
     @Bind(R.id.toolbar) Toolbar toolbar;

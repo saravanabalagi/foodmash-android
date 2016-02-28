@@ -162,7 +162,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/price_lorem_ipsum"
-                    android:id="@+id/total"
+                    android:id="@+id/payable_amount"
                     android:textSize="20sp" />
             </LinearLayout>
 

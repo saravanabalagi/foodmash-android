@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -55,22 +56,31 @@ import in.foodmash.app.custom.Cart;
 import in.foodmash.app.payment.CashOnDeliveryFragment;
 import in.foodmash.app.payment.CreditDebitCardFragment;
 import in.foodmash.app.payment.NetbankingFragment;
+import in.foodmash.app.utils.NumberUtils;
 
 /**
  * Created by Zeke on Jul 19 2015.
  */
-public class CheckoutPaymentActivity extends AppCompatActivity implements View.OnClickListener, PaymentRelatedDetailsListener {
+public class CheckoutPaymentActivity extends AppCompatActivity implements PaymentRelatedDetailsListener {
 
     @Bind(R.id.pay) FloatingActionButton pay;
-    @Bind(R.id.total) TextView total;
+    @Bind(R.id.payable_amount) TextView payableAmount;
     @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
+    @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.loading_layout) LinearLayout loadingLayout;
-    @Bind(R.id.main_layout) ViewPager mainLayout;
+    @Bind(R.id.view_pager) ViewPager viewPager;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
+    @Bind(R.id.total) TextView total;
+    @Bind(R.id.vat) TextView vat;
+    @Bind(R.id.delivery_charges) TextView deliveryCharges;
+    @Bind(R.id.grand_total) TextView grandTotal;
+
     private Intent intent;
-    private String payableAmount;
     private String paymentMethod;
+    private String payableAmountString;
+    private String password;
+    private Snackbar snackbar;
 
     private JsonObjectRequest makePurchaseRequest;
     private JsonObjectRequest makeHashRequest;
@@ -97,11 +107,23 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { e.printStackTrace(); }
 
-        if(getIntent().getDoubleExtra("payable_amount", 0)!=0) payableAmount = String.valueOf(getIntent().getDoubleExtra("payable_amount",0));
+        if(getIntent().getDoubleExtra("payable_amount", 0)!=0) payableAmountString = String.valueOf(getIntent().getDoubleExtra("payable_amount",0));
         else Alerts.commonErrorAlert(CheckoutPaymentActivity.this, "Transaction not authorized", "We found something suspicious about your current order. Try again!", "Back", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { finish(); } }, false);
 
-        setPayDefaultOnClickListener();
-        total.setText(payableAmount);
+        total.setText(NumberUtils.getCurrencyFormat(Cart.getInstance().getTotal()));
+        vat.setText(NumberUtils.getCurrencyFormat(Cart.getInstance().getVatForTotal()));
+        deliveryCharges.setText(NumberUtils.getCurrencyFormat(Cart.getInstance().getDeliveryCharge()));
+        grandTotal.setText(NumberUtils.getCurrencyFormat(Cart.getInstance().getGrandTotal()));
+
+        pay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + viewPager.getCurrentItem());
+                if(fragment instanceof CashOnDeliveryFragment) password = ((CashOnDeliveryFragment) fragment).getPassword();
+                paymentMethod=getResources().getString(R.string.payment_cod); if(isEverythingValid()) makePaymentRequest();
+            }
+        });
+        payableAmount.setText(payableAmountString);
 
         class PaymentPagerAdapter extends FragmentPagerAdapter {
             public PaymentPagerAdapter(FragmentManager fm) { super(fm); }
@@ -131,13 +153,13 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
         //Animations.fadeOut(mainLayout, 500);
         //fillPaymentParamsAndPayuEnv();
         PaymentPagerAdapter paymentPagerAdapter = new PaymentPagerAdapter(getSupportFragmentManager());
-        mainLayout.setAdapter(paymentPagerAdapter);
+        viewPager.setAdapter(paymentPagerAdapter);
 
     }
 
     public void fillPaymentParamsAndPayuEnv() {
         paymentParams.setKey("0MQaQP");
-        paymentParams.setAmount(payableAmount);
+        paymentParams.setAmount(payableAmountString);
         paymentParams.setProductInfo("Foodmash Order");
         paymentParams.setFirstName("Somename");
         paymentParams.setEmail(Info.getEmail(CheckoutPaymentActivity.this));
@@ -155,33 +177,20 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
         generateHashFromServer(paymentParams);
     }
 
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.pay: paymentMethod=getResources().getString(R.string.payment_cod); if(isEverythingValid()) makePaymentRequest(); break;
-        }
-    }
-
-    public void setPayDefaultOnClickListener() {
-        pay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                paymentMethod=getResources().getString(R.string.payment_cod); if(isEverythingValid()) makePaymentRequest();
-            }
-        });
-    }
-
     private JSONObject getPaymentJson() {
         JSONObject requestJson = JsonProvider.getStandardRequestJson(CheckoutPaymentActivity.this);
         try {
             JSONObject dataJson = new JSONObject();
             dataJson.put("payment_method",paymentMethod);
+            dataJson.put("password",password);
             requestJson.put("data",dataJson);
         } catch (JSONException e) { e.printStackTrace(); }
+        Log.i("Json",requestJson.toString());
         return requestJson;
     }
 
     private void makePaymentRequest() {
-        makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/purchase", getPaymentJson(), new Response.Listener<JSONObject>() {
+        makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/payments/purchaseByCod", getPaymentJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -196,15 +205,18 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                         startActivity(intent);
                         finish();
                     } else if(!response.getBoolean("success")){
-                        Alerts.commonErrorAlert(CheckoutPaymentActivity.this, "Payment Failed", "Paymment you made was not successful. Please try again!", "Try Again", new DialogInterface.OnClickListener() {
+                        Animations.fadeOut(connectingLayout,500);
+                        Animations.fadeIn(viewPager,500);
+                        snackbar = Snackbar.make(mainLayout, "Wrong Password", Snackbar.LENGTH_LONG);
+                        snackbar.setAction("Try Again", new View.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //Do nothing
+                            public void onClick(View v) {
+                                snackbar.dismiss();
                             }
-                        },false);
+                        });
                     } else {
                         Animations.fadeOut(connectingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
+                        Animations.fadeIn(viewPager,500);
                         Alerts.requestUnauthorisedAlert(CheckoutPaymentActivity.this);
                         Log.e("Success False",response.getString("error"));
                     }
@@ -214,12 +226,12 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
             @Override
             public void onErrorResponse(VolleyError error) {
                 Animations.fadeOut(connectingLayout,500);
-                Animations.fadeIn(mainLayout,500);
+                Animations.fadeIn(viewPager,500);
                 DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Animations.fadeIn(connectingLayout,500);
-                        Animations.fadeOut(mainLayout, 500);
+                        Animations.fadeOut(viewPager, 500);
                         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makePurchaseRequest);
                     }
                 };
@@ -231,7 +243,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
         });
 
         Animations.fadeIn(connectingLayout, 500);
-        Animations.fadeOut(mainLayout, 500);
+        Animations.fadeOut(viewPager, 500);
         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makePurchaseRequest);
     }
 
@@ -244,7 +256,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
                         payuHashes.setPaymentHash(response.getJSONObject("data").getString("hash"));
                     } else {
                         Animations.fadeOut(connectingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
+                        Animations.fadeIn(viewPager,500);
                         Alerts.requestUnauthorisedAlert(CheckoutPaymentActivity.this);
                         Log.e("Success False",response.getString("error"));
                     }
@@ -254,12 +266,12 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
             @Override
             public void onErrorResponse(VolleyError error) {
                 Animations.fadeOut(connectingLayout, 500);
-                Animations.fadeIn(mainLayout, 500);
+                Animations.fadeIn(viewPager, 500);
                 DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Animations.fadeIn(connectingLayout, 500);
-                        Animations.fadeOut(mainLayout, 500);
+                        Animations.fadeOut(viewPager, 500);
                         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makeHashRequest);
                     }
                 };
@@ -272,7 +284,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
             }
         });
         Animations.fadeIn(connectingLayout, 500);
-        Animations.fadeOut(mainLayout, 500);
+        Animations.fadeOut(viewPager, 500);
         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makeHashRequest);
     }
 
@@ -387,7 +399,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements View.O
     public void onPaymentRelatedDetailsResponse(PayuResponse payuResponse) {
         this.payuResponse = payuResponse;
         Animations.fadeOut(loadingLayout,500);
-        Animations.fadeIn(mainLayout, 500);
+        Animations.fadeIn(viewPager, 500);
     }
 
 }
