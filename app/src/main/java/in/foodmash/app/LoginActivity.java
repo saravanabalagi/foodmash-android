@@ -158,7 +158,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
                         JSONObject userJson = dataJson.getJSONObject("user");
-                        Actions.cacheEmailAndPhone(LoginActivity.this, userJson.getString("email"), userJson.getString("mobile_no"));
+                        Actions.cacheUserDetails(LoginActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"));
                         String userToken = dataJson.getString("user_token");
                         String sessionToken = dataJson.getString("session_token");
                         SharedPreferences sharedPreferences = getSharedPreferences("session", 0);

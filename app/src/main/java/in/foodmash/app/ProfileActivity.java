@@ -212,7 +212,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
-                        Actions.cacheEmailAndPhone(ProfileActivity.this, email.getText().toString().trim(), phone.getText().toString().trim());
+                        Actions.cacheUserDetails(ProfileActivity.this, name.getText().toString().trim(), email.getText().toString().trim(), phone.getText().toString().trim());
                         finish();
                     } else {
                         Animations.fadeOut(savingLayout,500);

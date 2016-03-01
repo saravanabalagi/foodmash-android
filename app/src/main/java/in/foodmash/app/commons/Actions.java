@@ -21,11 +21,12 @@ import in.foodmash.app.custom.Cart;
  */
 public class Actions {
 
-    public static void cacheEmailAndPhone(Context context, String email, String phone) {
+    public static void cacheUserDetails(Context context,String name, String email, String phone) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("email",email);
         editor.putString("phone",phone);
+        editor.putString("name",name);
         editor.apply();
     }
 
