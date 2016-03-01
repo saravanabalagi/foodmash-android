@@ -114,10 +114,11 @@
     <string name="saving">Saving...</string>
     <string name="saving_description">We\'re saving your info in the server</string>
     <string name="contents">Contents</string>
+    <string name="payment_card">card</string>
     <string name="payment_credit_card">credit_card</string>
     <string name="payment_debit_card">debit_card</string>
     <string name="payment_netbanking">netbanking</string>
-    <string name="payment_cod">cash_on_delivery</string>
+    <string name="payment_cod">cod</string>
     <string name="ok">Ok</string>
     <string name="click_here">Click here</string>
     <string name="if_cvv_and_expiry_on_card"> &#160;if you have CVV and Expiry on your card</string>

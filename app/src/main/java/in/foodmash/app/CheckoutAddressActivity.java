@@ -76,6 +76,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { e.printStackTrace(); }
 
+        if(Cart.getInstance().getCount()==0) finish();
         confirm.setOnClickListener(this);
         addAddress.setOnClickListener(this);
 
@@ -129,6 +130,8 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                     if(response.getBoolean("success")) {
                         intent = new Intent(CheckoutAddressActivity.this, CheckoutPaymentActivity.class);
                         intent.putExtra("payable_amount",response.getJSONObject("data").getDouble("grand_total"));
+                        intent.putExtra("order_id",response.getJSONObject("data").getString("order_id"));
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     } else {
                         Animations.fadeOut(connectingLayout,500);
@@ -175,6 +178,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     }
 
     private void fillLayout() {
+        fillLayout.removeAllViews();
         getAddressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",JsonProvider.getStandardRequestJson(CheckoutAddressActivity.this),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -226,16 +230,17 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                                         @Override
                                         public void onResponse(JSONObject response) {
                                             try {
-                                                if (response.getBoolean("success")) {
-                                                    fillLayout.removeView(addressLayout);
-                                                    fillLayout();
-                                                } else if (response.getBoolean("success"))
-                                                    Alerts.commonErrorAlert(CheckoutAddressActivity.this, "Could not delete !", "The address that you want to remove could not be removed. Try again!", "Okay");
+                                                Animations.fadeOut(loadingLayout,500);
+                                                Animations.fadeIn(mainLayout,500);
+                                                if (response.getBoolean("success")) fillLayout.removeView(addressLayout);
+                                                else Alerts.commonErrorAlert(CheckoutAddressActivity.this, "Could not delete !", "The address that you want to remove could not be removed. Try again!", "Okay");
                                             } catch (JSONException e) { e.printStackTrace(); }
                                         }
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
+                                            Animations.fadeOut(loadingLayout,500);
+                                            Animations.fadeIn(mainLayout,500);
                                             DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
@@ -248,6 +253,8 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                                             Log.e("Json Request Failed", error.toString());
                                         }
                                     });
+                                    Animations.fadeIn(loadingLayout, 500);
+                                    Animations.fadeOut(mainLayout, 500);
                                     Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(deleteRequest);
                                 }
                             });

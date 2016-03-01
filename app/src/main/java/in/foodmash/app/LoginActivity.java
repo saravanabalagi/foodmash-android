@@ -170,6 +170,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         editor.apply();
                         startActivity(intent);
                         finish();
+                        Animations.fadeOut(connectingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
                     } else {
                         Animations.fadeOut(connectingLayout,500);
                         Animations.fadeIn(mainLayout,500);

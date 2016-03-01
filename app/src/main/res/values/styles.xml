@@ -3,7 +3,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textViewStyle">@style/MyTextView</item>
         <item name="android:editTextStyle">@style/MyEditText</item>
-        <!--<item name="android:windowBackground">@drawable/app_bg</item>-->
+        <item name="android:windowBackground">@drawable/app_bg</item>
 
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>

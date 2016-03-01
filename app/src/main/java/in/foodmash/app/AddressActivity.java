@@ -130,10 +130,8 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                         @Override
                                         public void onResponse(JSONObject response) {
                                             try {
-                                                if (response.getBoolean("success")) {
-                                                    fillLayout.removeView(addressLayout);
-                                                    fillLayout();
-                                                } else if (response.getBoolean("success"))
+                                                if (response.getBoolean("success")) fillLayout.removeView(addressLayout);
+                                                else if (response.getBoolean("success"))
                                                     Alerts.commonErrorAlert(AddressActivity.this, "Could not delete !", "The address that you want to remove could not be removed. Try again!", "Okay");
                                             } catch (JSONException e) { e.printStackTrace(); }
                                         }

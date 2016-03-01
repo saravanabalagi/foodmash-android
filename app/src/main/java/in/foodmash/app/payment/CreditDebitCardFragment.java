@@ -55,49 +55,39 @@ public class CreditDebitCardFragment extends Fragment {
 
     private PayuUtils payuUtils;
 
-    @Override
-    public void setMenuVisibility(boolean menuVisible) {
-        super.setMenuVisibility(menuVisible);
-        if(menuVisible && created) {
-            ((CheckoutPaymentActivity) getActivity()).getPayButton().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // do i have to store the card
-                    if (saveCardCheckBox.isChecked()) paymentParams.setStoreCard(1);
-                    else paymentParams.setStoreCard(0);
-                    // setup the hash
-                    paymentParams.setHash(payuHashes.getPaymentHash());
+    public void doPayment() {
+        // do i have to store the card
+        if (saveCardCheckBox.isChecked()) paymentParams.setStoreCard(1);
+        else paymentParams.setStoreCard(0);
+        // setup the hash
+        paymentParams.setHash(payuHashes.getPaymentHash());
 
-                    // lets try to get the post params
+        // lets try to get the post params
 
-                    postData = null;
-                    // lets get the current card number;
-                    cardNumber = String.valueOf(cardNumberEditText.getText());
-                    cardName = cardNameEditText.getText().toString();
-                    expiryMonth = cardExpiryMonthEditText.getText().toString();
-                    expiryYear = cardExpiryYearEditText.getText().toString();
-                    cvv = cardCvvEditText.getText().toString();
+        postData = null;
+        // lets get the current card number;
+        cardNumber = String.valueOf(cardNumberEditText.getText());
+        cardName = cardNameEditText.getText().toString();
+        expiryMonth = cardExpiryMonthEditText.getText().toString();
+        expiryYear = cardExpiryYearEditText.getText().toString();
+        cvv = cardCvvEditText.getText().toString();
 
-                    // lets not worry about ui validations.
-                    paymentParams.setCardNumber(cardNumber);
-                    paymentParams.setCardName(cardName);
-                    paymentParams.setNameOnCard(cardName);
-                    paymentParams.setExpiryMonth(expiryMonth);
-                    paymentParams.setExpiryYear(expiryYear);
-                    paymentParams.setCvv(cvv);
-                    postData = new PaymentPostParams(paymentParams, PayuConstants.CC).getPaymentPostParams();
-                    if (postData.getCode() == PayuErrors.NO_ERROR) {
-                        // okay good to go.. lets make a transaction
-                        // launch webview
-                        payuConfig.setData(postData.getResult());
-                        Intent intent = new Intent(getActivity(), PaymentsActivity.class);
-                        intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
-                        startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
-                    } else
-                        Toast.makeText(getActivity(), postData.getResult(), Toast.LENGTH_LONG).show();
-                }
-            });
-        }
+        // lets not worry about ui validations.
+        paymentParams.setCardNumber(cardNumber);
+        paymentParams.setCardName(cardName);
+        paymentParams.setNameOnCard(cardName);
+        paymentParams.setExpiryMonth(expiryMonth);
+        paymentParams.setExpiryYear(expiryYear);
+        paymentParams.setCvv(cvv);
+        postData = new PaymentPostParams(paymentParams, PayuConstants.CC).getPaymentPostParams();
+        if (postData.getCode() == PayuErrors.NO_ERROR) {
+            // okay good to go.. lets make a transaction
+            // launch webview
+            payuConfig.setData(postData.getResult());
+            Intent intent = new Intent(getActivity(), PaymentsActivity.class);
+            intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
+            startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
+        } else Toast.makeText(getActivity(), postData.getResult(), Toast.LENGTH_LONG).show();
     }
 
     @Nullable
