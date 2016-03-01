@@ -52,7 +52,7 @@ public class Cryptography {
 
     public static String getEncryptedAndroidId(Context context, String key) {
         String androidId = Settings.Secure.getString(context.getContentResolver(),Settings.Secure.ANDROID_ID);
-        Log.e("Security","Android ID: "+androidId);
+        Log.i("Security","Android ID: "+androidId);
         return encrypt(androidId,key);
     }
 
