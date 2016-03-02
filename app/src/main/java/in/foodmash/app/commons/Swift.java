@@ -56,10 +56,7 @@ public class Swift {
     }
 
     public <T> void addToRequestQueue(Request<T> req) {
-        req.setRetryPolicy(new DefaultRetryPolicy(
-                10000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        req.setRetryPolicy(new DefaultRetryPolicy(15000, 3, 1.5f));
         Log.i("Json Request","Adding to request queue...!");
         getRequestQueue().add(req);
     }
