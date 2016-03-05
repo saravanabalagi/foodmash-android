@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.register: intent = new Intent(this, SignupActivity.class); startActivity(intent); break;
+            case R.id.register: intent = new Intent(this, SignupActivity.class); intent.putExtra("from_cart",true); startActivity(intent); break;
             case R.id.forgot_password: intent = new Intent(this, ForgotPasswordActivity.class); startActivity(intent); break;
             case R.id.login: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(LoginActivity.this); break;
         }
@@ -152,7 +152,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path)+"/sessions",getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                if(fromCart) intent = new Intent(LoginActivity.this, CheckoutAddressActivity.class);
+                if(fromCart) intent = new Intent(LoginActivity.this, CartActivity.class);
                 else intent = new Intent(LoginActivity.this, MainActivity.class);
                 try {
                     if (response.getBoolean("success")) {

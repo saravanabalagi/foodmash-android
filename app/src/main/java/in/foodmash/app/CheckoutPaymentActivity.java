@@ -125,7 +125,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
 
         class PaymentPagerAdapter extends FragmentPagerAdapter {
             public PaymentPagerAdapter(FragmentManager fm) { super(fm); }
-            @Override public int getCount() { return 2; }
+            @Override public int getCount() { return 1; }
             @Override public Fragment getItem(int position) {
                 switch (position) {
                     case 0: return new CashOnDeliveryFragment();
@@ -148,7 +148,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
         }
         PaymentPagerAdapter paymentPagerAdapter = new PaymentPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(paymentPagerAdapter);
-        getHashAndPaymentRelatedDetails();
+        //getHashAndPaymentRelatedDetails();
     }
 
     public void getHashAndPaymentRelatedDetails() {
@@ -249,7 +249,6 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
             dataJson.put("password",password);
             requestJson.put("data",dataJson);
         } catch (JSONException e) { e.printStackTrace(); }
-        Log.i("Json",requestJson.toString());
         return requestJson;
     }
 
@@ -268,7 +267,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
                         Cart.getInstance().removeAllOrders();
                         startActivity(intent);
                         finish();
-                    } else if(!response.getBoolean("success")){
+                    } else {
                         Animations.fadeOut(connectingLayout,500);
                         Animations.fadeIn(viewPager,500);
                         snackbar = Snackbar.make(viewPager, "Wrong Password", Snackbar.LENGTH_LONG);
@@ -278,11 +277,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
                                 snackbar.dismiss();
                             }
                         });
-                    } else {
-                        Animations.fadeOut(connectingLayout,500);
-                        Animations.fadeIn(viewPager,500);
-                        Alerts.requestUnauthorisedAlert(CheckoutPaymentActivity.this);
-                        Log.e("Success False",response.getString("error"));
+                        snackbar.show();
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }

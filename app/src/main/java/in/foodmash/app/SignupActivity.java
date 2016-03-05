@@ -32,6 +32,7 @@ import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
@@ -156,10 +157,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onResponse(JSONObject response) {
                 intent = new Intent(SignupActivity.this, LoginActivity.class);
-                if(fromCart) intent.putExtra("from_cart", true);
+                if(fromCart) intent = new Intent(SignupActivity.this, CartActivity.class);
                 try {
                     if (response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
+                        JSONObject userJson = dataJson.getJSONObject("user");
+                        Actions.cacheUserDetails(SignupActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"));
                         String userToken = dataJson.getString("user_token");
                         String sessionToken = dataJson.getString("session_token");
                         SharedPreferences sharedPreferences = getSharedPreferences("session", 0);

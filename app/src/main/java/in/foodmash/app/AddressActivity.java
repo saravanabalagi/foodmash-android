@@ -21,7 +21,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,6 +31,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.custom.Address;
@@ -45,14 +45,13 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
     @Bind(R.id.add_address) FloatingActionButton addAddress;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.loading_layout) LinearLayout loadingLayout;
-    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     private Intent intent;
     private List<Address> addresses;
+    private ObjectMapper objectMapper;
     private List<City> cities;
-    private JSONArray jsonArray;
     private JsonObjectRequest deleteRequest;
     private JsonObjectRequest getAddressesRequest;
 
@@ -68,6 +67,11 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { e.printStackTrace(); }
 
+        try {
+            objectMapper = new ObjectMapper();
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+            cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(this), City[].class));
+        } catch (Exception e) { e.printStackTrace(); }
         addAddress.setOnClickListener(this);
         fillLayout();
     }

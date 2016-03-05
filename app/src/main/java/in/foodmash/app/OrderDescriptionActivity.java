@@ -3,6 +3,7 @@ package in.foodmash.app;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -123,7 +124,7 @@ public class OrderDescriptionActivity extends AppCompatActivity {
                         Alerts.requestUnauthorisedAlert(OrderDescriptionActivity.this);
                         Log.e("Success False",response.getString("error"));
                     }
-                } catch (Exception e) { e.printStackTrace(); }
+                } catch (Exception e) { e.printStackTrace(); Snackbar.make(mainLayout, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show(); }
             }
         }, new Response.ErrorListener() {
             @Override

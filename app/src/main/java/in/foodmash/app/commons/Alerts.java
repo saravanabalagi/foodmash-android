@@ -23,7 +23,12 @@ public class Alerts {
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Network Error")
                 .setMessage(message)
-                .setPositiveButton("Try Again", onClickTryAgainButton)
+                .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
                 .setNegativeButton("Turn Internet On", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -41,7 +46,12 @@ public class Alerts {
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Network Error")
                 .setMessage(message)
-                .setPositiveButton("Try Again", onClickTryAgainButton)
+                .setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
                 .show();
     }
 

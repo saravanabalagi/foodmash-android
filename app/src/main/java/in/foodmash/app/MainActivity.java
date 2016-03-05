@@ -356,6 +356,7 @@ public class MainActivity extends AppCompatActivity {
                 case VEG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.veg)); break;
                 case NON_VEG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.non_veg)); break;
             }
+            comboLayout.findViewById(R.id.view).setOnClickListener(showDescription);
             comboLayout.findViewById(R.id.clickable_layout).setOnClickListener(showDescription);
             comboLayout.findViewById(R.id.image).setOnClickListener(showDescription);
             final TextView addToCartLayout = (TextView) comboLayout.findViewById(R.id.add_to_cart_layout);

@@ -180,18 +180,38 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp">
 
-                <TextView
-                    android:layout_width="110dp"
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/add_to_cart"
-                    android:textAllCaps="true"
-                    android:textSize="12sp"
-                    android:singleLine="true"
-                    android:background="@drawable/button_rounded_background"
-                    android:textColor="@color/primary_text_dark"
-                    android:id="@+id/add_to_cart_layout"
-                    android:gravity="center_horizontal"
-                    android:layout_centerInParent="true" />
+                    android:gravity="center_horizontal">
+
+                    <TextView
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:text="View"
+                        android:textAllCaps="true"
+                        android:textSize="12sp"
+                        android:singleLine="true"
+                        android:background="@drawable/button_rounded_left_background"
+                        android:textColor="@color/primary_text_dark"
+                        android:id="@+id/view"
+                        android:gravity="center_horizontal"
+                        android:layout_centerInParent="true" />
+
+                    <TextView
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:text="Cart"
+                        android:textAllCaps="true"
+                        android:textSize="12sp"
+                        android:singleLine="true"
+                        android:background="@drawable/button_rounded_right_cart_button_background"
+                        android:textColor="@color/primary_text_dark"
+                        android:id="@+id/add_to_cart_layout"
+                        android:gravity="center_horizontal"
+                        android:layout_centerInParent="true" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:orientation="horizontal"
