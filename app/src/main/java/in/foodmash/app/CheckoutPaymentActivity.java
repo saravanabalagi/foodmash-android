@@ -194,7 +194,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
                         merchantWebService.setKey(paymentParams.getKey());
                         merchantWebService.setCommand(PayuConstants.PAYMENT_RELATED_DETAILS_FOR_MOBILE_SDK);
                         merchantWebService.setVar1(paymentParams.getUserCredentials());
-                        merchantWebService.setHash(payuHashes.getPaymentHash());
+                        merchantWebService.setHash(payuHashes.getPaymentRelatedDetailsForMobileSdkHash());
                         PostData postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
                         if (postData.getCode() == PayuErrors.NO_ERROR) {
                             payuConfig.setData(postData.getResult());

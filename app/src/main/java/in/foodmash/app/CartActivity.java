@@ -57,10 +57,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 .setPositiveButton("Remove All", new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialog, int which) {
                         cart.removeAllOrders();
-                        for (int i = 0; i < fillLayout.getChildCount(); i++)
-                            handler.postDelayed(new Runnable() {
-                                @Override public void run() {
-                                    fillLayout.removeViewAt(0); } }, i*500);
+                        fillLayout.removeAllViews();
                         total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
                         Animations.fadeIn(emptyCartLayout,500);
                     }
@@ -98,15 +95,16 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.calculatePrice() * order.getValue()));
             comboLayout.findViewById(R.id.plus).setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
-                    ((TextView) comboLayout.findViewById(R.id.count)).setText(String.valueOf(cart.addToCart(combo)));
+                    cart.addToCart(combo);
+                    ((TextView) comboLayout.findViewById(R.id.count)).setText(String.valueOf(cart.getCount(combo)));
                     ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.calculatePrice() * order.getValue()));
                     total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
             }});
             comboLayout.findViewById(R.id.minus).setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     ((TextView) comboLayout.findViewById(R.id.count)).setText(String.valueOf(cart.decrementFromCart(combo)));
-                    if(cart.getCount(combo.getId())==0) fillLayout.removeView(comboLayout);
                     if(cart.getCount()==0) Animations.fadeIn(emptyCartLayout, 500);
+                    if(cart.getCount(combo)==0) fillLayout.removeView(comboLayout);
                     ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.calculatePrice() * order.getValue()));
                     total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
             }});

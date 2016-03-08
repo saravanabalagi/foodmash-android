@@ -7,8 +7,8 @@ public class ComboDish {
 
     private int id;
     private int priority;
-    private int minCount;
-    private int quantity;
+    private int minCount = 0;
+    private int quantity = 0;
     private Dish dish;
 
     public ComboDish() {}
@@ -23,6 +23,8 @@ public class ComboDish {
     public int getId() { return id; }
     public Dish getDish() { return dish; }
     public int getPriority() { return priority; }
+
+    public void setQuantity(int quantity) { this.quantity = quantity; }
     public int getMinCount() { return minCount; }
     public int getQuantity() { return quantity; }
 
@@ -32,14 +34,14 @@ public class ComboDish {
     public void setMinCount(int minCount) { this.minCount = minCount; this.quantity = minCount; }
     public boolean incrementQuantity() { if(quantity +1<10) { quantity++; return true;} else return false; }
     public boolean decrementQuantity() { if(quantity -1< minCount) return false; else { quantity--; return true; } }
-    public void resetQuantity() { quantity= minCount; }
+    public void resetQuantity() { quantity = minCount; }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ComboDish)) return false;
         if (o == this) return true;
         ComboDish comboDish = (ComboDish) o;
-        return this.id == comboDish.id && this.quantity == comboDish.quantity;
+        return this.hashCode() == comboDish.hashCode();
     }
 
     @Override

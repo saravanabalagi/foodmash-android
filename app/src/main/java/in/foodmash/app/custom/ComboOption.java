@@ -14,7 +14,7 @@ public class ComboOption {
 
     private int id;
     private int priority;
-    private int minCount;
+    private int minCount = 0;
     private String name;
     private String description;
     private ArrayList<ComboDish> selectedComboOptionDishes;
@@ -27,8 +27,12 @@ public class ComboOption {
         this.name = c.name;
         this.description = c.description;
         this.minCount = c.minCount;
-        this.selectedComboOptionDishes = c.selectedComboOptionDishes;
-        this.comboOptionDishes = c.comboOptionDishes;
+        this.selectedComboOptionDishes = new ArrayList<>();
+        for(ComboDish comboDish: c.getSelectedComboOptionDishes())
+            this.selectedComboOptionDishes.add(new ComboDish(comboDish));
+        this.comboOptionDishes = new ArrayList<>();
+        for(ComboDish comboDish: c.getComboOptionDishes())
+            this.comboOptionDishes.add(new ComboDish(comboDish));
     }
 
     @JsonIgnore public int getMinCount() { return minCount; }
@@ -59,7 +63,7 @@ public class ComboOption {
     @JsonIgnore public int getPriority() { return priority; }
     @JsonIgnore public String getName() { return name; }
     @JsonIgnore public String getDescription() { return description; }
-    @JsonProperty("ComboOptionDishes") public ArrayList<ComboDish> getSelectedComboOptionDishes() { return selectedComboOptionDishes; }
+    @JsonProperty("ComboOptionDishes") public ArrayList<ComboDish> getSelectedComboOptionDishes() { return new ArrayList<>(selectedComboOptionDishes); }
     @JsonIgnore public ArrayList<ComboDish> getComboOptionDishes() { return new ArrayList<>(comboOptionDishes); }
     @JsonIgnore public boolean isFromSameRestaurant() {
         Set<Integer> restaurantIdSet = new HashSet<>();
@@ -68,7 +72,10 @@ public class ComboOption {
         return restaurantIdSet.size()==1;
     }
 
-    @JsonProperty public void setMinCount(int minCount) { this.minCount = minCount; }
+    @JsonProperty public void setMinCount(int minCount) {
+        this.minCount = minCount;
+        if(comboOptionDishes!=null)
+            resetSelectedComboOptionDishes(); }
     @JsonProperty public void setId(int id) { this.id = id; }
     @JsonProperty public void setPriority(int priority) { this.priority = priority; }
     @JsonProperty public void setName(String name) { this.name = name; }
@@ -88,29 +95,43 @@ public class ComboOption {
     public boolean incrementQuantity(ComboDish comboDish) {
         if(this.getComprisedDishesQuantity()+1>=10) return false;
         if(!getSelectedComboOptionDishes().contains(comboDish)) return false;
-        comboDish.incrementQuantity();
+        comboDish.setQuantity(comboDish.getQuantity()+1);
         return true;
     }
     public boolean decrementQuantity(ComboDish comboDish) {
         if(this.getComprisedDishesQuantity()-1< minCount) return false;
         if(!getSelectedComboOptionDishes().contains(comboDish)) return false;
         if(comboDish.getQuantity()==1) return removeFromSelected(comboDish);
-        comboDish.decrementQuantity();
+        comboDish.setQuantity(comboDish.getQuantity()-1);
         return true;
     }
-    public boolean addToSelected(ComboDish comboDish) { if(!this.selectedComboOptionDishes.contains(comboDish)) { this.selectedComboOptionDishes.add(comboDish); return true; } else return false; }
-    public boolean addToSelectedAfterClear(ComboDish comboDish) { this.selectedComboOptionDishes.clear(); if(!this.selectedComboOptionDishes.contains(comboDish)) { for(int i = 0; i<this.minCount -1; i++) comboDish.incrementQuantity(); this.selectedComboOptionDishes.add(comboDish); return true; } else return false; }
-    public boolean removeFromSelected(ComboDish comboDish) { if(this.selectedComboOptionDishes.contains(comboDish))  { this.selectedComboOptionDishes.remove(comboDish); return true; } else return false;}
+    public boolean addToSelected(ComboDish comboDish) {
+        if(!this.selectedComboOptionDishes.contains(comboDish)) {
+            comboDish.incrementQuantity();
+            this.selectedComboOptionDishes.add(comboDish);
+            return true;
+        } else return false;
+    }
+    public void addToSelectedAfterClear(ComboDish comboDish) {
+        this.selectedComboOptionDishes.clear();
+        comboDish.setQuantity(minCount);
+        this.selectedComboOptionDishes.add(comboDish);
+    }
+    public boolean removeFromSelected(ComboDish comboDish) {
+        if(this.selectedComboOptionDishes.contains(comboDish))  {
+            this.selectedComboOptionDishes.remove(comboDish);
+            return true;
+        } else return false;
+    }
     public void resetSelectedComboOptionDishes() {
         this.selectedComboOptionDishes.clear();
-        comboOptionDishes.get(0).resetQuantity();
-        for(int i = 0; i<this.minCount -1; i++) comboOptionDishes.get(0).incrementQuantity();
+        comboOptionDishes.get(0).setQuantity(minCount);
         this.selectedComboOptionDishes.add(comboOptionDishes.get(0));
     }
     @JsonProperty public void setComboOptionDishes(ArrayList<ComboDish> comboOptionDishes) {
         this.selectedComboOptionDishes = new ArrayList<>();
         this.comboOptionDishes = comboOptionDishes;
-        this.resetSelectedComboOptionDishes();
+        if(minCount>0) this.resetSelectedComboOptionDishes();
     }
 
     @Override
@@ -118,19 +139,17 @@ public class ComboOption {
         if (!(o instanceof ComboOption)) return false;
         if (o == this) return true;
         ComboOption comboOption = (ComboOption) o;
-        if (this.comboOptionDishes.size() != comboOption.comboOptionDishes.size()) return false;
-        ArrayList<ComboDish> compareComboOptionDishes = comboOption.getComboOptionDishes();
-        compareComboOptionDishes.removeAll(this.comboOptionDishes);
-        return compareComboOptionDishes.size() == 0 && selectedComboOptionDishes == comboOption.selectedComboOptionDishes;
+        return this.hashCode() == comboOption.hashCode();
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 3*hash + this.getId();
-        hash = 3*hash + this.getComprisedDishesQuantity();
-        for (ComboDish comboDish : this.selectedComboOptionDishes)
-            hash = 3*hash + comboDish.getId();
+        for (ComboDish comboDish : this.selectedComboOptionDishes) {
+            hash = 3 * hash + comboDish.getId();
+            hash = 3 * hash + comboDish.getQuantity();
+        }
         return hash;
     }
 }

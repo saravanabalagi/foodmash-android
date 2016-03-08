@@ -210,7 +210,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                         comboOption.addToSelected(comboDish);
                         Animations.fadeOut(addExtraLayout, 500);
                         Animations.fadeIn(countLayout, 500);
-                        count.setText(String.valueOf(1));
+                        count.setText(String.valueOf(comboDish.getQuantity()));
                         Animations.fadeIn(selected, 500);
                         updatePrice();
                     }
@@ -234,12 +234,12 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                                 Animations.fadeIn(countLayout, 500);
                                 Animations.fadeIn(selected, 500);
                             } else {
-                                comboDish.resetQuantity();
+                                comboDish.setQuantity(0);
                                 Animations.fadeIn(addExtraLayout, 500);
                                 Animations.fadeOut(countLayout, 500);
                                 Animations.fadeOut(selected, 500);
                             }
-                            count.setText(String.valueOf(comboOption.getMinCount()));
+                            count.setText(String.valueOf(comboDish.getQuantity()));
                         }
                         Animations.fadeOut(addExtraLayout, 500);
                         Animations.fadeIn(countLayout, 500);
@@ -307,8 +307,10 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         switch (v.getId()) {
             case R.id.buy:
                 cart.addToCart(new Combo(combo));
-                Snackbar.make(parentLayout, "Added to Cart", Snackbar.LENGTH_SHORT)
-                    .setAction("Undo", new View.OnClickListener() { @Override public void onClick(View v) { cart.decrementFromCart(combo); Actions.updateCartCount(cartCount); } })
+                Snackbar.make(parentLayout, "Added to Cart", Snackbar.LENGTH_LONG)
+                    .setAction("Undo", new View.OnClickListener() { @Override public void onClick(View v) {
+                        cart.decrementFromCart(combo.getId());
+                        Actions.updateCartCount(cartCount); } })
                     .show();
                 Actions.updateCartCount(cartCount);
                 break;

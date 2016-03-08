@@ -38,6 +38,7 @@ public class Cart {
                 count += order.getValue();
         return count;
     }
+    public int getCount(Combo combo) { return (orders.containsKey(combo))?orders.get(combo):0; }
 
     public float getDeliveryCharge() {
         float deliveryCharge;
@@ -60,14 +61,13 @@ public class Cart {
     }
 
 
-    public int addToCart(Combo combo) {
+    public void addToCart(Combo combo) {
         timestamps.put(System.currentTimeMillis(),combo);
         if(orders.containsKey(combo)) orders.put(combo, orders.get(combo) + 1);
         else orders.put(combo, 1);
         printOrdersContents();
         printTimestampsContents();
-        return getCount(combo.getId());
-      }
+    }
 
     public boolean hasCombo(Combo combo) {
         for(Combo entry: this.orders.keySet())
@@ -75,10 +75,10 @@ public class Cart {
         return false;
     }
 
-    public int decrementFromCart(Combo combo) {
+    public int decrementFromCart(int comboId) {
         for(Long timestamp: timestamps.descendingKeySet()) {
             Combo comboEntry = timestamps.get(timestamp);
-            if (combo.getId() == comboEntry.getId()) {
+            if (comboEntry.getId() == comboId) {
                 if (orders.get(comboEntry) - 1 == 0) orders.remove(comboEntry);
                 else orders.put(comboEntry, orders.get(comboEntry) - 1);
                 timestamps.remove(timestamp);
@@ -87,7 +87,22 @@ public class Cart {
                 break;
             }
         }
-        return getCount(combo.getId());
+        return getCount(comboId);
+    }
+
+    public int decrementFromCart(Combo combo) {
+        for(Long timestamp: timestamps.descendingKeySet()) {
+            Combo comboEntry = timestamps.get(timestamp);
+            if (combo.hashCode() == comboEntry.hashCode()) {
+                if (orders.get(comboEntry) - 1 == 0) orders.remove(comboEntry);
+                else orders.put(comboEntry, orders.get(comboEntry) - 1);
+                timestamps.remove(timestamp);
+                printOrdersContents();
+                printTimestampsContents();
+                break;
+            }
+        }
+        return getCount(combo);
     }
 
     public HashMap<Combo,Integer> getOrders() { return orders; }
@@ -139,7 +154,7 @@ public class Cart {
     public void printOrdersContents() {
         Log.i("Cart","Orders hashmap contents: ");
         for (HashMap.Entry<Combo, Integer> entry: orders.entrySet())
-            Log.i("Cart","Combo Hash: "+entry.getKey().hashCode()+ " Quantity: "+entry.getValue()+" Contents: "+entry.getKey().getDishNames());
+            Log.i("Cart","Combo Hash: "+entry.getKey().hashCode()+ " Quantity: "+entry.getValue()+"\n"+entry.getKey().getDishNames());
     }
 
 }

@@ -384,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (count.getText().toString().equals("0")) return;
-                    cart.decrementFromCart(combo);
+                    cart.decrementFromCart(combo.getId());
                     count.setText(String.valueOf(cart.getCount(combo.getId())));
                     if (cart.getCount(combo.getId()) == 0) {
                         Animations.fadeOut(addedToCartLayout, 200);
