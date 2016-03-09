@@ -27,8 +27,8 @@
     <color name="material_button_tint">#ffffff</color>
 
     <color name="veg">#39b54a</color>
-    <color name="non_veg">#bc6231</color>
-    <color name="egg">#eede00</color>
+    <color name="non_veg">#d01c00</color>
+    <color name="egg">#d5a300</color>
 
     <color name="okay_green">#00a50e</color>
 

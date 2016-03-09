@@ -49,9 +49,9 @@ public class ComboOption {
         int egg = 0;
         for (ComboDish comboDish: comboOptionDishes) {
             switch (comboDish.getDish().getLabel()) {
-                case EGG: egg++;
-                case VEG: veg++;
-                case NON_VEG: non_veg++;
+                case EGG: egg++; break;
+                case VEG: veg++; break;
+                case NON_VEG: non_veg++; break;
             }
         }
         if(non_veg==0)
