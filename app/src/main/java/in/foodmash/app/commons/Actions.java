@@ -12,33 +12,43 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
-import java.util.List;
-
 import in.foodmash.app.LoginActivity;
 import in.foodmash.app.R;
 import in.foodmash.app.custom.Cart;
-import in.foodmash.app.custom.Combo;
 
 /**
  * Created by Zeke on Sep 20 2015.
  */
 public class Actions {
 
-    public static void cacheEmailAndPhone(Context context, String email, String phone) {
+    public static void cacheUserDetails(Context context,String name, String email, String phone) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("email",email);
         editor.putString("phone",phone);
+        editor.putString("name",name);
         editor.apply();
     }
 
-    public static void cachePackagingCentreId(Context context, int id) {
+    public static void cacheLocationDetails(Context context, String cityName, String areaName, int areaId,int packagingCenterId) {
         int oldPackagingCenterId = Info.getPackagingCentreId(context);
-        if(id != oldPackagingCenterId) cacheCombos(context, null);
+        if(oldPackagingCenterId != -1 && packagingCenterId != oldPackagingCenterId) cacheCombos(context, null);
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("packaging_centre_id", id);
+        editor.putString("city_name", cityName);
+        editor.putString("area_name", areaName);
+        editor.putInt("area_id", areaId);
+        editor.putInt("packaging_centre_id", packagingCenterId);
         editor.commit();
+    }
+
+    public static void cacheCities(Context context, String cityJsonArrayString) {
+        if(Info.getCityJsonArrayString(context)!= null
+                && Info.getCityJsonArrayString(context).equals(cityJsonArrayString)) return;
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("city_list", cityJsonArrayString);
+        editor.apply();
     }
 
     public static void cacheCombos(Context context, String comboJsonArrayString) {

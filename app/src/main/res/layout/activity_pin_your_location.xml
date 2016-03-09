@@ -27,7 +27,7 @@
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/svg_marker"
+                android:src="@drawable/svg_marker_filled"
                 android:scaleType="centerCrop"
                 android:tint="@color/accent_white_bg" />
         </FrameLayout>

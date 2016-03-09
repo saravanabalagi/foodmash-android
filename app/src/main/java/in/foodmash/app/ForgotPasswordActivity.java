@@ -8,8 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -72,9 +71,9 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         } catch (Exception e) { e.printStackTrace(); }
         forgot.setOnClickListener(this);
 
-        phoneValidate = (ImageView) findViewById(R.id.phone_validate);
+        phoneValidate = (ImageView) findViewById(R.id.contact_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
-        phone = (EditText) findViewById(R.id.phone); phone.setText(Info.getPhone(ForgotPasswordActivity.this)); phone.addTextChangedListener(this);
+        phone = (EditText) findViewById(R.id.contact_no); phone.setText(Info.getPhone(ForgotPasswordActivity.this)); phone.addTextChangedListener(this);
         email = (EditText) findViewById(R.id.email_or_phone); email.setText(Info.getEmail(ForgotPasswordActivity.this)); email.addTextChangedListener(this);
 
         otpMethodRadioGroup = (RadioGroup) findViewById(R.id.otp_method_radio_group); otpMethodRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -114,7 +113,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
-                        System.out.println(response.getString("otp"));
+                        Log.i("Security",response.getString("otp"));
                         intent = new Intent(ForgotPasswordActivity.this, ForgotPasswordOtpActivity.class);
                         intent.putExtra("type",(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)?"phone":"email");
                         intent.putExtra("value",(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)?phone.getText().toString().trim():email.getText().toString().trim());
@@ -123,7 +122,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
                         Animations.fadeOut(connectingLayout,500);
                         Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(ForgotPasswordActivity.this, "Could not send OTP", "We are unable to send you OTP as the details you entered are invalid. Try Again!", "Okay");
-                        System.out.println("Error: " + response.getString("error"));
+                        Log.e("Success False", response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -143,7 +142,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ForgotPasswordActivity.this, onClickTryAgain);
                 else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ForgotPasswordActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(ForgotPasswordActivity.this);
-                System.out.println("JSON Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(connectingLayout,500);

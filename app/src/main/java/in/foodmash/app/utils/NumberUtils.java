@@ -4,6 +4,9 @@ package in.foodmash.app.utils;
  * Created by Zeke on Sep 04 2015.
  */
 public class NumberUtils {
+
+    public static String getCurrencyFormat(float f) { return String.format("%.2f",f); }
+    public static String getCurrencyFormat(double d) { return String.format("%.2f",d); }
     public static boolean isInteger(String string) {
         if (string == null) { return false; }
         if (string.length() == 0) { return false; }

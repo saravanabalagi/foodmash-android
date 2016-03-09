@@ -58,7 +58,8 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/fill_layout">
+                android:id="@+id/fill_layout"
+                android:paddingBottom="80dp">
 
             </LinearLayout>
 
@@ -111,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/price_lorem_ipsum"
                 android:textSize="15sp"
-                android:id="@+id/total"
+                android:id="@+id/payable_amount"
                 android:textColor="@color/primary_text_dark" />
         </LinearLayout>
     </LinearLayout>

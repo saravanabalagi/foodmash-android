@@ -119,7 +119,6 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             if (c.getId()==comboId)
                 combo = c;
         if(combo==null) { Alerts.unknownErrorAlert(ComboDescriptionActivity.this); return; }
-        System.out.println(combo.toString());
 
         buy.setOnClickListener(this);
         imageLoader = Swift.getInstance(ComboDescriptionActivity.this).getImageLoader();
@@ -168,7 +167,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                 final TextView addExtraLayout = (TextView) comboOptionsLayout.findViewById(R.id.add_extra);
                 final LinearLayout countLayout = (LinearLayout) comboOptionsLayout.findViewById(R.id.count_layout);
                 final TextView count = (TextView) countLayout.findViewById(R.id.count);
-                int quantity = comboDish.getQuantity();
+                int quantity = comboOption.getMinCount();
                 count.setText(String.valueOf(quantity));
                 if (comboOption.getSelectedComboOptionDishes().contains(comboDish)) {
                     Animations.fadeOut(addExtraLayout, 500);
@@ -235,7 +234,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                                 Animations.fadeIn(countLayout, 500);
                                 Animations.fadeIn(selected, 500);
                             } else {
-                                comboDish.resetQuantity();
+                                comboDish.setQuantity(0);
                                 Animations.fadeIn(addExtraLayout, 500);
                                 Animations.fadeOut(countLayout, 500);
                                 Animations.fadeOut(selected, 500);
@@ -250,13 +249,6 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                 });
                 optionsLayout.addView(comboOptionsLayout);
             }
-
-            if (comboOption.isFromSameRestaurant()) {
-                for (int m = 0; m < comboOption.getComboOptionDishes().size(); m++)
-                    optionsLayout.getChildAt(m).findViewById(R.id.restaurant_layout).setVisibility(View.GONE);
-                ((TextView) currentComboFoodLayout.findViewById(R.id.restaurant_name)).setText(comboOption.getComboOptionDishes().get(0).getDish().getRestaurant().getName());
-                ((NetworkImageView) currentComboFoodLayout.findViewById(R.id.restaurant_logo)).setImageUrl(comboOption.getComboOptionDishes().get(0).getDish().getRestaurant().getLogo(),imageLoader);
-            } else currentComboFoodLayout.findViewById(R.id.restaurant_layout).setVisibility(View.GONE);
             layoutOrderTreeMap.put(comboOption.getPriority(), currentComboFoodLayout);
 
         }
@@ -315,8 +307,10 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         switch (v.getId()) {
             case R.id.buy:
                 cart.addToCart(new Combo(combo));
-                Snackbar.make(parentLayout, "Added to Cart", Snackbar.LENGTH_SHORT)
-                    .setAction("Undo", new View.OnClickListener() { @Override public void onClick(View v) { cart.decrementFromCart(combo); Actions.updateCartCount(cartCount); } })
+                Snackbar.make(parentLayout, "Added to Cart", Snackbar.LENGTH_LONG)
+                    .setAction("Undo", new View.OnClickListener() { @Override public void onClick(View v) {
+                        cart.decrementFromCart(combo.getId());
+                        Actions.updateCartCount(cartCount); } })
                     .show();
                 Actions.updateCartCount(cartCount);
                 break;

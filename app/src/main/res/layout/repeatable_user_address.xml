@@ -20,7 +20,7 @@
             android:id="@+id/selected"
             android:contentDescription="@string/edit"
             android:background="@color/transparent"
-            android:src="@drawable/svg_tick"
+            android:src="@drawable/svg_tick_filled"
             android:tint="@color/okay_green"
             android:scaleType="centerCrop"
             android:visibility="gone" />
@@ -72,19 +72,39 @@
             android:textSize="16sp"
             android:padding="5dp" />
 
-        <TextView
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/address_lorem_ipsum"
-            android:id="@+id/address"
-            android:padding="5dp"
-            android:textSize="12sp" />
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Line1"
+                android:id="@+id/line1"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Line2"
+                android:id="@+id/line2"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Area, City"
+                android:id="@+id/area_city"
+                android:textSize="12sp" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/phone_lorem_ipsum"
-            android:id="@+id/phone"
+            android:id="@+id/contact_no"
             android:textSize="14sp"
             android:padding="5dp" />
     </LinearLayout>

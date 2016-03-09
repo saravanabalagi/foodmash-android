@@ -20,8 +20,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
+import in.foodmash.app.utils.NumberUtils;
 
 /**
  * Created by Zeke on Jul 19 2015.
@@ -31,7 +33,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     @Bind(R.id.buy) FloatingActionButton buy;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.empty_cart_layout) LinearLayout emptyCartLayout;
-    @Bind(R.id.total) TextView total;
+    @Bind(R.id.payable_amount) TextView total;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     private Intent intent;
@@ -55,11 +57,8 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 .setPositiveButton("Remove All", new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialog, int which) {
                         cart.removeAllOrders();
-                        for (int i = 0; i < fillLayout.getChildCount(); i++)
-                            handler.postDelayed(new Runnable() {
-                                @Override public void run() {
-                                    fillLayout.removeViewAt(0); } }, i*500);
-                        total.setText(cart.getTotal());
+                        fillLayout.removeAllViews();
+                        total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
                         Animations.fadeIn(emptyCartLayout,500);
                     }
                 }).setNegativeButton("No, don't remove", new DialogInterface.OnClickListener() {
@@ -85,7 +84,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
         emptyCartLayout = (LinearLayout) findViewById(R.id.empty_cart_layout);
 
-        total.setText(cart.getTotal());
+        total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
         if(cart.getCount()>0) emptyCartLayout.setVisibility(View.GONE);
         for(final HashMap.Entry<Combo,Integer> order: cart.getOrders().entrySet()){
             final Combo combo = order.getKey();
@@ -96,17 +95,18 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.calculatePrice() * order.getValue()));
             comboLayout.findViewById(R.id.plus).setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
-                    ((TextView) comboLayout.findViewById(R.id.count)).setText(String.valueOf(cart.addToCart(combo)));
+                    cart.addToCart(combo);
+                    ((TextView) comboLayout.findViewById(R.id.count)).setText(String.valueOf(cart.getCount(combo)));
                     ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.calculatePrice() * order.getValue()));
-                    total.setText(cart.getTotal());
+                    total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
             }});
             comboLayout.findViewById(R.id.minus).setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     ((TextView) comboLayout.findViewById(R.id.count)).setText(String.valueOf(cart.decrementFromCart(combo)));
-                    if(cart.getCount(combo.getId())==0) fillLayout.removeView(comboLayout);
                     if(cart.getCount()==0) Animations.fadeIn(emptyCartLayout, 500);
+                    if(cart.getCount(combo)==0) fillLayout.removeView(comboLayout);
                     ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.calculatePrice() * order.getValue()));
-                    total.setText(cart.getTotal());
+                    total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
             }});
             fillLayout.addView(comboLayout);
         }
@@ -117,7 +117,12 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.buy:
                 if(cart.getCount()==0) Alerts.commonErrorAlert(CartActivity.this,"Empty Cart","Your cart is empty. Add some combos and we'll proceed!","Okay");
-                else { intent = new Intent(this, CheckoutAddressActivity.class); startActivity(intent); }
+                else if(Info.isLoggedIn(this)) startActivity(new Intent(CartActivity.this, CheckoutAddressActivity.class));
+                else {
+                    Intent intent = new Intent(CartActivity.this, LoginActivity.class);
+                    intent.putExtra("from_cart", true);
+                    startActivity(intent);
+                }
                 break;
         }
     }

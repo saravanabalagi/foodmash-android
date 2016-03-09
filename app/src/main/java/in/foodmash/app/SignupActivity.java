@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
@@ -52,6 +54,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     @Bind(R.id.refund_policy) LinearLayout refundPolicy;
 
     private Intent intent;
+    private boolean fromCart;
     private LegaleseActivity.Legalese legalese;
 
     private EditText name;
@@ -90,17 +93,18 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { e.printStackTrace(); }
 
+        fromCart = getIntent().getBooleanExtra("from_cart", false);
         create.setOnClickListener(this);
 
         nameValidate = (ImageView) findViewById(R.id.name_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
-        phoneValidate = (ImageView) findViewById(R.id.phone_validate);
+        phoneValidate = (ImageView) findViewById(R.id.contact_validate);
         passwordValidate = (ImageView) findViewById(R.id.password_validate);
         passwordConfirmationValidate = (ImageView) findViewById(R.id.password_confirmation_validate);
 
         name = (EditText) findViewById(R.id.name); name.addTextChangedListener(this);
         email = (EditText) findViewById(R.id.email); email.addTextChangedListener(this);
-        phone = (EditText) findViewById(R.id.phone); phone.addTextChangedListener(this);
+        phone = (EditText) findViewById(R.id.contact_no); phone.addTextChangedListener(this);
         password = (EditText) findViewById(R.id.password); password.addTextChangedListener(this);
         passwordConfirmation = (EditText) findViewById(R.id.password_confirmation); passwordConfirmation.addTextChangedListener(this);
 
@@ -152,11 +156,13 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         registerRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations",getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                System.out.println("JSON Response: "+response);
-                intent = new Intent(SignupActivity.this, MainActivity.class);
+                intent = new Intent(SignupActivity.this, LoginActivity.class);
+                if(fromCart) intent = new Intent(SignupActivity.this, CartActivity.class);
                 try {
                     if (response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
+                        JSONObject userJson = dataJson.getJSONObject("user");
+                        Actions.cacheUserDetails(SignupActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"));
                         String userToken = dataJson.getString("user_token");
                         String sessionToken = dataJson.getString("session_token");
                         SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
@@ -172,7 +178,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         Animations.fadeOut(connectingLayout,500);
                         Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(SignupActivity.this,"Registration Invalid", "We are unable to sign you up. Please try again!","Okay");
-                        System.out.println("Error Details: " + response.getString("info"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -192,12 +198,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
                 else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(SignupActivity.this);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(connectingLayout,500);
         Animations.fadeOut(mainLayout, 500);
-        Swift.getInstance(SignupActivity.this).addToRequestQueue(registerRequest);
+        Swift.getInstance(SignupActivity.this).addToRequestQueue(registerRequest,15000,3,1.5f);
     }
 
     private void setCancelOnImageView(ImageView imageView) { imageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); imageView.setImageResource(R.drawable.svg_close); }
@@ -219,12 +225,10 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                     dataJson.put("email",s.toString());
                     requestJson.put("data",dataJson);
                 } catch (JSONException e) { e.printStackTrace(); }
-                System.out.println("Request Json: "+requestJson);
                 checkEmailRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkEmail", requestJson, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            System.out.println("Email response: "+response);
                             isEmailValidationInProgress = false;
                             if(response.getBoolean("success")) {
                                 isEmailAvailable = true;
@@ -249,7 +253,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
                         else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
                         else Alerts.unknownErrorAlert(SignupActivity.this);
-                        System.out.println("Email response error: "+error);
+                        Log.e("Json Request","Email response error: "+error);
                         isEmailValidationInProgress = false;
                         setCancelOnImageView(emailValidate);
                         Animations.fadeOutAndFadeIn(emailProgressBar,emailValidate,500);
@@ -273,7 +277,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            System.out.println("Phone response: "+response);
                             if(response.getBoolean("success")) {
                                 isPhoneAvailable = true;
                                 setOkayOnImageView(phoneValidate);
@@ -297,7 +300,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
                         else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
                         else Alerts.unknownErrorAlert(SignupActivity.this);
-                        System.out.println("Phone response error: "+error);
+                        Log.e("Json Request","Phone response error: "+error);
                         isPhoneValidationInProgress = false;
                         setCancelOnImageView(phoneValidate);
                         Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);

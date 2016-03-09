@@ -7,10 +7,15 @@
         app:actionLayout="@layout/menu_item_cart_count"
         android:icon="@drawable/svg_cart"
         android:orderInCategory="1"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/menu_login"
+        android:title="@string/log_in"
+        android:icon="@drawable/svg_user1"
+        android:orderInCategory="2"
+        app:showAsAction="never" />
     <item android:id="@+id/menu_contact_us"
         android:title="@string/menu_contact_us"
         android:icon="@drawable/svg_help"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         app:showAsAction="never" />
 </menu>

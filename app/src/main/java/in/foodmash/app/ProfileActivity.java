@@ -10,16 +10,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -92,7 +89,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         nameValidate = (ImageView) findViewById(R.id.name_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
-        phoneValidate = (ImageView) findViewById(R.id.phone_validate);
+        phoneValidate = (ImageView) findViewById(R.id.contact_validate);
 
         name = (EditText) findViewById(R.id.name); name.addTextChangedListener(this);
         dob = (EditText) findViewById(R.id.dob); dob.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +115,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
         email = (EditText) findViewById(R.id.email_or_phone); email.addTextChangedListener(this);
-        phone = (EditText) findViewById(R.id.phone); phone.addTextChangedListener(this);
+        phone = (EditText) findViewById(R.id.contact_no); phone.addTextChangedListener(this);
         promotionOffers = (Switch) findViewById(R.id.receive_promo); promotionOffers.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -157,7 +154,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         promotionOffers.setChecked(userJson.getBoolean("offers"));
                     } else {
                         Alerts.requestUnauthorisedAlert(ProfileActivity.this);
-                        System.out.println(response.getString("error"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -173,7 +170,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ProfileActivity.this, onClickTryAgain);
                 else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ProfileActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(ProfileActivity.this);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(loadingLayout, 500);
@@ -215,7 +212,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void onResponse(JSONObject response) {
                 try {
                     if(response.getBoolean("success")) {
-                        Actions.cacheEmailAndPhone(ProfileActivity.this, email.getText().toString().trim(), phone.getText().toString().trim());
+                        Actions.cacheUserDetails(ProfileActivity.this, name.getText().toString().trim(), email.getText().toString().trim(), phone.getText().toString().trim());
                         finish();
                     } else {
                         Animations.fadeOut(savingLayout,500);
@@ -224,7 +221,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                 "Invalid Details",
                                 "We are unable to save your profile details as they are invalid. Try again later!",
                                 "Okay");
-                        System.out.println("Response error: "+response.getString("error"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -244,7 +241,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ProfileActivity.this, onClickTryAgain);
                 else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ProfileActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(ProfileActivity.this);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(savingLayout,500);

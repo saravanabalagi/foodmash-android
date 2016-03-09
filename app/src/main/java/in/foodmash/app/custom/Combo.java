@@ -46,15 +46,11 @@ public class Combo {
         this.price = c.price;
         this.picture = c.picture;
         this.comboDishes = new ArrayList<>();
-        for (ComboDish entry: c.getComboDishes()) {
-            ComboDish comboDish = new ComboDish(entry);
-            this.comboDishes.add(comboDish);
-        }
+        for (ComboDish comboDish: c.getComboDishes())
+            this.comboDishes.add(new ComboDish(comboDish));
         this.comboOptions = new ArrayList<>();
-        for (ComboOption entry: c.getComboOptions()) {
-            ComboOption comboOption = new ComboOption(entry);
-            this.comboOptions.add(comboOption);
-        }
+        for (ComboOption comboOption: c.getComboOptions())
+            this.comboOptions.add(new ComboOption(comboOption));
     }
 
     public int getId() { return id; }
@@ -96,10 +92,10 @@ public class Combo {
             String comboOptions = "";
             for(ComboDish comboDish: comboOption.getComboOptionDishes())
                 comboOptions += comboDish.getDish().getName() + "/ ";
-            contents.put(comboOption.getPriority(), new Pair<>(comboOptions.substring(0, comboOptions.length() - 2), comboOption.getLabel()));
+            contents.put(comboOption.getPriority(), new Pair<>(((comboOption.getMinCount()==1)?"":comboOption.getMinCount()+"x ") + comboOptions.substring(0, comboOptions.length() - 2), comboOption.getLabel()));
         }
         for (ComboDish comboDish : this.getComboDishes())
-            contents.put(comboDish.getPriority(), new Pair<>(comboDish.getDish().getName(),comboDish.getDish().getLabel()));
+            contents.put(comboDish.getPriority(), new Pair<>(((comboDish.getMinCount()==1)?"":comboDish.getMinCount()+"x ")+comboDish.getDish().getName(),comboDish.getDish().getLabel()));
         return contents;
     }
 
@@ -120,10 +116,10 @@ public class Combo {
     }
     @JsonProperty public void setCategory(String category) {
         switch (category) {
-            case "regular": this.category = Category.REGULAR; break;
-            case "budget": this.category = Category.BUDGET; break;
-            case "corporate": this.category = Category.CORPORATE; break;
-            case "health": this.category = Category.HEALTH; break;
+            case "Regular": this.category = Category.REGULAR; break;
+            case "Budget": this.category = Category.BUDGET; break;
+            case "Corporate": this.category = Category.CORPORATE; break;
+            case "Health": this.category = Category.HEALTH; break;
         }
     }
     @JsonProperty public void setName(String name) { this.name = name; }
@@ -148,10 +144,14 @@ public class Combo {
         int hash = 5;
         hash = 3*hash + this.getId();
         for(ComboOption comboOption: comboOptions)
-            for(ComboDish comboDish: comboOption.getSelectedComboOptionDishes())
-                hash = 3*hash + comboDish.getId();
-        for(ComboDish comboDish: comboDishes)
-            hash = 3*hash + comboDish.getQuantity();
+            for(ComboDish comboDish: comboOption.getSelectedComboOptionDishes()) {
+                hash = 3 * hash + comboDish.getId();
+                hash = 3 * hash + comboDish.getQuantity();
+            }
+        for(ComboDish comboDish: comboDishes) {
+            hash = 3 * hash + comboDish.getId();
+            hash = 3 * hash + comboDish.getQuantity();
+        }
         return hash;
     }
 }

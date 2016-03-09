@@ -34,39 +34,28 @@ import in.foodmash.app.R;
  */
 public class NetbankingFragment extends Fragment {
 
-    private boolean created = false;
     private String bankcode;
     private ArrayList<PaymentDetails> netBankingList;
     private PaymentParams paymentParams;
     private PayuHashes payuHashes;
     private PayuConfig payuConfig;
 
-    @Override
-    public void setMenuVisibility(boolean menuVisible) {
-        super.setMenuVisibility(menuVisible);
-        if(menuVisible && created) {
-            ((CheckoutPaymentActivity) getActivity()).getPayButton().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    paymentParams.setHash(payuHashes.getPaymentHash());
-                    paymentParams.setBankCode(bankcode);
-                    PostData postData = new PaymentPostParams(paymentParams, PayuConstants.NB).getPaymentPostParams();
-                    if (postData.getCode() == PayuErrors.NO_ERROR) {
-                        payuConfig.setData(postData.getResult());
-                        Intent intent = new Intent(getActivity(), PaymentsActivity.class);
-                        intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
-                        startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
-                    } else Toast.makeText(getActivity(), postData.getResult(), Toast.LENGTH_LONG).show();
-                }
-            });
-        }
+    public void doPayment() {
+        paymentParams.setHash(payuHashes.getPaymentHash());
+        paymentParams.setBankCode(bankcode);
+        PostData postData = new PaymentPostParams(paymentParams, PayuConstants.NB).getPaymentPostParams();
+        if (postData.getCode() == PayuErrors.NO_ERROR) {
+            payuConfig.setData(postData.getResult());
+            Intent intent = new Intent(getActivity(), PaymentsActivity.class);
+            intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
+            startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
+        } else Toast.makeText(getActivity(), postData.getResult(), Toast.LENGTH_LONG).show();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_netbanking, container, false);
-        created = true;
         class PayUNetBankingAdapter extends BaseAdapter {
             Context mContext;
             ArrayList<PaymentDetails> mNetBankingList;
@@ -80,7 +69,7 @@ public class NetbankingFragment extends Fragment {
                 NetbankingViewHolder netbankingViewHolder = null;
                 if (convertView == null) {
                     LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-                    convertView = mInflater.inflate(android.R.layout.simple_list_item_1, null);
+                    convertView = mInflater.inflate(R.layout.spinner_item, null);
                     netbankingViewHolder = new NetbankingViewHolder(convertView);
                     convertView.setTag(netbankingViewHolder);
                 } else netbankingViewHolder = (NetbankingViewHolder) convertView.getTag();

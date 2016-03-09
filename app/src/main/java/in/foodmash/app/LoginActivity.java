@@ -4,20 +4,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
@@ -56,7 +56,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Bind(R.id.register) TextView register;
     @Bind(R.id.forgot_password) TextView forgotPassword;
 
+    private boolean fromCart = false;
     private boolean isEmail = true;
+    private Snackbar snackbar;
+
     private EditText email;
     private EditText password;
     private EditText phonePrefix;
@@ -87,6 +90,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
+        fromCart = getIntent().getBooleanExtra("from_cart", false);
+        if(fromCart) {
+            snackbar = Snackbar.make(mainLayout, "Login to continue", Snackbar.LENGTH_LONG)
+                    .setAction("Okay", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (snackbar != null && snackbar.isShown())
+                                snackbar.dismiss();
+                        }
+                    });
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    snackbar.show();
+                }
+            }, 1000);
+        }
+
         register.setOnClickListener(this);
         forgotPassword.setOnClickListener(this);
         skip.setOnClickListener(this);
@@ -105,7 +127,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.register: intent = new Intent(this, SignupActivity.class); startActivity(intent); break;
+            case R.id.register: intent = new Intent(this, SignupActivity.class); intent.putExtra("from_cart",true); startActivity(intent); break;
             case R.id.forgot_password: intent = new Intent(this, ForgotPasswordActivity.class); startActivity(intent); break;
             case R.id.login: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(LoginActivity.this); break;
         }
@@ -130,13 +152,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path)+"/sessions",getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                System.out.println("JSON Response: "+response);
-                intent = new Intent(LoginActivity.this, MainActivity.class);
+                if(fromCart) intent = new Intent(LoginActivity.this, CartActivity.class);
+                else intent = new Intent(LoginActivity.this, MainActivity.class);
                 try {
                     if (response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
                         JSONObject userJson = dataJson.getJSONObject("user");
-                        Actions.cacheEmailAndPhone(LoginActivity.this, userJson.getString("email"), userJson.getString("mobile_no"));
+                        Actions.cacheUserDetails(LoginActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"));
                         String userToken = dataJson.getString("user_token");
                         String sessionToken = dataJson.getString("session_token");
                         SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
@@ -148,6 +170,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         editor.apply();
                         startActivity(intent);
                         finish();
+                        Animations.fadeOut(connectingLayout,500);
+                        Animations.fadeIn(mainLayout,500);
                     } else {
                         Animations.fadeOut(connectingLayout,500);
                         Animations.fadeIn(mainLayout,500);
@@ -155,7 +179,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 "Invalid username or password",
                                 "We are unable to log you in with the entered credentials. Please try again!",
                                 "Okay");
-                        System.out.println("Error Details: " + response.getString("error"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -175,7 +199,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(LoginActivity.this, onClickTryAgain);
                 if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(LoginActivity.this, onClickTryAgain);
                 else Alerts.unknownErrorAlert(LoginActivity.this);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
         Animations.fadeIn(connectingLayout,500);

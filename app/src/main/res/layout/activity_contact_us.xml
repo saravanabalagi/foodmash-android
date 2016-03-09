@@ -209,7 +209,7 @@
                             android:layout_height="wrap_content"
                             android:inputType="phone"
                             android:ems="10"
-                            android:id="@+id/phone"
+                            android:id="@+id/contact_no"
                             android:layout_margin="5dp"
                             android:hint="@string/phone_edit_text_hint"
                             android:singleLine="true"
@@ -218,7 +218,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:id="@+id/phone_validate"
+                            android:id="@+id/contact_validate"
                             android:src="@drawable/svg_tick"
                             android:tint="@color/okay_green"
                             android:layout_gravity="bottom"

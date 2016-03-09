@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_order_history: intent = new Intent(this, OrderHistoryActivity.class); startActivity(intent); return true;
             case R.id.menu_contact_us: intent = new Intent(this, ContactUsActivity.class); startActivity(intent); return true;
             case R.id.menu_log_out: Actions.logout(MainActivity.this); return true;
+            case R.id.menu_login: intent = new Intent(this, LoginActivity.class); startActivity(intent); return true;
             case R.id.menu_cart: intent = new Intent(this, CartActivity.class); startActivity(intent); return true;
             default: return super.onOptionsItemSelected(item);
         }
@@ -124,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("Executing onCreate");
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -145,6 +146,9 @@ public class MainActivity extends AppCompatActivity {
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener(){
             @Override public boolean onSingleTapUp(MotionEvent e) { return true; } });
         Filters filters = new Filters();
+
+        filters.addHeader("Deliver to");
+        filters.addFilter(Info.getAreaName(this), R.drawable.svg_marker_filled);
 
         filters.addHeader("Type");
         filters.addFilter("Regular", R.drawable.svg_hashtag);
@@ -190,21 +194,23 @@ public class MainActivity extends AppCompatActivity {
                 View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
                 if(child!=null && gestureDetector.onTouchEvent(e)) {
                     switch(recyclerView.getChildAdapterPosition(child)) {
-                        case 1: makeActive(child, Combo.Category.REGULAR); break;
-                        case 2: makeActive(child, Combo.Category.BUDGET); break;
-                        case 3: makeActive(child, Combo.Category.CORPORATE); break;
-                        case 4: makeActive(child, Combo.Category.HEALTH); break;
+                        case 1: startActivity(new Intent(MainActivity.this, SplashActivity.class));
 
-                        case 6: makeActive(child, Combo.Size.MICRO); break;
-                        case 7: makeActive(child, Combo.Size.MEDIUM); break;
-                        case 8: makeActive(child, Combo.Size.MEGA); break;
+                        case 3: makeActive(child, Combo.Category.REGULAR); break;
+                        case 4: makeActive(child, Combo.Category.BUDGET); break;
+                        case 5: makeActive(child, Combo.Category.CORPORATE); break;
+                        case 6: makeActive(child, Combo.Category.HEALTH); break;
 
-                        case 10: makeActive(child, Dish.Label.VEG); break;
-                        case 11: makeActive(child, Dish.Label.EGG); break;
-                        case 12: makeActive(child, Dish.Label.NON_VEG); break;
+                        case 8: makeActive(child, Combo.Size.MICRO); break;
+                        case 9: makeActive(child, Combo.Size.MEDIUM); break;
+                        case 10: makeActive(child, Combo.Size.MEGA); break;
 
-                        case 14: sortPriceLowToHigh = true; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(15).itemView.setActivated(false); } break;
-                        case 15: sortPriceLowToHigh = false; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(14).itemView.setActivated(false); } break;
+                        case 12: makeActive(child, Dish.Label.VEG); break;
+                        case 13: makeActive(child, Dish.Label.EGG); break;
+                        case 14: makeActive(child, Dish.Label.NON_VEG); break;
+
+                        case 16: sortPriceLowToHigh = true; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(15).itemView.setActivated(false); } break;
+                        case 17: sortPriceLowToHigh = false; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(14).itemView.setActivated(false); } break;
                     }
                 }
                 return false;
@@ -224,9 +230,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                System.out.println(categorySelected);
-                System.out.println(sizeSelected);
-                System.out.println(preferenceSelected);
+                Log.i("Filters",categorySelected.toString());
+                Log.i("Filters",sizeSelected.toString());
+                Log.i("Filters",preferenceSelected.toString());
                 try {updateFillLayout(Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(MainActivity.this), Combo[].class))); }
                 catch (Exception e) { e.printStackTrace(); }
             }
@@ -238,18 +244,17 @@ public class MainActivity extends AppCompatActivity {
         getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                System.out.println(response);
                 try {
                     if (response.getBoolean("success")) {
                         if (snackbar!=null && snackbar.isShown()) snackbar.dismiss();
                         Animations.fadeOut(fragmentContainer,100);
-                        System.out.println(response.getJSONObject("data"));
+                        Log.i("Combos", response.getJSONObject("data").getJSONArray("combos").length() + " combos found");
                         String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
                         updateFillLayout(Arrays.asList(objectMapper.readValue(comboJsonArrayString, Combo[].class)));
                         Actions.cacheCombos(MainActivity.this, comboJsonArrayString);
                     } else {
                         Alerts.requestUnauthorisedAlert(MainActivity.this);
-                        System.out.println(response.getString("error"));
+                        Log.e("Success False",response.getString("error"));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -263,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().executePendingTransactions();
                 ((VolleyFailureFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
                         .setJsonObjectRequest(getCombosRequest);
-                System.out.println("Response Error: " + error);
+                Log.e("Json Request Failed", error.toString());
             }
         });
 
@@ -277,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
             snackbar = Snackbar.make(fillLayout, "Updating combos...", Snackbar.LENGTH_INDEFINITE).setAction("Close", new View.OnClickListener() { @Override public void onClick(View v) { snackbar.dismiss(); } });
             snackbar.show();
         }
-        Swift.getInstance(this).addToRequestQueue(getCombosRequest);
+        Swift.getInstance(this).addToRequestQueue(getCombosRequest, 20000, 2, 1.0f);
     }
 
 
@@ -351,6 +356,7 @@ public class MainActivity extends AppCompatActivity {
                 case VEG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.veg)); break;
                 case NON_VEG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.non_veg)); break;
             }
+            comboLayout.findViewById(R.id.view).setOnClickListener(showDescription);
             comboLayout.findViewById(R.id.clickable_layout).setOnClickListener(showDescription);
             comboLayout.findViewById(R.id.image).setOnClickListener(showDescription);
             final TextView addToCartLayout = (TextView) comboLayout.findViewById(R.id.add_to_cart_layout);
@@ -378,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (count.getText().toString().equals("0")) return;
-                    cart.decrementFromCart(combo);
+                    cart.decrementFromCart(combo.getId());
                     count.setText(String.valueOf(cart.getCount(combo.getId())));
                     if (cart.getCount(combo.getId()) == 0) {
                         Animations.fadeOut(addedToCartLayout, 200);
@@ -435,7 +441,6 @@ public class MainActivity extends AppCompatActivity {
             if(!sizeSelected.isEmpty() && !sizeSelected.contains(combo.getSize())) survived = false;
             if(!preferenceSelected.isEmpty() && !preferenceSelected.contains(combo.getLabel())) survived = false;
             if(survived) filteredComboList.add(combo);
-            System.out.println(combo.getCategory()+" "+combo.getSize()+" "+combo.getLabel()+" "+survived);
         }
         return filteredComboList;
     }

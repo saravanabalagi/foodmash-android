@@ -3,6 +3,7 @@ package in.foodmash.app.commons;
 
 import android.content.Context;
 import android.provider.Settings;
+import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -25,7 +26,6 @@ public class Cryptography {
             sha = MessageDigest.getInstance("SHA-1");
             key = sha.digest(key);
             key = Arrays.copyOf(key, 16); // use only first 128 bit
-            System.out.println("Key: " + byteToHex(key));
             secretKey = new SecretKeySpec(key, "AES");
         } catch (NoSuchAlgorithmException e) { e.printStackTrace(); }
     }
@@ -35,10 +35,8 @@ public class Cryptography {
             setKey(key);
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            System.out.println("String to encrypt: "+strToEncrypt);
-            //System.out.println("Base64: " +Base64.encode(cipher.doFinal(hexToByte(strToEncrypt))));
             return Base64.encode(cipher.doFinal(hexToByte(strToEncrypt)));
-        } catch (Exception e) {  System.out.println("Error while encrypting: " + e.toString()); e.printStackTrace(); }
+        } catch (Exception e) {  Log.e("Security","Error while encrypting: " + e.toString()); e.printStackTrace(); }
         return null;
     }
 
@@ -48,13 +46,13 @@ public class Cryptography {
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             return new String(cipher.doFinal(Base64.decode(cipher.doFinal(strToDecrypt.getBytes()))));
-        } catch (Exception e) { System.out.println("Error while decrypting: "+e.toString()); e.printStackTrace(); }
+        } catch (Exception e) { Log.e("Security","Error while decrypting: "+e.toString()); }
         return null;
     }
 
     public static String getEncryptedAndroidId(Context context, String key) {
         String androidId = Settings.Secure.getString(context.getContentResolver(),Settings.Secure.ANDROID_ID);
-        System.out.println("Android ID: "+androidId);
+        Log.i("Security","Android ID: "+androidId);
         return encrypt(androidId,key);
     }
 

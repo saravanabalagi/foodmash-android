@@ -10,17 +10,16 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
 
                 <ImageView
                     android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:id="@+id/card_type"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="15dp"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_height="match_parent"
+                    android:src="@drawable/svg_android_card"
+                    android:id="@+id/card_type" />
 
                 <EditText
                     android:id="@+id/edit_text_card_number"
@@ -32,21 +31,42 @@
                     android:inputType="number"
                     android:maxLength="19"
                     android:singleLine="true" />
-            </RelativeLayout>
+            </LinearLayout>
 
-            <EditText
-                android:id="@+id/edit_text_name_on_card"
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="2dp"
-                android:hint="Name on Card"
-                android:inputType="text"
-                android:singleLine="true" />
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/svg_user1"
+                    android:tint="@color/black"
+                    android:id="@+id/imageView" />
+
+                <EditText
+                    android:id="@+id/edit_text_name_on_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:hint="Name on Card"
+                    android:inputType="text"
+                    android:singleLine="true" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/svg_android_date"
+                    android:tint="@color/black"
+                    android:id="@+id/imageView2"
+                    android:padding="7dp" />
 
                 <EditText
                     android:id="@+id/edit_text_expiry_month"
@@ -69,6 +89,21 @@
                     android:inputType="number"
                     android:maxLength="4"
                     android:singleLine="true" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:src="@android:drawable/ic_lock_idle_lock"
+                    android:tint="@color/black"
+                    android:id="@+id/imageView3"
+                    android:padding="7dp" />
 
                 <EditText
                     android:id="@+id/edit_text_card_cvv"

@@ -1,5 +1,7 @@
 package in.foodmash.app.custom;
 
+import android.util.Log;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONArray;
@@ -36,23 +38,36 @@ public class Cart {
                 count += order.getValue();
         return count;
     }
+    public int getCount(Combo combo) { return (orders.containsKey(combo))?orders.get(combo):0; }
 
-    public String getTotal() {
+    public float getDeliveryCharge() {
+        float deliveryCharge;
+        boolean isCorporatePresent=false;
+        for(Combo combo: orders.keySet())
+         if(combo.getCategory()== Combo.Category.CORPORATE)
+             isCorporatePresent=true;
+        if(isCorporatePresent) return 100;
+        if(getTotal()<200) { deliveryCharge=30; }
+        else deliveryCharge=40;
+        return deliveryCharge;
+    }
+    public float getGrandTotal() { return getTotal()+getVatForTotal()+getDeliveryCharge(); }
+    public float getVatForTotal() { return getTotal()*0.02f; }
+    public float getTotal() {
         float total = 0;
         for (HashMap.Entry<Combo,Integer> order: orders.entrySet() )
             total += order.getKey().calculatePrice() * order.getValue();
-        return String.format("%.2f",total);
+        return total;
     }
 
-    public int addToCart(Combo combo) {
+
+    public void addToCart(Combo combo) {
         timestamps.put(System.currentTimeMillis(),combo);
-        System.out.println("Combo Hash: "+combo.hashCode());
-        if(orders.containsKey(combo)) { System.out.println("Existing quantity: "+orders.get(combo)); orders.put(combo, orders.get(combo) + 1); System.out.println("Increasing quantity by 1");}
-        else { orders.put(combo, 1); System.out.println("Adding a new order"); }
+        if(orders.containsKey(combo)) orders.put(combo, orders.get(combo) + 1);
+        else orders.put(combo, 1);
         printOrdersContents();
         printTimestampsContents();
-        return getCount(combo.getId());
-      }
+    }
 
     public boolean hasCombo(Combo combo) {
         for(Combo entry: this.orders.keySet())
@@ -60,10 +75,10 @@ public class Cart {
         return false;
     }
 
-    public int decrementFromCart(Combo combo) {
+    public int decrementFromCart(int comboId) {
         for(Long timestamp: timestamps.descendingKeySet()) {
             Combo comboEntry = timestamps.get(timestamp);
-            if (combo.getId() == comboEntry.getId()) {
+            if (comboEntry.getId() == comboId) {
                 if (orders.get(comboEntry) - 1 == 0) orders.remove(comboEntry);
                 else orders.put(comboEntry, orders.get(comboEntry) - 1);
                 timestamps.remove(timestamp);
@@ -72,7 +87,22 @@ public class Cart {
                 break;
             }
         }
-        return getCount(combo.getId());
+        return getCount(comboId);
+    }
+
+    public int decrementFromCart(Combo combo) {
+        for(Long timestamp: timestamps.descendingKeySet()) {
+            Combo comboEntry = timestamps.get(timestamp);
+            if (combo.hashCode() == comboEntry.hashCode()) {
+                if (orders.get(comboEntry) - 1 == 0) orders.remove(comboEntry);
+                else orders.put(comboEntry, orders.get(comboEntry) - 1);
+                timestamps.remove(timestamp);
+                printOrdersContents();
+                printTimestampsContents();
+                break;
+            }
+        }
+        return getCount(combo);
     }
 
     public HashMap<Combo,Integer> getOrders() { return orders; }
@@ -116,15 +146,15 @@ public class Cart {
     }
 
     public void printTimestampsContents() {
-        System.out.println("Treemap contents: ");
+        Log.i("Cart","Treemap contents: ");
         for (TreeMap.Entry<Long, Combo> entry : timestamps.entrySet())
-            System.out.println("Timestamp: "+entry.getKey()+" Combo Hash: "+entry.getValue().hashCode() +" Combo ID: "+entry.getValue().getId());
+            Log.i("Cart","Timestamp: "+entry.getKey()+" Combo Hash: "+entry.getValue().hashCode() +" Combo ID: "+entry.getValue().getId());
     }
 
     public void printOrdersContents() {
-        System.out.println("Orders hashmap contents: ");
+        Log.i("Cart","Orders hashmap contents: ");
         for (HashMap.Entry<Combo, Integer> entry: orders.entrySet())
-            System.out.println("Combo Hash: "+entry.getKey().hashCode()+ " Quantity: "+entry.getValue()+" Contents: "+entry.getKey().getDishNames());
+            Log.i("Cart","Combo Hash: "+entry.getKey().hashCode()+ " Quantity: "+entry.getValue()+"\n"+entry.getKey().getDishNames());
     }
 
 }

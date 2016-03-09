@@ -3,10 +3,6 @@ package in.foodmash.app.commons;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.List;
-
-import in.foodmash.app.custom.Combo;
-
 /**
  * Created by Zeke on Sep 18 2015.
  */
@@ -15,6 +11,26 @@ public class Info {
     public static int getPackagingCentreId(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache",0);
         return sharedPreferences.getInt("packaging_centre_id",-1);
+    }
+
+    public static int getAreaId(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache",0);
+        return sharedPreferences.getInt("area_id",-1);
+    }
+
+    public static String getAreaName(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
+        return sharedPreferences.getString("area_name", null);
+    }
+
+    public static String getCityName(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
+        return sharedPreferences.getString("city_name", null);
+    }
+
+    public static String getCityJsonArrayString(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
+        return sharedPreferences.getString("city_list", null);
     }
 
     public static String getComboJsonArrayString(Context context) {
@@ -37,9 +53,9 @@ public class Info {
         return sharedPreferences.getString("phone",null);
     }
 
-    public static String getFirstName(Context context) {
+    public static String getName(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
-        return sharedPreferences.getString("firstName",null);
+        return sharedPreferences.getString("name",null);
     }
 
 }

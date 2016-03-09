@@ -20,18 +20,20 @@
     <!-- Badge Count -->
     <TextView
         android:id="@+id/cart_count"
-        android:layout_width="15dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="2dp"
         android:text="@string/cart_count_lorem_ipsum"
         android:textColor="@color/primary_text_dark"
         android:background="@drawable/bg_cart_count_background"
-        android:textSize="7sp"
+        android:textSize="15sp"
         android:gravity="center_horizontal"
         android:layout_marginRight="5dp"
-        android:visibility="gone"
         android:layout_alignRight="@+id/cart_icon"
         android:layout_marginTop="5dp"
-        android:clickable="false" />
+        android:clickable="false"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" />
 
 </RelativeLayout>

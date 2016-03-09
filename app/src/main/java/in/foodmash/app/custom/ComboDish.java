@@ -1,8 +1,5 @@
 package in.foodmash.app.custom;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Created by Zeke on Sep 11 2015.
  */
@@ -10,8 +7,8 @@ public class ComboDish {
 
     private int id;
     private int priority;
-    private int minCount;
-    private int quantity;
+    private int minCount = 0;
+    private int quantity = 0;
     private Dish dish;
 
     public ComboDish() {}
@@ -25,24 +22,26 @@ public class ComboDish {
 
     public int getId() { return id; }
     public Dish getDish() { return dish; }
-    @JsonIgnore public int getPriority() { return priority; }
-    @JsonIgnore public int getMinCount() { return minCount; }
+    public int getPriority() { return priority; }
+
+    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public int getMinCount() { return minCount; }
     public int getQuantity() { return quantity; }
 
-    @JsonProperty public void setId(int id) { this.id = id; }
-    @JsonProperty public void setPriority(int priority) { this.priority = priority; }
-    @JsonProperty public void setDish(Dish dish) { this.dish = dish; }
-    @JsonProperty public void setMinCount(int minCount) { this.minCount = minCount; this.quantity = minCount; }
+    public void setId(int id) { this.id = id; }
+    public void setPriority(int priority) { this.priority = priority; }
+    public void setDish(Dish dish) { this.dish = dish; }
+    public void setMinCount(int minCount) { this.minCount = minCount; this.quantity = minCount; }
     public boolean incrementQuantity() { if(quantity +1<10) { quantity++; return true;} else return false; }
     public boolean decrementQuantity() { if(quantity -1< minCount) return false; else { quantity--; return true; } }
-    public void resetQuantity() { quantity= minCount; }
+    public void resetQuantity() { quantity = minCount; }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ComboDish)) return false;
         if (o == this) return true;
         ComboDish comboDish = (ComboDish) o;
-        return this.id == comboDish.id && this.quantity == comboDish.quantity;
+        return this.hashCode() == comboDish.hashCode();
     }
 
     @Override
