@@ -74,7 +74,7 @@ public class ComboOption {
 
     @JsonProperty public void setMinCount(int minCount) {
         this.minCount = minCount;
-        if(comboOptionDishes!=null)
+        if(comboOptionDishes!=null && comboOptionDishes.size()!=0)
             resetSelectedComboOptionDishes(); }
     @JsonProperty public void setId(int id) { this.id = id; }
     @JsonProperty public void setPriority(int priority) { this.priority = priority; }
@@ -124,13 +124,14 @@ public class ComboOption {
         } else return false;
     }
     public void resetSelectedComboOptionDishes() {
-        this.selectedComboOptionDishes.clear();
+        if(selectedComboOptionDishes!=null)
+            this.selectedComboOptionDishes.clear();
         comboOptionDishes.get(0).setQuantity(minCount);
         this.selectedComboOptionDishes.add(comboOptionDishes.get(0));
     }
     @JsonProperty public void setComboOptionDishes(ArrayList<ComboDish> comboOptionDishes) {
-        this.selectedComboOptionDishes = new ArrayList<>();
         this.comboOptionDishes = comboOptionDishes;
+        this.selectedComboOptionDishes = new ArrayList<>();
         if(minCount>0) this.resetSelectedComboOptionDishes();
     }
 
