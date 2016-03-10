@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,14 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.payu.india.Interfaces.PaymentRelatedDetailsListener;
@@ -41,10 +38,11 @@ import org.json.JSONObject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Alerts;
-import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
+import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.payment.CashOnDeliveryFragment;
 import in.foodmash.app.payment.CreditDebitCardFragment;
@@ -58,8 +56,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
 
     @Bind(R.id.pay) FloatingActionButton pay;
     @Bind(R.id.payable_amount) TextView payableAmount;
-    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
-    @Bind(R.id.loading_layout) LinearLayout loadingLayout;
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.view_pager) ViewPager viewPager;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
@@ -71,7 +68,6 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
     private String paymentMethod;
     private String payableAmountString;
     private String password;
-    private Snackbar snackbar;
     private String orderId;
 
     PayuConfig payuConfig = new PayuConfig();
@@ -83,9 +79,6 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
     public PayuHashes getPayuHashes() {return payuHashes;}
     public PaymentParams getPaymentParams() {return paymentParams;}
     public PayuConfig getPayuConfig() {return payuConfig;}
-
-    private JsonObjectRequest makePurchaseRequest;
-    private JsonObjectRequest makeHashRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,9 +93,16 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
         } catch (Exception e) { e.printStackTrace(); }
 
         if(Cart.getInstance().getCount()==0) finish();
-        if(getIntent().getDoubleExtra("payable_amount", 0)!=0) payableAmountString = NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("payable_amount",0));
-        else Alerts.commonErrorAlert(CheckoutPaymentActivity.this, "Transaction not authorized", "We found something suspicious about your current order. Try again!", "Back", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { finish(); } }, false);
-        if(!NumberUtils.getCurrencyFormat(Cart.getInstance().getGrandTotal()).equals(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("payable_amount", 0)))) finish();
+        if(getIntent().getDoubleExtra("payable_amount", 0)!=0
+                && NumberUtils.getCurrencyFormat(Cart.getInstance().getGrandTotal())
+                    .equals(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("payable_amount", 0))))
+            payableAmountString = NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("payable_amount",0));
+        else {
+            Intent intent = new Intent(CheckoutPaymentActivity.this, CheckoutAddressActivity.class);
+            intent.putExtra("total_error", true);
+            startActivity(intent);
+            finish();
+        }
         orderId = getIntent().getStringExtra("order_id");
 
         total.setText(NumberUtils.getCurrencyFormat(Cart.getInstance().getTotal()));
@@ -170,26 +170,27 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
         paymentParams.setOfferKey("");
         payuConfig.setEnvironment(PayuConstants.MOBILE_STAGING_ENV);
 
-        makeHashRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/payments/getHash", JsonProvider.getStandardRequestJson(CheckoutPaymentActivity.this), new Response.Listener<JSONObject>() {
+        JsonObjectRequest makeHashRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/payments/getHash", JsonProvider.getStandardRequestJson(CheckoutPaymentActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
                 try {
-                    if(response.getBoolean("success")) {
+                    if (response.getBoolean("success")) {
                         payuHashes.setPaymentHash(response.getJSONObject("data").getString("hash"));
                         paymentParams.setHash(payuHashes.getPaymentHash());
-                        Log.i("Payments", "Key: "+paymentParams.getKey());
-                        Log.i("Payments", "Amount: "+paymentParams.getAmount());
-                        Log.i("Payments", "Product Info: "+paymentParams.getProductInfo());
-                        Log.i("Payments", "Firstname: "+paymentParams.getFirstName());
-                        Log.i("Payments", "Phone: "+paymentParams.getPhone());
-                        Log.i("Payments", "Email: "+paymentParams.getEmail());
-                        Log.i("Payments", "TxnId: "+paymentParams.getTxnId());
-                        Log.i("Payments", "Udf1: "+paymentParams.getUdf1());
-                        Log.i("Payments", "Udf2: "+paymentParams.getUdf2());
-                        Log.i("Payments", "Udf3: "+paymentParams.getUdf3());
-                        Log.i("Payments", "Udf4: "+paymentParams.getUdf4());
-                        Log.i("Payments", "Udf5: "+paymentParams.getUdf5());
-                        Log.i("Payments", "Hash: "+payuHashes.getPaymentHash());
+                        Log.i("Payments", "Key: " + paymentParams.getKey());
+                        Log.i("Payments", "Amount: " + paymentParams.getAmount());
+                        Log.i("Payments", "Product Info: " + paymentParams.getProductInfo());
+                        Log.i("Payments", "Firstname: " + paymentParams.getFirstName());
+                        Log.i("Payments", "Phone: " + paymentParams.getPhone());
+                        Log.i("Payments", "Email: " + paymentParams.getEmail());
+                        Log.i("Payments", "TxnId: " + paymentParams.getTxnId());
+                        Log.i("Payments", "Udf1: " + paymentParams.getUdf1());
+                        Log.i("Payments", "Udf2: " + paymentParams.getUdf2());
+                        Log.i("Payments", "Udf3: " + paymentParams.getUdf3());
+                        Log.i("Payments", "Udf4: " + paymentParams.getUdf4());
+                        Log.i("Payments", "Udf5: " + paymentParams.getUdf5());
+                        Log.i("Payments", "Hash: " + payuHashes.getPaymentHash());
                         MerchantWebService merchantWebService = new MerchantWebService();
                         merchantWebService.setKey(paymentParams.getKey());
                         merchantWebService.setCommand(PayuConstants.PAYMENT_RELATED_DETAILS_FOR_MOBILE_SDK);
@@ -201,43 +202,28 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
                             GetPaymentRelatedDetailsTask paymentRelatedDetailsForMobileSdkTask = new GetPaymentRelatedDetailsTask(CheckoutPaymentActivity.this);
                             paymentRelatedDetailsForMobileSdkTask.execute(payuConfig);
                             Log.i("Payments", "Making paymentDetails Request");
-                        } else {
-                            Animations.fadeOut(loadingLayout,500);
-                            Animations.fadeIn(viewPager, 500);
-                            Toast.makeText(CheckoutPaymentActivity.this, postData.getResult(), Toast.LENGTH_LONG).show();
-                        }
+                        } else
+                            Snackbar.make(viewPager, postData.getResult(), Snackbar.LENGTH_LONG).show();
 
                     } else {
-                        Animations.fadeOut(loadingLayout,500);
-                        Animations.fadeIn(viewPager,500);
                         Alerts.requestUnauthorisedAlert(CheckoutPaymentActivity.this);
-                        Log.e("Success False",response.getString("error"));
+                        Log.e("Success False", response.getString("error"));
                     }
-                } catch (JSONException e) { e.printStackTrace(); }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeOut(loadingLayout, 500);
-                Animations.fadeIn(viewPager, 500);
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Animations.fadeIn(loadingLayout, 500);
-                        Animations.fadeOut(viewPager, 500);
-                        Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makeHashRequest);
-                    }
-                };
-                if (error instanceof TimeoutError)
-                    Alerts.timeoutErrorAlert(CheckoutPaymentActivity.this, onClickTryAgain);
-                else if (error instanceof NoConnectionError)
-                    Alerts.internetConnectionErrorAlert(CheckoutPaymentActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(CheckoutPaymentActivity.this);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "getHashAndPaymentRelatedDetails")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
-        Animations.fadeIn(loadingLayout, 500);
-        Animations.fadeOut(viewPager, 500);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makeHashRequest);
     }
 
@@ -252,10 +238,11 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
         return requestJson;
     }
 
-    private void makeCodPaymentRequest() {
-        makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/payments/purchaseByCod", getPaymentJson(), new Response.Listener<JSONObject>() {
+    public void makeCodPaymentRequest() {
+        JsonObjectRequest makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/payments/purchaseByCod", getPaymentJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
@@ -267,42 +254,21 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
                         Cart.getInstance().removeAllOrders();
                         startActivity(intent);
                         finish();
-                    } else {
-                        Animations.fadeOut(connectingLayout,500);
-                        Animations.fadeIn(viewPager,500);
-                        snackbar = Snackbar.make(viewPager, "Wrong Password", Snackbar.LENGTH_LONG);
-                        snackbar.setAction("Try Again", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                snackbar.dismiss();
-                            }
-                        });
-                        snackbar.show();
-                    }
+                    } else Snackbar.make(viewPager, "Wrong Password", Snackbar.LENGTH_LONG).show();
                 } catch (JSONException e) { e.printStackTrace(); }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeOut(connectingLayout,500);
-                Animations.fadeIn(viewPager,500);
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Animations.fadeIn(connectingLayout,500);
-                        Animations.fadeOut(viewPager, 500);
-                        Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makePurchaseRequest);
-                    }
-                };
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(CheckoutPaymentActivity.this, onClickTryAgain);
-                else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(CheckoutPaymentActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(CheckoutPaymentActivity.this);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeCodPaymentRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
 
-        Animations.fadeIn(connectingLayout, 500);
-        Animations.fadeOut(viewPager, 500);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makePurchaseRequest);
     }
     private boolean isEverythingValid() {
@@ -314,8 +280,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
         Log.i("Payments", payuResponse.getResponseStatus().getCode()+", "+payuResponse.getResponseStatus().getStatus());
         Log.i("Payments", "Result: " + payuResponse.getResponseStatus().getResult());
         this.payuResponse = payuResponse;
-        Animations.fadeOut(loadingLayout,500);
-        Animations.fadeIn(viewPager, 500);
+        fragmentContainer.setVisibility(View.GONE);
     }
 
 }

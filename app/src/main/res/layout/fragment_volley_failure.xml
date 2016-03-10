@@ -16,42 +16,29 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Connection Failed"
+            android:text="Error"
             android:padding="10dp"
             android:textSize="20sp"
-            android:textColor="@color/accent" />
+            android:textColor="@color/accent"
+            android:id="@+id/error" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sometimes Internet gets lazy and takes a nap."
+            android:text="Description"
             android:padding="10dp"
             android:textSize="15sp"
             android:textColor="@color/white"
             android:fontFamily="sans-serif-light"
             android:gravity="center_horizontal"
             android:layout_marginTop="-10dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:id="@+id/description" />
 
-        <RelativeLayout
+        <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/svg_tower_signal"
-                android:tint="#FFCCCCCC"
-                android:id="@+id/tower" />
-
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/svg_close_filled"
-                android:tint="@color/accent"
-                android:layout_alignBottom="@+id/tower"
-                android:layout_alignRight="@+id/tower" />
-        </RelativeLayout>
+            android:layout_height="100dp"
+            android:id="@+id/image" />
 
     </LinearLayout>
 
@@ -61,130 +48,319 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
-        android:layout_marginTop="20dp">
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:background="#FF666666"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp" />
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp">
 
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:id="@+id/retry"
-            android:background="@drawable/button_transparent_background">
+            android:layout_height="match_parent"
+            android:id="@+id/internet_wrapper"
+            android:visibility="visible">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/svg_android_retry"
-                android:padding="10dp"
-                android:tint="#FFCCCCCC" />
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#FF666666"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp" />
 
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Retry"
-                android:padding="10dp"
-                android:textSize="17sp"
-                android:layout_weight="1"
-                android:textColor="#ffffff"
-                android:fontFamily="sans-serif-light" />
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:id="@+id/retry"
+                android:background="@drawable/button_transparent_background">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/svg_right"
-                android:tint="#FFCCCCCC" />
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/svg_android_retry"
+                    android:padding="10dp"
+                    android:tint="#FFCCCCCC" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Retry"
+                    android:padding="10dp"
+                    android:textSize="17sp"
+                    android:layout_weight="1"
+                    android:textColor="#ffffff"
+                    android:fontFamily="sans-serif-light" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/svg_right"
+                    android:tint="#FFCCCCCC" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#FF666666"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:id="@+id/settings_wifi"
+                android:background="@drawable/button_transparent_background">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/svg_android_wifi"
+                    android:padding="10dp"
+                    android:tint="#FFCCCCCC" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Wi-Fi Settings"
+                    android:padding="10dp"
+                    android:textSize="17sp"
+                    android:layout_weight="1"
+                    android:textColor="#ffffff"
+                    android:fontFamily="sans-serif-light" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/svg_right"
+                    android:tint="#FFCCCCCC" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#FF666666"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:id="@+id/settings_mobile_network"
+                android:background="@drawable/button_transparent_background">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/svg_android_mobile_network"
+                    android:padding="10dp"
+                    android:tint="#FFCCCCCC" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Mobile Network"
+                    android:padding="10dp"
+                    android:textSize="17sp"
+                    android:layout_weight="1"
+                    android:textColor="#ffffff"
+                    android:fontFamily="sans-serif-light" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/svg_right"
+                    android:tint="#FFCCCCCC" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:background="#FF666666"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp" />
+        <LinearLayout android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/logout_wrapper">
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#FF666666"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:id="@+id/logout"
+                android:background="@drawable/button_transparent_background">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/android_svg_reply_all"
+                    android:padding="10dp"
+                    android:tint="#FFCCCCCC" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Logout"
+                    android:padding="10dp"
+                    android:textSize="17sp"
+                    android:layout_weight="1"
+                    android:textColor="#ffffff"
+                    android:fontFamily="sans-serif-light" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/svg_right"
+                    android:tint="#FFCCCCCC" />
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:id="@+id/settings_wifi"
-            android:background="@drawable/button_transparent_background">
+            android:layout_height="match_parent"
+            android:id="@+id/error_wrapper">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/svg_android_wifi"
-                android:padding="10dp"
-                android:tint="#FFCCCCCC" />
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#FF666666"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp" />
 
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Wi-Fi Settings"
-                android:padding="10dp"
-                android:textSize="17sp"
-                android:layout_weight="1"
-                android:textColor="#ffffff"
-                android:fontFamily="sans-serif-light" />
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:id="@+id/back"
+                android:background="@drawable/button_transparent_background">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/svg_right"
-                android:tint="#FFCCCCCC" />
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/android_svg_reply_all"
+                    android:padding="10dp"
+                    android:tint="#FFCCCCCC" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Back"
+                    android:padding="10dp"
+                    android:textSize="17sp"
+                    android:layout_weight="1"
+                    android:textColor="#ffffff"
+                    android:fontFamily="sans-serif-light" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/svg_right"
+                    android:tint="#FFCCCCCC" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#FF666666"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:id="@+id/error_description"
+                android:background="@drawable/button_transparent_background">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/svg_android_align_left"
+                    android:padding="10dp"
+                    android:tint="#FFCCCCCC" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Error Description"
+                    android:padding="10dp"
+                    android:textSize="17sp"
+                    android:layout_weight="1"
+                    android:textColor="#ffffff"
+                    android:fontFamily="sans-serif-light" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/svg_right"
+                    android:tint="#FFCCCCCC" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#FF666666"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:id="@+id/exit"
+                android:background="@drawable/button_transparent_background">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/svg_android_backspace"
+                    android:padding="10dp"
+                    android:tint="#FFCCCCCC" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Exit App"
+                    android:padding="10dp"
+                    android:textSize="17sp"
+                    android:layout_weight="1"
+                    android:textColor="#ffffff"
+                    android:fontFamily="sans-serif-light" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/svg_right"
+                    android:tint="#FFCCCCCC" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:background="#FF666666"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp" />
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:id="@+id/settings_mobile_network"
-            android:background="@drawable/button_transparent_background">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/svg_android_mobile_network"
-                android:padding="10dp"
-                android:tint="#FFCCCCCC" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Mobile Network"
-                android:padding="10dp"
-                android:textSize="17sp"
-                android:layout_weight="1"
-                android:textColor="#ffffff"
-                android:fontFamily="sans-serif-light" />
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/svg_right"
-                android:tint="#FFCCCCCC" />
-
-        </LinearLayout>
 
         <View
             android:layout_width="wrap_content"

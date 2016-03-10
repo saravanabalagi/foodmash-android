@@ -266,8 +266,8 @@ public class MainActivity extends AppCompatActivity {
                 if (snackbar!=null && snackbar.isShown()) snackbar.setText("Update Failed!");
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyFailureFragment()).commit();
                 getSupportFragmentManager().executePendingTransactions();
-                ((VolleyFailureFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
-                        .setJsonObjectRequest(getCombosRequest);
+//                ((VolleyFailureFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
+//                        .setJsonObjectRequest(getCombosRequest);
                 Log.e("Json Request Failed", error.toString());
             }
         });
@@ -291,7 +291,11 @@ public class MainActivity extends AppCompatActivity {
         if(Info.isLoggedIn(this)) comboRequestJson = JsonProvider.getStandardRequestJson(this);
         else comboRequestJson = JsonProvider.getAnonymousRequestJson(this);
         int packagingCentreId = Info.getPackagingCentreId(this);
-        try { comboRequestJson.put("packaging_centre_id",packagingCentreId); }
+        try {
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("packaging_centre_id",packagingCentreId);
+            comboRequestJson.put("data", dataJson);
+        }
         catch (Exception e) { e.printStackTrace(); }
         return comboRequestJson;
     }

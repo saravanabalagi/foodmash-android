@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,13 +9,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -29,6 +27,8 @@ import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
+import in.foodmash.app.commons.VolleyProgressFragment;
 
 /**
  * Created by Zeke on Aug 08 2015.
@@ -39,7 +39,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     @Bind(R.id.otp_time_layout) LinearLayout otpTimeLayout;
     @Bind(R.id.otp_expired_layout) LinearLayout otpExpiredLayout;
     @Bind(R.id.otp_fill_layout) LinearLayout otpFillLayout;
-    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.resend_otp) TextView resendOtp;
     @Bind(R.id.otp_time) TextView otpTime;
@@ -88,7 +88,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.resend_otp: if(otpExpired) resendOtpRequest(); break;
-            case R.id.proceed: if(isEverythingValid()) makeRequest(); else Alerts.validityAlert(ForgotPasswordOtpActivity.this); break;
+            case R.id.proceed: if(isEverythingValid()) makeCheckOtpRequest(); else Alerts.validityAlert(ForgotPasswordOtpActivity.this); break;
         }
     }
 
@@ -121,10 +121,11 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
         return requestJson;
     }
 
-    private void makeRequest() {
-        checkOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkOtp", getRequestJson(), new Response.Listener<JSONObject>() {
+    public void makeCheckOtpRequest() {
+        JsonObjectRequest checkOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkOtp", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
@@ -134,8 +135,6 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                         startActivity(intent);
                         finish();
                     } else {
-                        Animations.fadeOut(connectingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(ForgotPasswordOtpActivity.this, "Invalid OTP", "We are unable to process the OTP you entered. Try Again!", "Okay");
                         Log.e("Success False", response.getString("error"));
                     }
@@ -144,24 +143,14 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeOut(connectingLayout,500);
-                Animations.fadeIn(mainLayout,500);
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Animations.fadeIn(connectingLayout,500);
-                        Animations.fadeOut(mainLayout, 500);
-                        Swift.getInstance(ForgotPasswordOtpActivity.this).addToRequestQueue(checkOtpRequest);
-                    }
-                };
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ForgotPasswordOtpActivity.this, onClickTryAgain);
-                else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ForgotPasswordOtpActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(ForgotPasswordOtpActivity.this);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeCheckOtpRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
-        Animations.fadeIn(connectingLayout,500);
-        Animations.fadeOut(mainLayout, 500);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(ForgotPasswordOtpActivity.this).addToRequestQueue(checkOtpRequest);
     }
 
@@ -183,14 +172,13 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
         return requestJson;
     }
 
-    private void resendOtpRequest() {
+    public void resendOtpRequest() {
         resendOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/forgotPassword", getOtpRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
-                        Animations.fadeOut(connectingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
                         otpExpired = false;
                         timerMinutes = 3; timerSeconds = 0;
                         Animations.fadeOutAndFadeIn(otpExpiredLayout, otpTimeLayout, 500);
@@ -198,8 +186,6 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                         handler.removeCallbacks(setOtpTime);
                         handler.postDelayed(setOtpTime, 1000);
                     } else {
-                        Animations.fadeOut(connectingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(ForgotPasswordOtpActivity.this, "Could not send OTP", "We are unable to send you OTP as the details you entered are invalid. Try Again!", "Okay");
                         Log.e("Success False", response.getString("error"));
                     }
@@ -208,24 +194,14 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeOut(connectingLayout,500);
-                Animations.fadeIn(mainLayout,500);
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Animations.fadeIn(connectingLayout,500);
-                        Animations.fadeOut(mainLayout, 500);
-                        Swift.getInstance(ForgotPasswordOtpActivity.this).addToRequestQueue(resendOtpRequest);
-                    }
-                };
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ForgotPasswordOtpActivity.this, onClickTryAgain);
-                else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ForgotPasswordOtpActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(ForgotPasswordOtpActivity.this);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLocationRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
-        Animations.fadeIn(connectingLayout,500);
-        Animations.fadeOut(mainLayout, 500);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(ForgotPasswordOtpActivity.this).addToRequestQueue(resendOtpRequest);
     }
 

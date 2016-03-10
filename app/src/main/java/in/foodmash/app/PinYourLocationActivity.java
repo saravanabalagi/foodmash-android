@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.*;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -13,11 +12,13 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -43,6 +44,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
     private static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 12;
     @Bind(R.id.proceed) FloatingActionButton proceed;
     @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.main_layout) RelativeLayout mainLayout;
 
     Intent intent;
     LocationManager locationManager;
@@ -69,12 +71,12 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
 
         cart = getIntent().getBooleanExtra("cart",false);
         if(getIntent().getBooleanExtra("edit",false)) {
+            edit = true;
             try {
                 jsonObject = new JSONObject(getIntent().getStringExtra("json"));
                 JSONObject geolocationJson = jsonObject.getJSONObject("geolocation");
                 initialLocation = new LatLng(geolocationJson.getDouble("latitude"),geolocationJson.getDouble("longitude"));
-                edit = true;
-            } catch (JSONException e) { e.printStackTrace(); }
+            } catch (JSONException e) { Snackbar.make(mainLayout, "No location chosen before!", Snackbar.LENGTH_LONG); }
         }
 
         if(!(isPlayServicesAvailable() && isGpsAvailable()))
@@ -130,7 +132,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
     public void onMapReady(GoogleMap map) {
         if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED )
             map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, (edit)?17:14));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, (edit)?16:14));
         locationListener = new LocationListener() {
             @Override public void onLocationChanged(Location location) {
                 initialLocation = new LatLng(location.getLatitude(),location.getLongitude());

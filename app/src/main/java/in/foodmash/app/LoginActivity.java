@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,20 +9,17 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -41,6 +37,8 @@ import in.foodmash.app.commons.Cryptography;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
+import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.utils.EmailUtils;
 import in.foodmash.app.utils.NumberUtils;
 
@@ -51,7 +49,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Bind(R.id.login) FloatingActionButton login;
     @Bind(R.id.main_layout) ScrollView mainLayout;
-    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.skip) TextView skip;
     @Bind(R.id.register) TextView register;
     @Bind(R.id.forgot_password) TextView forgotPassword;
@@ -66,7 +64,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private ImageView emailValidate;
     private ImageView passwordValidate;
 
-    private JsonObjectRequest loginRequest;
     private Intent intent;
 
     @Override
@@ -127,9 +124,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.register: intent = new Intent(this, SignupActivity.class); intent.putExtra("from_cart",true); startActivity(intent); break;
+            case R.id.register: intent = new Intent(this, SignUpActivity.class); intent.putExtra("from_cart",true); startActivity(intent); break;
             case R.id.forgot_password: intent = new Intent(this, ForgotPasswordActivity.class); startActivity(intent); break;
-            case R.id.login: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(LoginActivity.this); break;
+            case R.id.login: if(isEverythingValid()) makeLoginRequest(); else Alerts.validityAlert(LoginActivity.this); break;
         }
     }
 
@@ -148,10 +145,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return jsonObject;
     }
 
-    private void makeJsonRequest() {
-        loginRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path)+"/sessions",getRequestJson(), new Response.Listener<JSONObject>() {
+    private void makeLoginRequest() {
+        JsonObjectRequest loginRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path)+"/sessions",getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
                 if(fromCart) intent = new Intent(LoginActivity.this, CartActivity.class);
                 else intent = new Intent(LoginActivity.this, MainActivity.class);
                 try {
@@ -170,40 +168,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         editor.apply();
                         startActivity(intent);
                         finish();
-                        Animations.fadeOut(connectingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
-                    } else {
-                        Animations.fadeOut(connectingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
-                        Alerts.commonErrorAlert(LoginActivity.this,
-                                "Invalid username or password",
-                                "We are unable to log you in with the entered credentials. Please try again!",
-                                "Okay");
-                        Log.e("Success False",response.getString("error"));
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
+                    } else Snackbar.make(mainLayout, response.getString("error"), Snackbar.LENGTH_LONG).show();
+                } catch (JSONException e) { Snackbar.make(mainLayout, "Wrong username or password!", Snackbar.LENGTH_LONG).show(); }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeOut(connectingLayout,500);
-                Animations.fadeIn(mainLayout,500);
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Animations.fadeIn(connectingLayout,500);
-                        Animations.fadeOut(mainLayout, 500);
-                        Swift.getInstance(LoginActivity.this).addToRequestQueue(loginRequest);
-                    }
-                };
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(LoginActivity.this, onClickTryAgain);
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(LoginActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(LoginActivity.this);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLocationRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
-        Animations.fadeIn(connectingLayout,500);
-        Animations.fadeOut(mainLayout, 500);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(LoginActivity.this).addToRequestQueue(loginRequest);
     }
 

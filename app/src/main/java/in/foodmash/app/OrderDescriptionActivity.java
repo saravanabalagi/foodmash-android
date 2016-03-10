@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -9,14 +8,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -28,9 +27,10 @@ import org.json.JSONObject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Alerts;
-import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
+import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.utils.DateUtils;
 import in.foodmash.app.utils.NumberUtils;
 import in.foodmash.app.utils.WordUtils;
@@ -42,7 +42,7 @@ import in.foodmash.app.utils.WordUtils;
 public class OrderDescriptionActivity extends AppCompatActivity {
 
     @Bind(R.id.main_layout) LinearLayout mainLayout;
-    @Bind(R.id.loading_layout) LinearLayout loadingLayout;
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.status) TextView status;
     @Bind(R.id.date) TextView date;
@@ -58,7 +58,6 @@ public class OrderDescriptionActivity extends AppCompatActivity {
     private String orderId;
     private boolean cart;
 
-    private JsonObjectRequest orderDescriptionRequest;
     private ImageLoader imageLoader;
 
     @Override
@@ -82,14 +81,34 @@ public class OrderDescriptionActivity extends AppCompatActivity {
         imageLoader = Swift.getInstance(OrderDescriptionActivity.this).getImageLoader();
         cart = getIntent().getBooleanExtra("cart", false);
         orderId = getIntent().getStringExtra("order_id");
+        makeOrderDescriptionRequest();
 
-        orderDescriptionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/history", getRequestJson(), new Response.Listener<JSONObject>() {
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(cart) { intent = new Intent(OrderDescriptionActivity.this, MainActivity.class); intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); }
+        else { finish(); }
+    }
+
+    private JSONObject getRequestJson() {
+        JSONObject requestJson = JsonProvider.getStandardRequestJson(OrderDescriptionActivity.this);
+        try {
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("order_id",orderId);
+            requestJson.put("data",dataJson);
+        } catch (JSONException e) { e.printStackTrace(); }
+        Log.i("Json Request", requestJson.toString());
+        return requestJson;
+    }
+
+    public void makeOrderDescriptionRequest() {
+        JsonObjectRequest orderDescriptionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/history", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
                 try {
                     if (response.getBoolean("success")) {
-                        Animations.fadeOut(loadingLayout, 500);
-                        Animations.fadeIn(mainLayout, 500);
                         Log.i("Json Response", response.toString());
                         JSONArray orderJsonArray = response.getJSONArray("data");
                         JSONObject orderJson = orderJsonArray.getJSONObject(0);
@@ -98,7 +117,7 @@ public class OrderDescriptionActivity extends AppCompatActivity {
                         setStatus(statusIcon, orderJson.getString("aasm_state"));
                         date.setText(DateUtils.railsDateToLocalTime(orderJson.getString("updated_at")));
                         status.setText(WordUtils.titleize(orderJson.getString("aasm_state")));
-                        total.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("total")));
+                        total.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("grand_total")));
                         vat.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("vat")));
                         deliveryCharges.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("delivery_charge")));
                         JSONArray subOrdersJson = orderJson.getJSONArray("orders");
@@ -129,45 +148,21 @@ public class OrderDescriptionActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Swift.getInstance(OrderDescriptionActivity.this).addToRequestQueue(orderDescriptionRequest);
-                    }
-                };
-                if (error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(OrderDescriptionActivity.this, onClickTryAgain);
-                else if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(OrderDescriptionActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(OrderDescriptionActivity.this);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeOrderDescriptionRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
-        Animations.fadeIn(loadingLayout, 500);
-        Animations.fadeOut(mainLayout, 500);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(OrderDescriptionActivity.this).addToRequestQueue(orderDescriptionRequest);
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        if(cart) { intent = new Intent(OrderDescriptionActivity.this, MainActivity.class); intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); }
-        else { finish(); }
-    }
-
-    private JSONObject getRequestJson() {
-        JSONObject requestJson = JsonProvider.getStandardRequestJson(OrderDescriptionActivity.this);
-        try {
-            JSONObject dataJson = new JSONObject();
-            dataJson.put("order_id",orderId);
-            requestJson.put("data",dataJson);
-        } catch (JSONException e) { e.printStackTrace(); }
-        Log.i("Json Request", requestJson.toString());
-        return requestJson;
     }
 
     private void setStatus (ImageView statusImageView, String status) {
         switch (status) {
-            case "delivered": statusImageView.setImageResource(R.drawable.svg_tick); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); break;
-            case "cancelled": statusImageView.setImageResource(R.drawable.svg_close); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); break;
+            case "delivered": statusImageView.setImageResource(R.drawable.svg_tick_filled); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); break;
+            case "cancelled": statusImageView.setImageResource(R.drawable.svg_close_filled); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); break;
         }
     }
 }

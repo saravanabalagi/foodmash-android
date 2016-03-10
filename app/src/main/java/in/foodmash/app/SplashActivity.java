@@ -1,7 +1,6 @@
 package in.foodmash.app;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -33,6 +33,7 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.custom.City;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -43,6 +44,7 @@ public class SplashActivity extends AppCompatActivity {
 
     @Bind(R.id.city) Spinner citySpinner;
     @Bind(R.id.area) Spinner areaSpinner;
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
 
     private ArrayList<String> citiesArrayList = new ArrayList<>();
     private List<City> cities;
@@ -62,6 +64,10 @@ public class SplashActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         skipUpdate = getIntent().getBooleanExtra("skip_update", false);
+        makeCheckConnectionRequest();
+    }
+
+    public void makeCheckConnectionRequest() {
         checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/versions", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -78,25 +84,15 @@ public class SplashActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Alerts.commonErrorAlert(
-                        SplashActivity.this,
-                        "No Internet",
-                        "Sometimes Internet gets sleepy and takes a nap. Turn it on and we'll give it another go.",
-                        "Exit",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                finish();
-                            }
-                        },false);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeCheckConnectionRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
-        makeCheckConnectionRequest(checkConnectionRequest);
+        fragmentContainer.setVisibility(View.GONE);
+        Swift.getInstance(SplashActivity.this).addToRequestQueue(checkConnectionRequest,500,5,1.5f);
     }
-
-    private void makeCheckConnectionRequest(JsonObjectRequest jsonObjectRequest) { Swift.getInstance(SplashActivity.this).addToRequestQueue(jsonObjectRequest, 500, 10, 2f); }
-    private void makeLocationRequest() {
+    public void makeLocationRequest() {
         locationRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/cities", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -157,20 +153,12 @@ public class SplashActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Alerts.commonErrorAlert(
-                        SplashActivity.this,
-                        "No Internet",
-                        "Sometimes Internet gets sleepy and takes a nap. Turn it on and we'll give it another go.",
-                        "Exit",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                finish();
-                            }
-                        },false);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLocationRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
+        fragmentContainer.setVisibility(View.GONE);
         Swift.getInstance(this).addToRequestQueue(locationRequest);
     }
     private ArrayList<String> addStringAsFirstItem(ArrayList<String> arrayList, String defaultString) {

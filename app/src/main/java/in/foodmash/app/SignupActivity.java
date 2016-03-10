@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -38,24 +39,25 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
+import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.utils.EmailUtils;
 
 /**
  * Created by Zeke on Aug 08 2015.
  */
-public class SignupActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
+public class SignUpActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
     @Bind(R.id.create) FloatingActionButton create;
-    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.terms_and_conditions) LinearLayout termsAndConditions;
     @Bind(R.id.privacy_policy) LinearLayout privacyPolicy;
     @Bind(R.id.refund_policy) LinearLayout refundPolicy;
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
 
     private Intent intent;
     private boolean fromCart;
-    private LegaleseActivity.Legalese legalese;
 
     private EditText name;
     private EditText email;
@@ -79,7 +81,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
     private JsonObjectRequest checkEmailRequest;
     private JsonObjectRequest checkPhoneRequest;
-    private JsonObjectRequest registerRequest;
+    private JsonObjectRequest signUpRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,8 +124,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.refund_policy: goToLegaleseActivity(LegaleseActivity.Legalese.REFUND_POLICY); ;break;
             case R.id.privacy_policy: goToLegaleseActivity(LegaleseActivity.Legalese.PRIVACY_POLICY); ;break;
             case R.id.create:
-                if(isEverythingValid()) makeJsonRequest();
-                else Alerts.validityAlert(SignupActivity.this);
+                if(isEverythingValid()) makeSignUpRequest();
+                else Alerts.validityAlert(SignUpActivity.this);
                 break;
         }
     }
@@ -136,7 +138,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private JSONObject getRequestJson() {
-        JSONObject jsonObject = JsonProvider.getAnonymousRequestJson(SignupActivity.this);
+        JSONObject jsonObject = JsonProvider.getAnonymousRequestJson(SignUpActivity.this);
         HashMap<String,String> hashMap = new HashMap<>();
         hashMap.put("name",name.getText().toString());
         hashMap.put("email",email.getText().toString());
@@ -152,17 +154,18 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         return jsonObject;
     }
 
-    private void makeJsonRequest() {
-        registerRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations",getRequestJson(), new Response.Listener<JSONObject>() {
+    public void makeSignUpRequest() {
+        signUpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations",getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                intent = new Intent(SignupActivity.this, LoginActivity.class);
-                if(fromCart) intent = new Intent(SignupActivity.this, CartActivity.class);
+                fragmentContainer.setVisibility(View.GONE);
+                intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                if(fromCart) intent = new Intent(SignUpActivity.this, CartActivity.class);
                 try {
                     if (response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
                         JSONObject userJson = dataJson.getJSONObject("user");
-                        Actions.cacheUserDetails(SignupActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"));
+                        Actions.cacheUserDetails(SignUpActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"));
                         String userToken = dataJson.getString("user_token");
                         String sessionToken = dataJson.getString("session_token");
                         SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
@@ -170,14 +173,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         editor.putBoolean("logged_in",true);
                         editor.putString("user_token", userToken);
                         editor.putString("session_token", sessionToken);
-                        editor.putString("android_token", Cryptography.getEncryptedAndroidId(SignupActivity.this, sessionToken));
+                        editor.putString("android_token", Cryptography.getEncryptedAndroidId(SignUpActivity.this, sessionToken));
                         editor.apply();
                         startActivity(intent);
                         finish();
                     } else {
-                        Animations.fadeOut(connectingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
-                        Alerts.commonErrorAlert(SignupActivity.this,"Registration Invalid", "We are unable to sign you up. Please try again!","Okay");
+                        Alerts.commonErrorAlert(SignUpActivity.this,"Registration Invalid", "We are unable to sign you up. Please try again!","Okay");
                         Log.e("Success False",response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -185,29 +186,18 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeOut(connectingLayout,500);
-                Animations.fadeIn(mainLayout,500);
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Animations.fadeIn(connectingLayout,500);
-                        Animations.fadeOut(mainLayout, 500);
-                        Swift.getInstance(SignupActivity.this).addToRequestQueue(registerRequest);
-                    }
-                };
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
-                else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(SignupActivity.this);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeSignUpRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
-        Animations.fadeIn(connectingLayout,500);
-        Animations.fadeOut(mainLayout, 500);
-        Swift.getInstance(SignupActivity.this).addToRequestQueue(registerRequest,15000,3,1.5f);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
+        Swift.getInstance(SignUpActivity.this).addToRequestQueue(signUpRequest,15000,3,1.5f);
     }
 
-    private void setCancelOnImageView(ImageView imageView) { imageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); imageView.setImageResource(R.drawable.svg_close); }
-    private void setOkayOnImageView(ImageView imageView) { imageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); imageView.setImageResource(R.drawable.svg_tick); }
+    private void setCancelOnImageView(ImageView imageView) { imageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); imageView.setImageResource(R.drawable.svg_close_filled); }
+    private void setOkayOnImageView(ImageView imageView) { imageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); imageView.setImageResource(R.drawable.svg_tick_filled); }
 
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
@@ -247,12 +237,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Swift.getInstance(SignupActivity.this).addToRequestQueue(checkEmailRequest);
+                                Swift.getInstance(SignUpActivity.this).addToRequestQueue(checkEmailRequest);
                             }
                         };
-                        if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
-                        else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
-                        else Alerts.unknownErrorAlert(SignupActivity.this);
+                        if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignUpActivity.this, onClickTryAgain);
+                        else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignUpActivity.this, onClickTryAgain);
+                        else Alerts.unknownErrorAlert(SignUpActivity.this);
                         Log.e("Json Request","Email response error: "+error);
                         isEmailValidationInProgress = false;
                         setCancelOnImageView(emailValidate);
@@ -262,7 +252,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 isEmailValidationInProgress = true;
                 Animations.fadeOut(emailValidate,500);
                 Animations.fadeIn(emailProgressBar,500);
-                Swift.getInstance(SignupActivity.this).addToRequestQueue(checkEmailRequest);
+                Swift.getInstance(SignUpActivity.this).addToRequestQueue(checkEmailRequest);
             }
         }
         if(s==phone.getEditableText()) {
@@ -294,12 +284,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Swift.getInstance(SignupActivity.this).addToRequestQueue(checkPhoneRequest);
+                                Swift.getInstance(SignUpActivity.this).addToRequestQueue(checkPhoneRequest);
                             }
                         };
-                        if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignupActivity.this, onClickTryAgain);
-                        else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignupActivity.this, onClickTryAgain);
-                        else Alerts.unknownErrorAlert(SignupActivity.this);
+                        if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignUpActivity.this, onClickTryAgain);
+                        else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignUpActivity.this, onClickTryAgain);
+                        else Alerts.unknownErrorAlert(SignUpActivity.this);
                         Log.e("Json Request","Phone response error: "+error);
                         isPhoneValidationInProgress = false;
                         setCancelOnImageView(phoneValidate);
@@ -309,7 +299,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 isPhoneValidationInProgress = true;
                 Animations.fadeOut(phoneValidate,500);
                 Animations.fadeIn(phoneProgressBar,500);
-                Swift.getInstance(SignupActivity.this).addToRequestQueue(checkPhoneRequest);
+                Swift.getInstance(SignUpActivity.this).addToRequestQueue(checkPhoneRequest);
             }
         }
         if(s==password.getEditableText()) {

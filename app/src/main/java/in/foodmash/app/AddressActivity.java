@@ -1,21 +1,20 @@
 package in.foodmash.app;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,10 +29,11 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Alerts;
-import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
+import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.custom.Address;
 import in.foodmash.app.custom.City;
 
@@ -44,7 +44,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
 
     @Bind(R.id.add_address) FloatingActionButton addAddress;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
-    @Bind(R.id.loading_layout) LinearLayout loadingLayout;
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
@@ -52,8 +52,6 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
     private List<Address> addresses;
     private ObjectMapper objectMapper;
     private List<City> cities;
-    private JsonObjectRequest deleteRequest;
-    private JsonObjectRequest getAddressesRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +71,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
             cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(this), City[].class));
         } catch (Exception e) { e.printStackTrace(); }
         addAddress.setOnClickListener(this);
-        fillLayout();
+        makeAddressRequest();
     }
 
     public void onClick(View v) {
@@ -82,15 +80,14 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private void fillLayout() {
-        fillLayout.removeAllViews();
-        getAddressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses", JsonProvider.getStandardRequestJson(AddressActivity.this),new Response.Listener<JSONObject>() {
+    public void makeAddressRequest() {
+        JsonObjectRequest getAddressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses", JsonProvider.getStandardRequestJson(AddressActivity.this),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
-                        Animations.fadeOut(loadingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
+                        fillLayout.removeAllViews();
                         final ObjectMapper objectMapper = new ObjectMapper();
                         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
                         addresses = Arrays.asList(objectMapper.readValue(response.getJSONArray("data").toString(), Address[].class));
@@ -124,15 +121,20 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                             addressLayout.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    final Snackbar deletingAddressSnackbar = Snackbar.make(mainLayout,"Deleting address...",Snackbar.LENGTH_INDEFINITE);
+                                    final Snackbar couldNotDeleteSnackbar = Snackbar.make(mainLayout,"Could not delete",Snackbar.LENGTH_INDEFINITE);
+                                    couldNotDeleteSnackbar.setAction("Try Again", new View.OnClickListener() { @Override public void onClick(View v) { couldNotDeleteSnackbar.dismiss(); } });
+
                                     JSONObject requestJson = JsonProvider.getStandardRequestJson(AddressActivity.this);
                                     JSONObject dataJson = new JSONObject();
                                     try {
                                         dataJson.put("id", address.getId());
                                         requestJson.put("data", dataJson);
                                     } catch (JSONException e) { e.printStackTrace(); }
-                                    deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
+                                    JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
                                         @Override
                                         public void onResponse(JSONObject response) {
+                                            if(deletingAddressSnackbar.isShown()) deletingAddressSnackbar.dismiss();
                                             try {
                                                 if (response.getBoolean("success")) fillLayout.removeView(addressLayout);
                                                 else if (response.getBoolean("success"))
@@ -142,18 +144,11 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteRequest);
-                                                }
-                                            };
-                                            if (error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddressActivity.this, onClickTryAgain);
-                                            if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this, onClickTryAgain);
-                                            else Alerts.unknownErrorAlert(AddressActivity.this);
-                                            Log.e("Json Request Failed", error.toString());
+                                            couldNotDeleteSnackbar.show();
                                         }
                                     });
+
+                                    deletingAddressSnackbar.show();
                                     Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteRequest);
                                 }
                             });
@@ -168,20 +163,14 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Swift.getInstance(AddressActivity.this).addToRequestQueue(getAddressesRequest);
-                    }
-                };
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddressActivity.this, onClickTryAgain);
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddressActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(AddressActivity.this);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeAddressRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
-        Animations.fadeIn(loadingLayout, 500);
-        Animations.fadeOut(mainLayout, 500);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(AddressActivity.this).addToRequestQueue(getAddressesRequest);
     }
 

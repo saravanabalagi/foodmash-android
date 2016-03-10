@@ -81,8 +81,8 @@ public class LegaleseActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyFailureFragment()).commit();
                 getSupportFragmentManager().executePendingTransactions();
-                ((VolleyFailureFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
-                        .setJsonObjectRequest(legaleseRequest);
+//                ((VolleyFailureFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
+//                        .setJsonObjectRequest(legaleseRequest);
                 Log.e("Json Request Failed", error.toString());
             }
         });

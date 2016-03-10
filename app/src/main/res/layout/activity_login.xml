@@ -6,40 +6,6 @@
 
     <include layout="@layout/appbar"/>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical|center_horizontal"
-        android:id="@+id/connecting_layout"
-        android:visibility="gone">
-
-        <ProgressBar
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/connecting"
-            android:gravity="center_horizontal"
-            android:textSize="25sp"
-            android:fontFamily="sans-serif-light"
-            android:layout_margin="5dp"
-            android:singleLine="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/connecting_description"
-            android:gravity="center_horizontal"
-            android:fontFamily="sans-serif-light"
-            android:layout_margin="5dp"
-            android:singleLine="true" />
-    </LinearLayout>
-
     <ScrollView
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
@@ -91,10 +57,10 @@
                         android:layout_weight="1" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/email_validate"
-                        android:src="@drawable/svg_no"
+                        android:src="@drawable/svg_close_filled"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -118,10 +84,10 @@
                         android:layout_weight="1" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/password_validate"
-                        android:src="@drawable/svg_no"
+                        android:src="@drawable/svg_close_filled"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -153,7 +119,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/register"
+                    android:text="Create new account"
                     android:textSize="12sp"
                     android:textColor="@color/primary_text_disable_dark"
                     android:singleLine="true"
@@ -178,6 +144,12 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fragment_container"
+        android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
         android:src="@drawable/svg_android_verified"

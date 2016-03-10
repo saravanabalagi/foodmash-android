@@ -25,37 +25,6 @@
             android:scaleType="centerCrop"
             android:visibility="gone" />
 
-        <ImageButton
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/edit"
-            android:contentDescription="@string/edit"
-            android:background="@color/transparent"
-            android:src="@drawable/svg_edit"
-            android:tint="@color/primary_text_light"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="5dp"
-            android:scaleType="centerCrop"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp" />
-
-        <ImageButton
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/delete"
-            android:contentDescription="@string/delete"
-            android:src="@drawable/svg_trash"
-            android:background="@color/transparent"
-            android:tint="@color/primary_text_light"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="5dp"
-            android:scaleType="centerCrop"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -107,6 +76,44 @@
             android:id="@+id/contact_no"
             android:textSize="14sp"
             android:padding="5dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/edit"
+            android:contentDescription="@string/edit"
+            android:background="@color/transparent"
+            android:src="@drawable/svg_edit"
+            android:tint="@color/primary_text_light"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp" />
+
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/delete"
+            android:contentDescription="@string/delete"
+            android:src="@drawable/svg_trash"
+            android:background="@color/transparent"
+            android:tint="@color/primary_text_light"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp"
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp" />
     </LinearLayout>
 
 </LinearLayout>

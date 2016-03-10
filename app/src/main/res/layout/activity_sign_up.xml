@@ -6,40 +6,6 @@
 
     <include layout="@layout/appbar"/>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical|center_horizontal"
-        android:id="@+id/connecting_layout"
-        android:visibility="gone">
-
-        <ProgressBar
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/connecting"
-            android:gravity="center_horizontal"
-            android:textSize="25sp"
-            android:fontFamily="sans-serif-light"
-            android:layout_margin="5dp"
-            android:singleLine="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/connecting_description"
-            android:gravity="center_horizontal"
-            android:fontFamily="sans-serif-light"
-            android:layout_margin="5dp"
-            android:singleLine="true" />
-    </LinearLayout>
-
     <ScrollView
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
@@ -76,14 +42,14 @@
                         android:layout_weight="1" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/name_validate"
-                        android:src="@drawable/svg_tick"
+                        android:src="@drawable/svg_tick_filled"
                         android:tint="@color/okay_green"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
-                        android:visibility="gone" />
+                        android:visibility="gone"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -102,26 +68,30 @@
                         android:singleLine="true"
                         android:layout_weight="1" />
 
-                    <ProgressBar
-                        style="?android:attr/progressBarStyleSmall"
+                    <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/email_loader"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="10dp"
-                        android:indeterminate="true"
-                        android:visibility="gone"
-                        android:progressTint="@color/accent_white_bg" />
+                        android:layout_gravity="bottom">
 
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:id="@+id/email_validate"
-                        android:src="@drawable/svg_tick"
-                        android:tint="@color/okay_green"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="7dp"
-                        android:visibility="gone" />
+                        <ProgressBar
+                            style="?android:attr/progressBarStyleSmall"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:id="@+id/email_loader"
+                            android:layout_marginBottom="10dp"
+                            android:indeterminate="true"
+                            android:progressTint="@color/accent_white_bg" />
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:id="@+id/email_validate"
+                            android:src="@drawable/svg_tick_filled"
+                            android:tint="@color/okay_green"
+                            android:layout_marginBottom="7dp" />
+
+                    </RelativeLayout>
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -155,8 +125,8 @@
 
                     <ProgressBar
                         style="?android:attr/progressBarStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/phone_loader"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="10dp"
@@ -165,10 +135,10 @@
                         android:progressTint="@color/accent_white_bg" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/contact_validate"
-                        android:src="@drawable/svg_tick"
+                        android:src="@drawable/svg_tick_filled"
                         android:tint="@color/okay_green"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -192,10 +162,10 @@
                         android:layout_weight="1" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/password_validate"
-                        android:src="@drawable/svg_tick"
+                        android:src="@drawable/svg_tick_filled"
                         android:tint="@color/okay_green"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -219,10 +189,10 @@
                         android:layout_weight="1" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/password_confirmation_validate"
-                        android:src="@drawable/svg_tick"
+                        android:src="@drawable/svg_tick_filled"
                         android:tint="@color/okay_green"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -309,6 +279,12 @@
         </LinearLayout>
     </ScrollView>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fragment_container"
+        android:visibility="gone" />
+
     <android.support.design.widget.FloatingActionButton
         android:src="@drawable/svg_android_tick"
         android:id="@+id/create"
@@ -317,4 +293,5 @@
         android:layout_margin="20dp"
         android:layout_gravity="bottom|end"
         android:tint="@color/material_button_tint" />
+
 </android.support.design.widget.CoordinatorLayout>

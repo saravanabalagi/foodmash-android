@@ -4,14 +4,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -32,12 +33,12 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
     @Bind(R.id.buy) FloatingActionButton buy;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.empty_cart_layout) LinearLayout emptyCartLayout;
     @Bind(R.id.payable_amount) TextView total;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     private Intent intent;
-    private Handler handler=new Handler();
     private Cart cart = Cart.getInstance();
 
     @Override
@@ -79,6 +80,12 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { e.printStackTrace(); }
+
+        if(getIntent().getBooleanExtra("total_error",false)) {
+            final Snackbar totalErrorSnackbar = Snackbar.make(mainLayout, "Wrong cart value from server!", Snackbar.LENGTH_INDEFINITE);
+            totalErrorSnackbar.setAction("Try Again", new View.OnClickListener() { @Override public void onClick(View v) { totalErrorSnackbar.dismiss(); } });
+            totalErrorSnackbar.show();
+        }
 
         buy.setOnClickListener(this);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);

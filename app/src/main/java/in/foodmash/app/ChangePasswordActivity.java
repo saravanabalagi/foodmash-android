@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,14 +11,12 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -35,6 +32,8 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
+import in.foodmash.app.commons.VolleyProgressFragment;
 
 /**
  * Created by Zeke on Aug 08 2015.
@@ -43,13 +42,12 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
 
     @Bind(R.id.change) FloatingActionButton change;
     @Bind(R.id.main_layout) ScrollView mainLayout;
-    @Bind(R.id.saving_layout) LinearLayout savingLayout;
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     private EditText oldPassword;
     private EditText newPassword;
     private EditText confirmPassword;
-    private JsonObjectRequest changePasswordRequest;
 
     private boolean forgot = false;
     private String otpToken;
@@ -89,7 +87,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.change: if (isEverythingValid()) makeRequest(); else Alerts.validityAlert(ChangePasswordActivity.this); break;
+            case R.id.change: if (isEverythingValid()) makeChangePasswordRequest(); else Alerts.validityAlert(ChangePasswordActivity.this); break;
         }
     }
 
@@ -111,13 +109,14 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         return requestJson;
     }
 
-    private void makeRequest() {
-        changePasswordRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + ((forgot)?"/registrations/resetPasswordFromToken":"/registrations/changePassword"), getRequestJson(), new Response.Listener<JSONObject>() {
+    public void makeChangePasswordRequest() {
+        JsonObjectRequest changePasswordRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + ((forgot) ? "/registrations/resetPasswordFromToken" : "/registrations/changePassword"), getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
                 try {
-                    if(response.getBoolean("success")) {
-                        if(forgot) {
+                    if (response.getBoolean("success")) {
+                        if (forgot) {
                             JSONObject dataJson = response.getJSONObject("data");
                             String userToken = dataJson.getString("user_token");
                             String sessionToken = dataJson.getString("session_token");
@@ -131,39 +130,25 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                             intent = new Intent(ChangePasswordActivity.this, MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
-                        } else {
-                            finish();
-                        }
+                        } else finish();
                     } else {
-                        Animations.fadeOut(savingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
-                        if(forgot) Alerts.commonErrorAlert(ChangePasswordActivity.this,"OTP Error","There's a problem processing the OTP that you've sent","Okay");
-                        else Alerts.commonErrorAlert(ChangePasswordActivity.this,"Invalid Old Password","We are unable to change your password as Old Password entered by you is Invalid","Okay");
-                        Log.e("Success False",response.getString("error"));
+                        if (forgot) Alerts.commonErrorAlert(ChangePasswordActivity.this, "OTP Error", "There's a problem processing the OTP that you've sent", "Okay");
+                        else Alerts.commonErrorAlert(ChangePasswordActivity.this, "Invalid Old Password", "We are unable to change your password as Old Password entered by you is Invalid", "Okay");
+                        Log.e("Success False", response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeOut(savingLayout,500);
-                Animations.fadeIn(mainLayout,500);
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Animations.fadeIn(savingLayout,500);
-                        Animations.fadeOut(mainLayout, 500);
-                        Swift.getInstance(ChangePasswordActivity.this).addToRequestQueue(changePasswordRequest);
-                    }
-                };
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ChangePasswordActivity.this, onClickTryAgain);
-                if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ChangePasswordActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(ChangePasswordActivity.this);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeChangePasswordRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
-        Animations.fadeIn(savingLayout,500);
-        Animations.fadeOut(mainLayout, 500);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(ChangePasswordActivity.this).addToRequestQueue(changePasswordRequest);
     }
 

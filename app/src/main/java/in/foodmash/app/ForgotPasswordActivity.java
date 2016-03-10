@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,15 +10,14 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -33,6 +31,8 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
+import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.utils.EmailUtils;
 
 /**
@@ -43,15 +43,12 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     @Bind(R.id.forgot) FloatingActionButton forgot;
     @Bind(R.id.phone_layout) LinearLayout phoneLayout;
     @Bind(R.id.email_layout) LinearLayout emailLayout;
-    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
-    private JsonObjectRequest forgotRequest;
-
     private EditText phone;
     private EditText email;
-
     private ImageView phoneValidate;
     private ImageView emailValidate;
 
@@ -90,7 +87,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.forgot: if(isEverythingValid()) makeRequest(); else Alerts.validityAlert(ForgotPasswordActivity.this); break;
+            case R.id.forgot: if(isEverythingValid()) makeForgotRequest(); else Alerts.validityAlert(ForgotPasswordActivity.this); break;
         }
     }
 
@@ -107,10 +104,11 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         return requestJson;
     }
 
-    private void makeRequest() {
-        forgotRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/forgotPassword", getRequestJson(), new Response.Listener<JSONObject>() {
+    public void makeForgotRequest() {
+        JsonObjectRequest forgotRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/forgotPassword", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
                         Log.i("Security",response.getString("otp"));
@@ -119,8 +117,6 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
                         intent.putExtra("value",(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)?phone.getText().toString().trim():email.getText().toString().trim());
                         startActivity(intent);
                     } else {
-                        Animations.fadeOut(connectingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(ForgotPasswordActivity.this, "Could not send OTP", "We are unable to send you OTP as the details you entered are invalid. Try Again!", "Okay");
                         Log.e("Success False", response.getString("error"));
                     }
@@ -129,24 +125,14 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeOut(connectingLayout,500);
-                Animations.fadeIn(mainLayout,500);
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Animations.fadeIn(connectingLayout,500);
-                        Animations.fadeOut(mainLayout, 500);
-                        Swift.getInstance(ForgotPasswordActivity.this).addToRequestQueue(forgotRequest);
-                    }
-                };
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ForgotPasswordActivity.this, onClickTryAgain);
-                else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ForgotPasswordActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(ForgotPasswordActivity.this);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeForgotRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
-        Animations.fadeIn(connectingLayout,500);
-        Animations.fadeOut(mainLayout, 500);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(ForgotPasswordActivity.this).addToRequestQueue(forgotRequest);
     }
 

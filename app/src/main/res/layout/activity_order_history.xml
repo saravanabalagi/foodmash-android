@@ -7,40 +7,6 @@
 
     <include layout="@layout/appbar"/>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical|center_horizontal"
-        android:id="@+id/loading_layout"
-        android:visibility="gone">
-
-        <ProgressBar
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/loading"
-            android:gravity="center_horizontal"
-            android:textSize="25sp"
-            android:fontFamily="sans-serif-light"
-            android:layout_margin="5dp"
-            android:singleLine="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/loading_description"
-            android:gravity="center_horizontal"
-            android:fontFamily="sans-serif-light"
-            android:layout_margin="5dp"
-            android:singleLine="true" />
-    </LinearLayout>
-
     <ScrollView
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
@@ -56,4 +22,11 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fragment_container"
+        android:visibility="gone" />
+
 </android.support.design.widget.CoordinatorLayout>

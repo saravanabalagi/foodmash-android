@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -10,20 +9,20 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,6 +44,8 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
+import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.custom.Address;
 import in.foodmash.app.custom.City;
 
@@ -61,8 +62,8 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
     @Bind(R.id.address_line_2_validate) ImageView addressLine2Validate;
     @Bind(R.id.contact_validate) ImageView contactValidate;
 
-    @Bind(R.id.saving_layout) LinearLayout savingLayout;
     @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.area_city_spinner_layout) LinearLayout areaCitySpinnerLayout;
 
     @Bind(R.id.name) EditText name;
@@ -82,7 +83,12 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
     private LatLng latLng;
     private boolean edit = false;
     private boolean cart = false;
-    private JsonObjectRequest addAddressRequest;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home) { onBackPressed(); return true; }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +102,7 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { e.printStackTrace(); }
 
-        save.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { if (isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(AddAddressActivity.this); } });
+        save.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { if (isEverythingValid()) makeAddAddressRequest(); else Alerts.validityAlert(AddAddressActivity.this); } });
         cart = getIntent().getBooleanExtra("cart",false);
         latLng = new LatLng(getIntent().getDoubleExtra("latitude", 0),getIntent().getDoubleExtra("longitude",0));
         address = new Address();
@@ -132,7 +138,7 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
                     ArrayAdapter areaAdapter = new ArrayAdapter<>(
                             AddAddressActivity.this,
                             R.layout.spinner_item,
-                            addStringAsFirstItem(cities.get(position).getAreaStringArrayList(),"Area"));
+                            cities.get(position).getAreaStringArrayList());
                     areaAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     area.setAdapter(areaAdapter);
                 }
@@ -141,7 +147,7 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
             ArrayAdapter areaAdapter = new ArrayAdapter<>(
                     AddAddressActivity.this,
                     R.layout.spinner_item,
-                    addStringAsFirstItem(cities.get(0).getAreaStringArrayList(),"Area"));
+                    cities.get(0).getAreaStringArrayList());
             areaAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
             area.setAdapter(areaAdapter);
             area.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -165,7 +171,7 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
             line2.setText(address.getLine2());
             contactNo.setText(address.getContactNo());
             if(!cart) {
-                int areaId = address.getId();
+                int areaId = address.getAreaId();
                 int cityPos = -1;
                 for(int i=0;i<cities.size();i++) if (cities.get(i).indexOf(areaId)!=-1) cityPos=i;
                 int areaPos = cities.get(cityPos).indexOf(areaId);
@@ -174,6 +180,8 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
             }
         } else {
             try {
+                name.setText(Info.getName(this));
+                contactNo.setText(Info.getPhone(this));
                 Geocoder geocoder = new Geocoder(this);
                 List<android.location.Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
                 if(addresses.size()>0 && addresses.get(0)!=null) {
@@ -204,7 +212,7 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
         address.setLongitude(latLng.longitude);
 
         if(cart) address.setAreaId(Info.getAreaId(this));
-        else address.setAreaId(cities.get(city.getSelectedItemPosition()).getAreas().get(area.getSelectedItemPosition()-1).getId());
+        else address.setAreaId(cities.get(city.getSelectedItemPosition()).getAreas().get(area.getSelectedItemPosition()).getId());
 
         JSONObject requestJson = JsonProvider.getStandardRequestJson(AddAddressActivity.this);
         try {
@@ -219,12 +227,11 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
         return requestJson;
     }
 
-
-
-    private void makeJsonRequest() {
-        addAddressRequest = new JsonObjectRequest((edit)?Request.Method.PATCH:Request.Method.POST, getString(R.string.api_root_path) + ((edit)?"/delivery_addresses":"/delivery_addresses/create"), getRequestJson(), new Response.Listener<JSONObject>() {
+    public void makeAddAddressRequest() {
+        JsonObjectRequest addAddressRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + ((edit)?"/delivery_addresses/update":"/delivery_addresses/create"), getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
                         if (cart) intent = new Intent(AddAddressActivity.this, CheckoutAddressActivity.class);
@@ -233,8 +240,6 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
                         startActivity(intent);
                         finish();
                     } else {
-                        Animations.fadeOut(savingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
                         Alerts.commonErrorAlert(AddAddressActivity.this, "Address Invalid", "We are unable to process your Address Details. Try Again!", "Okay");
                         Log.e("Success False",response.getString("error"));
                     }
@@ -243,24 +248,15 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeOut(savingLayout,500);
-                Animations.fadeIn(mainLayout,500);
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Animations.fadeIn(savingLayout,500);
-                        Animations.fadeOut(mainLayout,500);
-                        Swift.getInstance(AddAddressActivity.this).addToRequestQueue(addAddressRequest);
-                    }
-                };
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(AddAddressActivity.this, onClickTryAgain);
-                else if (error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(AddAddressActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(AddAddressActivity.this);
-                Log.e("Network",error.toString());
+                Log.i("Json Request", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeAddAddressRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
-        Animations.fadeIn(savingLayout,500);
-        Animations.fadeOut(mainLayout, 500);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(AddAddressActivity.this).addToRequestQueue(addAddressRequest);
     }
 
@@ -287,11 +283,4 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
     }
 
     interface IgnoreIdMixin { @JsonIgnore int getId(); }
-    private ArrayList<String> addStringAsFirstItem(ArrayList<String> arrayList, String defaultString) {
-        ArrayList<String> resultArrayList = new ArrayList<>();
-        resultArrayList.add(0,defaultString);
-        for(String string: arrayList)
-            resultArrayList.add(string);
-        return  resultArrayList;
-    }
 }

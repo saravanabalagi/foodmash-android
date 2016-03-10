@@ -1,28 +1,26 @@
 package in.foodmash.app;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -39,6 +37,8 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
+import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.utils.EmailUtils;
 import in.foodmash.app.utils.NumberUtils;
 
@@ -50,7 +50,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     @Bind(R.id.call) FloatingActionButton call;
     @Bind(R.id.send_email) TextView sendEmail;
     @Bind(R.id.not_logged_in_layout) LinearLayout notLoggedInLayout;
-    @Bind(R.id.connecting_layout) LinearLayout connectingLayout;
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
@@ -60,7 +60,6 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
     @Bind(R.id.about_us) LinearLayout aboutUs;
 
     Intent intent;
-    JsonObjectRequest contactUsRequest;
 
     ImageView issueValidate;
     ImageView descriptionValidate;
@@ -126,7 +125,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
             case R.id.privacy_policy: goToLegaleseActivity(LegaleseActivity.Legalese.PRIVACY_POLICY); ;break;
             case R.id.about_us: goToLegaleseActivity(LegaleseActivity.Legalese.ABOUT_US); ;break;
             case R.id.call: Intent callIntent = new Intent(Intent.ACTION_CALL); callIntent.setData(Uri.parse("tel:+918056249612")); try { startActivity(callIntent); } catch (SecurityException e) { e.printStackTrace(); } ; break;
-            case R.id.send_email: if(isEverythingValid()) makeRequest(); else Alerts.validityAlert(ContactUsActivity.this); break;
+            case R.id.send_email: if(isEverythingValid()) makeContactUsRequest(); else Alerts.validityAlert(ContactUsActivity.this); break;
         }
     }
 
@@ -149,42 +148,27 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         return requestJson;
     }
 
-    private void makeRequest() {
-        contactUsRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/contact_us", getRequestJson(), new Response.Listener<JSONObject>() {
+    public void makeContactUsRequest() {
+        JsonObjectRequest contactUsRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/contact_us", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
                 try {
-                    if(response.getBoolean("success")) {
-                        finish();
-                    } else {
-                        Animations.fadeOut(connectingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
-                        Alerts.requestUnauthorisedAlert(ContactUsActivity.this);
-                        Log.e("Success False",response.getString("error"));
-                    }
+                    if(response.getBoolean("success")) finish();
+                    else Snackbar.make(mainLayout, response.getString("error"), Snackbar.LENGTH_LONG).show();
                 } catch (JSONException e) { e.printStackTrace(); }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeOut(connectingLayout,500);
-                Animations.fadeIn(mainLayout,500);
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Animations.fadeIn(connectingLayout,500);
-                        Animations.fadeOut(mainLayout, 500);
-                        Swift.getInstance(ContactUsActivity.this).addToRequestQueue(contactUsRequest);
-                    }
-                };
-                if(error instanceof TimeoutError) Alerts.internetConnectionErrorAlert(ContactUsActivity.this, onClickTryAgain);
-                else if(error instanceof NoConnectionError) Alerts.timeoutErrorAlert(ContactUsActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(ContactUsActivity.this);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeContactUsRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
-        Animations.fadeIn(connectingLayout,500);
-        Animations.fadeOut(mainLayout, 500);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(ContactUsActivity.this).addToRequestQueue(contactUsRequest);
     }
 

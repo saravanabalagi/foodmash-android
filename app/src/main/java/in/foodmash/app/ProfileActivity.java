@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -15,16 +16,14 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -43,6 +42,8 @@ import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
+import in.foodmash.app.commons.VolleyFailureFragment;
+import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.utils.EmailUtils;
 import in.foodmash.app.utils.NumberUtils;
 
@@ -53,8 +54,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     @Bind(R.id.save) FloatingActionButton save;
     @Bind(R.id.main_layout) ScrollView mainLayout;
-    @Bind(R.id.loading_layout) LinearLayout loadingLayout;
-    @Bind(R.id.saving_layout) LinearLayout savingLayout;
+    @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.change_password) TextView changePassword;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
@@ -69,9 +69,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private ImageView nameValidate;
     private ImageView emailValidate;
     private ImageView phoneValidate;
-
-    private JsonObjectRequest profileRequest;
-    private JsonObjectRequest jsonObjectRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,52 +134,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     }).show();
             }
         });
-
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/profile", JsonProvider.getStandardRequestJson(ProfileActivity.this), new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    if(response.getBoolean("success")) {
-                        Animations.fadeOut(loadingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
-                        JSONObject dataJson = response.getJSONObject("data");
-                        JSONObject userJson = dataJson.getJSONObject("user");
-                        name.setText(userJson.getString("name"));
-                        dob.setText(userJson.getString("dob").equals("null")?null:userJson.getString("dob"));
-                        email.setText(userJson.getString("email"));
-                        phone.setText(userJson.getString("mobile_no"));
-                        promotionOffers.setChecked(userJson.getBoolean("offers"));
-                    } else {
-                        Alerts.requestUnauthorisedAlert(ProfileActivity.this);
-                        Log.e("Success False",response.getString("error"));
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Swift.getInstance(ProfileActivity.this).addToRequestQueue(jsonObjectRequest);
-                    }
-                };
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ProfileActivity.this, onClickTryAgain);
-                else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ProfileActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(ProfileActivity.this);
-                Log.e("Json Request Failed", error.toString());
-            }
-        });
-        Animations.fadeIn(loadingLayout, 500);
-        Animations.fadeOut(mainLayout, 500);
-        Swift.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        makeProfileDetailsRequest();
 
     }
 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.change_password: intent = new Intent(this, ChangePasswordActivity.class); startActivity(intent); break;
-            case R.id.save: if(isEverythingValid()) makeJsonRequest(); else Alerts.validityAlert(ProfileActivity.this); break;
+            case R.id.save: if(isEverythingValid()) makeProfileRequest(); else Alerts.validityAlert(ProfileActivity.this); break;
         }
     }
 
@@ -206,21 +165,48 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         return requestJson;
     }
 
-    private void makeJsonRequest() {
-        profileRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/profile/update", getRequestJson(), new Response.Listener<JSONObject>() {
+    public void makeProfileRequest() {
+        JsonObjectRequest profileRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/profile/update", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
                         Actions.cacheUserDetails(ProfileActivity.this, name.getText().toString().trim(), email.getText().toString().trim(), phone.getText().toString().trim());
                         finish();
+                    } else Snackbar.make(mainLayout, response.getString("error"), Snackbar.LENGTH_LONG).show();
+                } catch (JSONException e) { e.printStackTrace(); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeProfileRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
+            }
+        });
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
+        Swift.getInstance(ProfileActivity.this).addToRequestQueue(profileRequest);
+    }
+
+    public void makeProfileDetailsRequest() {
+        JsonObjectRequest getProfileDetailsRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/profile", JsonProvider.getStandardRequestJson(ProfileActivity.this), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
+                try {
+                    if(response.getBoolean("success")) {
+                        JSONObject dataJson = response.getJSONObject("data");
+                        JSONObject userJson = dataJson.getJSONObject("user");
+                        name.setText(userJson.getString("name"));
+                        dob.setText(userJson.getString("dob").equals("null")?null:userJson.getString("dob"));
+                        email.setText(userJson.getString("email"));
+                        phone.setText(userJson.getString("mobile_no"));
+                        promotionOffers.setChecked(userJson.getBoolean("offers"));
                     } else {
-                        Animations.fadeOut(savingLayout,500);
-                        Animations.fadeIn(mainLayout,500);
-                        Alerts.commonErrorAlert(ProfileActivity.this,
-                                "Invalid Details",
-                                "We are unable to save your profile details as they are invalid. Try again later!",
-                                "Okay");
+                        Alerts.requestUnauthorisedAlert(ProfileActivity.this);
                         Log.e("Success False",response.getString("error"));
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -228,25 +214,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeOut(savingLayout,500);
-                Animations.fadeIn(mainLayout,500);
-                DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Animations.fadeIn(savingLayout,500);
-                        Animations.fadeOut(mainLayout, 500);
-                        Swift.getInstance(ProfileActivity.this).addToRequestQueue(profileRequest);
-                    }
-                };
-                if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(ProfileActivity.this, onClickTryAgain);
-                else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(ProfileActivity.this, onClickTryAgain);
-                else Alerts.unknownErrorAlert(ProfileActivity.this);
-                Log.e("Json Request Failed", error.toString());
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeProfileDetailsRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
-        Animations.fadeIn(savingLayout,500);
-        Animations.fadeOut(mainLayout, 500);
-        Swift.getInstance(ProfileActivity.this).addToRequestQueue(profileRequest);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
+        Swift.getInstance(this).addToRequestQueue(getProfileDetailsRequest);
     }
 
 
