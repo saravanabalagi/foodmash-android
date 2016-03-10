@@ -39,7 +39,7 @@
         <activity android:name=".ForgotPasswordOtpActivity" android:parentActivityName=".LoginActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".ErrorReportActivity" />
+        <activity android:name=".ErrorDescriptionActivity" />
         <activity android:name=".LegaleseActivity" android:parentActivityName=".SignUpActivity" />
         <activity android:name=".OrderDescriptionActivity" android:parentActivityName=".OrderHistoryActivity" />
         <activity android:name=".OrderHistoryActivity" android:parentActivityName=".MainActivity" />
