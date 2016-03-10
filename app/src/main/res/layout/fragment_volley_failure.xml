@@ -33,7 +33,7 @@
             android:gravity="center_horizontal"
             android:layout_marginTop="-10dp"
             android:layout_marginBottom="10dp"
-            android:id="@+id/description" />
+            android:id="@+id/message" />
 
         <ImageView
             android:layout_width="wrap_content"

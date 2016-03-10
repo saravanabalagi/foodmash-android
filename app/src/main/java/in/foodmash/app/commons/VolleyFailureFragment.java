@@ -24,7 +24,7 @@ import com.android.volley.VolleyError;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import in.foodmash.app.ErrorReportActivity;
+import in.foodmash.app.ErrorDescriptionActivity;
 import in.foodmash.app.R;
 import in.foodmash.app.SplashActivity;
 
@@ -45,7 +45,7 @@ public class VolleyFailureFragment extends Fragment implements View.OnClickListe
     @Bind(R.id.exit) LinearLayout exit;
 
     @Bind(R.id.error) TextView error;
-    @Bind(R.id.description) TextView description;
+    @Bind(R.id.message) TextView description;
     @Bind(R.id.image) ImageView image;
 
     Intent intent;
@@ -99,11 +99,16 @@ public class VolleyFailureFragment extends Fragment implements View.OnClickListe
         switch (v.getId()) {
             case R.id.settings_mobile_network: startActivityForResult(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS),0); break;
             case R.id.settings_wifi: startActivityForResult(new Intent(Settings.ACTION_WIFI_SETTINGS),0); break;
-            case R.id.error_description: intent = new Intent(getActivity(), ErrorReportActivity.class); startActivity(intent); break;
             case R.id.back: getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit(); break;
             case R.id.logout: Actions.logout(getActivity()); startActivity(new Intent(getActivity(), SplashActivity.class)); getActivity().finish(); break;
             case R.id.exit: getActivity().finish(); System.exit(0); break;
             case R.id.retry: retry(); break;
+            case R.id.error_description:
+                intent = new Intent(getActivity(), ErrorDescriptionActivity.class);
+                Bundle extras = new Bundle();
+                extras.putSerializable("error", volleyError);
+                intent.putExtras(extras);
+                startActivity(intent); break;
         }
     }
 
