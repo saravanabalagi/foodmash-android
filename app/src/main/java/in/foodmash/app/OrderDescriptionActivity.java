@@ -114,7 +114,7 @@ public class OrderDescriptionActivity extends AppCompatActivity {
                         JSONObject orderJson = orderJsonArray.getJSONObject(0);
                         grandTotal.setText(String.format("%.2f", Float.parseFloat(orderJson.getString("grand_total"))));
                         paymentMethod.setText(WordUtils.titleize(orderJson.getString("payment_method")));
-                        setStatus(statusIcon, orderJson.getString("aasm_stated"));
+                        setStatus(statusIcon, orderJson.getString("aasm_state"));
                         date.setText(DateUtils.railsDateToLocalTime(orderJson.getString("updated_at")));
                         status.setText(WordUtils.titleize(orderJson.getString("aasm_state")));
                         total.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("total")));
