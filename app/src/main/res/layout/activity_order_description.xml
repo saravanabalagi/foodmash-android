@@ -164,7 +164,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:id="@+id/status_icon"
-                        android:src="@drawable/svg_tick"
+                        android:src="@drawable/svg_tick_filled"
                         android:tint="@color/okay_green"
                         android:layout_marginRight="5dp" />
 
@@ -201,4 +201,11 @@
 
         </LinearLayout>
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fragment_container"
+        android:visibility="gone" />
+
 </android.support.design.widget.CoordinatorLayout>

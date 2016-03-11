@@ -1,26 +1,34 @@
 package in.foodmash.app;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,8 +44,10 @@ import in.foodmash.app.commons.VolleyProgressFragment;
 public class ErrorDescriptionActivity extends AppCompatActivity {
 
     @Bind(R.id.send) FloatingActionButton send;
+    @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.title) TextView titleTextView;
     @Bind(R.id.message) TextView messageTextView;
+    @Bind(R.id.time) TextView timeTextView;
     @Bind(R.id.stacktrace) TextView stacktraceTextView;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
 
@@ -51,6 +61,7 @@ public class ErrorDescriptionActivity extends AppCompatActivity {
     @Bind(R.id.width) TextView widthTextView;
 
     Throwable e;
+    String timeNow;
     String release;
     int sdkVersion;
     String manufacturer;
@@ -101,6 +112,10 @@ public class ErrorDescriptionActivity extends AppCompatActivity {
             stacktraceTextView.setText(Arrays.toString(e.getStackTrace()));
         }
 
+        Calendar calendar = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss", Locale.US);
+        timeNow = dateFormat.format(calendar.getTime());
+        timeTextView.setText(timeNow);
         releaseTextView.setText(release);
         sdkVersionTextView.setText(String.valueOf(sdkVersion));
         manufacturerTextView.setText(manufacturer);
@@ -113,10 +128,21 @@ public class ErrorDescriptionActivity extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeErrorRequest();
+                sendEmail();
             }
         });
 
+    }
+
+    private void sendEmail() {
+        try {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"bugs@foodmash.in"});
+            i.putExtra(Intent.EXTRA_SUBJECT, "App Error | Android "+ sdkVersion);
+            i.putExtra(Intent.EXTRA_TEXT   , new ObjectMapper().writeValueAsString(getMakeErrorRequestJson()));
+            startActivity(Intent.createChooser(i, "Send mail..."));
+        } catch (Exception e) { Snackbar.make(mainLayout, "There are no email clients installed.", Snackbar.LENGTH_LONG).show(); }
     }
 
     private JSONObject getMakeErrorRequestJson() {
@@ -126,6 +152,7 @@ public class ErrorDescriptionActivity extends AppCompatActivity {
             dataHashMap.put("class",e.getClass().getName());
             dataHashMap.put("message",e.getMessage());
             dataHashMap.put("stacktrace",Arrays.toString(e.getStackTrace()));
+            dataHashMap.put("time",timeNow);
             JSONObject dataJson = new JSONObject(dataHashMap);
             HashMap<String, String> hostHashMap = new HashMap<>();
             hostHashMap.put("release", release);

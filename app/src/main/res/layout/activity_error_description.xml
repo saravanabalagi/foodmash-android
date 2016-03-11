@@ -10,7 +10,8 @@
     <ScrollView
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/main_layout">
 
         <LinearLayout android:orientation="vertical"
             android:layout_width="match_parent"
@@ -23,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Under Construction"
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:id="@+id/title" />
 
             <View
@@ -46,6 +47,14 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/stacktrace"
                 android:text="StackTrace"
+                android:textSize="13sp"
+                android:padding="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/time"
+                android:text="Time"
                 android:textSize="13sp"
                 android:padding="5dp" />
 

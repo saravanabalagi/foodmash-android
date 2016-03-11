@@ -201,6 +201,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                                     try { intent.putExtra("json", objectMapper.writeValueAsString(address)); }
                                     catch (Exception e) { e.printStackTrace(); }
                                     intent.putExtra("edit", true);
+                                    intent.putExtra("cart", true);
                                     startActivity(intent);
                                 }
                             });

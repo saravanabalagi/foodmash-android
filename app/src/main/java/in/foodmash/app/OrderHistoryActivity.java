@@ -60,6 +60,7 @@ public class OrderHistoryActivity extends AppCompatActivity {
 
     private void setStatus (ImageView statusImageView, String status) {
         switch (status) {
+            case "purchased": statusImageView.setImageResource(R.drawable.svg_time); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); break;
             case "delivered": statusImageView.setImageResource(R.drawable.svg_tick_filled); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); break;
             case "cancelled": statusImageView.setImageResource(R.drawable.svg_close_filled); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); break;
         }
