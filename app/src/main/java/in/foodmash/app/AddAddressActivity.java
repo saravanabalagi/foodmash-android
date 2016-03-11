@@ -39,6 +39,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
@@ -100,7 +101,14 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            intent = new Intent(this, ErrorDescriptionActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("error", e);
+            intent.putExtras(bundle);
+            startActivity(intent);
+            finish();
+        }
 
         save.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { if (isEverythingValid()) makeAddAddressRequest(); else Alerts.validityAlert(AddAddressActivity.this); } });
         cart = getIntent().getBooleanExtra("cart",false);
@@ -114,8 +122,7 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
                 address = objectMapper.readValue(getIntent().getStringExtra("json"),Address.class);
                 cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(this), City[].class));
                 edit = true;
-            }
-            catch (Exception e) { e.printStackTrace(); }
+            } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         }
 
         if(!cart) {
@@ -188,7 +195,7 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
                         line1.setText(addresses.get(0).getAddressLine(0));
                         line2.setText(addresses.get(0).getAddressLine(1));
                     }
-            } catch (Exception e) { e.printStackTrace(); }
+            } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         }
     }
 
@@ -223,7 +230,7 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
                 objectMapper.addMixIn(Address.class, IgnoreIdMixin.class);
                 requestJson.put("data", new JSONObject(objectMapper.writeValueAsString(address)));
             }
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         return requestJson;
     }
 

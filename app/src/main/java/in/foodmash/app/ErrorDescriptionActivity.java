@@ -9,7 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Display;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ScrollView;
@@ -19,8 +21,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
@@ -32,6 +34,7 @@ import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
@@ -43,22 +46,13 @@ import in.foodmash.app.commons.VolleyProgressFragment;
  */
 public class ErrorDescriptionActivity extends AppCompatActivity {
 
+    @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.send) FloatingActionButton send;
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.title) TextView titleTextView;
     @Bind(R.id.message) TextView messageTextView;
-    @Bind(R.id.time) TextView timeTextView;
     @Bind(R.id.stacktrace) TextView stacktraceTextView;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
-
-    @Bind(R.id.release) TextView releaseTextView;
-    @Bind(R.id.sdk_version) TextView sdkVersionTextView;
-    @Bind(R.id.manufacturer) TextView manufacturerTextView;
-    @Bind(R.id.model) TextView modelTextView;
-    @Bind(R.id.orientation) TextView orientationTextView;
-    @Bind(R.id.size_category) TextView sizeCategoryTextView;
-    @Bind(R.id.height) TextView heightTextView;
-    @Bind(R.id.width) TextView widthTextView;
 
     Throwable e;
     String timeNow;
@@ -72,10 +66,22 @@ public class ErrorDescriptionActivity extends AppCompatActivity {
     int width;
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home) onBackPressed();
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_error_description);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        try {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         release = Build.VERSION.RELEASE;
         sdkVersion = Build.VERSION.SDK_INT;
@@ -115,15 +121,6 @@ public class ErrorDescriptionActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss", Locale.US);
         timeNow = dateFormat.format(calendar.getTime());
-        timeTextView.setText(timeNow);
-        releaseTextView.setText(release);
-        sdkVersionTextView.setText(String.valueOf(sdkVersion));
-        manufacturerTextView.setText(manufacturer);
-        modelTextView.setText(model);
-        orientationTextView.setText(orientation);
-        sizeCategoryTextView.setText(sizeCategory);
-        heightTextView.setText(String.valueOf(height));
-        widthTextView.setText(String.valueOf(width));
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,13 +133,14 @@ public class ErrorDescriptionActivity extends AppCompatActivity {
 
     private void sendEmail() {
         try {
-            Intent i = new Intent(Intent.ACTION_SEND);
-            i.setType("text/plain");
-            i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"bugs@foodmash.in"});
-            i.putExtra(Intent.EXTRA_SUBJECT, "App Error | Android "+ sdkVersion);
-            i.putExtra(Intent.EXTRA_TEXT   , new ObjectMapper().writeValueAsString(getMakeErrorRequestJson()));
-            startActivity(Intent.createChooser(i, "Send mail..."));
-        } catch (Exception e) { Snackbar.make(mainLayout, "There are no email clients installed.", Snackbar.LENGTH_LONG).show(); }
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_EMAIL  , new String[]{"bugs@foodmash.in"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "App Error | Android API "+ sdkVersion);
+            intent.putExtra(Intent.EXTRA_TEXT   , getMakeErrorRequestJson().toString(4));
+            startActivity(Intent.createChooser(intent, "Send mail..."));
+        } catch (JSONException e) { Snackbar.make(mainLayout, "Json Exception occurred!", Snackbar.LENGTH_LONG).show(); }
+        catch (Exception e) { Snackbar.make(mainLayout, "There are no email clients installed.", Snackbar.LENGTH_LONG).show(); }
     }
 
     private JSONObject getMakeErrorRequestJson() {
@@ -166,7 +164,7 @@ public class ErrorDescriptionActivity extends AppCompatActivity {
             JSONObject hostJson = new JSONObject(hostHashMap);
             dataJson.put("host", hostJson);
             requestJson.put("data", dataJson);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         return requestJson;
     }
 

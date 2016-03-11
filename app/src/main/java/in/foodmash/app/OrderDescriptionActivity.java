@@ -2,7 +2,6 @@ package in.foodmash.app;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -26,6 +25,7 @@ import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
@@ -76,7 +76,7 @@ public class OrderDescriptionActivity extends AppCompatActivity {
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         imageLoader = Swift.getInstance(OrderDescriptionActivity.this).getImageLoader();
         cart = getIntent().getBooleanExtra("cart", false);
@@ -114,7 +114,7 @@ public class OrderDescriptionActivity extends AppCompatActivity {
                         JSONObject orderJson = orderJsonArray.getJSONObject(0);
                         grandTotal.setText(String.format("%.2f", Float.parseFloat(orderJson.getString("grand_total"))));
                         paymentMethod.setText(WordUtils.titleize(orderJson.getString("payment_method")));
-                        setStatus(statusIcon, orderJson.getString("aasm_state"));
+                        setStatus(statusIcon, orderJson.getString("aasm_stated"));
                         date.setText(DateUtils.railsDateToLocalTime(orderJson.getString("updated_at")));
                         status.setText(WordUtils.titleize(orderJson.getString("aasm_state")));
                         total.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("total")));
@@ -143,7 +143,7 @@ public class OrderDescriptionActivity extends AppCompatActivity {
                         Alerts.requestUnauthorisedAlert(OrderDescriptionActivity.this);
                         Log.e("Success False",response.getString("error"));
                     }
-                } catch (Exception e) { e.printStackTrace(); Snackbar.make(mainLayout, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show(); }
+                } catch (Exception e) { Actions.handleIgnorableException(OrderDescriptionActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override

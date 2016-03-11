@@ -28,6 +28,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
@@ -63,13 +64,13 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         try {
             objectMapper = new ObjectMapper();
             objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
             cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(this), City[].class));
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         addAddress.setOnClickListener(this);
         makeAddressRequest();
     }
@@ -112,7 +113,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                 public void onClick(View v) {
                                     Intent intent = new Intent(AddressActivity.this, PinYourLocationActivity.class);
                                     try { intent.putExtra("json", objectMapper.writeValueAsString(address)); }
-                                    catch (Exception e) { e.printStackTrace(); }
+                                    catch (Exception e) { Actions.handleIgnorableException(AddressActivity.this,e); }
                                     intent.putExtra("edit", true);
                                     startActivity(intent);
                                 }
@@ -158,7 +159,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                         Alerts.requestUnauthorisedAlert(AddressActivity.this);
                         Log.e("Success False",response.getString("error"));
                     }
-                } catch (Exception e) { e.printStackTrace(); }
+                } catch (Exception e) { Actions.handleIgnorableException(AddressActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override

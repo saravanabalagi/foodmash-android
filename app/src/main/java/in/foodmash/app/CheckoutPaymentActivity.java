@@ -37,6 +37,7 @@ import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
@@ -90,7 +91,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         if(Cart.getInstance().getCount()==0) finish();
         if(getIntent().getDoubleExtra("payable_amount", 0)!=0

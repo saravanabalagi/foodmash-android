@@ -114,7 +114,7 @@ public class VolleyFailureFragment extends Fragment implements View.OnClickListe
 
     private void retry() {
         try  { Class.forName(getActivity().getClass().getName()).getDeclaredMethod(methodName).invoke(getActivity()); }
-        catch (Exception e) { e.printStackTrace(); }
+        catch (Exception e) { Actions.handleIgnorableException(getActivity(),e); }
     }
 
 }

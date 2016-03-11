@@ -79,7 +79,7 @@ public class SplashActivity extends AppCompatActivity {
                         if(currentVersion < newVersion) { startActivity(new Intent(SplashActivity.this, UpdateAppActivity.class)); finish(); }
                         else makeLocationRequest();
                     } else Alerts.requestUnauthorisedAlert(SplashActivity.this);
-                } catch (Exception e) { e.printStackTrace(); }
+                } catch (Exception e) { Actions.handleIgnorableException(SplashActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -148,7 +148,7 @@ public class SplashActivity extends AppCompatActivity {
                         Alerts.requestUnauthorisedAlert(SplashActivity.this);
                         Log.e("Success False",response.getString("error"));
                     }
-                } catch (Exception e) { e.printStackTrace(); }
+                } catch (Exception e) { Actions.handleIgnorableException(SplashActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override

@@ -27,6 +27,7 @@ import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
@@ -68,7 +69,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         if(getIntent().getBooleanExtra("forgot",false)) { forgot = true; otpToken = getIntent().getStringExtra("otp_token"); }
 
@@ -105,7 +106,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
             JSONObject dataJson = new JSONObject();
             dataJson.put("user",userJson);
             requestJson.put("data", dataJson);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         return requestJson;
     }
 

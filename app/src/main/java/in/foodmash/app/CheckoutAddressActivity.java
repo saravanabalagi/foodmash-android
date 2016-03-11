@@ -29,6 +29,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
@@ -67,7 +68,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         if(Cart.getInstance().getCount()==0) {
             Intent intent = new Intent(CheckoutAddressActivity.this, CartActivity.class);
@@ -89,7 +90,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
             cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(this), City[].class));
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
     }
 
@@ -199,7 +200,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                                 public void onClick(View v) {
                                     Intent intent = new Intent(CheckoutAddressActivity.this, PinYourLocationActivity.class);
                                     try { intent.putExtra("json", objectMapper.writeValueAsString(address)); }
-                                    catch (Exception e) { e.printStackTrace(); }
+                                    catch (Exception e) { Actions.handleIgnorableException(CheckoutAddressActivity.this,e); }
                                     intent.putExtra("edit", true);
                                     intent.putExtra("cart", true);
                                     startActivity(intent);
@@ -258,7 +259,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                         Alerts.requestUnauthorisedAlert(CheckoutAddressActivity.this);
                         Log.e("Success False",response.getString("error"));
                     }
-                } catch (Exception e) { e.printStackTrace(); }
+                } catch (Exception e) { Actions.handleIgnorableException(CheckoutAddressActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override

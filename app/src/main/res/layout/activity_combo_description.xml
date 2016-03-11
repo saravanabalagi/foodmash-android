@@ -23,7 +23,7 @@
             android:id="@+id/fill_layout"
             android:layout_marginBottom="10dp"
             android:animateLayoutChanges="true"
-            android:paddingBottom="40dp">
+            android:paddingBottom="80dp">
         </LinearLayout>
 
     </ScrollView>

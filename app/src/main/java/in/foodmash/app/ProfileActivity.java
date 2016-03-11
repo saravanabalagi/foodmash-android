@@ -79,7 +79,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         save.setOnClickListener(this);
         changePassword.setOnClickListener(this);

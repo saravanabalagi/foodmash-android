@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         try { getSupportActionBar().setDisplayShowTitleEnabled(false); }
-        catch (Exception e) { e.printStackTrace(); }
+        catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("Filters",sizeSelected.toString());
                 Log.i("Filters",preferenceSelected.toString());
                 try {updateFillLayout(Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(MainActivity.this), Combo[].class))); }
-                catch (Exception e) { e.printStackTrace(); }
+                catch (Exception e) { Actions.handleIgnorableException(MainActivity.this,e); }
             }
         };
 
@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
             Animations.fadeIn(fragmentContainer, 300);
         } else {
             try {updateFillLayout(Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(this), Combo[].class))); }
-            catch (Exception e) { e.printStackTrace(); }
+            catch (Exception e) { Actions.handleIgnorableException(this,e); }
             snackbar = Snackbar.make(fillLayout, "Updating combos...", Snackbar.LENGTH_INDEFINITE).setAction("Close", new View.OnClickListener() { @Override public void onClick(View v) { snackbar.dismiss(); } });
             snackbar.show();
         }
@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
             dataJson.put("packaging_centre_id",packagingCentreId);
             comboRequestJson.put("data", dataJson);
         }
-        catch (Exception e) { e.printStackTrace(); }
+        catch (Exception e) { Actions.handleIgnorableException(this,e); }
         return comboRequestJson;
     }
 

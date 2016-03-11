@@ -93,7 +93,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         fromCart = getIntent().getBooleanExtra("from_cart", false);
         create.setOnClickListener(this);

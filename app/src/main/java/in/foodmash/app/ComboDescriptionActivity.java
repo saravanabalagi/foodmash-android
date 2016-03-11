@@ -102,7 +102,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -114,7 +114,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         if(comboId==-1) { Alerts.unknownErrorAlert(ComboDescriptionActivity.this); return; }
         List<Combo> combos = null;
         try { combos = Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(this), Combo[].class)); }
-        catch (Exception e) { e.printStackTrace(); }
+        catch (Exception e) { Actions.handleIgnorableException(this,e); }
         for (Combo c : combos)
             if (c.getId()==comboId)
                 combo = c;

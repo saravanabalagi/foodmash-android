@@ -34,6 +34,7 @@ import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import in.foodmash.app.commons.Actions;
 
 
 /**
@@ -67,7 +68,7 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         cart = getIntent().getBooleanExtra("cart",false);
         if(getIntent().getBooleanExtra("edit",false)) {

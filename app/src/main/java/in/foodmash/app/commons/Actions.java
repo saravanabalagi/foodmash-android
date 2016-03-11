@@ -1,8 +1,11 @@
 package in.foodmash.app.commons;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -12,6 +15,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import in.foodmash.app.ErrorDescriptionActivity;
 import in.foodmash.app.LoginActivity;
 import in.foodmash.app.R;
 import in.foodmash.app.custom.Cart;
@@ -92,6 +96,26 @@ public class Actions {
         Intent intent = new Intent(context,LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    public static void handleIgnorableException(final Context context, final Throwable e) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context)
+                .setCancelable(true)
+                .setTitle("App encountered an error")
+                .setMessage("To view error details or to send it to Tech Team, click View. Or you shall continue using the app by clicking Cancel")
+                .setPositiveButton("View", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(context, ErrorDescriptionActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("error", e);
+                        intent.putExtras(bundle);
+                        context.startActivity(intent);
+                    }
+                });
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"Cancel", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { alertDialog.dismiss(); } });
+        alertDialog.show();
     }
 
 }

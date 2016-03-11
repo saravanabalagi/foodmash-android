@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
@@ -55,7 +56,7 @@ public class LegaleseActivity extends AppCompatActivity {
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         final boolean signedIn = getIntent().getBooleanExtra("SignedIn", true);
         final Legalese legalese = (Legalese) getIntent().getSerializableExtra("Type");

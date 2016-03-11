@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
@@ -79,7 +80,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         if(getIntent().getBooleanExtra("total_error",false)) {
             final Snackbar totalErrorSnackbar = Snackbar.make(mainLayout, "Wrong cart value from server!", Snackbar.LENGTH_INDEFINITE);
