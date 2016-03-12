@@ -1,10 +1,16 @@
 package in.foodmash.app;
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -48,6 +54,7 @@ import in.foodmash.app.utils.NumberUtils;
  */
 public class ContactUsActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
+    private static final int MY_PERMISSION_CALL_PHONE = 17;
     @Bind(R.id.call) FloatingActionButton call;
     @Bind(R.id.send_email) TextView sendEmail;
     @Bind(R.id.not_logged_in_layout) LinearLayout notLoggedInLayout;
@@ -113,7 +120,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
         email = (EditText) findViewById(R.id.email); email.addTextChangedListener(this);
         phone = (EditText) findViewById(R.id.contact_no); phone.addTextChangedListener(this);
         issue = (AutoCompleteTextView) findViewById(R.id.issue); issue.addTextChangedListener(this);
-        ArrayAdapter<String> issueAdapter = new ArrayAdapter<String>(this,android.R.layout.select_dialog_item,issueList);
+        ArrayAdapter<String> issueAdapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_item, issueList);
         issue.setAdapter(issueAdapter);
         issue.setThreshold(2);
 
@@ -121,12 +128,33 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.terms_and_conditions: goToLegaleseActivity(LegaleseActivity.Legalese.TERMS_AND_CONDITIONS); ;break;
-            case R.id.refund_policy: goToLegaleseActivity(LegaleseActivity.Legalese.REFUND_POLICY); ;break;
-            case R.id.privacy_policy: goToLegaleseActivity(LegaleseActivity.Legalese.PRIVACY_POLICY); ;break;
-            case R.id.about_us: goToLegaleseActivity(LegaleseActivity.Legalese.ABOUT_US); ;break;
-            case R.id.call: Intent callIntent = new Intent(Intent.ACTION_CALL); callIntent.setData(Uri.parse("tel:+918056249612")); try { startActivity(callIntent); } catch (SecurityException e) { e.printStackTrace(); } ; break;
+            case R.id.terms_and_conditions: goToLegaleseActivity(LegaleseActivity.Legalese.TERMS_AND_CONDITIONS); break;
+            case R.id.refund_policy: goToLegaleseActivity(LegaleseActivity.Legalese.REFUND_POLICY); break;
+            case R.id.privacy_policy: goToLegaleseActivity(LegaleseActivity.Legalese.PRIVACY_POLICY); break;
+            case R.id.about_us: goToLegaleseActivity(LegaleseActivity.Legalese.ABOUT_US); break;
             case R.id.send_email: if(isEverythingValid()) makeContactUsRequest(); else Alerts.validityAlert(ContactUsActivity.this); break;
+            case R.id.call:
+                if ( ContextCompat.checkSelfPermission( this, Manifest.permission.CALL_PHONE ) != PackageManager.PERMISSION_GRANTED )
+                    ActivityCompat.requestPermissions( this, new String[] {  Manifest.permission.CALL_PHONE  },
+                            MY_PERMISSION_CALL_PHONE );
+                else {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:+918056249612"));
+                    startActivity(callIntent);
+                } break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == MY_PERMISSION_CALL_PHONE) {
+            if(grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:+918056249612"));
+                try { startActivity(callIntent); }
+                catch (Exception e) { Actions.handleIgnorableException(this,e); }
+            }
         }
     }
 
