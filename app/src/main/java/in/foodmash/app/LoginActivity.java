@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.register: intent = new Intent(this, SignUpActivity.class); intent.putExtra("from_cart",true); startActivity(intent); break;
+            case R.id.register: intent = new Intent(this, SignUpActivity.class); intent.putExtra("from_cart",fromCart); startActivity(intent); break;
             case R.id.forgot_password: intent = new Intent(this, ForgotPasswordActivity.class); startActivity(intent); break;
             case R.id.login: if(isEverythingValid()) makeLoginRequest(); else Alerts.validityAlert(LoginActivity.this); break;
         }

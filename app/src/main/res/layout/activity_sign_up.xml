@@ -80,6 +80,7 @@
                             android:id="@+id/email_loader"
                             android:layout_marginBottom="10dp"
                             android:indeterminate="true"
+                            android:visibility="gone"
                             android:progressTint="@color/accent_white_bg" />
 
                         <ImageView
@@ -88,6 +89,7 @@
                             android:id="@+id/email_validate"
                             android:src="@drawable/svg_tick_filled"
                             android:tint="@color/okay_green"
+                            android:visibility="gone"
                             android:layout_marginBottom="7dp" />
 
                     </RelativeLayout>
@@ -123,26 +125,34 @@
                         android:singleLine="true"
                         android:layout_weight="1" />
 
-                    <ProgressBar
-                        style="?android:attr/progressBarStyleSmall"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:id="@+id/phone_loader"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="10dp"
-                        android:indeterminate="true"
-                        android:visibility="gone"
-                        android:progressTint="@color/accent_white_bg" />
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
 
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:id="@+id/contact_validate"
-                        android:src="@drawable/svg_tick_filled"
-                        android:tint="@color/okay_green"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="7dp"
-                        android:visibility="gone" />
+                        <ProgressBar
+                            style="?android:attr/progressBarStyleSmall"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:id="@+id/phone_loader"
+                            android:layout_gravity="bottom"
+                            android:layout_marginBottom="10dp"
+                            android:indeterminate="true"
+                            android:visibility="gone"
+                            android:progressTint="@color/accent_white_bg" />
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:id="@+id/contact_validate"
+                            android:src="@drawable/svg_tick_filled"
+                            android:tint="@color/okay_green"
+                            android:layout_gravity="bottom"
+                            android:layout_marginBottom="7dp"
+                            android:visibility="gone" />
+
+                    </RelativeLayout>
+
+
                 </LinearLayout>
 
                 <LinearLayout
