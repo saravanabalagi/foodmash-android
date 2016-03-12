@@ -167,8 +167,18 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         return count;
     }
 
+    private JSONObject getMakeAddressRequestJson() {
+        JSONObject requestJson = JsonProvider.getStandardRequestJson(this);
+        try {
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("area_id",Info.getAreaId(this));
+            requestJson.put("data", dataJson);
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        return requestJson;
+    }
+
     public void makeAddressRequest() {
-        JsonObjectRequest addressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",JsonProvider.getStandardRequestJson(CheckoutAddressActivity.this),new Response.Listener<JSONObject>() {
+        JsonObjectRequest addressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",getMakeAddressRequestJson(),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);

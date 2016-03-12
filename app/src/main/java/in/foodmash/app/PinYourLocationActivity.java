@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -80,28 +81,46 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
             } catch (JSONException e) { Snackbar.make(mainLayout, "No location chosen before!", Snackbar.LENGTH_LONG); }
         }
 
-        if(!(isPlayServicesAvailable() && isGpsAvailable()))
-            proceed(initialLocation);
+        if(!isPlayServicesAvailable()) {
+            final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+            alertBuilder.setTitle("Google Play Services Outdated");
+            alertBuilder.setMessage("Your phone does not seem to have recent version of Google Play Services installed which is very essential for basic functioning of Maps Services. You will be taken to next page.");
+            final AlertDialog alertDialog = alertBuilder.create();
+            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Okay", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    alertDialog.dismiss();
+                    proceed(initialLocation);
+                    finish();
+                }
+            });
+            alertDialog.show();
+        }
 
-        if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+        else if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
             ActivityCompat.requestPermissions( this, new String[] {  Manifest.permission.ACCESS_FINE_LOCATION  },
                     MY_PERMISSION_ACCESS_FINE_LOCATION );
+        } else {
+            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            if (!isGpsAvailable()) enableGpsAlert();
+            if (!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)))
+                enableGpsAlert();
+
+            mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
+
+            proceed.setOnClickListener(this);
         }
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if(!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) enableGpsAlert();
-
-        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-        proceed.setOnClickListener(this);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == MY_PERMISSION_ACCESS_FINE_LOCATION) {
-            if(!(grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED))
-                proceed(initialLocation);
+            if(grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startActivity(getIntent());
+                finish();
+            } else if (!isGpsAvailable()) enableGpsAlert();
         }
     }
 
@@ -130,6 +149,13 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)))
+            enableGpsAlert();
+    }
+
+    @Override
     public void onMapReady(GoogleMap map) {
         if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED )
             map.setMyLocationEnabled(true);
@@ -147,24 +173,17 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
     }
 
     private void enableGpsAlert() {
-        new AlertDialog.Builder(PinYourLocationActivity.this)
-                .setIconAttribute(android.R.attr.alertDialogIcon)
-                .setTitle("GPS Turned Off")
-                .setMessage("Enabling GPS helps pinpoint your location on map. Enable GPS from Settings.")
-                .setPositiveButton("Enable GPS", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(intent);
-                    }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        Snackbar snackbar = Snackbar.make(mainLayout, "GPS Disabled", Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("Enable", new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if ( ContextCompat.checkSelfPermission( PinYourLocationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED )
-                    locationManager.removeUpdates(locationListener);
+            public void onClick(View v) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(intent,0);
             }
-        }).show();
+        });
+        snackbar.show();
     }
+
 
     private boolean isPlayServicesAvailable() {
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();

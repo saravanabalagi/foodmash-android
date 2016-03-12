@@ -80,6 +80,10 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
     private List<City> cities;
     private Address address;
 
+    private int areaPos = -1;
+    private int cityPos = -1;
+    private boolean areaAndCitySetInitially = false;
+
     private Intent intent;
     private LatLng latLng;
     private boolean edit = false;
@@ -115,15 +119,15 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
         latLng = new LatLng(getIntent().getDoubleExtra("latitude", 0),getIntent().getDoubleExtra("longitude",0));
         address = new Address();
 
-        if(getIntent().getBooleanExtra("edit",false)) {
+        try {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-            try {
-                address = objectMapper.readValue(getIntent().getStringExtra("json"),Address.class);
-                cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(this), City[].class));
-                edit = true;
-            } catch (Exception e) { Actions.handleIgnorableException(this,e); }
-        }
+            cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(this), City[].class));
+            if(getIntent().getBooleanExtra("edit",false)) {
+                    address = objectMapper.readValue(getIntent().getStringExtra("json"),Address.class);
+                    edit = true;
+            }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
         if(!cart) {
             lockedAreaCity.setText(null);
@@ -131,7 +135,14 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
 
             city = (Spinner) findViewById(R.id.city);
             area = (Spinner) findViewById(R.id.area);
-
+            area.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override public void onNothingSelected(AdapterView<?> parent) { }
+                @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if(areaAndCitySetInitially) { areaAndCitySetInitially = false; return; }
+                    Log.i("Spinner", "Selecting " + position + " in area spinner");
+                    area.setSelection(position);
+                }
+            });
             for (City city : cities) citiesArrayList.add(city.getName());
             ArrayAdapter cityAdapter = new ArrayAdapter<>(
                     AddAddressActivity.this,
@@ -142,6 +153,8 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
             city.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override public void onNothingSelected(AdapterView<?> parent) { }
                 @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if(areaAndCitySetInitially) { areaAndCitySetInitially = false; return; }
+                    Log.i("Spinner", "Selecting " + position + " in city spinner");
                     ArrayAdapter areaAdapter = new ArrayAdapter<>(
                             AddAddressActivity.this,
                             R.layout.spinner_item,
@@ -151,20 +164,6 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
                 }
             });
 
-            ArrayAdapter areaAdapter = new ArrayAdapter<>(
-                    AddAddressActivity.this,
-                    R.layout.spinner_item,
-                    cities.get(0).getAreaStringArrayList());
-            areaAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-            area.setAdapter(areaAdapter);
-            area.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override public void onNothingSelected(AdapterView<?> parent) { }
-                @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (position==0) return;
-                    int areaId = cities.get(city.getSelectedItemPosition()).getAreas().get(position-1).getId();
-                    address.setAreaId(areaId);
-                }
-            });
         } else {
             areaCitySpinnerLayout.setVisibility(View.GONE);
             String areaCityString = Info.getAreaName(this) + ", " + Info.getCityName(this);
@@ -179,11 +178,18 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
             contactNo.setText(address.getContactNo());
             if(!cart) {
                 int areaId = address.getAreaId();
-                int cityPos = -1;
                 for(int i=0;i<cities.size();i++) if (cities.get(i).indexOf(areaId)!=-1) cityPos=i;
-                int areaPos = cities.get(cityPos).indexOf(areaId);
-                city.setSelection(cityPos, true);
-                area.setSelection(areaPos, true);
+                areaPos = cities.get(cityPos).indexOf(areaId);
+                Log.i("Addresses", "Citypos, AreaPos " + cityPos+", "+areaPos);
+                city.setSelection(cityPos, false);
+                ArrayAdapter areaAdapter = new ArrayAdapter<>(
+                        AddAddressActivity.this,
+                        R.layout.spinner_item,
+                        cities.get(cityPos).getAreaStringArrayList());
+                areaAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                area.setAdapter(areaAdapter);
+                area.setSelection(areaPos, false);
+                areaAndCitySetInitially = true;
             }
         } else {
             try {
