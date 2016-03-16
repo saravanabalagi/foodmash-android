@@ -22,6 +22,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+import java.util.TreeMap;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
@@ -61,9 +64,9 @@ public class OrderHistoryActivity extends AppCompatActivity {
 
     private void setStatus (ImageView statusImageView, String status) {
         switch (status) {
-            case "purchased": statusImageView.setImageResource(R.drawable.svg_time); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); break;
             case "delivered": statusImageView.setImageResource(R.drawable.svg_tick_filled); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); break;
             case "cancelled": statusImageView.setImageResource(R.drawable.svg_close_filled); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); break;
+            default: statusImageView.setImageResource(R.drawable.svg_circle_filled); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.warning_orange)); break;
         }
     }
 
@@ -75,11 +78,12 @@ public class OrderHistoryActivity extends AppCompatActivity {
                 try {
                     if (response.getBoolean("success")) {
                         JSONArray ordersJson = response.getJSONArray("data");
+                        TreeMap<Date, LinearLayout> orderHistoryTreeMap = new TreeMap<>();
                         for(int i=0;i<ordersJson.length();i++) {
                             final JSONObject orderJson = ordersJson.getJSONObject(i);
                             LinearLayout orderLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_order_history_item,fillLayout,false);
                             ((TextView) orderLayout.findViewById(R.id.order_id)).setText(orderJson.getString("order_id"));
-                            ((TextView) orderLayout.findViewById(R.id.date)).setText(DateUtils.railsDateToLocalTime(orderJson.getString("updated_at")));
+                            ((TextView) orderLayout.findViewById(R.id.date)).setText(DateUtils.railsDateStringToReadableTime(orderJson.getString("updated_at")));
                             ((TextView) orderLayout.findViewById(R.id.status)).setText(WordUtils.titleize(orderJson.getString("aasm_state")));
                             ((TextView) orderLayout.findViewById(R.id.price)).setText(orderJson.getString("total"));
                             setStatus((ImageView) orderLayout.findViewById(R.id.statusIcon), orderJson.getString("aasm_state"));
@@ -94,8 +98,10 @@ public class OrderHistoryActivity extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                            fillLayout.addView(orderLayout);
+                            orderHistoryTreeMap.put(DateUtils.railsDateStringToJavaDate(orderJson.getString("updated_at")), orderLayout);
                         }
+                        for (Date key: orderHistoryTreeMap.descendingKeySet())
+                            fillLayout.addView(orderHistoryTreeMap.get(key));
                     } else {
                         Alerts.requestUnauthorisedAlert(OrderHistoryActivity.this);
                         Log.e("Success False",response.getString("error"));
