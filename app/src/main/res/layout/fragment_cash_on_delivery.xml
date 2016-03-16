@@ -1,20 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_vertical|center_horizontal">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_height="match_parent"
+    android:layout_width="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Confirm COD with Password"
-        android:padding="20dp" />
+        android:layout_centerVertical="true"
+        android:padding="20dp"
+        android:gravity="center_horizontal">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/password"
-        android:gravity="center_horizontal" />
-</LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invoice will be sent to"
+            android:padding="10dp"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:background="@drawable/button_transparent_background"
+            android:layout_marginTop="-5dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/svg_android_mail"
+                android:padding="10dp"
+                android:tint="@color/accent" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="user@email.com"
+                android:padding="10dp"
+                android:textSize="17sp"
+                android:layout_weight="1"
+                android:textColor="@color/black_222"
+                android:fontFamily="sans-serif-light"
+                android:id="@+id/email" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

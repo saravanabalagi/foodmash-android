@@ -30,6 +30,8 @@
     <color name="non_veg">#d01c00</color>
     <color name="egg">#d5a300</color>
 
+    <color name="warning_yellow">#d5a300</color>
+    <color name="warning_orange">#d57200</color>
     <color name="okay_green">#00a50e</color>
 
 </resources>

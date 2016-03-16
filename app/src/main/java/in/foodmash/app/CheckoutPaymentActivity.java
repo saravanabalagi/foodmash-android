@@ -68,7 +68,6 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
     private Intent intent;
     private String paymentMethod;
     private String payableAmountString;
-    private String password;
     private String orderId;
 
     PayuConfig payuConfig = new PayuConfig();
@@ -115,7 +114,6 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
             public void onClick(View v) {
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + viewPager.getCurrentItem());
                 if(fragment instanceof CashOnDeliveryFragment) {
-                    password = ((CashOnDeliveryFragment) fragment).getPassword();
                     paymentMethod=getResources().getString(R.string.payment_cod);
                     if(isEverythingValid()) makeCodPaymentRequest();
                 } else if(fragment instanceof NetbankingFragment) { paymentMethod = getString(R.string.payment_netbanking); ((NetbankingFragment) fragment).doPayment(); }
@@ -233,7 +231,6 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
         try {
             JSONObject dataJson = new JSONObject();
             dataJson.put("payment_method",paymentMethod);
-            dataJson.put("password",password);
             requestJson.put("data",dataJson);
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;
