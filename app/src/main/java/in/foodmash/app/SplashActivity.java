@@ -48,8 +48,6 @@ public class SplashActivity extends AppCompatActivity {
 
     private ArrayList<String> citiesArrayList = new ArrayList<>();
     private List<City> cities;
-    private JsonObjectRequest locationRequest;
-    private JsonObjectRequest checkConnectionRequest;
     private boolean skipUpdate;
 
     @Override
@@ -68,18 +66,22 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public void makeCheckConnectionRequest() {
-        checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/versions", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
+        JsonObjectRequest checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/versions", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    if(response.getBoolean("success")) {
-                        if(skipUpdate) makeLocationRequest();
-                        int newVersion = Integer.parseInt(response.getJSONObject("data").getString("id"));
+                    if (response.getBoolean("success")) {
+                        if (skipUpdate) makeLocationRequest();
+                        int newVersion = Integer.parseInt(response.getJSONObject("data").getString("version_code"));
                         int currentVersion = BuildConfig.VERSION_CODE;
-                        if(currentVersion < newVersion) { startActivity(new Intent(SplashActivity.this, UpdateAppActivity.class)); finish(); }
-                        else makeLocationRequest();
+                        if (currentVersion < newVersion) {
+                            startActivity(new Intent(SplashActivity.this, UpdateAppActivity.class));
+                            finish();
+                        } else makeLocationRequest();
                     } else Alerts.requestUnauthorisedAlert(SplashActivity.this);
-                } catch (Exception e) { Actions.handleIgnorableException(SplashActivity.this,e); }
+                } catch (Exception e) {
+                    Actions.handleIgnorableException(SplashActivity.this, e);
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -93,14 +95,14 @@ public class SplashActivity extends AppCompatActivity {
         Swift.getInstance(SplashActivity.this).addToRequestQueue(checkConnectionRequest,500,5,1.5f);
     }
     public void makeLocationRequest() {
-        locationRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/cities", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
+        JsonObjectRequest locationRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/cities", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    if(response.getBoolean("success")) {
+                    if (response.getBoolean("success")) {
                         ObjectMapper objectMapper = new ObjectMapper();
                         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-                        Actions.cacheCities(SplashActivity.this,response.getJSONArray("data").toString());
+                        Actions.cacheCities(SplashActivity.this, response.getJSONArray("data").toString());
                         cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(SplashActivity.this), City[].class));
                         for (City city : cities) citiesArrayList.add(city.getName());
                         ArrayAdapter citySpinnerAdapter = new ArrayAdapter<>(
@@ -110,12 +112,16 @@ public class SplashActivity extends AppCompatActivity {
                         citySpinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                         citySpinner.setAdapter(citySpinnerAdapter);
                         citySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            @Override public void onNothingSelected(AdapterView<?> parent) { }
-                            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+                            }
+
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                 ArrayAdapter areaSpinnerAdapter = new ArrayAdapter<>(
                                         SplashActivity.this,
                                         R.layout.spinner_item,
-                                        addStringAsFirstItem(cities.get(position).getAreaStringArrayList(),"Area"));
+                                        addStringAsFirstItem(cities.get(position).getAreaStringArrayList(), "Area"));
                                 areaSpinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                                 areaSpinner.setAdapter(areaSpinnerAdapter);
                             }
@@ -124,19 +130,23 @@ public class SplashActivity extends AppCompatActivity {
                         ArrayAdapter areaSpinnerAdapter = new ArrayAdapter<>(
                                 SplashActivity.this,
                                 R.layout.spinner_item,
-                                addStringAsFirstItem(cities.get(0).getAreaStringArrayList(),"Area"));
+                                addStringAsFirstItem(cities.get(0).getAreaStringArrayList(), "Area"));
                         areaSpinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                         areaSpinner.setAdapter(areaSpinnerAdapter);
                         areaSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            @Override public void onNothingSelected(AdapterView<?> parent) { }
-                            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                if (position==0) return;
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+                            }
+
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                if (position == 0) return;
                                 String cityName = cities.get(citySpinner.getSelectedItemPosition()).getName();
                                 String areaName = ((TextView) view).getText().toString();
                                 int packagingCentreId = cities.get(citySpinner.getSelectedItemPosition()).getPackagingCentreId(((TextView) view).getText().toString());
-                                int areaId = cities.get(citySpinner.getSelectedItemPosition()).getAreas().get(position-1).getId();
+                                int areaId = cities.get(citySpinner.getSelectedItemPosition()).getAreas().get(position - 1).getId();
                                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                                Actions.cacheLocationDetails(SplashActivity.this,cityName,areaName,areaId,packagingCentreId);
+                                Actions.cacheLocationDetails(SplashActivity.this, cityName, areaName, areaId, packagingCentreId);
                                 startActivity(intent);
                                 finish();
                             }
@@ -146,9 +156,11 @@ public class SplashActivity extends AppCompatActivity {
                                 SplashActivity.this.findViewById(R.id.location_layout), 500);
                     } else {
                         Alerts.requestUnauthorisedAlert(SplashActivity.this);
-                        Log.e("Success False",response.getString("error"));
+                        Log.e("Success False", response.getString("error"));
                     }
-                } catch (Exception e) { Actions.handleIgnorableException(SplashActivity.this,e); }
+                } catch (Exception e) {
+                    Actions.handleIgnorableException(SplashActivity.this, e);
+                }
             }
         }, new Response.ErrorListener() {
             @Override
