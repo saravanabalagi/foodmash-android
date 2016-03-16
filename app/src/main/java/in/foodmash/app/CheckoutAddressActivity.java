@@ -25,12 +25,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Alerts;
+import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
@@ -39,6 +41,7 @@ import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.custom.Address;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.City;
+import in.foodmash.app.custom.Combo;
 
 /**
  * Created by Zeke on Jul 19 2015.
@@ -54,6 +57,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
 
     private Intent intent;
+    private ObjectMapper objectMapper;
     private List<City> cities;
     private int addressId;
     private List<Address> addresses;
@@ -87,7 +91,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
         }
 
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper = new ObjectMapper();
             objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
             cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(this), City[].class));
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
@@ -119,40 +123,88 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
             dataJson.put("grand_total",Cart.getInstance().getGrandTotal());
             JSONArray cartJsonArray = Cart.getInstance().getCartOrders();
             dataJson.put("cart",cartJsonArray);
+            Log.i("Testing", cartJsonArray.toString());
             requestJson.put("data",dataJson);
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;
     }
+
+    private JSONObject getComboRequestJson() {
+        JSONObject comboRequestJson;
+        if(Info.isLoggedIn(this)) comboRequestJson = JsonProvider.getStandardRequestJson(this);
+        else comboRequestJson = JsonProvider.getAnonymousRequestJson(this);
+        int packagingCentreId = Info.getPackagingCentreId(this);
+        try {
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("packaging_centre_id",packagingCentreId);
+            comboRequestJson.put("data", dataJson);
+        }
+        catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        return comboRequestJson;
+    }
+
     private void makeConfirmOrderRequest() {
-        JsonObjectRequest confirmOrderRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/addCart", getConfirmRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.i("Json Request", response.toString());
-                fragmentContainer.setVisibility(View.GONE);
                 try {
-                    if(response.getBoolean("success")) {
-                        intent = new Intent(CheckoutAddressActivity.this, CheckoutPaymentActivity.class);
-                        intent.putExtra("payable_amount",response.getJSONObject("data").getDouble("grand_total"));
-                        intent.putExtra("order_id",response.getJSONObject("data").getString("order_id"));
-                        startActivity(intent);
-                    } else {
-                        Alerts.requestUnauthorisedAlert(CheckoutAddressActivity.this);
-                        Log.e("Success False",response.getString("error"));
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
+                    if (response.getBoolean("success")) {
+                        Animations.fadeOut(fragmentContainer,100);
+                        Log.i("Combos", response.getJSONObject("data").getJSONArray("combos").length() + " combos found");
+                        String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
+                        Actions.cacheCombos(CheckoutAddressActivity.this, comboJsonArrayString, new Date());
+                        if(!Cart.getInstance().areCombosAvailableIn(comboJsonArrayString)) {
+                            Intent intent = new Intent(CheckoutAddressActivity.this, CartActivity.class);
+                            intent.putExtra("combo_error", true);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            JsonObjectRequest confirmOrderRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/addCart", getConfirmRequestJson(), new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    Log.i("Json Request", response.toString());
+                                    fragmentContainer.setVisibility(View.GONE);
+                                    try {
+                                        if (response.getBoolean("success")) {
+                                            intent = new Intent(CheckoutAddressActivity.this, CheckoutPaymentActivity.class);
+                                            intent.putExtra("payable_amount", response.getJSONObject("data").getDouble("grand_total"));
+                                            intent.putExtra("order_id", response.getJSONObject("data").getString("order_id"));
+                                            startActivity(intent);
+                                        } else {
+                                            Intent intent = new Intent(CheckoutAddressActivity.this, CartActivity.class);
+                                            intent.putExtra("combo_error", true);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    fragmentContainer.setVisibility(View.VISIBLE);
+                                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeConfirmOrderRequest")).commit();
+                                    getSupportFragmentManager().executePendingTransactions();
+                                }
+                            });
+                            fragmentContainer.setVisibility(View.VISIBLE);
+                            Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(confirmOrderRequest);
+                        }
+                    } else Snackbar.make(mainLayout,"Request Failed. Reason: "+response.getString("error"),Snackbar.LENGTH_INDEFINITE).show();
+                } catch (Exception e) { Actions.handleIgnorableException(CheckoutAddressActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeConfirmOrderRequest")).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyFailureFragment()).commit();
                 getSupportFragmentManager().executePendingTransactions();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeConfirmOrderRequest")).commit();
             }
         });
-        fragmentContainer.setVisibility(View.VISIBLE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
         getSupportFragmentManager().executePendingTransactions();
-        Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(confirmOrderRequest);
+        Swift.getInstance(this).addToRequestQueue(getCombosRequest, 20000, 2, 1.0f);
     }
 
     private boolean isEverythingValid() {
