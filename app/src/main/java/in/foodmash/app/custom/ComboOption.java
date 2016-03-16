@@ -63,7 +63,7 @@ public class ComboOption {
     @JsonIgnore public int getPriority() { return priority; }
     @JsonIgnore public String getName() { return name; }
     @JsonIgnore public String getDescription() { return description; }
-    @JsonProperty("ComboOptionDishes") public ArrayList<ComboDish> getSelectedComboOptionDishes() { return new ArrayList<>(selectedComboOptionDishes); }
+    @JsonProperty("combo_option_dishes") public ArrayList<ComboDish> getSelectedComboOptionDishes() { return new ArrayList<>(selectedComboOptionDishes); }
     @JsonIgnore public ArrayList<ComboDish> getComboOptionDishes() { return new ArrayList<>(comboOptionDishes); }
     @JsonIgnore public boolean isFromSameRestaurant() {
         Set<Integer> restaurantIdSet = new HashSet<>();
