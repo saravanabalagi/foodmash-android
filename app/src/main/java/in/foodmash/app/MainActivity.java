@@ -39,6 +39,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
@@ -61,6 +62,7 @@ import in.foodmash.app.custom.ComboDish;
 import in.foodmash.app.custom.ComboOption;
 import in.foodmash.app.custom.Dish;
 import in.foodmash.app.custom.Restaurant;
+import in.foodmash.app.utils.DateUtils;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivity extends AppCompatActivity {
@@ -241,7 +243,29 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
-        getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", getComboRequestJson(), new Response.Listener<JSONObject>() {
+        Date comboUpdatedAt = null;
+        boolean areCombosOutdated = true;
+        if(Info.getComboUpdatedAtDate(this)!=null) {
+            try {
+                comboUpdatedAt = DateUtils.railsDateStringToJavaDate(Info.getComboUpdatedAtDate(this));
+                areCombosOutdated = (DateUtils.howOldInHours(comboUpdatedAt) > 6);
+            } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        }
+        if(Info.getComboJsonArrayString(this)==null || areCombosOutdated) {
+            ((VolleyProgressFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
+                    .setLoadingText("Loading Combos...", "We are loading as fast as we can");
+            Animations.fadeIn(fragmentContainer, 300);
+        } else {
+            try {updateFillLayout(Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(this), Combo[].class))); }
+            catch (Exception e) { Actions.handleIgnorableException(this,e); }
+            snackbar = Snackbar.make(fillLayout, "Updating combos...", Snackbar.LENGTH_INDEFINITE);
+            snackbar.show();
+        }
+        makeComboRequest();
+    }
+
+    public void makeComboRequest() {
+        JsonObjectRequest getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -251,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("Combos", response.getJSONObject("data").getJSONArray("combos").length() + " combos found");
                         String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
                         updateFillLayout(Arrays.asList(objectMapper.readValue(comboJsonArrayString, Combo[].class)));
-                        Actions.cacheCombos(MainActivity.this, comboJsonArrayString);
+                        Actions.cacheCombos(MainActivity.this, comboJsonArrayString, new Date());
                     } else {
                         Alerts.requestUnauthorisedAlert(MainActivity.this);
                         Log.e("Success False",response.getString("error"));
@@ -264,24 +288,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (snackbar!=null && snackbar.isShown()) snackbar.setText("Update Failed!");
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyFailureFragment()).commit();
-                getSupportFragmentManager().executePendingTransactions();
-//                ((VolleyFailureFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
-//                        .setJsonObjectRequest(getCombosRequest);
-                Log.e("Json Request Failed", error.toString());
+                else {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyFailureFragment()).commit();
+                    getSupportFragmentManager().executePendingTransactions();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeComboRequest")).commit();
+                }
             }
         });
-
-        if(Info.getComboJsonArrayString(this) == null) {
-            ((VolleyProgressFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
-                    .setLoadingText("Loading Combos...", "We are loading as fast as we can");
-            Animations.fadeIn(fragmentContainer, 300);
-        } else {
-            try {updateFillLayout(Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(this), Combo[].class))); }
-            catch (Exception e) { Actions.handleIgnorableException(this,e); }
-            snackbar = Snackbar.make(fillLayout, "Updating combos...", Snackbar.LENGTH_INDEFINITE).setAction("Close", new View.OnClickListener() { @Override public void onClick(View v) { snackbar.dismiss(); } });
-            snackbar.show();
-        }
         Swift.getInstance(this).addToRequestQueue(getCombosRequest, 20000, 2, 1.0f);
     }
 
