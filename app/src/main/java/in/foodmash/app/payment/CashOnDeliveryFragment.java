@@ -8,23 +8,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.R;
+import in.foodmash.app.commons.Info;
 
 /**
  * Created by Zeke on Oct 28 2015.
  */
 public class CashOnDeliveryFragment extends Fragment {
-
-    private TextView password;
+    TextView email;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_cash_on_delivery, container, false);
-        password = (TextView) rootView.findViewById(R.id.password);
+
+        email = (TextView) rootView.findViewById(R.id.email);
+        email.setText(Info.getEmail(getActivity()));
+
         return rootView;
     }
-
-    public String getPassword() { return password.getText().toString(); }
 
 }
