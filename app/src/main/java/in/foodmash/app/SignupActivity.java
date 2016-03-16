@@ -159,7 +159,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
-                intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                intent = new Intent(SignUpActivity.this, MainActivity.class);
                 if(fromCart) intent = new Intent(SignUpActivity.this, CartActivity.class);
                 try {
                     if (response.getBoolean("success")) {
@@ -175,6 +175,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                         editor.putString("session_token", sessionToken);
                         editor.putString("android_token", Cryptography.getEncryptedAndroidId(SignUpActivity.this, sessionToken));
                         editor.apply();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
                     } else {
