@@ -15,10 +15,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 
+import java.util.Date;
+
 import in.foodmash.app.ErrorDescriptionActivity;
 import in.foodmash.app.LoginActivity;
 import in.foodmash.app.R;
 import in.foodmash.app.custom.Cart;
+import in.foodmash.app.utils.DateUtils;
 
 /**
  * Created by Zeke on Sep 20 2015.
@@ -36,7 +39,7 @@ public class Actions {
 
     public static void cacheLocationDetails(Context context, String cityName, String areaName, int areaId,int packagingCenterId) {
         int oldPackagingCenterId = Info.getPackagingCentreId(context);
-        if(oldPackagingCenterId != -1 && packagingCenterId != oldPackagingCenterId) cacheCombos(context, null);
+        if(oldPackagingCenterId != -1 && packagingCenterId != oldPackagingCenterId) cacheCombos(context, null, null);
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("city_name", cityName);
@@ -55,12 +58,14 @@ public class Actions {
         editor.apply();
     }
 
-    public static void cacheCombos(Context context, String comboJsonArrayString) {
+    public static void cacheCombos(Context context, String comboJsonArrayString, Date date) {
+        String dateString = (date==null)?"": DateUtils.javaDateToRailsDateString(date);
         if(Info.getComboJsonArrayString(context)!= null
             && Info.getComboJsonArrayString(context).equals(comboJsonArrayString)) return;
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("combo_list", comboJsonArrayString);
+        editor.putString("combo_list_updated_at", dateString);
         editor.apply();
     }
 

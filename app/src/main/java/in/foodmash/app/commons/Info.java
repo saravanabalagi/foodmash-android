@@ -38,6 +38,11 @@ public class Info {
         return sharedPreferences.getString("combo_list", null);
     }
 
+    public static String getComboUpdatedAtDate(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
+        return sharedPreferences.getString("combo_list_updated_at", null);
+    }
+
     public static boolean isLoggedIn(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("session",0);
         return sharedPreferences.getBoolean("logged_in",false);
