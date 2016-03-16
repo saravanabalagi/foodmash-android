@@ -3,12 +3,17 @@ package in.foodmash.app.custom;
 import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -52,7 +57,7 @@ public class Cart {
         return deliveryCharge;
     }
     public float getGrandTotal() { return getTotal()+getVatForTotal()+getDeliveryCharge(); }
-    public float getVatForTotal() { return getTotal()*0.02f; }
+    public float getVatForTotal() { return getTotal()*0.145f; }
     public float getTotal() {
         float total = 0;
         for (HashMap.Entry<Combo,Integer> order: orders.entrySet() )
@@ -135,11 +140,37 @@ public class Cart {
         printTimestampsContents();
     }
 
+    public boolean areCombosAvailableIn(String comboJsonArrayString) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+        try {
+            List<Combo> combos = Arrays.asList(objectMapper.readValue(comboJsonArrayString, Combo[].class));
+            boolean areCombosAvailable = true;
+            ArrayList<Combo> combosToBeDeleted = new ArrayList<>();
+            for (Combo combo : orders.keySet()) {
+                boolean isComboAvailable = false;
+                for (Combo comboEntry : combos)
+                    if (combo.getId() == comboEntry.getId()) {
+                        isComboAvailable = true;
+                        break;
+                    }
+                if(!isComboAvailable) {
+                    combosToBeDeleted.add(combo);
+                    areCombosAvailable = false;
+                }
+            }
+            for (Combo combo: combosToBeDeleted)
+                removeOrder(combo);
+            return areCombosAvailable;
+        } catch (Exception e) { e.printStackTrace(); return false; }
+    }
+
     public JSONArray getCartOrders() {
         JSONArray cartJsonArray = new JSONArray();
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
         for (HashMap.Entry<Combo, Integer> entry : orders.entrySet()) {
-            try { cartJsonArray.put(new JSONObject(mapper.writeValueAsString(entry.getKey())).put("quantity",entry.getValue())); }
+            try { cartJsonArray.put(new JSONObject(objectMapper.writeValueAsString(entry.getKey())).put("quantity",entry.getValue())); }
             catch (Exception e) { e.printStackTrace(); }
         }
         return cartJsonArray;
