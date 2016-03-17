@@ -94,6 +94,7 @@ public class SplashActivity extends AppCompatActivity {
         fragmentContainer.setVisibility(View.GONE);
         Swift.getInstance(SplashActivity.this).addToRequestQueue(checkConnectionRequest,500,5,1.5f);
     }
+
     public void makeLocationRequest() {
         JsonObjectRequest locationRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/cities", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
