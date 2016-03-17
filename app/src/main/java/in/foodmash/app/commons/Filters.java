@@ -51,6 +51,7 @@ public class Filters extends RecyclerView.Adapter {
         if(((ViewHolder) holder).type==Type.REGULAR) {
             ((ViewHolder) holder).text.setText(filter);
             ((ViewHolder) holder).icon.setImageResource(filters.get(filter));
+            if(position==16 || position==1) holder.itemView.setActivated(true);
         } else ((ViewHolder) holder).header.setText(filter);
     }
 }
