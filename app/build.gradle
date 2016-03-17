@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     lintOptions {
-        checkReleaseBuilds false
+        checkReleaseBuilds true
         abortOnError false
     }
     signingConfigs {
@@ -19,8 +19,8 @@ android {
         applicationId 'in.foodmash.app'
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 5
-        versionName '1.0.5 acornsquash'
+        versionCode 6
+        versionName '1.0 acornsquash'
     }
     buildTypes {
         release {
@@ -30,7 +30,6 @@ android {
             jniDebuggable false
             signingConfig signingConfigs.config
             renderscriptDebuggable false
-            versionNameSuffix ' alpha'
             zipAlignEnabled true
         }
     }
