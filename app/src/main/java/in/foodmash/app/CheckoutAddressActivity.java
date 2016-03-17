@@ -123,7 +123,6 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
             dataJson.put("grand_total",Cart.getInstance().getGrandTotal());
             JSONArray cartJsonArray = Cart.getInstance().getCartOrders();
             dataJson.put("cart",cartJsonArray);
-            Log.i("Testing", cartJsonArray.toString());
             requestJson.put("data",dataJson);
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;
