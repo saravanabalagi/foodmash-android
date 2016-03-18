@@ -19,8 +19,8 @@ android {
         applicationId 'in.foodmash.app'
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 6
-        versionName '1.0 acornsquash'
+        versionCode 7
+        versionName '1.0.1 acornsquash'
     }
     buildTypes {
         release {
