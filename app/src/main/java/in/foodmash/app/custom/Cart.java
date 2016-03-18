@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -57,7 +56,7 @@ public class Cart {
         return deliveryCharge;
     }
     public float getGrandTotal() { return getTotal()+getVatForTotal()+getDeliveryCharge(); }
-    public float getVatForTotal() { return getTotal()*0.145f; }
+    public float getVatForTotal() { return getTotal()*0.02f; }
     public float getTotal() {
         float total = 0;
         for (HashMap.Entry<Combo,Integer> order: orders.entrySet() )

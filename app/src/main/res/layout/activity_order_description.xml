@@ -64,7 +64,7 @@
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="ST + VAT + Packaging Charges"
+                            android:text="VAT (2%)"
                             android:layout_weight="1" />
 
                         <TextView
