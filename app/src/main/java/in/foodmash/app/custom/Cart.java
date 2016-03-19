@@ -44,19 +44,6 @@ public class Cart {
     }
     public int getCount(Combo combo) { return (orders.containsKey(combo))?orders.get(combo):0; }
 
-    public float getDeliveryCharge() {
-        float deliveryCharge;
-        boolean isCorporatePresent=false;
-        for(Combo combo: orders.keySet())
-         if(combo.getCategory()== Combo.Category.CORPORATE)
-             isCorporatePresent=true;
-        if(isCorporatePresent) return 100;
-        if(getTotal()<200) { deliveryCharge=30; }
-        else deliveryCharge=40;
-        return deliveryCharge;
-    }
-    public float getGrandTotal() { return getTotal()+getVatForTotal()+getDeliveryCharge(); }
-    public float getVatForTotal() { return getTotal()*0.02f; }
     public float getTotal() {
         float total = 0;
         for (HashMap.Entry<Combo,Integer> order: orders.entrySet() )
