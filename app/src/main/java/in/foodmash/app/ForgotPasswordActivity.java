@@ -3,6 +3,7 @@ package in.foodmash.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -27,7 +28,6 @@ import org.json.JSONObject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
@@ -88,7 +88,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.forgot: if(isEverythingValid()) makeForgotRequest(); else Alerts.validityAlert(ForgotPasswordActivity.this); break;
+            case R.id.forgot: if(isEverythingValid()) makeForgotRequest(); else Snackbar.make(mainLayout,"One or more data you entered is invalid",Snackbar.LENGTH_LONG).show(); break;
         }
     }
 
@@ -117,11 +117,8 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
                         intent.putExtra("type",(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)?"phone":"email");
                         intent.putExtra("value",(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)?phone.getText().toString().trim():email.getText().toString().trim());
                         startActivity(intent);
-                    } else {
-                        Alerts.commonErrorAlert(ForgotPasswordActivity.this, "Could not send OTP", "We are unable to send you OTP as the details you entered are invalid. Try Again!", "Okay");
-                        Log.e("Success False", response.getString("error"));
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
+                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(ForgotPasswordActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override

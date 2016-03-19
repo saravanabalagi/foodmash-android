@@ -3,12 +3,13 @@ package in.foodmash.app;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -28,7 +29,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
@@ -45,6 +45,7 @@ public class SplashActivity extends AppCompatActivity {
     @Bind(R.id.city) Spinner citySpinner;
     @Bind(R.id.area) Spinner areaSpinner;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
+    @Bind(R.id.main_layout) LinearLayout mainLayout;
 
     private ArrayList<String> citiesArrayList = new ArrayList<>();
     private List<City> cities;
@@ -78,10 +79,8 @@ public class SplashActivity extends AppCompatActivity {
                             startActivity(new Intent(SplashActivity.this, UpdateAppActivity.class));
                             finish();
                         } else makeLocationRequest();
-                    } else Alerts.requestUnauthorisedAlert(SplashActivity.this);
-                } catch (Exception e) {
-                    Actions.handleIgnorableException(SplashActivity.this, e);
-                }
+                    } else Snackbar.make(mainLayout,"Unable to check for updates: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                } catch (Exception e) { Actions.handleIgnorableException(SplashActivity.this, e); }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -135,12 +134,8 @@ public class SplashActivity extends AppCompatActivity {
                         areaSpinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                         areaSpinner.setAdapter(areaSpinnerAdapter);
                         areaSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            @Override
-                            public void onNothingSelected(AdapterView<?> parent) {
-                            }
-
-                            @Override
-                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            @Override public void onNothingSelected(AdapterView<?> parent) { }
+                            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                 if (position == 0) return;
                                 String cityName = cities.get(citySpinner.getSelectedItemPosition()).getName();
                                 String areaName = ((TextView) view).getText().toString();
@@ -155,13 +150,8 @@ public class SplashActivity extends AppCompatActivity {
                         Animations.fadeOutAndFadeIn(
                                 SplashActivity.this.findViewById(R.id.loading_layout),
                                 SplashActivity.this.findViewById(R.id.location_layout), 500);
-                    } else {
-                        Alerts.requestUnauthorisedAlert(SplashActivity.this);
-                        Log.e("Success False", response.getString("error"));
-                    }
-                } catch (Exception e) {
-                    Actions.handleIgnorableException(SplashActivity.this, e);
-                }
+                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                } catch (Exception e) { Actions.handleIgnorableException(SplashActivity.this, e); }
             }
         }, new Response.ErrorListener() {
             @Override

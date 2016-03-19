@@ -2,10 +2,10 @@ package in.foodmash.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -28,7 +28,6 @@ import java.util.TreeMap;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
@@ -102,11 +101,8 @@ public class OrderHistoryActivity extends AppCompatActivity {
                         }
                         for (Date key: orderHistoryTreeMap.descendingKeySet())
                             fillLayout.addView(orderHistoryTreeMap.get(key));
-                    } else {
-                        Alerts.requestUnauthorisedAlert(OrderHistoryActivity.this);
-                        Log.e("Success False",response.getString("error"));
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
+                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(OrderHistoryActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override

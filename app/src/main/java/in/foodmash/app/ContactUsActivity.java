@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.*;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -39,7 +38,6 @@ import java.util.HashMap;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
@@ -132,7 +130,7 @@ public class ContactUsActivity extends AppCompatActivity implements View.OnClick
             case R.id.refund_policy: goToLegaleseActivity(LegaleseActivity.Legalese.REFUND_POLICY); break;
             case R.id.privacy_policy: goToLegaleseActivity(LegaleseActivity.Legalese.PRIVACY_POLICY); break;
             case R.id.about_us: goToLegaleseActivity(LegaleseActivity.Legalese.ABOUT_US); break;
-            case R.id.send_email: if(isEverythingValid()) makeContactUsRequest(); else Alerts.validityAlert(ContactUsActivity.this); break;
+            case R.id.send_email: if(isEverythingValid()) makeContactUsRequest(); else Snackbar.make(mainLayout,"One or more data you entered is invalid",Snackbar.LENGTH_LONG).show(); break;
             case R.id.call:
                 if ( ContextCompat.checkSelfPermission( this, Manifest.permission.CALL_PHONE ) != PackageManager.PERMISSION_GRANTED )
                     ActivityCompat.requestPermissions( this, new String[] {  Manifest.permission.CALL_PHONE  },

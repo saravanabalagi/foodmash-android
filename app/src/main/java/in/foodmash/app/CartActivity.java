@@ -8,12 +8,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -21,7 +19,6 @@ import java.util.HashMap;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.custom.Cart;
@@ -35,7 +32,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
     @Bind(R.id.buy) FloatingActionButton buy;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
-    @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.empty_cart_layout) LinearLayout emptyCartLayout;
     @Bind(R.id.payable_amount) TextView total;
     @Bind(R.id.toolbar) Toolbar toolbar;
@@ -133,7 +130,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buy:
-                if(cart.getCount()==0) Alerts.commonErrorAlert(CartActivity.this,"Empty Cart","Your cart is empty. Add some combos and we'll proceed!","Okay");
+                if(cart.getCount()==0) Snackbar.make(mainLayout,"Cart is empty, Add some combos and we'll give it a go!",Snackbar.LENGTH_LONG).show();
                 else if(Info.isLoggedIn(this)) startActivity(new Intent(CartActivity.this, CheckoutAddressActivity.class));
                 else {
                     Intent intent = new Intent(CartActivity.this, LoginActivity.class);

@@ -31,7 +31,6 @@ import java.util.HashMap;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
 import in.foodmash.app.commons.Info;
@@ -126,7 +125,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.register: intent = new Intent(this, SignUpActivity.class); intent.putExtra("from_cart",fromCart); startActivity(intent); break;
             case R.id.forgot_password: intent = new Intent(this, ForgotPasswordActivity.class); startActivity(intent); break;
-            case R.id.login: if(isEverythingValid()) makeLoginRequest(); else Alerts.validityAlert(LoginActivity.this); break;
+            case R.id.login: if(isEverythingValid()) makeLoginRequest(); else Snackbar.make(mainLayout,"One or more data you entered is invalid",Snackbar.LENGTH_LONG).show(); break;
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -40,7 +41,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
@@ -114,7 +114,13 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
             finish();
         }
 
-        save.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { if (isEverythingValid()) makeAddAddressRequest(); else Alerts.validityAlert(AddAddressActivity.this); } });
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isEverythingValid()) makeAddAddressRequest();
+                else Snackbar.make(mainLayout,"One or more data you entered is invalid",Snackbar.LENGTH_LONG).show();
+            }
+        });
         cart = getIntent().getBooleanExtra("cart",false);
         latLng = new LatLng(getIntent().getDoubleExtra("latitude", 0),getIntent().getDoubleExtra("longitude",0));
         address = new Address();
@@ -249,14 +255,10 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
                     if(response.getBoolean("success")) {
                         if (cart) intent = new Intent(AddAddressActivity.this, CheckoutAddressActivity.class);
                         else intent = new Intent(AddAddressActivity.this, AddressActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
-                        finish();
-                    } else {
-                        Alerts.commonErrorAlert(AddAddressActivity.this, "Address Invalid", "We are unable to process your Address Details. Try Again!", "Okay");
-                        Log.e("Success False",response.getString("error"));
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
+                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(AddAddressActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override

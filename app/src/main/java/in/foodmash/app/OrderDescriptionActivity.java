@@ -2,6 +2,7 @@ package in.foodmash.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -26,7 +27,6 @@ import org.json.JSONObject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
@@ -139,10 +139,7 @@ public class OrderDescriptionActivity extends AppCompatActivity {
                             ((TextView) comboLayout.findViewById(R.id.dishes)).setText(dishes);
                             fillLayout.addView(comboLayout);
                         }
-                    } else {
-                        Alerts.requestUnauthorisedAlert(OrderDescriptionActivity.this);
-                        Log.e("Success False",response.getString("error"));
-                    }
+                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { Actions.handleIgnorableException(OrderDescriptionActivity.this,e); }
             }
         }, new Response.ErrorListener() {

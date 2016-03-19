@@ -6,7 +6,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -29,7 +28,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
@@ -45,6 +43,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
 
     @Bind(R.id.add_address) FloatingActionButton addAddress;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.empty_address_layout) LinearLayout emptyAddressLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
@@ -92,6 +91,8 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                         final ObjectMapper objectMapper = new ObjectMapper();
                         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
                         addresses = Arrays.asList(objectMapper.readValue(response.getJSONArray("data").toString(), Address[].class));
+                        if(addresses.size()==0) { emptyAddressLayout.setVisibility(View.VISIBLE); fillLayout.setVisibility(View.GONE); return; }
+                        else { fillLayout.setVisibility(View.VISIBLE); emptyAddressLayout.setVisibility(View.GONE); }
                         for (final Address address: addresses) {
                             final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_user_address, fillLayout, false);
                             ((TextView) addressLayout.findViewById(R.id.name)).setText(address.getName());
@@ -138,9 +139,8 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                                             if(deletingAddressSnackbar.isShown()) deletingAddressSnackbar.dismiss();
                                             try {
                                                 if (response.getBoolean("success")) fillLayout.removeView(addressLayout);
-                                                else if (response.getBoolean("success"))
-                                                    Alerts.commonErrorAlert(AddressActivity.this, "Could not delete !", "The address that you want to remove could not be removed. Try again!", "Okay");
-                                            } catch (JSONException e) { e.printStackTrace(); }
+                                                else if (response.getBoolean("success")) Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                                            } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(AddressActivity.this,e); }
                                         }
                                     }, new Response.ErrorListener() {
                                         @Override
@@ -155,10 +155,7 @@ public class AddressActivity extends AppCompatActivity implements View.OnClickLi
                             });
                             fillLayout.addView(addressLayout);
                         }
-                    } else {
-                        Alerts.requestUnauthorisedAlert(AddressActivity.this);
-                        Log.e("Success False",response.getString("error"));
-                    }
+                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { Actions.handleIgnorableException(AddressActivity.this,e); }
             }
         }, new Response.ErrorListener() {

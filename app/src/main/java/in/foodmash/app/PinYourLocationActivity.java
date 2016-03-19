@@ -17,7 +17,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -58,6 +57,11 @@ public class PinYourLocationActivity extends AppCompatActivity implements View.O
 
     MapFragment mapFragment;
     LatLng initialLocation = new LatLng(13.0220501,80.2437108);
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

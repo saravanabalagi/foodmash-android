@@ -1,16 +1,15 @@
 package in.foodmash.app;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -19,10 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -34,7 +31,6 @@ import java.util.HashMap;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
 import in.foodmash.app.commons.JsonProvider;
@@ -79,10 +75,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private boolean isEmailValidationInProgress = false;
     private boolean isPhoneValidationInProgress = false;
 
-    private JsonObjectRequest checkEmailRequest;
-    private JsonObjectRequest checkPhoneRequest;
-    private JsonObjectRequest signUpRequest;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,7 +117,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.privacy_policy: goToLegaleseActivity(LegaleseActivity.Legalese.PRIVACY_POLICY); ;break;
             case R.id.create:
                 if(isEverythingValid()) makeSignUpRequest();
-                else Alerts.validityAlert(SignUpActivity.this);
+                else Snackbar.make(mainLayout,"One or more data you entered is invalid",Snackbar.LENGTH_LONG).show();
                 break;
         }
     }
@@ -155,7 +147,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void makeSignUpRequest() {
-        signUpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations",getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest signUpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations",getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
@@ -178,11 +170,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
-                    } else {
-                        Alerts.commonErrorAlert(SignUpActivity.this,"Registration Invalid", "We are unable to sign you up. Please try again!","Okay");
-                        Log.e("Success False",response.getString("error"));
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
+                    } else Snackbar.make(mainLayout,"Unable to register your account: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(SignUpActivity.this,e);}
             }
         }, new Response.ErrorListener() {
             @Override
@@ -194,7 +183,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         });
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
         getSupportFragmentManager().executePendingTransactions();
-        Swift.getInstance(SignUpActivity.this).addToRequestQueue(signUpRequest,15000,3,1.5f);
+        Swift.getInstance(SignUpActivity.this).addToRequestQueue(signUpRequest);
     }
 
     private void setCancelOnImageView(ImageView imageView) { imageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); imageView.setImageResource(R.drawable.svg_close_filled); }
@@ -208,101 +197,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             else setOkayOnImageView(nameValidate);
             if(nameValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(nameValidate, 500);
         }
-        if(s==email.getEditableText()) {
-            if(EmailUtils.isValidEmailAddress(s.toString())) {
-                JSONObject requestJson = new JSONObject();
-                try{
-                    JSONObject dataJson = new JSONObject();
-                    dataJson.put("email",s.toString());
-                    requestJson.put("data",dataJson);
-                } catch (JSONException e) { e.printStackTrace(); }
-                checkEmailRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkEmail", requestJson, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            isEmailValidationInProgress = false;
-                            if(response.getBoolean("success")) {
-                                isEmailAvailable = true;
-                                setOkayOnImageView(emailValidate);
-                                Animations.fadeOutAndFadeIn(emailProgressBar,emailValidate,500);
-                            } else {
-                                isEmailAvailable = false;
-                                setCancelOnImageView(emailValidate);
-                                Animations.fadeOutAndFadeIn(emailProgressBar,emailValidate,500);
-                            }
-                        } catch (JSONException e) { e.printStackTrace(); }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Swift.getInstance(SignUpActivity.this).addToRequestQueue(checkEmailRequest);
-                            }
-                        };
-                        if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignUpActivity.this, onClickTryAgain);
-                        else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignUpActivity.this, onClickTryAgain);
-                        else Alerts.unknownErrorAlert(SignUpActivity.this);
-                        Log.e("Json Request","Email response error: "+error);
-                        isEmailValidationInProgress = false;
-                        setCancelOnImageView(emailValidate);
-                        Animations.fadeOutAndFadeIn(emailProgressBar,emailValidate,500);
-                    }
-                });
-                isEmailValidationInProgress = true;
-                Animations.fadeOut(emailValidate,500);
-                Animations.fadeIn(emailProgressBar,500);
-                Swift.getInstance(SignUpActivity.this).addToRequestQueue(checkEmailRequest);
-            }
-        }
-        if(s==phone.getEditableText()) {
-            if(s.length()==10) {
-                JSONObject requestJson = new JSONObject();
-                try {
-                    JSONObject dataJson = new JSONObject();
-                    dataJson.put("mobile_no", phone.getText().toString().trim());
-                    requestJson.put("data",dataJson);
-                } catch (JSONException e) { e.printStackTrace(); }
-                checkPhoneRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkMobileNo", requestJson, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            if(response.getBoolean("success")) {
-                                isPhoneAvailable = true;
-                                setOkayOnImageView(phoneValidate);
-                                Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);
-                            } else {
-                                isPhoneAvailable = false;
-                                setCancelOnImageView(phoneValidate);
-                                Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);
-                            }
-                        } catch (JSONException e) { e.printStackTrace(); }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        DialogInterface.OnClickListener onClickTryAgain = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Swift.getInstance(SignUpActivity.this).addToRequestQueue(checkPhoneRequest);
-                            }
-                        };
-                        if(error instanceof TimeoutError) Alerts.timeoutErrorAlert(SignUpActivity.this, onClickTryAgain);
-                        else if(error instanceof NoConnectionError) Alerts.internetConnectionErrorAlert(SignUpActivity.this, onClickTryAgain);
-                        else Alerts.unknownErrorAlert(SignUpActivity.this);
-                        Log.e("Json Request","Phone response error: "+error);
-                        isPhoneValidationInProgress = false;
-                        setCancelOnImageView(phoneValidate);
-                        Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);
-                    }
-                });
-                isPhoneValidationInProgress = true;
-                Animations.fadeOut(phoneValidate,500);
-                Animations.fadeIn(phoneProgressBar,500);
-                Swift.getInstance(SignUpActivity.this).addToRequestQueue(checkPhoneRequest);
-            }
-        }
+        if(s==email.getEditableText()) if(EmailUtils.isValidEmailAddress(s.toString())) makeCheckEmailRequest();
+        if(s==phone.getEditableText()) if(s.length()==10) makeCheckPhoneRequest();
         if(s==password.getEditableText()) {
             if(password.getText().length()<8) setCancelOnImageView(passwordValidate);
             else setOkayOnImageView(passwordValidate);
@@ -315,6 +211,93 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             else setOkayOnImageView(passwordConfirmationValidate);
             if(passwordConfirmationValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(passwordConfirmationValidate, 500);
         }
+    }
+
+    private JSONObject getCheckEmailJson() {
+        JSONObject requestJson = new JSONObject();
+        try{
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("email",email.getText().toString().trim());
+            requestJson.put("data",dataJson);
+        } catch (JSONException e) { e.printStackTrace(); }
+        return requestJson;
+    }
+
+    private JSONObject getCheckPhoneJson() {
+        JSONObject requestJson = new JSONObject();
+        try {
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("mobile_no", phone.getText().toString().trim());
+            requestJson.put("data",dataJson);
+        } catch (JSONException e) { e.printStackTrace(); }
+        return requestJson;
+    }
+
+    private void makeCheckEmailRequest() {
+        JsonObjectRequest checkEmailRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkEmail", getCheckEmailJson(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    isEmailValidationInProgress = false;
+                    if(response.getBoolean("success")) {
+                        isEmailAvailable = true;
+                        setOkayOnImageView(emailValidate);
+                        Animations.fadeOutAndFadeIn(emailProgressBar,emailValidate,500);
+                    } else {
+                        isEmailAvailable = false;
+                        setCancelOnImageView(emailValidate);
+                        Animations.fadeOutAndFadeIn(emailProgressBar,emailValidate,500);
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Snackbar snackbar = Snackbar.make(mainLayout, "No connection",Snackbar.LENGTH_LONG);
+                snackbar.setAction("Try again", new View.OnClickListener() { @Override public void onClick(View v) { makeCheckEmailRequest(); } });
+                snackbar.show();
+                isEmailValidationInProgress = false;
+                setCancelOnImageView(emailValidate);
+                Animations.fadeOutAndFadeIn(emailProgressBar,emailValidate,500);
+            }
+        });
+        isEmailValidationInProgress = true;
+        Animations.fadeOut(emailValidate,500);
+        Animations.fadeIn(emailProgressBar,500);
+        Swift.getInstance(SignUpActivity.this).addToRequestQueue(checkEmailRequest);
+    }
+
+    private void makeCheckPhoneRequest() {
+        JsonObjectRequest checkPhoneRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkMobileNo", getCheckPhoneJson(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    if(response.getBoolean("success")) {
+                        isPhoneAvailable = true;
+                        setOkayOnImageView(phoneValidate);
+                        Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);
+                    } else {
+                        isPhoneAvailable = false;
+                        setCancelOnImageView(phoneValidate);
+                        Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Snackbar snackbar = Snackbar.make(mainLayout, "No connection",Snackbar.LENGTH_LONG);
+                snackbar.setAction("Try again", new View.OnClickListener() { @Override public void onClick(View v) { makeCheckPhoneRequest(); } });
+                snackbar.show();
+                isPhoneValidationInProgress = false;
+                setCancelOnImageView(phoneValidate);
+                Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);
+            }
+        });
+        isPhoneValidationInProgress = true;
+        Animations.fadeOut(phoneValidate,500);
+        Animations.fadeIn(phoneProgressBar,500);
+        Swift.getInstance(SignUpActivity.this).addToRequestQueue(checkPhoneRequest);
     }
 
     private boolean isEverythingValid() {

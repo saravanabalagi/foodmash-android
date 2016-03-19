@@ -31,7 +31,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
@@ -41,7 +40,6 @@ import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.custom.Address;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.City;
-import in.foodmash.app.custom.Combo;
 
 /**
  * Created by Zeke on Jul 19 2015.
@@ -53,6 +51,8 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     @Bind(R.id.add_address) TextView addAddress;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.choose_address) LinearLayout chooseAddressLayout;
+    @Bind(R.id.empty_address_layout) LinearLayout emptyAddressLayout;
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
 
@@ -106,8 +106,11 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                 startActivity(intent); break;
             case R.id.confirm:
                 if(isEverythingValid()) makeConfirmOrderRequest();
-                else if(getSelectedAddressCount()==0) Alerts.commonErrorAlert(CheckoutAddressActivity.this, "No Address Selected", "You have not selected any delivery address. Select one of the listed addresses or add new address to proceed", "Okay");
-                else if(getSelectedAddressCount()>1) Alerts.validityAlert(CheckoutAddressActivity.this);
+                else if(getSelectedAddressCount()==0) Snackbar.make(mainLayout,"Select an address to deliver",Snackbar.LENGTH_LONG).show();
+                else if(getSelectedAddressCount()>1) {
+                    makeAddressRequest();
+                    Snackbar.make(mainLayout,"Please choose your delivery address again!",Snackbar.LENGTH_LONG).show();
+                }
                 break;
         }
     }
@@ -118,12 +121,10 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
             JSONObject dataJson = new JSONObject();
             dataJson.put("delivery_address_id",addressId);
             dataJson.put("total",Cart.getInstance().getTotal());
-            dataJson.put("vat",Cart.getInstance().getVatForTotal());
-            dataJson.put("delivery_charge",Cart.getInstance().getDeliveryCharge());
-            dataJson.put("grand_total",Cart.getInstance().getGrandTotal());
             JSONArray cartJsonArray = Cart.getInstance().getCartOrders();
             dataJson.put("cart",cartJsonArray);
             requestJson.put("data",dataJson);
+            Log.i("Json Request", dataJson.toString());
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;
     }
@@ -166,7 +167,11 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                                     try {
                                         if (response.getBoolean("success")) {
                                             intent = new Intent(CheckoutAddressActivity.this, CheckoutPaymentActivity.class);
-                                            intent.putExtra("payable_amount", response.getJSONObject("data").getDouble("grand_total"));
+                                            intent.putExtra("grand_total", response.getJSONObject("data").getDouble("grand_total"));
+                                            intent.putExtra("total", response.getJSONObject("data").getDouble("total"));
+                                            intent.putExtra("vat", response.getJSONObject("data").getDouble("vat"));
+                                            intent.putExtra("vat_percentage", response.getJSONObject("data").getString("vat_percentage"));
+                                            intent.putExtra("delivery_charges", response.getJSONObject("data").getDouble("delivery_charges"));
                                             intent.putExtra("order_id", response.getJSONObject("data").getString("order_id"));
                                             startActivity(intent);
                                         } else {
@@ -239,6 +244,8 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                         final ObjectMapper objectMapper = new ObjectMapper();
                         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
                         addresses = Arrays.asList(objectMapper.readValue(response.getJSONArray("data").toString(), Address[].class));
+                        if(addresses.size()==0) { emptyAddressLayout.setVisibility(View.VISIBLE); fillLayout.setVisibility(View.GONE); return; }
+                        else { fillLayout.setVisibility(View.VISIBLE); emptyAddressLayout.setVisibility(View.GONE); }
                         for (int i=0;i<addresses.size();i++) {
                             final Address address = addresses.get(i);
                             final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_user_address, fillLayout, false);
@@ -286,10 +293,9 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                                         public void onResponse(JSONObject response) {
                                             if(deletingAddressSnackbar.isShown()) deletingAddressSnackbar.dismiss();
                                             try {
-                                                if (response.getBoolean("success")) fillLayout.removeView(addressLayout);
-                                                else if (response.getBoolean("success"))
-                                                    Alerts.commonErrorAlert(CheckoutAddressActivity.this, "Could not delete !", "The address that you want to remove could not be removed. Try again!", "Okay");
-                                            } catch (JSONException e) { e.printStackTrace(); }
+                                                if (response.getBoolean("success")) makeAddressRequest();
+                                                else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                                            } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(CheckoutAddressActivity.this,e); }
                                         }
                                     }, new Response.ErrorListener() {
                                         @Override
@@ -312,14 +318,12 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                                     for(int i=0; i<fillLayout.getChildCount(); i++)
                                         fillLayout.getChildAt(i).findViewById(R.id.selected).setVisibility(View.INVISIBLE);
                                     addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
+                                    chooseAddressLayout.setVisibility(View.GONE);
                                 }
                             });
                             fillLayout.addView(addressLayout);
                         }
-                    } else {
-                        Alerts.requestUnauthorisedAlert(CheckoutAddressActivity.this);
-                        Log.e("Success False",response.getString("error"));
-                    }
+                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { Actions.handleIgnorableException(CheckoutAddressActivity.this,e); }
             }
         }, new Response.ErrorListener() {

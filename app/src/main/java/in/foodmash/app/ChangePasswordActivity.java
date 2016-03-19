@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -28,7 +28,6 @@ import java.util.HashMap;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Cryptography;
 import in.foodmash.app.commons.JsonProvider;
@@ -88,7 +87,10 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.change: if (isEverythingValid()) makeChangePasswordRequest(); else Alerts.validityAlert(ChangePasswordActivity.this); break;
+            case R.id.change:
+                if (isEverythingValid()) makeChangePasswordRequest();
+                else Snackbar.make(mainLayout,"One or more data you entered is invalid",Snackbar.LENGTH_LONG).show();
+                break;
         }
     }
 
@@ -132,12 +134,8 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         } else finish();
-                    } else {
-                        if (forgot) Alerts.commonErrorAlert(ChangePasswordActivity.this, "OTP Error", "There's a problem processing the OTP that you've sent", "Okay");
-                        else Alerts.commonErrorAlert(ChangePasswordActivity.this, "Invalid Old Password", "We are unable to change your password as Old Password entered by you is Invalid", "Okay");
-                        Log.e("Success False", response.getString("error"));
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
+                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(ChangePasswordActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override

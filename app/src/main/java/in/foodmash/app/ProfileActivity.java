@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -38,7 +37,6 @@ import java.util.Locale;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
@@ -141,7 +139,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.change_password: intent = new Intent(this, ChangePasswordActivity.class); startActivity(intent); break;
-            case R.id.save: if(isEverythingValid()) makeProfileRequest(); else Alerts.validityAlert(ProfileActivity.this); break;
+            case R.id.save: if(isEverythingValid()) makeProfileRequest(); else Snackbar.make(mainLayout,"One or more data you entered is invalid",Snackbar.LENGTH_LONG).show(); break;
         }
     }
 
@@ -205,11 +203,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         email.setText(userJson.getString("email"));
                         phone.setText(userJson.getString("mobile_no"));
                         promotionOffers.setChecked(userJson.getBoolean("offers"));
-                    } else {
-                        Alerts.requestUnauthorisedAlert(ProfileActivity.this);
-                        Log.e("Success False",response.getString("error"));
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
+                    } else Snackbar.make(mainLayout,"Unable to save details: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(ProfileActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override

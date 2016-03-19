@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,6 +17,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -24,6 +26,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -47,7 +50,6 @@ import java.util.TreeMap;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Filters;
 import in.foodmash.app.commons.Info;
@@ -68,16 +70,20 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.empty_combo_layout) LinearLayout emptyComboLayout;
+    @Bind(R.id.filter) FloatingActionButton filterFab;
     @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.filters) RecyclerView recyclerView;
+    @Bind(R.id.apply_filters) TextView applyFilters;
+    @Bind(R.id.remove_filters) TextView removeFilters;
 
     private Snackbar snackbar;
     private Intent intent;
     private TextView cartCount;
     private Cart cart = Cart.getInstance();
-    private JsonObjectRequest getCombosRequest;
     private ImageLoader imageLoader;
     private DisplayMetrics displayMetrics;
     private ObjectMapper objectMapper;
@@ -175,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(filters);
         recyclerView.setLayoutManager(linearLayoutManager);
-//        recyclerView.findViewHolderForAdapterPosition(14).itemView.setActivated(true);
         recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
 
             private void makeActive(View view, Combo.Category category) {
@@ -240,8 +245,30 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        applyFilters.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { drawerLayout.closeDrawer(Gravity.LEFT); } });
+        removeFilters.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(int i=0; i< recyclerView.getChildCount(); i++)
+                    recyclerView.findViewHolderForAdapterPosition(i).itemView.setActivated(false);
+                recyclerView.findViewHolderForAdapterPosition(1).itemView.setActivated(true);
+                recyclerView.findViewHolderForAdapterPosition(16).itemView.setActivated(true);
+                categorySelected.clear();
+                preferenceSelected.clear();
+                preferenceSelected.clear();
+                drawerLayout.closeDrawer(Gravity.LEFT);
+            }
+        });
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+        filterFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(drawerLayout.isDrawerOpen(Gravity.LEFT)) drawerLayout.closeDrawer(Gravity.LEFT);
+                else drawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
+
 
         Date comboUpdatedAt = null;
         boolean areCombosOutdated = true;
@@ -276,13 +303,8 @@ public class MainActivity extends AppCompatActivity {
                         String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
                         updateFillLayout(Arrays.asList(objectMapper.readValue(comboJsonArrayString, Combo[].class)));
                         Actions.cacheCombos(MainActivity.this, comboJsonArrayString, new Date());
-                    } else {
-                        Alerts.requestUnauthorisedAlert(MainActivity.this);
-                        Log.e("Success False",response.getString("error"));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    } else Snackbar.make(mainLayout,"Unable to load combos: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                } catch (Exception e) { e.printStackTrace(); Actions.handleIgnorableException(MainActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -334,6 +356,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateFillLayout(List<Combo> combos) {
         List<Combo> filteredCombos = applyFilters(combos);
+        if(filteredCombos.size()==0) { emptyComboLayout.setVisibility(View.VISIBLE); fillLayout.setVisibility(View.GONE); return; }
+        else { emptyComboLayout.setVisibility(View.GONE); fillLayout.setVisibility(View.VISIBLE); }
         TreeMap<Integer, LinearLayout> comboTreeMap = new TreeMap<>();
         for (final Combo combo : filteredCombos) {
             View.OnClickListener showDescription = new View.OnClickListener() {

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,7 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +41,6 @@ import org.json.JSONObject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
@@ -59,16 +61,23 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
     @Bind(R.id.payable_amount) TextView payableAmount;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.view_pager) ViewPager viewPager;
+    @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     @Bind(R.id.total) TextView total;
     @Bind(R.id.vat) TextView vat;
+    @Bind(R.id.vat_percentage) TextView vatPercentage;
+    @Bind(R.id.apply) TextView apply;
+    @Bind(R.id.promo_discount) TextView promoDiscount;
+    @Bind(R.id.promo_discount_layout) LinearLayout promoDiscountLayout;
+    @Bind(R.id.promo_code) EditText promoCode;
+    @Bind(R.id.input_layout_promo_code) TextInputLayout promoCodeInputLayout;
     @Bind(R.id.delivery_charges) TextView deliveryCharges;
 
     private Intent intent;
     private String paymentMethod;
-    private String payableAmountString;
     private String orderId;
+    private boolean isPromoApplied = false;
 
     PayuConfig payuConfig = new PayuConfig();
     PayuResponse payuResponse = new PayuResponse();
@@ -92,22 +101,18 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
-        if(Cart.getInstance().getCount()==0) finish();
-        if(getIntent().getDoubleExtra("payable_amount", 0)!=0
-                && NumberUtils.getCurrencyFormat(Cart.getInstance().getGrandTotal())
-                    .equals(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("payable_amount", 0))))
-            payableAmountString = NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("payable_amount",0));
-        else {
-            Intent intent = new Intent(CheckoutPaymentActivity.this, CheckoutAddressActivity.class);
-            intent.putExtra("total_error", true);
-            startActivity(intent);
-            finish();
-        }
         orderId = getIntent().getStringExtra("order_id");
-
-        total.setText(NumberUtils.getCurrencyFormat(Cart.getInstance().getTotal()));
-        vat.setText(NumberUtils.getCurrencyFormat(Cart.getInstance().getVatForTotal()));
-        deliveryCharges.setText(NumberUtils.getCurrencyFormat(Cart.getInstance().getDeliveryCharge()));
+        apply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makePromoCodeRequest();
+            }
+        });
+        payableAmount.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("grand_total", 0)));
+        total.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("total", 0)));
+        vat.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("vat", 0)));
+        vatPercentage.setText(getIntent().getStringExtra("vat_percentage"));
+        deliveryCharges.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("delivery_charges", 0)));
 
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,7 +125,6 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
                 else if(fragment instanceof CreditDebitCardFragment) { paymentMethod = getString(R.string.payment_card); ((CreditDebitCardFragment) fragment).doPayment(); }
             }
         });
-        payableAmount.setText(payableAmountString);
 
         class PaymentPagerAdapter extends FragmentPagerAdapter {
             public PaymentPagerAdapter(FragmentManager fm) { super(fm); }
@@ -152,7 +156,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
 
     public void getHashAndPaymentRelatedDetails() {
         paymentParams.setKey("gtKFFx");
-        paymentParams.setAmount(payableAmountString);
+        paymentParams.setAmount(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("grand_total", 0)));
         paymentParams.setProductInfo("a bunch of combos from Foodmash");
         paymentParams.setFirstName(Info.getName(this));
         paymentParams.setPhone(Info.getPhone(this));
@@ -201,16 +205,9 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
                             GetPaymentRelatedDetailsTask paymentRelatedDetailsForMobileSdkTask = new GetPaymentRelatedDetailsTask(CheckoutPaymentActivity.this);
                             paymentRelatedDetailsForMobileSdkTask.execute(payuConfig);
                             Log.i("Payments", "Making paymentDetails Request");
-                        } else
-                            Snackbar.make(viewPager, postData.getResult(), Snackbar.LENGTH_LONG).show();
-
-                    } else {
-                        Alerts.requestUnauthorisedAlert(CheckoutPaymentActivity.this);
-                        Log.e("Success False", response.getString("error"));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                        } else Snackbar.make(mainLayout, postData.getResult(), Snackbar.LENGTH_LONG).show();
+                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(CheckoutPaymentActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -231,6 +228,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
         try {
             JSONObject dataJson = new JSONObject();
             dataJson.put("payment_method",paymentMethod);
+            if(isPromoApplied) dataJson.put("promo_code",promoCode.getText().toString().trim());
             requestJson.put("data",dataJson);
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;
@@ -252,7 +250,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
                         Cart.getInstance().removeAllOrders();
                         startActivity(intent);
                         finish();
-                    } else Snackbar.make(viewPager, "Wrong Password", Snackbar.LENGTH_LONG).show();
+                    } else Snackbar.make(mainLayout, "Wrong Password", Snackbar.LENGTH_LONG).show();
                 } catch (JSONException e) { e.printStackTrace(); }
             }
         }, new Response.ErrorListener() {
@@ -269,6 +267,55 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makePurchaseRequest);
     }
+
+    private JSONObject getPromoCodeJson() {
+        JSONObject requestJson = JsonProvider.getStandardRequestJson(CheckoutPaymentActivity.this);
+        try {
+            JSONObject dataJson = new JSONObject();
+            dataJson.put("promo_code",promoCode.getText().toString().trim());
+            requestJson.put("data",dataJson);
+        } catch (JSONException e) { e.printStackTrace(); }
+        return requestJson;
+    }
+
+    public void makePromoCodeRequest() {
+        JsonObjectRequest makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/payments/validatePromoCode", getPromoCodeJson(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
+                try {
+                    if(response.getBoolean("success")) {
+                        Snackbar.make(mainLayout, "Promo Code applied successfully", Snackbar.LENGTH_LONG).show();
+                        apply.setText("Applied");
+                        promoDiscount.setText(NumberUtils.getCurrencyFormat(response.getDouble("promo_discount")));
+                        promoDiscountLayout.setVisibility(View.VISIBLE);
+                        isPromoApplied = true;
+                        promoCodeInputLayout.setErrorEnabled(false);
+                    } else {
+                        promoCodeInputLayout.setError("Invalid Promo Code. Try again");
+                        Snackbar.make(mainLayout, "Promo Code not applied", Snackbar.LENGTH_LONG).show();
+                        promoDiscountLayout.setVisibility(View.GONE);
+                        promoCode.setText("");
+                        isPromoApplied = false;
+                        promoCode.requestFocus();
+                    }
+                } catch (JSONException e) { e.printStackTrace(); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makePromoCodeRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
+            }
+        });
+
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().executePendingTransactions();
+        Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makePurchaseRequest);
+    }
+
     private boolean isEverythingValid() {
         return !(paymentMethod.length()<1);
     }

@@ -29,7 +29,6 @@ import java.util.TreeMap;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.Swift;
@@ -44,7 +43,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  */
 public class ComboDescriptionActivity extends AppCompatActivity implements View.OnClickListener {
 
-    @Bind(R.id.parentLayout) View parentLayout;
+    @Bind(R.id.main_layout) View mainLayout;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.price) TextView currentPrice;
     @Bind(R.id.buy) FloatingActionButton buy;
@@ -111,14 +110,14 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
         int comboId = getIntent().getIntExtra("combo_id", -1);
-        if(comboId==-1) { Alerts.unknownErrorAlert(ComboDescriptionActivity.this); return; }
+        if(comboId==-1) { Snackbar.make(mainLayout,"Something went wrong. Try again later!",Snackbar.LENGTH_LONG).show(); return; }
         List<Combo> combos = null;
         try { combos = Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(this), Combo[].class)); }
         catch (Exception e) { Actions.handleIgnorableException(this,e); }
         for (Combo c : combos)
             if (c.getId()==comboId)
                 combo = c;
-        if(combo==null) { Alerts.unknownErrorAlert(ComboDescriptionActivity.this); return; }
+        if(combo==null) { Snackbar.make(mainLayout,"Something went wrong. Try again later!",Snackbar.LENGTH_LONG).show(); return; }
 
         buy.setOnClickListener(this);
         imageLoader = Swift.getInstance(ComboDescriptionActivity.this).getImageLoader();
@@ -184,7 +183,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                     @Override
                     public void onClick(View v) {
                         if(!comboOption.incrementQuantity(comboDish))
-                            Alerts.maxCountAlert(ComboDescriptionActivity.this, comboOption);
+                            Snackbar.make(mainLayout, "For bulk orders, contact Foodmash", Snackbar.LENGTH_SHORT).show();
                         count.setText(String.valueOf(comboDish.getQuantity()));
                         updatePrice();
                     }
@@ -194,7 +193,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
                     public void onClick(View v) {
                         if(count.getText().toString().equals("0")) return;
                         if(!comboOption.decrementQuantity(comboDish))
-                            Alerts.minCountAlert(ComboDescriptionActivity.this, comboOption);
+                            Snackbar.make(mainLayout, "Combo should contain minimum "+comboOption.getMinCount()+" "+comboOption.getContents(), Snackbar.LENGTH_SHORT).show();
                         count.setText(String.valueOf(comboDish.getQuantity()));
                         if(comboDish.getQuantity()==1 && !comboOption.getSelectedComboOptionDishes().contains(comboDish)) {
                             Animations.fadeOut(selected, 500);
@@ -273,7 +272,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             countLayout.findViewById(R.id.plus).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(!comboDish.incrementQuantity()) Alerts.maxCountAlert(ComboDescriptionActivity.this, comboDish);
+                    if(!comboDish.incrementQuantity()) Snackbar.make(mainLayout, "For bulk orders, contact Foodmash", Snackbar.LENGTH_SHORT).show();
                     count.setText(String.valueOf(comboDish.getQuantity()));
                     updatePrice();
                 }
@@ -281,7 +280,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
             countLayout.findViewById(R.id.minus).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(!comboDish.decrementQuantity()) Alerts.minCountAlert(ComboDescriptionActivity.this, comboDish);
+                    if(!comboDish.decrementQuantity()) Snackbar.make(mainLayout, "Combo should contain minimum "+comboDish.getMinCount()+" "+comboDish.getDish().getName(), Snackbar.LENGTH_SHORT).show();
                     count.setText(String.valueOf(comboDish.getQuantity()));
                     updatePrice();
                 }
@@ -307,7 +306,7 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
         switch (v.getId()) {
             case R.id.buy:
                 cart.addToCart(new Combo(combo));
-                Snackbar.make(parentLayout, "Added to Cart", Snackbar.LENGTH_LONG)
+                Snackbar.make(mainLayout, "Added to Cart", Snackbar.LENGTH_LONG)
                     .setAction("Undo", new View.OnClickListener() { @Override public void onClick(View v) {
                         cart.decrementFromCart(combo.getId());
                         Actions.updateCartCount(cartCount); } })

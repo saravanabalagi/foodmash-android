@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -24,7 +24,6 @@ import org.json.JSONObject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Alerts;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
@@ -89,7 +88,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.resend_otp: if(otpExpired) resendOtpRequest(); break;
-            case R.id.proceed: if(isEverythingValid()) makeCheckOtpRequest(); else Alerts.validityAlert(ForgotPasswordOtpActivity.this); break;
+            case R.id.proceed: if(isEverythingValid()) makeCheckOtpRequest(); else Snackbar.make(mainLayout,"One or more data you entered is invalid",Snackbar.LENGTH_LONG).show(); break;
         }
     }
 
@@ -135,11 +134,8 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                         intent.putExtra("forgot",true);
                         startActivity(intent);
                         finish();
-                    } else {
-                        Alerts.commonErrorAlert(ForgotPasswordOtpActivity.this, "Invalid OTP", "We are unable to process the OTP you entered. Try Again!", "Okay");
-                        Log.e("Success False", response.getString("error"));
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
+                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(ForgotPasswordOtpActivity.this,e);}
             }
         }, new Response.ErrorListener() {
             @Override
@@ -186,11 +182,8 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity implements View
                         Animations.fadeIn(otpFillLayout, 500);
                         handler.removeCallbacks(setOtpTime);
                         handler.postDelayed(setOtpTime, 1000);
-                    } else {
-                        Alerts.commonErrorAlert(ForgotPasswordOtpActivity.this, "Could not send OTP", "We are unable to send you OTP as the details you entered are invalid. Try Again!", "Okay");
-                        Log.e("Success False", response.getString("error"));
-                    }
-                } catch (JSONException e) { e.printStackTrace(); }
+                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(ForgotPasswordOtpActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override
