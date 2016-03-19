@@ -45,6 +45,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 import butterknife.Bind;
@@ -89,9 +90,9 @@ public class MainActivity extends AppCompatActivity {
     private ObjectMapper objectMapper;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
-    private List<Combo.Category> categorySelected = new ArrayList<>();
-    private List<Combo.Size> sizeSelected = new ArrayList<>();
-    private List<Dish.Label> preferenceSelected = new ArrayList<>();
+    private Set<Combo.Category> categorySelected = new HashSet<>();
+    private Set<Combo.Size> sizeSelected = new HashSet<>();
+    private Set<Dish.Label> preferenceSelected = new HashSet<>();
     private boolean sortPriceLowToHigh = true;
 
     @Override
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener(){
             @Override public boolean onSingleTapUp(MotionEvent e) { return true; } });
-        Filters filters = new Filters();
+        final Filters filters = new Filters();
 
         filters.addHeader("Deliver to");
         filters.addFilter(Info.getAreaName(this), R.drawable.svg_marker_filled);
@@ -178,22 +179,28 @@ public class MainActivity extends AppCompatActivity {
         filters.addFilter("Low to High", R.drawable.svg_sort_amount_asc);
         filters.addFilter("High to Low", R.drawable.svg_sort_amount_desc);
 
+        filters.setSelected(1);
+        filters.setSelected(16);
+
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(filters);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
 
-            private void makeActive(View view, Combo.Category category) {
-                if (view.isActivated()) { categorySelected.remove(category); view.setActivated(false); }
-                else { categorySelected.add(category); view.setActivated(true); }
+            private void makeActive(View view, Integer position, Combo.Category category) {
+                if (view.isActivated()) { categorySelected.remove(category); filters.removeSelected(position); }
+                else { categorySelected.add(category); filters.setSelected(position); }
+                filters.notifyItemChanged(position);
             }
-            private void makeActive(View view, Combo.Size size) {
-                if (view.isActivated()) { sizeSelected.remove(size); view.setActivated(false); }
-                else { sizeSelected.add(size); view.setActivated(true); }
+            private void makeActive(View view, Integer position, Combo.Size size) {
+                if (view.isActivated()) { sizeSelected.remove(size); filters.removeSelected(position); }
+                else { sizeSelected.add(size); filters.setSelected(position); }
+                filters.notifyItemChanged(position);
             }
-            private void makeActive(View view, Dish.Label preference) {
-                if (view.isActivated()) { preferenceSelected.remove(preference); view.setActivated(false); }
-                else { preferenceSelected.add(preference); view.setActivated(true); }
+            private void makeActive(View view, Integer position, Dish.Label preference) {
+                if (view.isActivated()) { preferenceSelected.remove(preference); filters.removeSelected(position); }
+                else { preferenceSelected.add(preference); filters.setSelected(position); }
+                filters.notifyItemChanged(position);
             }
 
             @Override
@@ -203,18 +210,18 @@ public class MainActivity extends AppCompatActivity {
                     switch(recyclerView.getChildAdapterPosition(child)) {
                         case 1: startActivity(new Intent(MainActivity.this, SplashActivity.class));
 
-                        case 3: makeActive(child, Combo.Category.REGULAR); break;
-                        case 4: makeActive(child, Combo.Category.BUDGET); break;
-                        case 5: makeActive(child, Combo.Category.CORPORATE); break;
-                        case 6: makeActive(child, Combo.Category.HEALTH); break;
+                        case 3: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Category.REGULAR); break;
+                        case 4: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Category.BUDGET); break;
+                        case 5: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Category.CORPORATE); break;
+                        case 6: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Category.HEALTH); break;
 
-                        case 8: makeActive(child, Combo.Size.MICRO); break;
-                        case 9: makeActive(child, Combo.Size.MEDIUM); break;
-                        case 10: makeActive(child, Combo.Size.MEGA); break;
+                        case 8: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Size.MICRO); break;
+                        case 9: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Size.MEDIUM); break;
+                        case 10: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Size.MEGA); break;
 
-                        case 12: makeActive(child, Dish.Label.VEG); break;
-                        case 13: makeActive(child, Dish.Label.EGG); break;
-                        case 14: makeActive(child, Dish.Label.NON_VEG); break;
+                        case 12: makeActive(child, recyclerView.getChildAdapterPosition(child), Dish.Label.VEG); break;
+                        case 13: makeActive(child, recyclerView.getChildAdapterPosition(child), Dish.Label.EGG); break;
+                        case 14: makeActive(child, recyclerView.getChildAdapterPosition(child), Dish.Label.NON_VEG); break;
 
                         case 16: sortPriceLowToHigh = true; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(15).itemView.setActivated(false); } break;
                         case 17: sortPriceLowToHigh = false; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(14).itemView.setActivated(false); } break;
@@ -249,12 +256,12 @@ public class MainActivity extends AppCompatActivity {
         removeFilters.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for(int i=0; i< recyclerView.getChildCount(); i++)
-                    recyclerView.findViewHolderForAdapterPosition(i).itemView.setActivated(false);
-                recyclerView.findViewHolderForAdapterPosition(1).itemView.setActivated(true);
-                recyclerView.findViewHolderForAdapterPosition(16).itemView.setActivated(true);
+                filters.clearAllSelected();
+                filters.setSelected(1);
+                filters.setSelected(16);
+                filters.notifyDataSetChanged();
                 categorySelected.clear();
-                preferenceSelected.clear();
+                sizeSelected.clear();
                 preferenceSelected.clear();
                 drawerLayout.closeDrawer(Gravity.LEFT);
             }
