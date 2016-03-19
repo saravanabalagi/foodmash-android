@@ -21,7 +21,6 @@ public class Combo {
     private Category category;
     private String name;
     private String description;
-    private boolean special;
     private boolean available;
     private float price;
     public enum Category { REGULAR, BUDGET, CORPORATE, HEALTH }
@@ -41,7 +40,6 @@ public class Combo {
         this.category = c.category;
         this.name = c.name;
         this.description = c.description;
-        this.special = c.special;
         this.available = c.available;
         this.price = c.price;
         this.picture = c.picture;
@@ -61,7 +59,6 @@ public class Combo {
     @JsonIgnore public Category getCategory() { return category; }
     @JsonIgnore public String getName() { return name; }
     @JsonIgnore public String getDescription() { return description; }
-    @JsonIgnore public boolean isSpecial() { return special; }
     @JsonIgnore public boolean isAvailable() { return available; }
     public ArrayList<ComboDish> getComboDishes() { return comboDishes; }
     public ArrayList<ComboOption> getComboOptions() { return comboOptions; }
@@ -125,7 +122,6 @@ public class Combo {
     @JsonProperty public void setName(String name) { this.name = name; }
     @JsonProperty public void setPrice(float price) { this.price = price; }
     @JsonProperty public void setDescription(String description) { this.description = description; }
-    @JsonProperty public void setSpecial(boolean special) { this.special = special; }
     @JsonProperty public void setAvailable(boolean available) { this.available = available; }
     @JsonProperty public void setComboDishes(ArrayList<ComboDish> comboDishes) { this.comboDishes = comboDishes; }
     @JsonProperty public void setComboOptions(ArrayList<ComboOption> comboOptions) { this.comboOptions = comboOptions; }
