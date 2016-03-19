@@ -26,7 +26,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -71,15 +70,20 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
-    @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.empty_combo_layout) LinearLayout emptyComboLayout;
     @Bind(R.id.filter) FloatingActionButton filterFab;
     @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.filters) RecyclerView recyclerView;
+
     @Bind(R.id.apply_filters) TextView applyFilters;
-    @Bind(R.id.remove_filters) TextView removeFilters;
+    @Bind(R.id.remove_all_filters) TextView removeFilters;
+    @Bind(R.id.filter_combos_text) TextView filterCombosText;
+    @Bind(R.id.no_of_filters) TextView noOfFilters;
+    @Bind(R.id.no_of_filters_applied_text) TextView noOfFiltersAppliedText;
+    @Bind(R.id.no_of_filters_layout) LinearLayout noOfFiltersLayout;
 
     private Snackbar snackbar;
     private Intent intent;
@@ -207,24 +211,25 @@ public class MainActivity extends AppCompatActivity {
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
                 View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
                 if(child!=null && gestureDetector.onTouchEvent(e)) {
-                    switch(recyclerView.getChildAdapterPosition(child)) {
+                    int position = recyclerView.getChildAdapterPosition(child);
+                    switch(position) {
                         case 1: startActivity(new Intent(MainActivity.this, SplashActivity.class));
 
-                        case 3: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Category.REGULAR); break;
-                        case 4: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Category.BUDGET); break;
-                        case 5: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Category.CORPORATE); break;
-                        case 6: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Category.HEALTH); break;
+                        case 3: makeActive(child, position, Combo.Category.REGULAR); break;
+                        case 4: makeActive(child, position, Combo.Category.BUDGET); break;
+                        case 5: makeActive(child, position, Combo.Category.CORPORATE); break;
+                        case 6: makeActive(child, position, Combo.Category.HEALTH); break;
 
-                        case 8: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Size.MICRO); break;
-                        case 9: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Size.MEDIUM); break;
-                        case 10: makeActive(child, recyclerView.getChildAdapterPosition(child), Combo.Size.MEGA); break;
+                        case 8: makeActive(child, position, Combo.Size.MICRO); break;
+                        case 9: makeActive(child, position, Combo.Size.MEDIUM); break;
+                        case 10: makeActive(child, position, Combo.Size.MEGA); break;
 
-                        case 12: makeActive(child, recyclerView.getChildAdapterPosition(child), Dish.Label.VEG); break;
-                        case 13: makeActive(child, recyclerView.getChildAdapterPosition(child), Dish.Label.EGG); break;
-                        case 14: makeActive(child, recyclerView.getChildAdapterPosition(child), Dish.Label.NON_VEG); break;
+                        case 12: makeActive(child, position, Dish.Label.VEG); break;
+                        case 13: makeActive(child, position, Dish.Label.EGG); break;
+                        case 14: makeActive(child, position, Dish.Label.NON_VEG); break;
 
-                        case 16: sortPriceLowToHigh = true; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(15).itemView.setActivated(false); } break;
-                        case 17: sortPriceLowToHigh = false; if (!child.isActivated()) { child.setActivated(true); recyclerView.findViewHolderForAdapterPosition(14).itemView.setActivated(false); } break;
+                        case 16: sortPriceLowToHigh = true; if (!child.isActivated()) { filters.setSelected(position); filters.notifyItemChanged(position); filters.removeSelected(17); filters.notifyItemChanged(17); } break;
+                        case 17: sortPriceLowToHigh = false; if (!child.isActivated()) { filters.setSelected(position); filters.notifyItemChanged(position); filters.removeSelected(16); filters.notifyItemChanged(16); } break;
                     }
                 }
                 return false;
@@ -482,6 +487,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private List<Combo> applyFilters(List<Combo> combos) {
+        if(categorySelected.isEmpty() && sizeSelected.isEmpty() && preferenceSelected.isEmpty()) {
+            filterCombosText.setVisibility(View.VISIBLE);
+            noOfFiltersLayout.setVisibility(View.GONE);
+            return combos;
+        }
+
+        filterCombosText.setVisibility(View.GONE);
+        noOfFiltersLayout.setVisibility(View.VISIBLE);
+        int noOfFiltersInt = categorySelected.size()+sizeSelected.size()+preferenceSelected.size();
+        if(noOfFiltersInt==1) noOfFiltersAppliedText.setText("Filter Applied");
+        else noOfFiltersAppliedText.setText("Filters Applied");
+        noOfFilters.setText(String.valueOf(noOfFiltersInt));
+
         List<Combo> filteredComboList = new ArrayList<>();
         for(Combo combo: combos) {
             boolean survived = true;

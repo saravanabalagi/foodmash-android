@@ -14,69 +14,124 @@
         android:layout_height="match_parent">
 
         <!-- The main content view -->
-        <ScrollView
+        <LinearLayout android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="0dp"
-            android:layout_marginStart="0dp"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="0dp"
             android:id="@+id/main_layout">
 
-            <LinearLayout android:orientation="vertical"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="0dp">
 
-                <LinearLayout
-                    android:orientation="vertical"
+                <LinearLayout android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:id="@+id/empty_combo_layout">
+                    android:layout_height="wrap_content">
 
-                    <ImageView
+                    <LinearLayout
+                        android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:src="@drawable/svg_empty_combos"
-                        android:cropToPadding="true"
-                        android:paddingLeft="30dp"
-                        android:paddingRight="30dp"
-                        android:contentDescription="@string/empty_cart" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="We didn't find any combos!"
-                        android:gravity="center_horizontal"
-                        android:textSize="25sp"
-                        android:fontFamily="sans-serif-light"
-                        android:layout_margin="5dp"
-                        android:singleLine="true" />
+                        android:gravity="center_vertical|center_horizontal"
+                        android:id="@+id/empty_combo_layout">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:src="@drawable/svg_empty_combos"
+                            android:cropToPadding="true"
+                            android:paddingLeft="30dp"
+                            android:paddingRight="30dp"
+                            android:contentDescription="@string/empty_cart" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="We didn't find any combos!"
+                            android:gravity="center_horizontal"
+                            android:textSize="25sp"
+                            android:fontFamily="sans-serif-light"
+                            android:layout_margin="5dp"
+                            android:singleLine="true" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="If you applied any filters, remove them"
+                            android:gravity="center_horizontal"
+                            android:fontFamily="sans-serif-light"
+                            android:layout_margin="5dp"
+                            android:singleLine="true" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="If you applied any filters, remove them"
                         android:gravity="center_horizontal"
-                        android:fontFamily="sans-serif-light"
-                        android:layout_margin="5dp"
-                        android:singleLine="true" />
+                        android:id="@+id/fill_layout"
+                        android:paddingBottom="10dp">
+                    </LinearLayout>
+
                 </LinearLayout>
+            </ScrollView>
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:background="@color/black_333"
+                android:id="@+id/filters_layout">
 
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:id="@+id/fill_layout"
-                    android:paddingBottom="10dp">
+                    android:text="Filter combos"
+                    android:id="@+id/filter_combos_text"
+                    android:textSize="13sp"
+                    android:textColor="@color/primary_text_dark"
+                    android:fontFamily="sans-serif-light"
+                    android:paddingRight="20dp"
+                    android:textAllCaps="true" />
+
+                <LinearLayout android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="20dp"
+                    android:id="@+id/no_of_filters_layout"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2"
+                        android:textColor="@color/white"
+                        android:paddingRight="5dp"
+                        android:id="@+id/no_of_filters" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Filters Applied"
+                        android:textSize="13sp"
+                        android:textColor="@color/primary_text_dark"
+                        android:fontFamily="sans-serif-light"
+                        android:textAllCaps="true"
+                        android:id="@+id/no_of_filters_applied_text" />
+
                 </LinearLayout>
 
             </LinearLayout>
-        </ScrollView>
+
+        </LinearLayout>
+
 
         <LinearLayout android:orientation="vertical"
             android:layout_height="match_parent"
@@ -118,7 +173,7 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:layout_margin="5dp"
-                    android:id="@+id/remove_filters"
+                    android:id="@+id/remove_all_filters"
                     android:background="@drawable/button_rounded_background"
                     android:text="Remove All"
                     android:textColor="@color/white" />
