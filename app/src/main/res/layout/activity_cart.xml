@@ -7,112 +7,117 @@
 
     <include layout="@layout/appbar"/>
 
-    <ScrollView
+    <LinearLayout android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/main_layout">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical|center_horizontal"
-                android:id="@+id/empty_cart_layout">
+                android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/png_empty_cart"
-                    android:cropToPadding="true"
-                    android:paddingLeft="30dp"
-                    android:paddingRight="30dp"
-                    android:contentDescription="@string/empty_cart" />
+                    android:gravity="center_vertical|center_horizontal"
+                    android:id="@+id/empty_cart_layout">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/empty_cart_title"
-                    android:gravity="center_horizontal"
-                    android:textSize="25sp"
-                    android:fontFamily="sans-serif-light"
-                    android:layout_margin="5dp"
-                    android:singleLine="true" />
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:src="@drawable/svg_empty_cart"
+                        android:cropToPadding="true"
+                        android:paddingLeft="30dp"
+                        android:paddingRight="30dp"
+                        android:contentDescription="@string/empty_cart" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/empty_cart_title"
+                        android:gravity="center_horizontal"
+                        android:textSize="25sp"
+                        android:fontFamily="sans-serif-light"
+                        android:layout_margin="5dp"
+                        android:singleLine="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/empty_cart_description"
+                        android:gravity="center_horizontal"
+                        android:fontFamily="sans-serif-light"
+                        android:layout_margin="5dp"
+                        android:singleLine="true" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/empty_cart_description"
-                    android:gravity="center_horizontal"
-                    android:fontFamily="sans-serif-light"
-                    android:layout_margin="5dp"
-                    android:singleLine="true" />
+                    android:id="@+id/fill_layout"
+                    android:paddingBottom="20dp">
+
+                </LinearLayout>
+
             </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/fill_layout"
-                android:paddingBottom="80dp">
-
-            </LinearLayout>
-
-        </LinearLayout>
-    </ScrollView>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:gravity="center_vertical|center_horizontal"
-        android:background="@color/black_333"
-        app:layout_anchor="@id/main_layout"
-        app:layout_anchorGravity="bottom">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/cart_amount"
-            android:textSize="13sp"
-            android:textColor="@color/primary_text_dark"
-            android:fontFamily="sans-serif-light"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:textAllCaps="true" />
+        </ScrollView>
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_combo_description_price_background"
-            android:paddingLeft="15dp"
-            android:paddingTop="5dp"
-            android:paddingRight="15dp"
-            android:paddingBottom="5dp"
-            android:layout_marginRight="50dp">
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:background="@color/black_333">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/rupee"
+                android:text="@string/cart_amount"
+                android:textSize="13sp"
                 android:textColor="@color/primary_text_dark"
-                android:layout_marginRight="1dp"
-                android:textSize="12sp" />
+                android:fontFamily="sans-serif-light"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:textAllCaps="true" />
 
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/price_lorem_ipsum"
-                android:textSize="15sp"
-                android:id="@+id/payable_amount"
-                android:textColor="@color/primary_text_dark" />
+                android:background="@drawable/bg_combo_description_price_background"
+                android:paddingLeft="15dp"
+                android:paddingTop="5dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="5dp"
+                android:layout_marginRight="50dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rupee"
+                    android:textColor="@color/primary_text_dark"
+                    android:layout_marginRight="1dp"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/price_lorem_ipsum"
+                    android:textSize="15sp"
+                    android:id="@+id/payable_amount"
+                    android:textColor="@color/primary_text_dark" />
+            </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 
     <FrameLayout

@@ -4,77 +4,82 @@
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/parentLayout">
+    android:id="@+id/main_layout">
 
     <include layout="@layout/appbar"/>
 
-    <ScrollView
+    <LinearLayout android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="50dp"
-        android:id="@+id/combo_description_layout">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:id="@+id/fill_layout"
-            android:layout_marginBottom="10dp"
-            android:animateLayoutChanges="true"
-            android:paddingBottom="80dp">
-        </LinearLayout>
+            android:layout_height="0dp"
+            android:paddingBottom="50dp"
+            android:layout_weight="1"
+            android:id="@+id/combo_description_layout">
 
-    </ScrollView>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:id="@+id/fill_layout"
+                android:layout_marginBottom="10dp"
+                android:animateLayoutChanges="true"
+                android:paddingBottom="80dp">
+            </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:gravity="center_vertical|center_horizontal"
-        android:background="@color/black_333"
-        app:layout_anchor="@id/combo_description_layout"
-        app:layout_anchorGravity="bottom">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/price_of_combo"
-            android:textSize="13sp"
-            android:textColor="@color/primary_text_dark"
-            android:fontFamily="sans-serif-light"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:textAllCaps="true" />
+        </ScrollView>
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_combo_description_price_background"
-            android:paddingLeft="15dp"
-            android:paddingTop="5dp"
-            android:paddingRight="15dp"
-            android:paddingBottom="5dp"
-            android:layout_marginRight="50dp">
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:background="@color/black_333">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/rupee"
+                android:text="@string/price_of_combo"
+                android:textSize="13sp"
                 android:textColor="@color/primary_text_dark"
-                android:layout_marginRight="1dp"
-                android:textSize="12sp" />
+                android:fontFamily="sans-serif-light"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:textAllCaps="true" />
 
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/price_lorem_ipsum"
-                android:textSize="15sp"
-                android:id="@+id/price"
-                android:textColor="@color/primary_text_dark" />
+                android:background="@drawable/bg_combo_description_price_background"
+                android:paddingLeft="15dp"
+                android:paddingTop="5dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="5dp"
+                android:layout_marginRight="50dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rupee"
+                    android:textColor="@color/primary_text_dark"
+                    android:layout_marginRight="1dp"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/price_lorem_ipsum"
+                    android:textSize="15sp"
+                    android:id="@+id/price"
+                    android:textColor="@color/primary_text_dark" />
+            </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

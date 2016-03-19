@@ -1,34 +1,70 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <include layout="@layout/appbar"/>
 
     <android.support.v4.widget.DrawerLayout
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <!-- The main content view -->
-        <RelativeLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            tools:context=".MainActivity">
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:id="@+id/main_layout">
 
-
-            <ScrollView
+            <LinearLayout android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="0dp"
-                android:layout_marginStart="0dp"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="0dp">
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:id="@+id/empty_combo_layout">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:src="@drawable/svg_empty_combos"
+                        android:cropToPadding="true"
+                        android:paddingLeft="30dp"
+                        android:paddingRight="30dp"
+                        android:contentDescription="@string/empty_cart" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="We didn't find any combos!"
+                        android:gravity="center_horizontal"
+                        android:textSize="25sp"
+                        android:fontFamily="sans-serif-light"
+                        android:layout_margin="5dp"
+                        android:singleLine="true" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="If you applied any filters, remove them"
+                        android:gravity="center_horizontal"
+                        android:fontFamily="sans-serif-light"
+                        android:layout_margin="5dp"
+                        android:singleLine="true" />
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -37,28 +73,77 @@
                     android:gravity="center_horizontal"
                     android:id="@+id/fill_layout"
                     android:paddingBottom="10dp">
-
                 </LinearLayout>
-            </ScrollView>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/fragment_container"
-                android:visibility="gone" />
+            </LinearLayout>
+        </ScrollView>
 
-        </RelativeLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/filters"
+        <LinearLayout android:orientation="vertical"
             android:layout_height="match_parent"
             android:layout_width="250dp"
             android:layout_gravity="left"
-            android:layout_marginRight="50dp"
             android:background="@color/black_333">
-        </android.support.v7.widget.RecyclerView>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/filters"
+                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_weight="1">
+            </android.support.v7.widget.RecyclerView>
+
+            <LinearLayout android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:layout_margin="5dp"
+                    android:id="@+id/apply_filters"
+                    android:background="@drawable/button_rounded_green_background"
+                    android:text="Apply"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:layout_margin="5dp"
+                    android:id="@+id/remove_filters"
+                    android:background="@drawable/button_rounded_background"
+                    android:text="Remove All"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
 
     </android.support.v4.widget.DrawerLayout>
 
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:src="@drawable/svg_filter_filled"
+        android:id="@+id/filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_gravity="bottom|end"
+        android:tint="@color/material_button_tint" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fragment_container"
+        android:visibility="gone" />
+
+</android.support.design.widget.CoordinatorLayout>
 
