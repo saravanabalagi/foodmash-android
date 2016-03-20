@@ -28,14 +28,14 @@
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/svg_marker_filled"
+                app:srcCompat="@drawable/svg_marker_filled"
                 android:scaleType="centerCrop"
                 android:tint="@color/accent_white_bg" />
         </FrameLayout>
     </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/svg_android_bookmark"
+        app:srcCompat="@drawable/svg_android_bookmark"
         android:id="@+id/proceed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

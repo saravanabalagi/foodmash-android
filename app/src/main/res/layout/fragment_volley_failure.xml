@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical|center_horizontal"
     android:background="#CC000000"
@@ -78,7 +80,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/svg_android_retry"
+                    app:srcCompat="@drawable/svg_android_retry"
                     android:padding="10dp"
                     android:tint="#FFCCCCCC" />
 
@@ -95,7 +97,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/svg_right"
+                    app:srcCompat="@drawable/svg_right"
                     android:tint="#FFCCCCCC" />
             </LinearLayout>
 
@@ -118,7 +120,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/svg_android_wifi"
+                    app:srcCompat="@drawable/svg_android_wifi"
                     android:padding="10dp"
                     android:tint="#FFCCCCCC" />
 
@@ -135,7 +137,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/svg_right"
+                    app:srcCompat="@drawable/svg_right"
                     android:tint="#FFCCCCCC" />
 
             </LinearLayout>
@@ -159,7 +161,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/svg_android_mobile_network"
+                    app:srcCompat="@drawable/svg_android_mobile_network"
                     android:padding="10dp"
                     android:tint="#FFCCCCCC" />
 
@@ -176,7 +178,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/svg_right"
+                    app:srcCompat="@drawable/svg_right"
                     android:tint="#FFCCCCCC" />
 
             </LinearLayout>
@@ -207,7 +209,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/android_svg_reply_all"
+                    app:srcCompat="@drawable/android_svg_reply_all"
                     android:padding="10dp"
                     android:tint="#FFCCCCCC" />
 
@@ -224,7 +226,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/svg_right"
+                    app:srcCompat="@drawable/svg_right"
                     android:tint="#FFCCCCCC" />
             </LinearLayout>
 
@@ -255,7 +257,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/android_svg_reply_all"
+                    app:srcCompat="@drawable/android_svg_reply_all"
                     android:padding="10dp"
                     android:tint="#FFCCCCCC" />
 
@@ -272,7 +274,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/svg_right"
+                    app:srcCompat="@drawable/svg_right"
                     android:tint="#FFCCCCCC" />
             </LinearLayout>
 
@@ -295,7 +297,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/svg_android_align_left"
+                    app:srcCompat="@drawable/svg_android_align_left"
                     android:padding="10dp"
                     android:tint="#FFCCCCCC" />
 
@@ -312,7 +314,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/svg_right"
+                    app:srcCompat="@drawable/svg_right"
                     android:tint="#FFCCCCCC" />
 
             </LinearLayout>
@@ -336,7 +338,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/svg_android_backspace"
+                    app:srcCompat="@drawable/svg_android_backspace"
                     android:padding="10dp"
                     android:tint="#FFCCCCCC" />
 
@@ -353,7 +355,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/svg_right"
+                    app:srcCompat="@drawable/svg_right"
                     android:tint="#FFCCCCCC" />
 
             </LinearLayout>

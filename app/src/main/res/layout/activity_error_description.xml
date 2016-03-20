@@ -62,7 +62,7 @@
         android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/svg_android_error_message"
+        app:srcCompat="@drawable/svg_android_error_message"
         android:id="@+id/send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

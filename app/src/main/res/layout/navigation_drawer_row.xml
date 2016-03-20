@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_navigation_row_background"
     android:orientation="horizontal"
     android:gravity="center_vertical"
@@ -25,7 +26,7 @@
         android:layout_height="match_parent"
         android:id="@+id/icon"
         android:paddingLeft="16dp"
-        android:src="@drawable/svg_egg"
+        app:srcCompat="@drawable/svg_egg"
         android:cropToPadding="false"
         android:layout_marginRight="5dp" />
 

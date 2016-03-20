@@ -45,7 +45,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:id="@+id/name_validate"
-                        android:src="@drawable/svg_tick_filled"
+                        app:srcCompat="@drawable/svg_tick_filled"
                         android:tint="@color/okay_green"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -87,7 +87,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:id="@+id/email_validate"
-                            android:src="@drawable/svg_tick_filled"
+                            app:srcCompat="@drawable/svg_tick_filled"
                             android:tint="@color/okay_green"
                             android:visibility="gone"
                             android:layout_marginBottom="7dp" />
@@ -144,7 +144,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:id="@+id/contact_validate"
-                            android:src="@drawable/svg_tick_filled"
+                            app:srcCompat="@drawable/svg_tick_filled"
                             android:tint="@color/okay_green"
                             android:layout_gravity="bottom"
                             android:layout_marginBottom="7dp"
@@ -175,7 +175,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:id="@+id/password_validate"
-                        android:src="@drawable/svg_tick_filled"
+                        app:srcCompat="@drawable/svg_tick_filled"
                         android:tint="@color/okay_green"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -202,7 +202,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:id="@+id/password_confirmation_validate"
-                        android:src="@drawable/svg_tick_filled"
+                        app:srcCompat="@drawable/svg_tick_filled"
                         android:tint="@color/okay_green"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -231,7 +231,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/svg_buyer_protection"
+                            app:srcCompat="@drawable/svg_buyer_protection"
                             android:tint="@color/okay_green" />
 
                         <TextView
@@ -251,7 +251,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/svg_buyer_protection"
+                            app:srcCompat="@drawable/svg_buyer_protection"
                             android:tint="@color/okay_green" />
 
                         <TextView
@@ -272,7 +272,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/svg_buyer_protection"
+                            app:srcCompat="@drawable/svg_buyer_protection"
                             android:tint="@color/okay_green" />
 
                         <TextView
@@ -296,7 +296,7 @@
         android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/svg_android_tick"
+        app:srcCompat="@drawable/svg_android_tick"
         android:id="@+id/create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -32,7 +32,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
-                        android:src="@drawable/svg_empty_addresses"
+                        app:srcCompat="@drawable/svg_empty_addresses"
                         android:cropToPadding="true"
                         android:paddingLeft="30dp"
                         android:paddingRight="30dp"
@@ -118,7 +118,7 @@
         android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/svg_bike"
+        app:srcCompat="@drawable/svg_bike"
         android:id="@+id/confirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

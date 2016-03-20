@@ -33,7 +33,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
-                        android:src="@drawable/svg_empty_cart"
+                        app:srcCompat="@drawable/svg_empty_cart"
                         android:cropToPadding="true"
                         android:paddingLeft="30dp"
                         android:paddingRight="30dp"
@@ -127,7 +127,7 @@
         android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/svg_cart"
+        app:srcCompat="@drawable/svg_cart"
         android:id="@+id/buy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

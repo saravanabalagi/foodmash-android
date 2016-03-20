@@ -47,7 +47,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:id="@+id/name_validate"
-                        android:src="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_no"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -94,7 +94,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:id="@+id/email_validate"
-                        android:src="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_no"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -134,7 +134,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:id="@+id/contact_validate"
-                        android:src="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_no"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -179,7 +179,7 @@
         android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/svg_android_tick"
+        app:srcCompat="@drawable/svg_android_tick"
         android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

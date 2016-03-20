@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_combo"
     android:layout_marginTop="10dp"
@@ -63,7 +65,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:id="@+id/taste"
-                        android:src="@drawable/svg_spicy"
+                        app:srcCompat="@drawable/svg_spicy"
                         android:contentDescription="@string/taste"
                         android:visibility="gone" />
 
@@ -71,7 +73,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:id="@+id/label"
-                        android:src="@drawable/svg_label"
+                        app:srcCompat="@drawable/svg_label"
                         android:contentDescription="@string/label" />
 
                     <TextView

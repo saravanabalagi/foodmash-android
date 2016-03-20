@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginRight="10dp"
     android:background="@drawable/bg_combo">
@@ -20,7 +22,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/svg_circle_filled"
+            app:srcCompat="@drawable/svg_circle_filled"
             android:contentDescription="@string/selected"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"
@@ -30,7 +32,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/selected"
-            android:src="@drawable/svg_tick_filled"
+            app:srcCompat="@drawable/svg_tick_filled"
             android:contentDescription="@string/selected"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"
@@ -84,7 +86,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:id="@+id/taste"
-                    android:src="@drawable/svg_spicy"
+                    app:srcCompat="@drawable/svg_spicy"
                     android:contentDescription="@string/taste"
                     android:visibility="gone" />
 
@@ -92,7 +94,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:id="@+id/label"
-                    android:src="@drawable/svg_label"
+                    app:srcCompat="@drawable/svg_label"
                     android:contentDescription="@string/label" />
 
                 <TextView

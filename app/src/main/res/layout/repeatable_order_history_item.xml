@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:paddingTop="5dp"
@@ -33,7 +35,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:id="@+id/clear_fields"
-            android:src="@android:drawable/ic_menu_revert"
+            app:srcCompat="@android:drawable/ic_menu_revert"
             android:layout_centerVertical="true"
             android:padding="10dp"
             android:tint="@color/accent_white_bg"
@@ -86,7 +88,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:id="@+id/statusIcon"
-                    android:src="@drawable/svg_tick_filled"
+                    app:srcCompat="@drawable/svg_tick_filled"
                     android:tint="@color/okay_green"
                     android:layout_marginRight="5dp" />
 

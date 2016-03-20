@@ -47,7 +47,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/svg_right"
+                            app:srcCompat="@drawable/svg_right"
                             android:tint="@color/black" />
 
                         <TextView
@@ -67,7 +67,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/svg_right"
+                            app:srcCompat="@drawable/svg_right"
                             android:tint="@color/black" />
 
                         <TextView
@@ -88,7 +88,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/svg_right"
+                            app:srcCompat="@drawable/svg_right"
                             android:tint="@color/black" />
 
                         <TextView
@@ -107,7 +107,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/svg_right"
+                            app:srcCompat="@drawable/svg_right"
                             android:tint="@color/black" />
 
                         <TextView
@@ -145,7 +145,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:id="@+id/email_validate"
-                            android:src="@drawable/svg_tick"
+                            app:srcCompat="@drawable/svg_tick"
                             android:tint="@color/okay_green"
                             android:layout_gravity="bottom"
                             android:layout_marginBottom="7dp"
@@ -185,7 +185,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:id="@+id/contact_validate"
-                            android:src="@drawable/svg_tick"
+                            app:srcCompat="@drawable/svg_tick"
                             android:tint="@color/okay_green"
                             android:layout_gravity="bottom"
                             android:layout_marginBottom="7dp"
@@ -210,7 +210,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:id="@+id/issue_validate"
-                        android:src="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_no"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -239,7 +239,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:id="@+id/description_validate"
-                        android:src="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_no"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -269,7 +269,7 @@
         android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/svg_call_filled"
+        app:srcCompat="@drawable/svg_call_filled"
         android:id="@+id/call"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

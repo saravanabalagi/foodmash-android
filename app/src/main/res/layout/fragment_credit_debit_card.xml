@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <LinearLayout
             android:id="@+id/linear_layout_root_detail"
@@ -18,7 +19,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/svg_android_card"
+                    app:srcCompat="@drawable/svg_android_card"
                     android:id="@+id/card_type" />
 
                 <EditText
@@ -41,7 +42,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/svg_user1"
+                    app:srcCompat="@drawable/svg_user1"
                     android:tint="@color/black"
                     android:id="@+id/imageView" />
 
@@ -63,7 +64,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/svg_android_date"
+                    app:srcCompat="@drawable/svg_android_date"
                     android:tint="@color/black"
                     android:id="@+id/imageView2"
                     android:padding="7dp" />
@@ -100,7 +101,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="match_parent"
-                    android:src="@android:drawable/ic_lock_idle_lock"
+                    app:srcCompat="@android:drawable/ic_lock_idle_lock"
                     android:tint="@color/black"
                     android:id="@+id/imageView3"
                     android:padding="7dp" />

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/svg_left"
+                app:srcCompat="@drawable/svg_left"
                 android:layout_gravity="center"
                 android:tint="@color/white"
                 android:id="@+id/arrow_left"
@@ -55,7 +55,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/svg_right"
+                app:srcCompat="@drawable/svg_right"
                 android:layout_gravity="center"
                 android:tint="@color/white"
                 android:id="@+id/arrow_right"

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="10dp"
     android:layout_marginLeft="10dp"
@@ -47,7 +49,7 @@
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:src="@drawable/svg_cart"
+                    app:srcCompat="@drawable/svg_cart"
                     android:scaleType="centerCrop"
                     android:layout_marginLeft="3dp"
                     android:layout_marginRight="3dp"
@@ -116,14 +118,14 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:id="@+id/label"
-                        android:src="@drawable/svg_label"
+                        app:srcCompat="@drawable/svg_label"
                         android:contentDescription="@string/label" />
 
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:id="@+id/taste"
-                        android:src="@drawable/svg_spicy"
+                        app:srcCompat="@drawable/svg_spicy"
                         android:contentDescription="@string/taste"
                         android:visibility="gone" />
 

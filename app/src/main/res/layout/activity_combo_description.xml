@@ -83,7 +83,7 @@
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/svg_cart"
+        app:srcCompat="@drawable/svg_cart"
         android:id="@+id/buy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
