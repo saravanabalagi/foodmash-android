@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,7 +15,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -42,10 +40,10 @@ import in.foodmash.app.utils.EmailUtils;
 /**
  * Created by Zeke on Aug 08 2015.
  */
-public class SignUpActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
+public class SignUpActivity extends FoodmashActivity implements View.OnClickListener, TextWatcher {
 
     @Bind(R.id.create) FloatingActionButton create;
-    @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.terms_and_conditions) LinearLayout termsAndConditions;
     @Bind(R.id.privacy_policy) LinearLayout privacyPolicy;

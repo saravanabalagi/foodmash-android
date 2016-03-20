@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ScrollView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -46,7 +46,7 @@ import in.foodmash.app.utils.NumberUtils;
 public class LoginActivity extends FoodmashActivity implements View.OnClickListener, TextWatcher{
 
     @Bind(R.id.login) FloatingActionButton login;
-    @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.skip) TextView skip;
     @Bind(R.id.register) TextView register;
