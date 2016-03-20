@@ -388,12 +388,15 @@ public class MainActivity extends FoodmashActivity {
                 contentsLayout.addView(contentTextView);
             }
             ((TextView) comboLayout.findViewById(R.id.price)).setText(String.valueOf((int) combo.getPrice()));
-            ImageView foodLabel = (ImageView) comboLayout.findViewById(R.id.label);
-            switch (combo.getLabel()) {
-                case EGG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.egg)); break;
-                case VEG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.veg)); break;
-                case NON_VEG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.non_veg)); break;
+            ImageView comboSize = (ImageView) comboLayout.findViewById(R.id.combo_size_icon);
+            switch (combo.getGroupSize()) {
+                case 1: comboSize.setImageDrawable(ContextCompat.getDrawable(MainActivity.this,R.drawable.svg_user1)); break;
+                case 2: comboSize.setImageDrawable(ContextCompat.getDrawable(MainActivity.this,R.drawable.svg_user2)); break;
+                case 3: comboSize.setImageDrawable(ContextCompat.getDrawable(MainActivity.this,R.drawable.svg_user2)); break;
+                default: comboSize.setImageDrawable(ContextCompat.getDrawable(MainActivity.this,R.drawable.svg_user3)); break;
             }
+            ((TextView) comboLayout.findViewById(R.id.group_size)).setText(String.valueOf(combo.getGroupSize()));
+            if(combo.getGroupSize()==1) comboLayout.findViewById(R.id.group_size).setVisibility(View.GONE);
             comboLayout.findViewById(R.id.view).setOnClickListener(showDescription);
             comboLayout.findViewById(R.id.clickable_layout).setOnClickListener(showDescription);
             comboLayout.findViewById(R.id.image).setOnClickListener(showDescription);

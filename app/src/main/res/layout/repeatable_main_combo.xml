@@ -114,12 +114,36 @@
                             android:textColor="@color/primary_text_dark" />
                     </LinearLayout>
 
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:id="@+id/label"
-                        app:srcCompat="@drawable/svg_label"
-                        android:contentDescription="@string/label" />
+                    <RelativeLayout
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_width="40dp"
+                        android:layout_height="30dp">
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:id="@+id/combo_size_icon"
+                            android:tint="@color/black"
+                            app:srcCompat="@drawable/svg_user3"
+                            android:contentDescription="@string/label" />
+
+                        <TextView
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:paddingLeft="3dp"
+                            android:paddingRight="3dp"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            android:textSize="12sp"
+                            android:id="@+id/group_size"
+                            android:background="@drawable/bg_combo_size_background"
+                            android:text="2"/>
+
+                    </RelativeLayout>
 
                     <ImageView
                         android:layout_width="30dp"
