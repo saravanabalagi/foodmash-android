@@ -65,6 +65,12 @@ public class SplashActivity extends FoodmashActivity {
         makeCheckConnectionRequest();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        makeCheckConnectionRequest();
+    }
+
     public void makeCheckConnectionRequest() {
         JsonObjectRequest checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/versions", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
