@@ -72,6 +72,7 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
     @Bind(R.id.line2) EditText line2;
     @Bind(R.id.contact_no) EditText contactNo;
     @Bind(R.id.locked_area_city) EditText lockedAreaCity;
+    @Bind(R.id.locked_area_city_layout) LinearLayout lockedAreaCityLayout;
 
     @Bind(R.id.area) Spinner area;
     @Bind(R.id.city) Spinner city;
@@ -124,6 +125,11 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
         latLng = new LatLng(getIntent().getDoubleExtra("latitude", 0),getIntent().getDoubleExtra("longitude",0));
         address = new Address();
 
+        name.addTextChangedListener(this);
+        line1.addTextChangedListener(this);
+        line2.addTextChangedListener(this);
+        contactNo.addTextChangedListener(this);
+
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
@@ -136,7 +142,7 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
 
         if(!cart) {
             lockedAreaCity.setText(null);
-            lockedAreaCity.setVisibility(View.GONE);
+            lockedAreaCityLayout.setVisibility(View.GONE);
 
             city = (Spinner) findViewById(R.id.city);
             area = (Spinner) findViewById(R.id.area);

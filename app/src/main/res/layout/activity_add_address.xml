@@ -32,6 +32,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:tint="@color/black_222"
+                        app:srcCompat="@drawable/svg_user1" />
+
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -44,10 +52,10 @@
                         android:layout_weight="1" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/name_validate"
-                        app:srcCompat="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_close_filled"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -58,6 +66,14 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:tint="@color/black_222"
+                        app:srcCompat="@drawable/svg_home" />
 
                     <EditText
                         android:layout_width="match_parent"
@@ -71,10 +87,10 @@
                         android:layout_weight="1" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/address_line_1_validate"
-                        app:srcCompat="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_close_filled"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -86,6 +102,14 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:tint="@color/black_222"
+                        app:srcCompat="@drawable/svg_apartment" />
 
                     <EditText
                         android:layout_width="match_parent"
@@ -99,10 +123,10 @@
                         android:layout_weight="1" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/address_line_2_validate"
-                        app:srcCompat="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_close_filled"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -110,22 +134,44 @@
 
                 </LinearLayout>
 
-                <EditText
+                <LinearLayout android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:id="@+id/locked_area_city"
-                    android:layout_margin="5dp"
-                    android:hint="Area, City"
-                    android:singleLine="true"
-                    android:inputType="none"
-                    android:editable="false" />
+                    android:id="@+id/locked_area_city_layout">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:tint="@color/black_222"
+                        app:srcCompat="@drawable/svg_marker_filled" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:id="@+id/locked_area_city"
+                        android:layout_margin="5dp"
+                        android:hint="Area, City"
+                        android:singleLine="true"
+                        android:inputType="none"
+                        android:editable="false" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/area_city_spinner_layout">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:tint="@color/black_222"
+                        app:srcCompat="@drawable/svg_marker_filled" />
 
                     <Spinner
                         android:layout_width="wrap_content"
@@ -151,10 +197,10 @@
                     android:gravity="center_vertical">
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/area_validate"
-                        app:srcCompat="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_close_filled"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -169,10 +215,10 @@
                     android:gravity="center_vertical">
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/pincode_validate"
-                        app:srcCompat="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_close_filled"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -186,6 +232,14 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:id="@+id/mobile_layout">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:tint="@color/black_222"
+                        app:srcCompat="@drawable/svg_call" />
 
                     <EditText
                         android:layout_width="50dp"
@@ -212,10 +266,10 @@
                         android:numeric="integer" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/contact_validate"
-                        app:srcCompat="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_close_filled"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
