@@ -192,9 +192,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                                             startActivity(intent);
                                             finish();
                                         }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
+                                    } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(CheckoutAddressActivity.this, e); }
                                 }
                             }, new Response.ErrorListener() {
                                 @Override
