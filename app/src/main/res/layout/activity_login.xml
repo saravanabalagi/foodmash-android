@@ -30,6 +30,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:tint="@color/black_222"
+                        app:srcCompat="@drawable/svg_user1" />
+
                     <EditText
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
@@ -71,6 +79,14 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:tint="@color/black_222"
+                        app:srcCompat="@drawable/svg_key" />
 
                     <EditText
                         android:layout_width="match_parent"
