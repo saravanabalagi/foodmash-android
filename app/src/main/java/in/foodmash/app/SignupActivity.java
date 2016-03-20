@@ -84,6 +84,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        setTitle(toolbar,"Sign","up");
 
         fromCart = getIntent().getBooleanExtra("from_cart", false);
         create.setOnClickListener(this);
