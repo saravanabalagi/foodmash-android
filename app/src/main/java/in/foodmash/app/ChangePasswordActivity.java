@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,7 +37,7 @@ import in.foodmash.app.commons.VolleyProgressFragment;
 /**
  * Created by Zeke on Aug 08 2015.
  */
-public class ChangePasswordActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
+public class ChangePasswordActivity extends FoodmashActivity implements View.OnClickListener, TextWatcher {
 
     @Bind(R.id.change) FloatingActionButton change;
     @Bind(R.id.main_layout) ScrollView mainLayout;

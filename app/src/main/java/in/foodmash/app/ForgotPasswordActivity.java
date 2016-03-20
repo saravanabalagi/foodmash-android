@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -39,7 +38,7 @@ import in.foodmash.app.utils.EmailUtils;
 /**
  * Created by Zeke on Aug 08 2015.
  */
-public class ForgotPasswordActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
+public class ForgotPasswordActivity extends FoodmashActivity implements View.OnClickListener, TextWatcher {
 
     @Bind(R.id.forgot) FloatingActionButton forgot;
     @Bind(R.id.phone_layout) LinearLayout phoneLayout;

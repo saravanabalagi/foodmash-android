@@ -1,12 +1,10 @@
 package in.foodmash.app;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -36,12 +34,11 @@ import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
 import in.foodmash.app.custom.ComboDish;
 import in.foodmash.app.custom.ComboOption;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * Created by Zeke on Sep 30 2015.
  */
-public class ComboDescriptionActivity extends AppCompatActivity implements View.OnClickListener {
+public class ComboDescriptionActivity extends FoodmashActivity implements View.OnClickListener {
 
     @Bind(R.id.main_layout) View mainLayout;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
@@ -55,11 +52,6 @@ public class ComboDescriptionActivity extends AppCompatActivity implements View.
     private Combo combo;
     private ImageLoader imageLoader;
     private DisplayMetrics displayMetrics;
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

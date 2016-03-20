@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
@@ -33,7 +32,7 @@ import in.foodmash.app.commons.VolleyProgressFragment;
 /**
  * Created by Zeke on Aug 08 2015.
  */
-public class ForgotPasswordOtpActivity extends AppCompatActivity implements View.OnClickListener{
+public class ForgotPasswordOtpActivity extends FoodmashActivity implements View.OnClickListener{
 
     @Bind(R.id.proceed) FloatingActionButton proceed;
     @Bind(R.id.otp_time_layout) LinearLayout otpTimeLayout;

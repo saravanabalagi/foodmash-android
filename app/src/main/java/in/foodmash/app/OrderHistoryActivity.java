@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -38,7 +37,7 @@ import in.foodmash.app.utils.WordUtils;
 /**
  * Created by Zeke on Aug 08 2015.
  */
-public class OrderHistoryActivity extends AppCompatActivity {
+public class OrderHistoryActivity extends FoodmashActivity {
 
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;

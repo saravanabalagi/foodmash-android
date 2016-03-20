@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -40,7 +39,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 /**
  * Created by Zeke on Jul 19 2015.
  */
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends FoodmashActivity {
 
     @Bind(R.id.city) Spinner citySpinner;
     @Bind(R.id.area) Spinner areaSpinner;

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +42,7 @@ import in.foodmash.app.custom.City;
 /**
  * Created by Zeke on Jul 19 2015.
  */
-public class CheckoutAddressActivity extends AppCompatActivity implements View.OnClickListener {
+public class CheckoutAddressActivity extends FoodmashActivity implements View.OnClickListener {
 
     @Bind(R.id.confirm) FloatingActionButton confirm;
     @Bind(R.id.add_address) TextView addAddress;

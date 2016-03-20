@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -65,9 +63,8 @@ import in.foodmash.app.custom.ComboOption;
 import in.foodmash.app.custom.Dish;
 import in.foodmash.app.custom.Restaurant;
 import in.foodmash.app.utils.DateUtils;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FoodmashActivity {
 
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
@@ -98,11 +95,6 @@ public class MainActivity extends AppCompatActivity {
     private Set<Combo.Size> sizeSelected = new HashSet<>();
     private Set<Dish.Label> preferenceSelected = new HashSet<>();
     private boolean sortPriceLowToHigh = true;
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

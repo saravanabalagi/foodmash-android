@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -39,7 +38,7 @@ import in.foodmash.app.utils.WordUtils;
 /**
  * Created by Zeke on Aug 08 2015.
  */
-public class OrderDescriptionActivity extends AppCompatActivity {
+public class OrderDescriptionActivity extends FoodmashActivity {
 
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;

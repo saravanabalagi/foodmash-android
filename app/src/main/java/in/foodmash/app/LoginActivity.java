@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -44,7 +43,7 @@ import in.foodmash.app.utils.NumberUtils;
 /**
  * Created by Zeke on Jul 19 2015.
  */
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher{
+public class LoginActivity extends FoodmashActivity implements View.OnClickListener, TextWatcher{
 
     @Bind(R.id.login) FloatingActionButton login;
     @Bind(R.id.main_layout) ScrollView mainLayout;

@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Display;
 import android.view.MenuItem;
@@ -44,7 +43,7 @@ import in.foodmash.app.commons.VolleyProgressFragment;
 /**
  * Created by Zeke on Feb 22, 2016.
  */
-public class ErrorDescriptionActivity extends AppCompatActivity {
+public class ErrorDescriptionActivity extends FoodmashActivity {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.send) FloatingActionButton send;

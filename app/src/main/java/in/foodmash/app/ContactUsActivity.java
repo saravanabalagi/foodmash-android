@@ -10,7 +10,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -50,7 +49,7 @@ import in.foodmash.app.utils.NumberUtils;
 /**
  * Created by Zeke on Aug 08 2015.
  */
-public class ContactUsActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
+public class ContactUsActivity extends FoodmashActivity implements View.OnClickListener, TextWatcher {
 
     private static final int MY_PERMISSION_CALL_PHONE = 17;
     @Bind(R.id.call) FloatingActionButton call;

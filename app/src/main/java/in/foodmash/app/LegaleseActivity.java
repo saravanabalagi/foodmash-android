@@ -1,10 +1,8 @@
 package in.foodmash.app;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
@@ -29,12 +27,11 @@ import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.utils.WordUtils;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * Created by Zeke on Feb 16, 2016.
  */
-public class LegaleseActivity extends AppCompatActivity {
+public class LegaleseActivity extends FoodmashActivity {
 
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
@@ -44,12 +41,8 @@ public class LegaleseActivity extends AppCompatActivity {
 
     private boolean signedIn;
     private Legalese legalese;
-    public enum Legalese { TERMS_AND_CONDITIONS, PRIVACY_POLICY, REFUND_POLICY, ABOUT_US};
+    public enum Legalese { TERMS_AND_CONDITIONS, PRIVACY_POLICY, REFUND_POLICY, ABOUT_US}
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

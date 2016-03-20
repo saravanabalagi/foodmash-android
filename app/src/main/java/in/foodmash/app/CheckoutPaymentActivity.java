@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -55,7 +54,7 @@ import in.foodmash.app.utils.NumberUtils;
 /**
  * Created by Zeke on Jul 19 2015.
  */
-public class CheckoutPaymentActivity extends AppCompatActivity implements PaymentRelatedDetailsListener {
+public class CheckoutPaymentActivity extends FoodmashActivity implements PaymentRelatedDetailsListener {
 
     @Bind(R.id.pay) FloatingActionButton pay;
     @Bind(R.id.payable_amount) TextView payableAmount;
@@ -71,7 +70,7 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
     @Bind(R.id.promo_discount) TextView promoDiscount;
     @Bind(R.id.promo_discount_layout) LinearLayout promoDiscountLayout;
     @Bind(R.id.promo_code) EditText promoCode;
-    @Bind(R.id.input_layout_promo_code) TextInputLayout promoCodeInputLayout;
+    @Bind(R.id.promo_code_input_layout) TextInputLayout promoCodeInputLayout;
     @Bind(R.id.delivery_charges) TextView deliveryCharges;
 
     private Intent intent;

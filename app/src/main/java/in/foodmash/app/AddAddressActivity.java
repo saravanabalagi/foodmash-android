@@ -5,7 +5,6 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -53,7 +52,7 @@ import in.foodmash.app.custom.City;
 /**
  * Created by Zeke on Aug 08 2015.
  */
-public class AddAddressActivity extends AppCompatActivity implements TextWatcher {
+public class AddAddressActivity extends FoodmashActivity implements TextWatcher {
 
     @Bind(R.id.save) FloatingActionButton save;
     @Bind(R.id.toolbar) Toolbar toolbar;

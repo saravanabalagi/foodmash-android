@@ -4,15 +4,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 /**
  * Created by Zeke on Feb 22, 2016.
  */
-public class UpdateAppActivity extends AppCompatActivity {
+public class UpdateAppActivity extends FoodmashActivity {
 
-    boolean force;
+    private boolean force;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
