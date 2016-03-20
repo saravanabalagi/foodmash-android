@@ -63,7 +63,7 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
-        setTitle(toolbar,"Delivery","Addresses");
+        setTitle(toolbar,"Mash","addresses");
 
         try {
             objectMapper = new ObjectMapper();

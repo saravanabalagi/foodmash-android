@@ -81,7 +81,7 @@ public class ErrorReportActivity extends FoodmashActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
-        setTitle(toolbar,"Error","Report");
+        setTitle(toolbar,"Mash","error");
 
         release = Build.VERSION.RELEASE;
         sdkVersion = Build.VERSION.SDK_INT;
