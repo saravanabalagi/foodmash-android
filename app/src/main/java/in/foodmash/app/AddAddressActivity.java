@@ -84,7 +84,6 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
     private int cityPos = -1;
     private boolean areaAndCitySetInitially = false;
 
-    private Intent intent;
     private LatLng latLng;
     private boolean edit = false;
     private boolean cart = false;
@@ -106,7 +105,7 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) {
-            intent = new Intent(this, ErrorDescriptionActivity.class);
+            Intent intent = new Intent(this, ErrorDescriptionActivity.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable("error", e);
             intent.putExtras(bundle);
@@ -204,10 +203,10 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
                 Geocoder geocoder = new Geocoder(this);
                 List<android.location.Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
                 if(addresses.size()>0 && addresses.get(0)!=null) {
-                        line1.setText(addresses.get(0).getAddressLine(0));
-                        line2.setText(addresses.get(0).getAddressLine(1));
-                    }
-            } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+                    line1.setText(addresses.get(0).getAddressLine(0));
+                    line2.setText(addresses.get(0).getAddressLine(1));
+                }
+            } catch (Exception e) { Log.i("GPS", e.getMessage()); }
         }
     }
 
@@ -253,6 +252,7 @@ public class AddAddressActivity extends AppCompatActivity implements TextWatcher
                 fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
+                        Intent intent;
                         if (cart) intent = new Intent(AddAddressActivity.this, CheckoutAddressActivity.class);
                         else intent = new Intent(AddAddressActivity.this, AddressActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

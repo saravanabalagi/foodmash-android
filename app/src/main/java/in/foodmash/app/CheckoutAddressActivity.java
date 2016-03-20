@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -46,14 +45,13 @@ import in.foodmash.app.custom.City;
  */
 public class CheckoutAddressActivity extends AppCompatActivity implements View.OnClickListener {
 
-    @Bind(R.id.parent_layout) View parentLayout;
     @Bind(R.id.confirm) FloatingActionButton confirm;
     @Bind(R.id.add_address) TextView addAddress;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.choose_address) LinearLayout chooseAddressLayout;
     @Bind(R.id.empty_address_layout) LinearLayout emptyAddressLayout;
-    @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
 
     private Intent intent;
@@ -61,6 +59,33 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
     private List<City> cities;
     private int addressId;
     private List<Address> addresses;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(Cart.getInstance().getCount()==0) {
+            Intent intent = new Intent(CheckoutAddressActivity.this, CartActivity.class);
+            intent.putExtra("empty_cart", true);
+            startActivity(intent);
+            finish();
+        }
+        makeAddressRequest();
+
+        if(getIntent().getBooleanExtra("total_error",false)) {
+            final Snackbar totalErrorSnackbar = Snackbar.make(mainLayout, "Wrong cart value from server!", Snackbar.LENGTH_INDEFINITE);
+            totalErrorSnackbar.setAction("Try Again", new View.OnClickListener() { @Override public void onClick(View v) { totalErrorSnackbar.dismiss(); } });
+            totalErrorSnackbar.show();
+        }
+
+        if(getIntent().getBooleanExtra("order_id_error",false)) {
+            Intent intent = new Intent(CheckoutAddressActivity.this, CartActivity.class);
+            intent.putExtra("order_id_error", true);
+            startActivity(intent);
+            finish();
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,21 +99,8 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
-        if(Cart.getInstance().getCount()==0) {
-            Intent intent = new Intent(CheckoutAddressActivity.this, CartActivity.class);
-            intent.putExtra("empty_cart", true);
-            startActivity(intent);
-            finish();
-        }
         confirm.setOnClickListener(this);
         addAddress.setOnClickListener(this);
-        makeAddressRequest();
-
-        if(getIntent().getBooleanExtra("total_error",false)) {
-            final Snackbar totalErrorSnackbar = Snackbar.make(mainLayout, "Wrong cart value from server!", Snackbar.LENGTH_INDEFINITE);
-            totalErrorSnackbar.setAction("Try Again", new View.OnClickListener() { @Override public void onClick(View v) { totalErrorSnackbar.dismiss(); } });
-            totalErrorSnackbar.show();
-        }
 
         try {
             objectMapper = new ObjectMapper();
@@ -313,7 +325,7 @@ public class CheckoutAddressActivity extends AppCompatActivity implements View.O
                             addressLayout.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Snackbar.make(parentLayout, "Address "+cardinalNumber+" Selected", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(mainLayout, "Address "+cardinalNumber+" Selected", Snackbar.LENGTH_SHORT).show();
                                     addressId = address.getId();
                                     for(int i=0; i<fillLayout.getChildCount(); i++)
                                         fillLayout.getChildAt(i).findViewById(R.id.selected).setVisibility(View.INVISIBLE);

@@ -101,19 +101,6 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
-        orderId = getIntent().getStringExtra("order_id");
-        apply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                makePromoCodeRequest();
-            }
-        });
-        payableAmount.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("grand_total", 0)));
-        total.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("total", 0)));
-        vat.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("vat", 0)));
-        vatPercentage.setText(getIntent().getStringExtra("vat_percentage"));
-        deliveryCharges.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("delivery_charges", 0)));
-
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,6 +139,37 @@ public class CheckoutPaymentActivity extends AppCompatActivity implements Paymen
         PaymentPagerAdapter paymentPagerAdapter = new PaymentPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(paymentPagerAdapter);
         //getHashAndPaymentRelatedDetails();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        orderId = getIntent().getStringExtra("order_id");
+        if (orderId == null) {
+            intent = new Intent(CheckoutPaymentActivity.this,CheckoutAddressActivity.class);
+            intent.putExtra("order_id_error", true);
+            startActivity(intent);
+            finish();
+        }
+        apply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makePromoCodeRequest();
+            }
+        });
+        payableAmount.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("grand_total", 0)));
+        total.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("total", 0)));
+        if (getIntent().getDoubleExtra("total",0) == 0) {
+            intent = new Intent(CheckoutPaymentActivity.this,CheckoutAddressActivity.class);
+            intent.putExtra("total_error", true);
+            startActivity(intent);
+            finish();
+        }
+        vat.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("vat", 0)));
+        vatPercentage.setText(getIntent().getStringExtra("vat_percentage"));
+        deliveryCharges.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("delivery_charges", 0)));
+
     }
 
     public void getHashAndPaymentRelatedDetails() {

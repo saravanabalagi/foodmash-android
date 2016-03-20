@@ -27,27 +27,27 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".AddAddressActivity" />
-        <activity android:name=".AddressActivity" android:parentActivityName=".MainActivity" />
-        <activity android:name=".CartActivity" android:parentActivityName=".MainActivity" />
-        <activity android:name=".ChangePasswordActivity" android:parentActivityName=".MainActivity" />
-        <activity android:name=".CheckoutAddressActivity" android:parentActivityName=".CartActivity" />
-        <activity android:name=".CheckoutPaymentActivity" android:parentActivityName=".CheckoutAddressActivity" />
-        <activity android:name=".ComboDescriptionActivity" android:parentActivityName=".MainActivity" />
-        <activity android:name=".ContactUsActivity" android:parentActivityName=".MainActivity" />
-        <activity android:name=".ForgotPasswordActivity" android:parentActivityName=".LoginActivity" />
-        <activity android:name=".ForgotPasswordOtpActivity" android:parentActivityName=".LoginActivity" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".ErrorDescriptionActivity" />
-        <activity android:name=".LegaleseActivity" android:parentActivityName=".SignUpActivity" />
-        <activity android:name=".OrderDescriptionActivity" android:parentActivityName=".OrderHistoryActivity" />
-        <activity android:name=".OrderHistoryActivity" android:parentActivityName=".MainActivity" />
-        <activity android:name=".payment.PaymentsActivity" android:parentActivityName=".CheckoutPaymentActivity" />
-        <activity android:name=".PinYourLocationActivity" android:parentActivityName=".AddressActivity" />
-        <activity android:name=".ProfileActivity" android:parentActivityName=".MainActivity" />
-        <activity android:name=".SignUpActivity" android:parentActivityName=".LoginActivity" />
-        <activity android:name=".UpdateAppActivity" />
+        <activity android:name=".AddAddressActivity" android:launchMode="singleTask" android:parentActivityName=".PinYourLocationActivity"/>
+        <activity android:name=".AddressActivity" android:launchMode="singleTask" android:parentActivityName=".MainActivity" />
+        <activity android:name=".CartActivity" android:launchMode="singleTask" android:parentActivityName=".MainActivity" />
+        <activity android:name=".ChangePasswordActivity" android:launchMode="singleTask" android:parentActivityName=".MainActivity" />
+        <activity android:name=".CheckoutAddressActivity" android:launchMode="singleTask" android:parentActivityName=".CartActivity" />
+        <activity android:name=".CheckoutPaymentActivity" android:launchMode="singleTask" android:parentActivityName=".CheckoutAddressActivity" />
+        <activity android:name=".ComboDescriptionActivity" android:launchMode="singleTask" android:parentActivityName=".MainActivity" />
+        <activity android:name=".ContactUsActivity" android:launchMode="singleTask" android:parentActivityName=".MainActivity" />
+        <activity android:name=".ForgotPasswordActivity" android:launchMode="singleTask" android:parentActivityName=".LoginActivity" />
+        <activity android:name=".ForgotPasswordOtpActivity" android:launchMode="singleTask" android:parentActivityName=".LoginActivity" />
+        <activity android:name=".LoginActivity" android:launchMode="singleTask" />
+        <activity android:name=".MainActivity" android:launchMode="singleTask" />
+        <activity android:name=".ErrorDescriptionActivity" android:launchMode="singleTask" />
+        <activity android:name=".LegaleseActivity" android:launchMode="singleTask" android:parentActivityName=".SignUpActivity" />
+        <activity android:name=".OrderDescriptionActivity" android:launchMode="singleTask" android:parentActivityName=".OrderHistoryActivity" />
+        <activity android:name=".OrderHistoryActivity" android:launchMode="singleTask" android:parentActivityName=".MainActivity" />
+        <activity android:name=".payment.PaymentsActivity" android:launchMode="singleTask" android:parentActivityName=".CheckoutPaymentActivity" />
+        <activity android:name=".PinYourLocationActivity" android:launchMode="singleTask" />
+        <activity android:name=".ProfileActivity" android:launchMode="singleTask" android:parentActivityName=".MainActivity" />
+        <activity android:name=".SignUpActivity" android:launchMode="singleTask" android:parentActivityName=".LoginActivity" />
+        <activity android:name=".UpdateAppActivity" android:launchMode="singleTask" />
 
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAYI1ddDqZ1-JTwvH3G_MwDFIpVuplDuKQ" />
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />

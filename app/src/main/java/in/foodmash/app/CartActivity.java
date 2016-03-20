@@ -80,8 +80,18 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
-        if(getIntent().getBooleanExtra("total_error",false)) {
-            final Snackbar totalErrorSnackbar = Snackbar.make(mainLayout, "Wrong cart value from server!", Snackbar.LENGTH_INDEFINITE);
+        buy.setOnClickListener(this);
+        fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
+        emptyCartLayout = (LinearLayout) findViewById(R.id.empty_cart_layout);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(getIntent().getBooleanExtra("order_id_error",false)) {
+            final Snackbar totalErrorSnackbar = Snackbar.make(mainLayout, "Something went wrong!", Snackbar.LENGTH_INDEFINITE);
             totalErrorSnackbar.setAction("Try Again", new View.OnClickListener() { @Override public void onClick(View v) { totalErrorSnackbar.dismiss(); } });
             totalErrorSnackbar.show();
         }
@@ -92,12 +102,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             invalidCombos.show();
         }
 
-
-
-        buy.setOnClickListener(this);
-        fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
-        emptyCartLayout = (LinearLayout) findViewById(R.id.empty_cart_layout);
-
+        fillLayout.removeAllViews();
         total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
         if(cart.getCount()>0) emptyCartLayout.setVisibility(View.GONE);
         for(final HashMap.Entry<Combo,Integer> order: cart.getOrders().entrySet()){
@@ -113,7 +118,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                     ((TextView) comboLayout.findViewById(R.id.count)).setText(String.valueOf(cart.getCount(combo)));
                     ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.calculatePrice() * order.getValue()));
                     total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
-            }});
+                }});
             comboLayout.findViewById(R.id.minus).setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     ((TextView) comboLayout.findViewById(R.id.count)).setText(String.valueOf(cart.decrementFromCart(combo)));
@@ -121,10 +126,9 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                     if(cart.getCount(combo)==0) fillLayout.removeView(comboLayout);
                     ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.calculatePrice() * order.getValue()));
                     total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
-            }});
+                }});
             fillLayout.addView(comboLayout);
         }
-
     }
 
     public void onClick(View v) {
