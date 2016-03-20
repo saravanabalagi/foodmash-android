@@ -69,6 +69,7 @@ public class ForgotPasswordOtpActivity extends FoodmashActivity implements View.
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        setTitle(toolbar,"Forgot","Password");
 
         proceed.setOnClickListener(this);
         resendOtp.setOnClickListener(this);

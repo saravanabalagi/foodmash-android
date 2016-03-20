@@ -77,6 +77,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        setTitle(toolbar,"Mash","profile");
 
         save.setOnClickListener(this);
         changePassword.setOnClickListener(this);

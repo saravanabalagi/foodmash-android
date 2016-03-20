@@ -99,6 +99,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        setTitle(toolbar,"Payment","method");
 
         pay.setOnClickListener(new View.OnClickListener() {
             @Override

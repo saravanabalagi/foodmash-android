@@ -17,9 +17,9 @@ public class FoodmashActivity extends AppCompatActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
-    protected void setTitle(Toolbar toolbar, String firstHalf, String secondHalf) {
-        ((TextView) toolbar.findViewById(R.id.logo_text_white)).setText(firstHalf);
-        ((TextView) toolbar.findViewById(R.id.logo_text_red)).setText(secondHalf);
+    protected void setTitle(Toolbar toolbar, String textWhite, String textRed) {
+        ((TextView) toolbar.findViewById(R.id.logo_text_white)).setText(textWhite);
+        ((TextView) toolbar.findViewById(R.id.logo_text_red)).setText(textRed);
     }
 
 }

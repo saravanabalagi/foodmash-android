@@ -55,6 +55,7 @@ public class LegaleseActivity extends FoodmashActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        setTitle(toolbar,"Foodmash","legalism");
 
         signedIn = getIntent().getBooleanExtra("SignedIn", true);
         legalese = (Legalese) getIntent().getSerializableExtra("Type");

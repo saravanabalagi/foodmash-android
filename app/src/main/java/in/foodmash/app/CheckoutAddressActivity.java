@@ -97,6 +97,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        setTitle(toolbar,"Select","address");
 
         confirm.setOnClickListener(this);
         addAddress.setOnClickListener(this);

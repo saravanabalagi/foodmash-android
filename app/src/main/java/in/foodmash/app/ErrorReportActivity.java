@@ -43,7 +43,7 @@ import in.foodmash.app.commons.VolleyProgressFragment;
 /**
  * Created by Zeke on Feb 22, 2016.
  */
-public class ErrorDescriptionActivity extends FoodmashActivity {
+public class ErrorReportActivity extends FoodmashActivity {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.send) FloatingActionButton send;
@@ -73,7 +73,7 @@ public class ErrorDescriptionActivity extends FoodmashActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_error_description);
+        setContentView(R.layout.activity_error_report);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
@@ -81,6 +81,7 @@ public class ErrorDescriptionActivity extends FoodmashActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        setTitle(toolbar,"Error","Report");
 
         release = Build.VERSION.RELEASE;
         sdkVersion = Build.VERSION.SDK_INT;

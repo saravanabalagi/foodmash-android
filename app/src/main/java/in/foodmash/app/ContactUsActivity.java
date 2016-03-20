@@ -88,6 +88,7 @@ public class ContactUsActivity extends FoodmashActivity implements View.OnClickL
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        setTitle(toolbar,"Contact","us");
 
         termsAndConditions.setOnClickListener(this);
         refundPolicy.setOnClickListener(this);

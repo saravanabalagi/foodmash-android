@@ -104,14 +104,8 @@ public class AddAddressActivity extends FoodmashActivity implements TextWatcher 
         try {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) {
-            Intent intent = new Intent(this, ErrorDescriptionActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("error", e);
-            intent.putExtras(bundle);
-            startActivity(intent);
-            finish();
-        }
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        setTitle(toolbar,"Add","address");
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
-import in.foodmash.app.ErrorDescriptionActivity;
+import in.foodmash.app.ErrorReportActivity;
 import in.foodmash.app.LoginActivity;
 import in.foodmash.app.R;
 import in.foodmash.app.custom.Cart;
@@ -111,7 +111,7 @@ public class Actions {
                 .setPositiveButton("View", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(context, ErrorDescriptionActivity.class);
+                        Intent intent = new Intent(context, ErrorReportActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("error", e);
                         intent.putExtras(bundle);

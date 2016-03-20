@@ -55,6 +55,7 @@ public class OrderHistoryActivity extends FoodmashActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        setTitle(toolbar,"Order","history");
 
         makeOrderHistoryRequest();
 

@@ -66,6 +66,7 @@ public class ForgotPasswordActivity extends FoodmashActivity implements View.OnC
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        setTitle(toolbar,"Forgot","Password");
         forgot.setOnClickListener(this);
 
         phoneValidate = (ImageView) findViewById(R.id.contact_validate);

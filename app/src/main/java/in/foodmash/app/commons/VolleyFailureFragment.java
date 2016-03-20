@@ -24,7 +24,7 @@ import com.android.volley.VolleyError;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import in.foodmash.app.ErrorDescriptionActivity;
+import in.foodmash.app.ErrorReportActivity;
 import in.foodmash.app.R;
 import in.foodmash.app.SplashActivity;
 
@@ -104,7 +104,7 @@ public class VolleyFailureFragment extends Fragment implements View.OnClickListe
             case R.id.exit: getActivity().finish(); System.exit(0); break;
             case R.id.retry: retry(); break;
             case R.id.error_description:
-                intent = new Intent(getActivity(), ErrorDescriptionActivity.class);
+                intent = new Intent(getActivity(), ErrorReportActivity.class);
                 Bundle extras = new Bundle();
                 extras.putSerializable("error", volleyError);
                 intent.putExtras(extras);

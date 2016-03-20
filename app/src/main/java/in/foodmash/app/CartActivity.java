@@ -78,6 +78,7 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        setTitle(toolbar,"Food","cart");
 
         buy.setOnClickListener(this);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
