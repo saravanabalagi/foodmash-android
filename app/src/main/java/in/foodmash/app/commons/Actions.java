@@ -115,6 +115,7 @@ public class Actions {
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("error", e);
                         intent.putExtras(bundle);
+                        intent.putExtra("ignorable", true);
                         context.startActivity(intent);
                     }
                 });
@@ -122,5 +123,4 @@ public class Actions {
         alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"Cancel", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { alertDialog.dismiss(); } });
         alertDialog.show();
     }
-
 }

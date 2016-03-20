@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,6 +14,7 @@ import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -26,7 +28,6 @@ import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -50,10 +51,14 @@ public class ErrorReportActivity extends FoodmashActivity {
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.title) TextView titleTextView;
     @Bind(R.id.message) TextView messageTextView;
-    @Bind(R.id.stacktrace) TextView stacktraceTextView;
+    @Bind(R.id.cause) TextView causeTextView;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
+    @Bind(R.id.error_description_layout) LinearLayout errorDescriptionLayout;
+    @Bind(R.id.view_error_description) TextView viewErrorDescription;
 
     Throwable e;
+    String stackTrace;
+    String causeTrace;
     String timeNow;
     String release;
     int sdkVersion;
@@ -63,6 +68,15 @@ public class ErrorReportActivity extends FoodmashActivity {
     String sizeCategory;
     int height;
     int width;
+
+    boolean ignorable = false;
+    boolean isShowingErrorDescription = false;
+
+    @Override
+    public void onBackPressed() {
+        if(!ignorable) { startActivity(new Intent(this, SplashActivity.class)); finish(); }
+        else super.onBackPressed();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -82,6 +96,22 @@ public class ErrorReportActivity extends FoodmashActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         setTitle(toolbar,"Mash","error");
+
+        ignorable = getIntent().getBooleanExtra("ignorable", false);
+        viewErrorDescription.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isShowingErrorDescription) {
+                    viewErrorDescription.setText("Show Error Description");
+                    isShowingErrorDescription = false;
+                    errorDescriptionLayout.setVisibility(View.GONE);
+                } else {
+                    viewErrorDescription.setText("Hide Error Description");
+                    isShowingErrorDescription = true;
+                    errorDescriptionLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         release = Build.VERSION.RELEASE;
         sdkVersion = Build.VERSION.SDK_INT;
@@ -113,9 +143,30 @@ public class ErrorReportActivity extends FoodmashActivity {
         e = (Throwable) extras.getSerializable("error");
 
         if(e!=null) {
+
+            stackTrace = "";
+            stackTrace += "[ERROR] "+e.getMessage()+"\r\n";
+            StackTraceElement stackTraceElements[] = e.getStackTrace();
+            for (StackTraceElement stackTraceElement: stackTraceElements)
+                stackTrace += stackTraceElement.toString() + "\r\n";
+            stackTrace += "\r\n";
+            Throwable cause = e.getCause();
+            causeTrace = "";
+            while (cause != null) {
+                causeTrace += "[CAUSE] "+cause.getMessage() + "\r\n";
+                stackTrace += "[CAUSE] "+cause.getMessage() + "\r\n";
+                StackTraceElement stackTraceElementsForCause[] = cause.getStackTrace();
+                for (StackTraceElement stackTraceElement: stackTraceElementsForCause)
+                    stackTrace += stackTraceElement.toString() + "\r\n";
+                stackTrace += "\r\n";
+                cause = cause.getCause();
+            }
+
             titleTextView.setText(e.getClass().getName());
             messageTextView.setText(e.getMessage());
-            stacktraceTextView.setText(Arrays.toString(e.getStackTrace()));
+            causeTextView.setText(causeTrace);
+
+
         }
 
         Calendar calendar = Calendar.getInstance();
@@ -128,6 +179,23 @@ public class ErrorReportActivity extends FoodmashActivity {
                 sendEmail();
             }
         });
+
+        if(!ignorable) new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Snackbar.make(mainLayout, "App has encountered a fatal error", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Restart", new View.OnClickListener() { @Override public void onClick(View v) { onBackPressed(); } })
+                        .show();
+            }
+        }, 5000);
+        else new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Snackbar.make(mainLayout, "Something went wrong", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Go Back", new View.OnClickListener() { @Override public void onClick(View v) { onBackPressed(); } })
+                        .show();
+            }
+        }, 5000);
 
     }
 
@@ -149,7 +217,8 @@ public class ErrorReportActivity extends FoodmashActivity {
             HashMap<String, String> dataHashMap = new HashMap<>();
             dataHashMap.put("class",e.getClass().getName());
             dataHashMap.put("message",e.getMessage());
-            dataHashMap.put("stacktrace",Arrays.toString(e.getStackTrace()));
+            dataHashMap.put("causetrace",causeTrace);
+            dataHashMap.put("stacktrace",stackTrace);
             dataHashMap.put("time",timeNow);
             JSONObject dataJson = new JSONObject(dataHashMap);
             HashMap<String, String> hostHashMap = new HashMap<>();
