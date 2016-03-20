@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -349,21 +349,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(MainActivity.this)
-                .setIconAttribute(android.R.attr.alertDialogIcon)
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this)
+                .setCancelable(true)
                 .setTitle("Exit App ?")
-                .setMessage("We're sad to see you go. Do you really want to exit the app?")
-                .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.super.onBackPressed();
-                    }
-                }).setNegativeButton("No, lemme eat more", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        }).show();
+                .setMessage("We're sad to see you go. Do you really want to exit the app?");
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE ,"Exit", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { MainActivity.super.onBackPressed(); } });
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"No, lemme eat more", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) { alertDialog.dismiss(); } });
+        alertDialog.show();
     }
 
     private void updateFillLayout(List<Combo> combos) {
