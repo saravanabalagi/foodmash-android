@@ -136,7 +136,7 @@ public class Cart {
             for (Combo combo : orders.keySet()) {
                 boolean isComboAvailable = false;
                 for (Combo comboEntry : combos)
-                    if (combo.getId() == comboEntry.getId()) {
+                    if (combo.getId() == comboEntry.getId() && comboEntry.isAvailable()) {
                         isComboAvailable = true;
                         break;
                     }
