@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
-import java.util.TreeMap;
 
 /**
  * Created by Zeke on Sep 10 2015.
@@ -21,7 +20,7 @@ public class Combo {
     private Category category;
     private String name;
     private String description;
-    private boolean available;
+    private boolean available = false;
     private float price;
     public enum Category { REGULAR, BUDGET, CORPORATE, HEALTH }
     public enum Size { MICRO, MEDIUM, MEGA }
@@ -83,16 +82,16 @@ public class Combo {
         return dishNames.substring(0,dishNames.length()-1);
     }
 
-    @JsonIgnore public TreeMap<Integer,Pair<String,Dish.Label>> getContents() {
-        TreeMap<Integer,Pair<String,Dish.Label>> contents = new TreeMap<>();
+    @JsonIgnore public ArrayList<Pair<String,Dish.Label>> getContents() {
+        ArrayList<Pair<String,Dish.Label>> contents = new ArrayList<>();
         for (ComboOption comboOption : this.getComboOptions()) {
             String comboOptions = "";
             for(ComboDish comboDish: comboOption.getComboOptionDishes())
                 comboOptions += comboDish.getDish().getName() + "/ ";
-            contents.put(comboOption.getPriority(), new Pair<>(((comboOption.getMinCount()==1)?"":comboOption.getMinCount()+"x ") + comboOptions.substring(0, comboOptions.length() - 2), comboOption.getLabel()));
+            contents.add(new Pair<>(((comboOption.getMinCount()==1)?"":comboOption.getMinCount()+"x ") + comboOptions.substring(0, comboOptions.length() - 2), comboOption.getLabel()));
         }
         for (ComboDish comboDish : this.getComboDishes())
-            contents.put(comboDish.getPriority(), new Pair<>(((comboDish.getMinCount()==1)?"":comboDish.getMinCount()+"x ")+comboDish.getDish().getName(),comboDish.getDish().getLabel()));
+            contents.add(new Pair<>(((comboDish.getMinCount()==1)?"":comboDish.getMinCount()+"x ")+comboDish.getDish().getName(),comboDish.getDish().getLabel()));
         return contents;
     }
 

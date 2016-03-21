@@ -209,7 +209,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    app:srcCompat="@drawable/android_svg_reply_all"
+                    app:srcCompat="@drawable/svg_android_reply_all"
                     android:padding="10dp"
                     android:tint="#FFCCCCCC" />
 
@@ -257,7 +257,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    app:srcCompat="@drawable/android_svg_reply_all"
+                    app:srcCompat="@drawable/svg_android_reply_all"
                     android:padding="10dp"
                     android:tint="#FFCCCCCC" />
 

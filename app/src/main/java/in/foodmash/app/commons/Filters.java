@@ -1,6 +1,7 @@
 package in.foodmash.app.commons;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Set;
 
 import in.foodmash.app.R;
@@ -21,11 +21,16 @@ public class Filters extends RecyclerView.Adapter {
     public enum Type { REGULAR, HEADER }
     private ArrayList<Integer> headerPositions = new ArrayList<>();
     private Set<Integer> selectedPositions = new HashSet<>();
-    private LinkedHashMap<String, Integer> filters = new LinkedHashMap<>();
+    private ArrayList<Pair<String, Integer>> filters = new ArrayList<>();
 
     public Filters() { }
-    public void addFilter(String filter, int iconResource) { filters.put(filter,iconResource); }
-    public void addHeader(String header) { filters.put(header,-1); headerPositions.add(filters.size() - 1); }
+    public void changeLocation(String location) {
+        Integer icon = filters.get(1).second;
+        filters.remove(1);
+        filters.add(1, new Pair<>(location, icon));
+    }
+    public void addFilter(String filter, int iconResource) { filters.add(new Pair<>(filter, iconResource)); }
+    public void addHeader(String header) { filters.add(new Pair<>(header, -1)); headerPositions.add(filters.size() - 1); }
     public void setSelected(Integer position) { selectedPositions.add(position); }
     public void removeSelected(Integer position) { selectedPositions.remove(position); }
     public void clearAllSelected() { selectedPositions.clear(); }
@@ -52,12 +57,12 @@ public class Filters extends RecyclerView.Adapter {
         else return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.navigation_drawer_row,parent,false),Type.REGULAR);
     }
     @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        String filter = (new ArrayList<>(filters.keySet())).get(position);
+        Pair<String,Integer> filterIconPair = filters.get(position);
         if(((ViewHolder) holder).type==Type.REGULAR) {
-            ((ViewHolder) holder).text.setText(filter);
-            ((ViewHolder) holder).icon.setImageResource(filters.get(filter));
+            ((ViewHolder) holder).text.setText(filterIconPair.first);
+            ((ViewHolder) holder).icon.setImageResource(filterIconPair.second);
             if(selectedPositions.contains(position)) holder.itemView.setActivated(true);
             else holder.itemView.setActivated(false);
-        } else ((ViewHolder) holder).header.setText(filter);
+        } else ((ViewHolder) holder).header.setText(filterIconPair.first);
     }
 }

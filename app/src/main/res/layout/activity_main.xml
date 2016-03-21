@@ -160,9 +160,9 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:layout_margin="5dp"
-                    android:id="@+id/apply_filters"
-                    android:background="@drawable/button_rounded_green_background"
-                    android:text="Apply"
+                    android:id="@+id/remove_all_filters"
+                    android:background="@drawable/button_rounded_background"
+                    android:text="Remove All"
                     android:textColor="@color/white" />
 
                 <TextView
@@ -173,9 +173,9 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:layout_margin="5dp"
-                    android:id="@+id/remove_all_filters"
-                    android:background="@drawable/button_rounded_background"
-                    android:text="Remove All"
+                    android:id="@+id/apply_filters"
+                    android:background="@drawable/button_rounded_green_background"
+                    android:text="Apply"
                     android:textColor="@color/white" />
 
             </LinearLayout>

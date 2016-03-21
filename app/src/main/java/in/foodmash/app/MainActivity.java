@@ -39,11 +39,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -90,6 +91,7 @@ public class MainActivity extends FoodmashActivity {
     private DisplayMetrics displayMetrics;
     private ObjectMapper objectMapper;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+    private Filters filters;
 
     private Set<Combo.Category> categorySelected = new HashSet<>();
     private Set<Combo.Size> sizeSelected = new HashSet<>();
@@ -150,7 +152,7 @@ public class MainActivity extends FoodmashActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener(){
             @Override public boolean onSingleTapUp(MotionEvent e) { return true; } });
-        final Filters filters = new Filters();
+        filters = new Filters();
 
         filters.addHeader("Deliver to");
         filters.addFilter(Info.getAreaName(this), R.drawable.svg_marker_filled);
@@ -205,7 +207,7 @@ public class MainActivity extends FoodmashActivity {
                 if(child!=null && gestureDetector.onTouchEvent(e)) {
                     int position = recyclerView.getChildAdapterPosition(child);
                     switch(position) {
-                        case 1: startActivity(new Intent(MainActivity.this, SplashActivity.class));
+                        case 1: startActivity(new Intent(MainActivity.this, SplashActivity.class)); break;
 
                         case 3: makeActive(child, position, Combo.Category.REGULAR); break;
                         case 4: makeActive(child, position, Combo.Category.BUDGET); break;
@@ -273,8 +275,15 @@ public class MainActivity extends FoodmashActivity {
             }
         });
 
+    }
 
-        Date comboUpdatedAt = null;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        filters.changeLocation(Info.getAreaName(this));
+        filters.notifyDataSetChanged();
+
+        Date comboUpdatedAt;
         boolean areCombosOutdated = true;
         if(Info.getComboUpdatedAtDate(this)!=null) {
             try {
@@ -293,6 +302,7 @@ public class MainActivity extends FoodmashActivity {
             snackbar.show();
         }
         makeComboRequest();
+
     }
 
     public void makeComboRequest() {
@@ -355,7 +365,7 @@ public class MainActivity extends FoodmashActivity {
         List<Combo> filteredCombos = applyFilters(combos);
         if(filteredCombos.size()==0) { emptyComboLayout.setVisibility(View.VISIBLE); fillLayout.setVisibility(View.GONE); return; }
         else { emptyComboLayout.setVisibility(View.GONE); fillLayout.setVisibility(View.VISIBLE); }
-        TreeMap<Integer, LinearLayout> comboTreeMap = new TreeMap<>();
+        fillLayout.removeAllViews();
         for (final Combo combo : filteredCombos) {
             View.OnClickListener showDescription = new View.OnClickListener() {
                 @Override
@@ -373,11 +383,11 @@ public class MainActivity extends FoodmashActivity {
             ((TextView) comboLayout.findViewById(R.id.name)).setText(combo.getName());
             LinearLayout contentsLayout = (LinearLayout) comboLayout.findViewById(R.id.contents_layout);
             contentsLayout.setOnClickListener(showDescription);
-            TreeMap<Integer, Pair<String,Dish.Label>> contents = combo.getContents();
-            for (int n : contents.navigableKeySet()) {
+            ArrayList<Pair<String,Dish.Label>> contents = combo.getContents();
+            for (Pair<String, Dish.Label> labelPair: contents) {
                 LinearLayout contentTextView = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_main_combo_content, contentsLayout, false);
-                String dishNameString = contents.get(n).first;
-                Dish.Label dishLabel = contents.get(n).second;
+                String dishNameString = labelPair.first;
+                Dish.Label dishLabel = labelPair.second;
                 ImageView label = (ImageView) contentTextView.findViewById(R.id.label);
                 switch (dishLabel) {
                     case EGG: label.setColorFilter(ContextCompat.getColor(this, R.color.egg)); break;
@@ -398,13 +408,24 @@ public class MainActivity extends FoodmashActivity {
             ((TextView) comboLayout.findViewById(R.id.group_size)).setText(String.valueOf(combo.getGroupSize()));
             if(combo.getGroupSize()==1) comboLayout.findViewById(R.id.group_size).setVisibility(View.GONE);
             comboLayout.findViewById(R.id.view).setOnClickListener(showDescription);
+            comboLayout.findViewById(R.id.view_combo_separate_button).setOnClickListener(showDescription);
             comboLayout.findViewById(R.id.clickable_layout).setOnClickListener(showDescription);
             comboLayout.findViewById(R.id.image).setOnClickListener(showDescription);
+            if(combo.isAvailable())  {
+                comboLayout.findViewById(R.id.view_or_cart_layout).setVisibility(View.VISIBLE);
+                comboLayout.findViewById(R.id.view_combo_separate_button).setVisibility(View.GONE);
+                comboLayout.findViewById(R.id.combo_overlay_layout).setVisibility(View.GONE);
+            } else {
+                comboLayout.findViewById(R.id.view_or_cart_layout).setVisibility(View.GONE);
+                comboLayout.findViewById(R.id.view_combo_separate_button).setVisibility(View.VISIBLE);
+                comboLayout.findViewById(R.id.combo_overlay_layout).setVisibility(View.VISIBLE);
+            }
             final TextView addToCartLayout = (TextView) comboLayout.findViewById(R.id.add_to_cart_layout);
             final LinearLayout addedToCartLayout = (LinearLayout) comboLayout.findViewById(R.id.added_to_cart_layout);
             final LinearLayout countLayout = (LinearLayout) comboLayout.findViewById(R.id.count_layout);
             final TextView count = (TextView) countLayout.findViewById(R.id.count);
             int quantity = cart.getCount(combo.getId());
+            if(!combo.isAvailable()) cart.removeOrder(combo);
             count.setText(String.valueOf(quantity));
             if (quantity > 0) {
                 addedToCartLayout.setVisibility(View.VISIBLE);
@@ -463,18 +484,20 @@ public class MainActivity extends FoodmashActivity {
                 restaurantsLayout.addView(restaurantLayout);
             }
 
-            comboTreeMap.put((int) combo.getPrice(), comboLayout);
+            fillLayout.addView(comboLayout);
         }
-
-        fillLayout.removeAllViews();
-        if(sortPriceLowToHigh)
-            for (int n : comboTreeMap.navigableKeySet())
-                fillLayout.addView(comboTreeMap.get(n));
-        else for (int n : comboTreeMap.descendingKeySet())
-            fillLayout.addView(comboTreeMap.get(n));
     }
 
     private List<Combo> applyFilters(List<Combo> combos) {
+
+        Collections.sort(combos, new Comparator<Combo>() {
+            @Override
+            public int compare(Combo lhs, Combo rhs) {
+                if(sortPriceLowToHigh) return Float.compare(lhs.getPrice(), rhs.getPrice());
+                else return Float.compare(rhs.getPrice(), lhs.getPrice());
+            }
+        });
+
         if(categorySelected.isEmpty() && sizeSelected.isEmpty() && preferenceSelected.isEmpty()) {
             filterCombosText.setVisibility(View.VISIBLE);
             noOfFiltersLayout.setVisibility(View.GONE);

@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +21,11 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.TreeMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -43,7 +46,9 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
     @Bind(R.id.main_layout) View mainLayout;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.price) TextView currentPrice;
+    @Bind(R.id.combo_unavailable) TextView comboUnavailable;
     @Bind(R.id.buy) FloatingActionButton buy;
+    @Bind(R.id.back) FloatingActionButton back;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     private TextView cartCount;
@@ -112,7 +117,13 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                 combo = c;
         if(combo==null) { Snackbar.make(mainLayout,"Something went wrong. Try again later!",Snackbar.LENGTH_LONG).show(); return; }
 
+        if (!combo.isAvailable()) {
+            comboUnavailable.setVisibility(View.VISIBLE);
+            buy.setVisibility(View.GONE);
+            back.setVisibility(View.VISIBLE);
+        }
         buy.setOnClickListener(this);
+        back.setOnClickListener(this);
         imageLoader = Swift.getInstance(ComboDescriptionActivity.this).getImageLoader();
         updateFillLayout();
 
@@ -131,7 +142,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
 
     private void updateFillLayout() {
         fillLayout.removeAllViews();
-        final TreeMap<Integer,LinearLayout> layoutOrderTreeMap = new TreeMap<>();
+        final ArrayList<Pair<Object,LinearLayout>> layoutOrderArrayList = new ArrayList<>();
 
         for (final ComboOption comboOption: combo.getComboOptions()) {
             final LinearLayout currentComboFoodLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_combo_description_combo_option, fillLayout, false);
@@ -241,7 +252,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                 });
                 optionsLayout.addView(comboOptionsLayout);
             }
-            layoutOrderTreeMap.put(comboOption.getPriority(), currentComboFoodLayout);
+            layoutOrderArrayList.add(new Pair<>((Object)comboOption, currentComboFoodLayout));
 
         }
         for (final ComboDish comboDish: combo.getComboDishes()) {
@@ -278,10 +289,18 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                     updatePrice();
                 }
             });
-            layoutOrderTreeMap.put(comboDish.getPriority(), comboDishLayout);
+            layoutOrderArrayList.add(new Pair<>((Object)comboDish, comboDishLayout));
         }
-        for (LinearLayout comboFoodLayout : layoutOrderTreeMap.values())
-            fillLayout.addView(comboFoodLayout);
+        Collections.sort(layoutOrderArrayList, new Comparator<Pair<Object, LinearLayout>>() {
+            @Override
+            public int compare(Pair<Object, LinearLayout> lhs, Pair<Object, LinearLayout> rhs) {
+                int priorityLhs = (lhs.first instanceof ComboOption) ? ((ComboOption) lhs.first).getPriority() : ((ComboDish) lhs.first).getPriority();
+                int priorityRhs = (rhs.first instanceof ComboOption) ? ((ComboOption) rhs.first).getPriority() : ((ComboDish) rhs.first).getPriority();
+                return priorityLhs - priorityRhs;
+            }
+        });
+        for (Pair<Object,LinearLayout> comboFoodLayoutPair : layoutOrderArrayList)
+            fillLayout.addView(comboFoodLayoutPair.second);
         updatePrice();
     }
 
@@ -306,6 +325,8 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                     .show();
                 Actions.updateCartCount(cartCount);
                 break;
+            case R.id.back:
+                onBackPressed();
         }
     }
 
