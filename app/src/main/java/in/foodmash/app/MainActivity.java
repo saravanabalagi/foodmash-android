@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -69,6 +70,7 @@ public class MainActivity extends FoodmashActivity {
 
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
+    @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.empty_combo_layout) LinearLayout emptyComboLayout;
     @Bind(R.id.filter) FloatingActionButton filterFab;
     @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
@@ -275,6 +277,13 @@ public class MainActivity extends FoodmashActivity {
             }
         });
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                onResume();
+            }
+        });
+
     }
 
     @Override
@@ -311,6 +320,7 @@ public class MainActivity extends FoodmashActivity {
             public void onResponse(JSONObject response) {
                 try {
                     if (response.getBoolean("success")) {
+                        swipeRefreshLayout.setRefreshing(false);
                         if (snackbar!=null && snackbar.isShown()) snackbar.dismiss();
                         Animations.fadeOut(fragmentContainer,100);
                         Log.i("Combos", response.getJSONObject("data").getJSONArray("combos").length() + " combos found");
@@ -331,6 +341,7 @@ public class MainActivity extends FoodmashActivity {
                 }
             }
         });
+        swipeRefreshLayout.setRefreshing(true);
         Swift.getInstance(this).addToRequestQueue(getCombosRequest, 20000, 2, 1.0f);
     }
 

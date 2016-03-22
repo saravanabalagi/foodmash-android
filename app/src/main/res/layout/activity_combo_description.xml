@@ -24,25 +24,30 @@
             android:visibility="gone"
             android:background="#333"/>
 
-        <ScrollView
+        <android.support.v4.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:paddingBottom="50dp"
             android:layout_weight="1"
-            android:id="@+id/combo_description_layout">
+            android:id="@+id/swipe_refresh_layout">
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:id="@+id/fill_layout"
-                android:layout_marginBottom="10dp"
-                android:animateLayoutChanges="true"
-                android:paddingBottom="80dp">
-            </LinearLayout>
+            <ScrollView
+                android:layout_height="match_parent"
+                android:layout_width="match_parent">
 
-        </ScrollView>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:id="@+id/fill_layout"
+                    android:layout_marginBottom="10dp"
+                    android:animateLayoutChanges="true"
+                    android:paddingBottom="80dp">
+                </LinearLayout>
+
+            </ScrollView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <LinearLayout
             android:orientation="horizontal"

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Pair;
@@ -45,6 +46,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
 
     @Bind(R.id.main_layout) View mainLayout;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.price) TextView currentPrice;
     @Bind(R.id.combo_unavailable) TextView comboUnavailable;
     @Bind(R.id.buy) FloatingActionButton buy;
@@ -104,6 +106,20 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
         displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                onResume();
+            }
+        });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        swipeRefreshLayout.setRefreshing(true);
+
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
@@ -126,21 +142,10 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
         back.setOnClickListener(this);
         imageLoader = Swift.getInstance(ComboDescriptionActivity.this).getImageLoader();
         updateFillLayout();
-
-    }
-
-    private void resetLayout() {
-        for(ComboOption comboOption: combo.getComboOptions()) {
-            for (ComboDish comboDish : comboOption.getComboOptionDishes())
-                comboDish.resetQuantity();
-            comboOption.resetSelectedComboOptionDishes();
-        }
-        for(ComboDish comboDish: combo.getComboDishes())
-            comboDish.resetQuantity();
-        updateFillLayout();
     }
 
     private void updateFillLayout() {
+
         fillLayout.removeAllViews();
         final ArrayList<Pair<Object,LinearLayout>> layoutOrderArrayList = new ArrayList<>();
 
@@ -302,6 +307,8 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
         for (Pair<Object,LinearLayout> comboFoodLayoutPair : layoutOrderArrayList)
             fillLayout.addView(comboFoodLayoutPair.second);
         updatePrice();
+
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     private void updatePrice() {

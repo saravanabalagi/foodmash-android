@@ -19,68 +19,75 @@
             android:layout_height="match_parent"
             android:id="@+id/main_layout">
 
-            <ScrollView
-                android:layout_width="match_parent"
+            <android.support.v4.widget.SwipeRefreshLayout
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="0dp"
-                android:layout_marginStart="0dp"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="0dp">
+                android:layout_width="match_parent"
+                android:id="@+id/swipe_refresh_layout">
 
-                <LinearLayout android:orientation="vertical"
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="0dp">
 
-                    <LinearLayout
-                        android:orientation="vertical"
+                    <LinearLayout android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:id="@+id/empty_combo_layout">
+                        android:layout_height="wrap_content">
 
-                        <ImageView
+                        <LinearLayout
+                            android:orientation="vertical"
                             android:layout_width="match_parent"
-                            android:layout_height="200dp"
-                            app:srcCompat="@drawable/svg_empty_combos"
-                            android:cropToPadding="true"
-                            android:paddingLeft="30dp"
-                            android:paddingRight="30dp"
-                            android:contentDescription="No Combos Found" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="We didn't find any combos!"
-                            android:gravity="center_horizontal"
-                            android:textSize="25sp"
-                            android:fontFamily="sans-serif-light"
-                            android:layout_margin="5dp"
-                            android:singleLine="true" />
+                            android:gravity="center_vertical|center_horizontal"
+                            android:id="@+id/empty_combo_layout">
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="200dp"
+                                app:srcCompat="@drawable/svg_empty_combos"
+                                android:cropToPadding="true"
+                                android:paddingLeft="30dp"
+                                android:paddingRight="30dp"
+                                android:contentDescription="No Combos Found" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="We didn't find any combos!"
+                                android:gravity="center_horizontal"
+                                android:textSize="25sp"
+                                android:fontFamily="sans-serif-light"
+                                android:layout_margin="5dp"
+                                android:singleLine="true" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="If you applied any filters, remove them"
+                                android:gravity="center_horizontal"
+                                android:fontFamily="sans-serif-light"
+                                android:layout_margin="5dp"
+                                android:singleLine="true" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="If you applied any filters, remove them"
                             android:gravity="center_horizontal"
-                            android:fontFamily="sans-serif-light"
-                            android:layout_margin="5dp"
-                            android:singleLine="true" />
-                    </LinearLayout>
+                            android:id="@+id/fill_layout"
+                            android:paddingBottom="10dp">
+                        </LinearLayout>
 
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:id="@+id/fill_layout"
-                        android:paddingBottom="10dp">
                     </LinearLayout>
+                </ScrollView>
 
-                </LinearLayout>
-            </ScrollView>
+            </android.support.v4.widget.SwipeRefreshLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
