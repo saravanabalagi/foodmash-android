@@ -10,15 +10,26 @@
     android:layout_marginRight="10dp">
 
 
-        <com.android.volley.toolbox.NetworkImageView
+        <FrameLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/image"
-            android:contentDescription="@string/food_image"
-            android:src="@drawable/png_image_default"
-            android:scaleType="centerCrop"
             android:layout_weight="1"
-            android:layout_marginBottom="2dp" />
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/image"
+                android:contentDescription="@string/food_image"
+                android:scaleType="centerCrop"
+                android:layout_marginBottom="2dp" />
+
+        </FrameLayout>
 
         <LinearLayout
             android:orientation="vertical"
