@@ -305,7 +305,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                 fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
-                        Snackbar.make(mainLayout, "Promo Code applied successfully", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(mainLayout, "Promo Code applied successfully", Snackbar.LENGTH_SHORT).show();
                         apply.setText("Applied");
                         payableAmount.setText(NumberUtils.getCurrencyFormat(response.getJSONObject("data").getDouble("grand_total")));
                         promoDiscount.setText(NumberUtils.getCurrencyFormat(response.getJSONObject("data").getDouble("promo_discount")));
