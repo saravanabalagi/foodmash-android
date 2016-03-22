@@ -289,6 +289,8 @@ public class MainActivity extends FoodmashActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        invalidateOptionsMenu();
+
         filters.changeLocation(Info.getAreaName(this));
         filters.notifyDataSetChanged();
 
