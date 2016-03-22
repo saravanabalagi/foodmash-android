@@ -305,11 +305,11 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                     if(response.getBoolean("success")) {
                         Snackbar.make(mainLayout, "Promo Code applied successfully", Snackbar.LENGTH_LONG).show();
                         apply.setText("Applied");
-                        promoDiscount.setText(NumberUtils.getCurrencyFormat(response.getDouble("promo_discount")));
+                        payableAmount.setText(NumberUtils.getCurrencyFormat(response.getJSONObject("data").getDouble("payable_amount")));
+                        promoDiscount.setText(NumberUtils.getCurrencyFormat(response.getJSONObject("data").getDouble("promo_discount")));
                         promoDiscountLayout.setVisibility(View.VISIBLE);
                         isPromoApplied = true;
                         promoCodeInputLayout.setErrorEnabled(false);
-                        payableAmount.setText(NumberUtils.getCurrencyFormat(response.getDouble("payable_amount")));
                     } else {
                         promoCodeInputLayout.setError("Invalid Promo Code. Try again");
                         Snackbar.make(mainLayout, "Promo Code not applied", Snackbar.LENGTH_LONG).show();
