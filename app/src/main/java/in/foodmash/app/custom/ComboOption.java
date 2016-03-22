@@ -121,6 +121,7 @@ public class ComboOption {
     public boolean removeFromSelected(ComboDish comboDish) {
         if(this.selectedComboOptionDishes.contains(comboDish))  {
             this.selectedComboOptionDishes.remove(comboDish);
+            comboDish.setQuantity(0);
             return true;
         } else return false;
     }

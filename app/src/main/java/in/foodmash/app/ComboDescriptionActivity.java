@@ -202,7 +202,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                         if(!comboOption.decrementQuantity(comboDish))
                             Snackbar.make(mainLayout, "Combo should contain minimum "+comboOption.getMinCount()+" "+comboOption.getContents(), Snackbar.LENGTH_SHORT).show();
                         count.setText(String.valueOf(comboDish.getQuantity()));
-                        if(comboDish.getQuantity()==1 && !comboOption.getSelectedComboOptionDishes().contains(comboDish)) {
+                        if(!comboOption.getSelectedComboOptionDishes().contains(comboDish)) {
                             Animations.fadeOut(selected, 500);
                             Animations.fadeOut(countLayout, 500);
                             Animations.fadeIn(addExtraLayout, 500);
