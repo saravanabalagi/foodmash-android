@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -33,6 +34,7 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.empty_cart_layout) LinearLayout emptyCartLayout;
+    @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.payable_amount) TextView total;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
@@ -82,12 +84,19 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
         buy.setOnClickListener(this);
         fillLayout = (LinearLayout) findViewById(R.id.fill_layout);
         emptyCartLayout = (LinearLayout) findViewById(R.id.empty_cart_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                onResume();
+            }
+        });
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        swipeRefreshLayout.setRefreshing(true);
 
         if(getIntent().getBooleanExtra("order_id_error",false)) {
             final Snackbar totalErrorSnackbar = Snackbar.make(mainLayout, "Something went wrong!", Snackbar.LENGTH_INDEFINITE);
@@ -129,6 +138,8 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
                 }});
             fillLayout.addView(comboLayout);
         }
+
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     public void onClick(View v) {
