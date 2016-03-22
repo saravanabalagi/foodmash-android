@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +63,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     @Bind(R.id.view_pager) ViewPager viewPager;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.promo_validate) ImageView promoValidate;
 
     @Bind(R.id.total) TextView total;
     @Bind(R.id.vat) TextView vat;
@@ -305,15 +307,19 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                     if(response.getBoolean("success")) {
                         Snackbar.make(mainLayout, "Promo Code applied successfully", Snackbar.LENGTH_LONG).show();
                         apply.setText("Applied");
-                        payableAmount.setText(NumberUtils.getCurrencyFormat(response.getJSONObject("data").getDouble("payable_amount")));
+                        payableAmount.setText(NumberUtils.getCurrencyFormat(response.getJSONObject("data").getDouble("grand_total")));
                         promoDiscount.setText(NumberUtils.getCurrencyFormat(response.getJSONObject("data").getDouble("promo_discount")));
                         promoDiscountLayout.setVisibility(View.VISIBLE);
                         isPromoApplied = true;
                         promoCodeInputLayout.setErrorEnabled(false);
+                        promoValidate.setVisibility(View.VISIBLE);
+                        promoCode.setFocusable(false);
+                        promoCode.clearFocus();
                     } else {
                         promoCodeInputLayout.setError("Invalid Promo Code. Try again");
                         Snackbar.make(mainLayout, "Promo Code not applied", Snackbar.LENGTH_LONG).show();
                         promoDiscountLayout.setVisibility(View.GONE);
+                        promoValidate.setVisibility(View.GONE);
                         promoCode.setText("");
                         isPromoApplied = false;
                         promoCode.requestFocus();
