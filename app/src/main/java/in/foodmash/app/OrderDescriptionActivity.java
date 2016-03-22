@@ -44,6 +44,8 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.promo_discount_layout) LinearLayout promoDiscountLayout;
+    @Bind(R.id.promo_discount) TextView promoDiscount;
     @Bind(R.id.status) TextView status;
     @Bind(R.id.date) TextView date;
     @Bind(R.id.delivery_charges) TextView deliveryCharges;
@@ -127,7 +129,12 @@ public class OrderDescriptionActivity extends FoodmashActivity {
                         JSONArray orderJsonArray = response.getJSONArray("data");
                         JSONObject orderJson = orderJsonArray.getJSONObject(0);
                         grandTotal.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("grand_total")));
+                        grandTotal.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("grand_total")));
                         paymentMethod.setText(WordUtils.titleize(orderJson.getString("payment_method")));
+                        if(orderJson.has("promo_discount")) {
+                            promoDiscount.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("promo_discount")));
+                            promoDiscountLayout.setVisibility(View.VISIBLE);
+                        }
                         setStatus(statusIcon, orderJson.getString("aasm_state"));
                         date.setText(DateUtils.railsDateStringToReadableTime(orderJson.getString("updated_at")));
                         status.setText(WordUtils.titleize(orderJson.getString("aasm_state")));
