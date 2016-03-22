@@ -7,21 +7,27 @@
 
     <include layout="@layout/appbar"/>
 
-    <ScrollView
+    <android.support.v4.widget.SwipeRefreshLayout
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/main_layout">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/fill_layout"
-            android:paddingBottom="5dp">
+            android:layout_height="match_parent"
+            android:id="@+id/main_layout">
 
-        </LinearLayout>
-    </ScrollView>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/fill_layout"
+                android:paddingBottom="5dp">
+
+            </LinearLayout>
+        </ScrollView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

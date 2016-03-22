@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -16,7 +17,6 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONArray;
@@ -42,6 +42,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
 
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
+    @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.status) TextView status;
     @Bind(R.id.date) TextView date;
@@ -53,11 +54,9 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     @Bind(R.id.status_icon) ImageView statusIcon;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
-    private Intent intent;
     private String orderId;
     private boolean cart;
 
-    private ImageLoader imageLoader;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -78,16 +77,29 @@ public class OrderDescriptionActivity extends FoodmashActivity {
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         setTitle(toolbar,"Order","contents");
 
-        imageLoader = Swift.getInstance(OrderDescriptionActivity.this).getImageLoader();
         cart = getIntent().getBooleanExtra("cart", false);
         orderId = getIntent().getStringExtra("order_id");
-        makeOrderDescriptionRequest();
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                onResume();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        swipeRefreshLayout.setRefreshing(true);
+        makeOrderDescriptionRequest();
     }
 
     @Override
     public void onBackPressed() {
-        if(cart) { intent = new Intent(OrderDescriptionActivity.this, MainActivity.class); intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); }
+        if(cart) {
+            Intent intent = new Intent(OrderDescriptionActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); }
         else { finish(); }
     }
 
@@ -107,6 +119,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
                 try {
                     if (response.getBoolean("success")) {
                         Log.i("Json Response", response.toString());

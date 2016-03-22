@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -41,6 +42,7 @@ public class OrderHistoryActivity extends FoodmashActivity {
 
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
@@ -57,8 +59,19 @@ public class OrderHistoryActivity extends FoodmashActivity {
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         setTitle(toolbar,"Order","history");
 
-        makeOrderHistoryRequest();
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                onResume();
+            }
+        });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        swipeRefreshLayout.setRefreshing(true);
+        makeOrderHistoryRequest();
     }
 
     private void setStatus (ImageView statusImageView, String status) {
@@ -74,6 +87,7 @@ public class OrderHistoryActivity extends FoodmashActivity {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
                 try {
                     if (response.getBoolean("success")) {
                         JSONArray ordersJson = response.getJSONArray("data");
