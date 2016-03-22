@@ -52,10 +52,10 @@
                         android:layout_weight="1" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/name_validate"
-                        app:srcCompat="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_close_filled"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -115,10 +115,10 @@
                         android:editable="false" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/email_validate"
-                        app:srcCompat="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_close_filled"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
@@ -163,10 +163,10 @@
                         android:layout_weight="1" />
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:id="@+id/contact_validate"
-                        app:srcCompat="@drawable/svg_no"
+                        app:srcCompat="@drawable/svg_close_filled"
                         android:tint="@color/accent"
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="7dp"
