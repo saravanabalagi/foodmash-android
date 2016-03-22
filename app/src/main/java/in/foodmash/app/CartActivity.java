@@ -1,11 +1,11 @@
 package in.foodmash.app;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,7 +50,6 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
         int id = item.getItemId();
         if (id == R.id.menu_delete_cart) {
             new AlertDialog.Builder(CartActivity.this)
-                .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle("Remove all from cart ?")
                 .setMessage("Do you want to remove all combos added to the cart?")
                 .setPositiveButton("Remove All", new DialogInterface.OnClickListener() {
@@ -104,7 +103,8 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
 
         fillLayout.removeAllViews();
         total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
-        if(cart.getCount()>0) emptyCartLayout.setVisibility(View.GONE);
+        if(cart.getCount()>0) { emptyCartLayout.setVisibility(View.GONE); fillLayout.setVisibility(View.VISIBLE); }
+        else { emptyCartLayout.setVisibility(View.VISIBLE); fillLayout.setVisibility(View.GONE); }
         for(final HashMap.Entry<Combo,Integer> order: cart.getOrders().entrySet()){
             final Combo combo = order.getKey();
             final LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_cart_item, fillLayout, false);
