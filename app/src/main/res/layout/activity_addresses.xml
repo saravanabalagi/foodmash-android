@@ -6,11 +6,16 @@
 
     <include layout="@layout/appbar"/>
 
-    <ScrollView
+    <android.support.v4.widget.SwipeRefreshLayout
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/main_layout">
+        android:layout_width="match_parent"
+        android:id="@+id/swipe_refresh_layout">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/main_layout">
 
             <LinearLayout android:orientation="vertical"
                 android:layout_width="match_parent"
@@ -63,7 +68,9 @@
                 </LinearLayout>
 
             </LinearLayout>
-    </ScrollView>
+        </ScrollView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

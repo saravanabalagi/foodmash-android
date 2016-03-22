@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -44,6 +45,7 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.empty_address_layout) LinearLayout emptyAddressLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
+    @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
@@ -71,6 +73,18 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
             cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(this), City[].class));
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         addAddress.setOnClickListener(this);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                onResume();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        swipeRefreshLayout.setRefreshing(true);
         makeAddressRequest();
     }
 
@@ -154,6 +168,7 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
                                 }
                             });
                             fillLayout.addView(addressLayout);
+                            swipeRefreshLayout.setRefreshing(false);
                         }
                     } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { Actions.handleIgnorableException(AddressActivity.this,e); }

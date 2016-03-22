@@ -13,54 +13,18 @@
         android:layout_height="match_parent"
         android:id="@+id/main_layout">
 
-        <ScrollView
-            android:layout_width="match_parent"
+        <android.support.v4.widget.SwipeRefreshLayout
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/swipe_refresh_layout">
 
-            <LinearLayout android:orientation="vertical"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical|center_horizontal"
-                    android:id="@+id/empty_address_layout"
-                    android:visibility="gone">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        app:srcCompat="@drawable/svg_empty_addresses"
-                        android:cropToPadding="true"
-                        android:paddingLeft="30dp"
-                        android:paddingRight="30dp"
-                        android:contentDescription="@string/empty_cart" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tell us where you are"
-                        android:gravity="center_horizontal"
-                        android:textSize="25sp"
-                        android:fontFamily="sans-serif-light"
-                        android:layout_margin="5dp"
-                        android:singleLine="true" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="We didn't find any delivery addresses"
-                        android:gravity="center_horizontal"
-                        android:fontFamily="sans-serif-light"
-                        android:layout_margin="5dp"
-                        android:singleLine="true" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="vertical"
+                <LinearLayout android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -68,26 +32,70 @@
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/fill_layout">
+                        android:gravity="center_vertical|center_horizontal"
+                        android:id="@+id/empty_address_layout"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            app:srcCompat="@drawable/svg_empty_addresses"
+                            android:cropToPadding="true"
+                            android:paddingLeft="30dp"
+                            android:paddingRight="30dp"
+                            android:contentDescription="@string/empty_cart" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tell us where you are"
+                            android:gravity="center_horizontal"
+                            android:textSize="25sp"
+                            android:fontFamily="sans-serif-light"
+                            android:layout_margin="5dp"
+                            android:singleLine="true" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="We didn't find any delivery addresses"
+                            android:gravity="center_horizontal"
+                            android:fontFamily="sans-serif-light"
+                            android:layout_margin="5dp"
+                            android:singleLine="true" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/fill_layout">
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/add_address"
+                            android:textSize="12sp"
+                            android:textColor="@color/primary_text_disable_dark"
+                            android:background="@drawable/button_rounded_background"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_margin="20dp"
+                            android:textAllCaps="true"
+                            android:id="@+id/add_address" />
 
                     </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/add_address"
-                        android:textSize="12sp"
-                        android:textColor="@color/primary_text_disable_dark"
-                        android:background="@drawable/button_rounded_background"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_margin="20dp"
-                        android:textAllCaps="true"
-                        android:id="@+id/add_address" />
-
                 </LinearLayout>
+            </ScrollView>
 
-            </LinearLayout>
-        </ScrollView>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <LinearLayout
             android:orientation="horizontal"

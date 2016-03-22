@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -45,6 +46,7 @@ import in.foodmash.app.custom.City;
 public class CheckoutAddressActivity extends FoodmashActivity implements View.OnClickListener {
 
     @Bind(R.id.confirm) FloatingActionButton confirm;
+    @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.add_address) TextView addAddress;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
@@ -54,14 +56,44 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
 
     private Intent intent;
-    private ObjectMapper objectMapper;
     private List<City> cities;
     private int addressId;
     private List<Address> addresses;
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_checkout_address);
+        ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        try {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        setTitle(toolbar,"Select","address");
+
+        confirm.setOnClickListener(this);
+        addAddress.setOnClickListener(this);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                onResume();
+            }
+        });
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+            cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(this), City[].class));
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        swipeRefreshLayout.setRefreshing(true);
 
         if(Cart.getInstance().getCount()==0) {
             Intent intent = new Intent(CheckoutAddressActivity.this, CartActivity.class);
@@ -83,30 +115,6 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
             startActivity(intent);
             finish();
         }
-
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_checkout_address);
-        ButterKnife.bind(this);
-
-        setSupportActionBar(toolbar);
-        try {
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
-        setTitle(toolbar,"Select","address");
-
-        confirm.setOnClickListener(this);
-        addAddress.setOnClickListener(this);
-
-        try {
-            objectMapper = new ObjectMapper();
-            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-            cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(this), City[].class));
-        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
     }
 
@@ -248,6 +256,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
                 try {
                     if(response.getBoolean("success")) {
                         fillLayout.removeAllViews();
