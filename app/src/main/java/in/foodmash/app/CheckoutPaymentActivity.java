@@ -309,6 +309,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                         promoDiscountLayout.setVisibility(View.VISIBLE);
                         isPromoApplied = true;
                         promoCodeInputLayout.setErrorEnabled(false);
+                        payableAmount.setText(NumberUtils.getCurrencyFormat(response.getDouble("payable_amount")));
                     } else {
                         promoCodeInputLayout.setError("Invalid Promo Code. Try again");
                         Snackbar.make(mainLayout, "Promo Code not applied", Snackbar.LENGTH_LONG).show();
