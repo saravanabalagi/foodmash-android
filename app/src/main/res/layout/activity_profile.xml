@@ -32,6 +32,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:tint="@color/black_222"
+                        app:srcCompat="@drawable/svg_user1" />
+
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -39,7 +47,7 @@
                         android:ems="10"
                         android:id="@+id/name"
                         android:layout_margin="5dp"
-                        android:hint="@string/name"
+                        android:hint="Name"
                         android:singleLine="true"
                         android:layout_weight="1" />
 
@@ -58,6 +66,14 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:tint="@color/black_222"
+                        app:srcCompat="@drawable/svg_calendar_filled" />
 
                     <EditText
                         android:layout_width="match_parent"
@@ -78,12 +94,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:tint="@color/black_222"
+                        app:srcCompat="@drawable/svg_mail_filled" />
+
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
                         android:ems="10"
-                        android:id="@+id/email_or_phone"
+                        android:id="@+id/email"
                         android:layout_margin="5dp"
                         android:hint="@string/email_edit_text_hint"
                         android:singleLine="true"
@@ -106,6 +130,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:tint="@color/black_222"
+                        app:srcCompat="@drawable/svg_call" />
 
                     <EditText
                         android:layout_width="50dp"
@@ -143,7 +175,7 @@
 
 
 
-                <Switch
+                <android.support.v7.widget.SwitchCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/receive_promotional_offers"

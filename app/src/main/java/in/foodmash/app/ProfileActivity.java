@@ -1,23 +1,20 @@
 package in.foodmash.app;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ScrollView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -55,17 +52,15 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
     @Bind(R.id.change_password) TextView changePassword;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
-    private Intent intent;
+    @Bind(R.id.name) EditText name;
+    @Bind(R.id.dob) EditText dob;
+    @Bind(R.id.email) EditText email;
+    @Bind(R.id.contact_no) EditText phone;
+    @Bind(R.id.receive_promo) SwitchCompat promotionalOffers;
 
-    private EditText name;
-    private EditText dob;
-    private EditText email;
-    private EditText phone;
-    private Switch promotionOffers;
-
-    private ImageView nameValidate;
-    private ImageView emailValidate;
-    private ImageView phoneValidate;
+    @Bind(R.id.name_validate) ImageView nameValidate;
+    @Bind(R.id.email_validate) ImageView emailValidate;
+    @Bind(R.id.contact_validate) ImageView phoneValidate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,12 +77,8 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
         save.setOnClickListener(this);
         changePassword.setOnClickListener(this);
 
-        nameValidate = (ImageView) findViewById(R.id.name_validate);
-        emailValidate = (ImageView) findViewById(R.id.email_validate);
-        phoneValidate = (ImageView) findViewById(R.id.contact_validate);
-
-        name = (EditText) findViewById(R.id.name); name.addTextChangedListener(this);
-        dob = (EditText) findViewById(R.id.dob); dob.setOnClickListener(new View.OnClickListener() {
+        name.addTextChangedListener(this);
+        dob.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final Calendar calendar = Calendar.getInstance();
@@ -109,36 +100,18 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
                 datePickerDialog.show();
             }
         });
-        email = (EditText) findViewById(R.id.email_or_phone); email.addTextChangedListener(this);
-        phone = (EditText) findViewById(R.id.contact_no); phone.addTextChangedListener(this);
-        promotionOffers = (Switch) findViewById(R.id.receive_promo); promotionOffers.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!isChecked)
-                    new AlertDialog.Builder(ProfileActivity.this)
-                            .setIconAttribute(android.R.attr.alertDialogIcon)
-                            .setTitle("Stop receiving offers ?")
-                            .setMessage("You have chosen to unsubscribe from all promotional offers via email and SMS. Are you sure to want to disable sending promotional offers?")
-                            .setPositiveButton("Disable", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
 
-                                }
-                            }).setNegativeButton("Enable", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            promotionOffers.setChecked(true);
-                        }
-                    }).show();
-            }
-        });
+        email.addTextChangedListener(this);
+        phone.addTextChangedListener(this);
         makeProfileDetailsRequest();
 
     }
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.change_password: intent = new Intent(this, ChangePasswordActivity.class); startActivity(intent); break;
+            case R.id.change_password:
+                Intent intent = new Intent(this, ChangePasswordActivity.class);
+                startActivity(intent); break;
             case R.id.save: if(isEverythingValid()) makeProfileRequest(); else Snackbar.make(mainLayout,"One or more data you entered is invalid",Snackbar.LENGTH_LONG).show(); break;
         }
     }
@@ -152,7 +125,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
             profileHashMap.put("email", email.getText().toString().trim());
             profileHashMap.put("mobile_no", phone.getText().toString().trim());
             JSONObject userJson = new JSONObject(profileHashMap);
-            userJson.put("offers", promotionOffers.isChecked());
+            userJson.put("offers", promotionalOffers.isChecked());
 
             requestJson = JsonProvider.getStandardRequestJson(ProfileActivity.this);
             JSONObject dataJson = new JSONObject();
@@ -202,7 +175,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
                         dob.setText(userJson.getString("dob").equals("null")?null:userJson.getString("dob"));
                         email.setText(userJson.getString("email"));
                         phone.setText(userJson.getString("mobile_no"));
-                        promotionOffers.setChecked(userJson.getBoolean("offers"));
+                        promotionalOffers.setChecked(userJson.getBoolean("offers"));
                     } else Snackbar.make(mainLayout,"Unable to save details: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(ProfileActivity.this,e); }
             }
