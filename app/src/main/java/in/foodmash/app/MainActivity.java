@@ -289,6 +289,7 @@ public class MainActivity extends FoodmashActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        swipeRefreshLayout.setRefreshing(true);
         invalidateOptionsMenu();
 
         filters.changeLocation(Info.getAreaName(this));
@@ -320,9 +321,9 @@ public class MainActivity extends FoodmashActivity {
         JsonObjectRequest getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                swipeRefreshLayout.setRefreshing(false);
                 try {
                     if (response.getBoolean("success")) {
-                        swipeRefreshLayout.setRefreshing(false);
                         if (snackbar!=null && snackbar.isShown()) snackbar.dismiss();
                         Animations.fadeOut(fragmentContainer,100);
                         Log.i("Combos", response.getJSONObject("data").getJSONArray("combos").length() + " combos found");

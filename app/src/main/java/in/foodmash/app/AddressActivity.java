@@ -99,6 +99,7 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                swipeRefreshLayout.setRefreshing(false);
                 try {
                     if(response.getBoolean("success")) {
                         fillLayout.removeAllViews();
@@ -168,7 +169,6 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
                                 }
                             });
                             fillLayout.addView(addressLayout);
-                            swipeRefreshLayout.setRefreshing(false);
                         }
                     } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { Actions.handleIgnorableException(AddressActivity.this,e); }
