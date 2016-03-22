@@ -75,7 +75,8 @@ public class ComboOption {
     @JsonProperty public void setMinCount(int minCount) {
         this.minCount = minCount;
         if(comboOptionDishes!=null && comboOptionDishes.size()!=0)
-            resetSelectedComboOptionDishes(); }
+            resetSelectedComboOptionDishes();
+    }
     @JsonProperty public void setId(int id) { this.id = id; }
     @JsonProperty public void setPriority(int priority) { this.priority = priority; }
     @JsonProperty public void setName(String name) { this.name = name; }
@@ -140,16 +141,16 @@ public class ComboOption {
         if (!(o instanceof ComboOption)) return false;
         if (o == this) return true;
         ComboOption comboOption = (ComboOption) o;
-        return this.hashCode() == comboOption.hashCode();
+        return this.getId() == comboOption.getId() && this.selectedComboOptionDishes == comboOption.selectedComboOptionDishes;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 3*hash + this.getId();
+        int hash = 17;
+        hash = 31*hash + this.getId();
         for (ComboDish comboDish : this.selectedComboOptionDishes) {
-            hash = 3 * hash + comboDish.getId();
-            hash = 3 * hash + comboDish.getQuantity();
+            hash = 31 * hash + comboDish.getId();
+            hash = 31 * hash + comboDish.getQuantity();
         }
         return hash;
     }

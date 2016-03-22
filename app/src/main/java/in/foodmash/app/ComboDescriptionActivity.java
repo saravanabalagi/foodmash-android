@@ -155,9 +155,6 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
 
             for (final ComboDish comboDish: comboOption.getComboOptionDishes()) {
                 final LinearLayout comboOptionsLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_combo_description_combo_option_dish, currentComboFoodLayout, false);
-                final ImageView selected = (ImageView) comboOptionsLayout.findViewById(R.id.selected);
-                if (comboOption.getSelectedComboOptionDishes().contains(comboDish)) { Animations.fadeIn(selected, 500); }
-                else { Animations.fadeOut(selected, 500); }
                 ImageView foodLabel = (ImageView) comboOptionsLayout.findViewById(R.id.label);
                 switch(comboDish.getDish().getLabel()) {
                     case EGG: foodLabel.setColorFilter(ContextCompat.getColor(this, R.color.egg)); break;
@@ -177,14 +174,15 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                 final TextView count = (TextView) countLayout.findViewById(R.id.count);
                 int quantity = comboOption.getMinCount();
                 count.setText(String.valueOf(quantity));
+                final ImageView selected = (ImageView) comboOptionsLayout.findViewById(R.id.selected);
                 if (comboOption.getSelectedComboOptionDishes().contains(comboDish)) {
-                    Animations.fadeOut(addExtraLayout, 500);
-                    Animations.fadeIn(countLayout, 500);
-                    Animations.fadeIn(selected, 500);
+                    addExtraLayout.setVisibility(View.GONE);
+                    countLayout.setVisibility(View.VISIBLE);
+                    selected.setVisibility(View.VISIBLE);
                 } else {
-                    Animations.fadeIn(addExtraLayout, 500);
-                    Animations.fadeOut(countLayout, 500);
-                    Animations.fadeOut(selected, 500);
+                    addExtraLayout.setVisibility(View.VISIBLE);
+                    countLayout.setVisibility(View.GONE);
+                    selected.setVisibility(View.GONE);
                 }
                 TextView plus = (TextView) countLayout.findViewById(R.id.plus);
                 TextView minus = (TextView) countLayout.findViewById(R.id.minus);

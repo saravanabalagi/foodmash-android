@@ -41,4 +41,12 @@ public class Dish {
     }
     @JsonProperty public void setPicture(String picture) { this.picture = picture; }
 
+    @Override public boolean equals(Object o) { return o instanceof Dish && (o == this || ((Dish) o).id == this.id); }
+    @Override
+    public int hashCode() {
+        int hash = 17;
+        hash = 31*hash + this.getId();
+        return hash;
+    }
+
 }

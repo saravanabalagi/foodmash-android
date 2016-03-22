@@ -41,14 +41,14 @@ public class ComboDish {
         if (!(o instanceof ComboDish)) return false;
         if (o == this) return true;
         ComboDish comboDish = (ComboDish) o;
-        return this.hashCode() == comboDish.hashCode();
+        return this.getId() == comboDish.getId() && this.getQuantity() == comboDish.getQuantity();
     }
 
     @Override
     public int hashCode() {
-        int hash =7;
-        hash = 3*hash + this.getId();
-        hash = 3*hash + this.getQuantity();
+        int hash = 17;
+        hash = 31*hash + this.getId();
+        hash = 31*hash + this.getQuantity();
         return hash;
     }
 }

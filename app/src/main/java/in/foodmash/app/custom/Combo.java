@@ -131,22 +131,22 @@ public class Combo {
         if (!(o instanceof Combo)) return false;
         if (o == this) return true;
         Combo combo = (Combo) o;
-        return this.getId() == combo.getId() && this.hashCode() == combo.hashCode();
+        if(this.getId() == combo.getId()) {
+            if(!(this.comboDishes.equals(((Combo) o).comboDishes))) return false;
+            if(this.comboOptions.size()!=0)
+                if (!(comboOptions.equals(((Combo) o).comboOptions))) return false;
+            return true;
+        } else return false;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 3*hash + this.getId();
+        int hash = 17;
+        hash = 31*hash + this.getId();
         for(ComboOption comboOption: comboOptions)
-            for(ComboDish comboDish: comboOption.getSelectedComboOptionDishes()) {
-                hash = 3 * hash + comboDish.getId();
-                hash = 3 * hash + comboDish.getQuantity();
-            }
-        for(ComboDish comboDish: comboDishes) {
-            hash = 3 * hash + comboDish.getId();
-            hash = 3 * hash + comboDish.getQuantity();
-        }
+            for(ComboDish comboDish: comboOption.getSelectedComboOptionDishes())
+                hash = 31 * hash + comboDish.hashCode();
+        for(ComboDish comboDish: comboDishes) hash = 31 * hash + comboDish.hashCode();
         return hash;
     }
 }

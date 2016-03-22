@@ -17,15 +17,11 @@ public class Restaurant {
     public void setName(String name) { this.name = name; }
     public void setLogo(String logo) { this.logo = logo; }
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof Restaurant && (o == this || ((Restaurant) o).id == this.id);
-    }
-
+    @Override public boolean equals(Object o) { return o instanceof Restaurant && (o == this || ((Restaurant) o).id == this.id); }
     @Override
     public int hashCode() {
         int hash = 17;
-        hash = 23*hash + this.getId();
+        hash = 31*hash + this.getId();
         return hash;
     }
 }
