@@ -123,9 +123,10 @@ public class OrderDescriptionActivity extends FoodmashActivity {
                 try {
                     if (response.getBoolean("success")) {
                         Log.i("Json Response", response.toString());
+                        fillLayout.removeAllViews();
                         JSONArray orderJsonArray = response.getJSONArray("data");
                         JSONObject orderJson = orderJsonArray.getJSONObject(0);
-                        grandTotal.setText(String.format("%.2f", Float.parseFloat(orderJson.getString("grand_total"))));
+                        grandTotal.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("grand_total")));
                         paymentMethod.setText(WordUtils.titleize(orderJson.getString("payment_method")));
                         setStatus(statusIcon, orderJson.getString("aasm_state"));
                         date.setText(DateUtils.railsDateStringToReadableTime(orderJson.getString("updated_at")));

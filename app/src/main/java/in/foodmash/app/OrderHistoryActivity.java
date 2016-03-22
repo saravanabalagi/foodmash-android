@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.Pair;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -22,8 +23,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.TreeMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -90,8 +93,9 @@ public class OrderHistoryActivity extends FoodmashActivity {
                 swipeRefreshLayout.setRefreshing(false);
                 try {
                     if (response.getBoolean("success")) {
+                        fillLayout.removeAllViews();
                         JSONArray ordersJson = response.getJSONArray("data");
-                        TreeMap<Date, LinearLayout> orderHistoryTreeMap = new TreeMap<>();
+                        ArrayList<Pair<Date,LinearLayout>> orderHistoryArrayList = new ArrayList<>();
                         for(int i=0;i<ordersJson.length();i++) {
                             final JSONObject orderJson = ordersJson.getJSONObject(i);
                             LinearLayout orderLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_order_history_item,fillLayout,false);
@@ -111,10 +115,16 @@ public class OrderHistoryActivity extends FoodmashActivity {
                                     startActivity(intent);
                                 }
                             });
-                            orderHistoryTreeMap.put(DateUtils.railsDateStringToJavaDate(orderJson.getString("updated_at")), orderLayout);
+                            orderHistoryArrayList.add(new Pair(DateUtils.railsDateStringToJavaDate(orderJson.getString("updated_at")), orderLayout));
                         }
-                        for (Date key: orderHistoryTreeMap.descendingKeySet())
-                            fillLayout.addView(orderHistoryTreeMap.get(key));
+                        Collections.sort(orderHistoryArrayList, new Comparator<Pair<Date, LinearLayout>>() {
+                            @Override
+                            public int compare(Pair<Date, LinearLayout> lhs, Pair<Date, LinearLayout> rhs) {
+                                return rhs.first.compareTo(lhs.first);
+                            }
+                        });
+                        for (Pair<Date,LinearLayout> orderHistory: orderHistoryArrayList)
+                            fillLayout.addView(orderHistory.second);
                     } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(OrderHistoryActivity.this,e); }
             }
