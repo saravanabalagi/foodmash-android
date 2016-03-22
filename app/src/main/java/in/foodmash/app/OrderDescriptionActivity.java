@@ -46,6 +46,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     @Bind(R.id.fill_layout) LinearLayout fillLayout;
     @Bind(R.id.promo_discount_layout) LinearLayout promoDiscountLayout;
     @Bind(R.id.promo_discount) TextView promoDiscount;
+    @Bind(R.id.vat_percentage) TextView vatPercentage;
     @Bind(R.id.status) TextView status;
     @Bind(R.id.date) TextView date;
     @Bind(R.id.delivery_charges) TextView deliveryCharges;
@@ -139,6 +140,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
                         date.setText(DateUtils.railsDateStringToReadableTime(orderJson.getString("updated_at")));
                         status.setText(WordUtils.titleize(orderJson.getString("aasm_state")));
                         total.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("total")));
+                        if(orderJson.has("vat_percentage")) vatPercentage.setText(orderJson.getString("vat_percentage"));
                         vat.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("vat")));
                         deliveryCharges.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("delivery_charge")));
                         JSONArray subOrdersJson = orderJson.getJSONArray("orders");
