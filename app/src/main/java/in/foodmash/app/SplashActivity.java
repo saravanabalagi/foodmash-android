@@ -48,7 +48,8 @@ public class SplashActivity extends FoodmashActivity {
 
     private ArrayList<String> citiesArrayList = new ArrayList<>();
     private List<City> cities;
-    private boolean skipUpdate;
+    private boolean skipUpdate = false;
+    private boolean skipMaintenance = false;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -61,31 +62,41 @@ public class SplashActivity extends FoodmashActivity {
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
 
-        skipUpdate = getIntent().getBooleanExtra("skip_update", false);
         makeCheckConnectionRequest();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        skipUpdate = getIntent().getBooleanExtra("skip_update", false);
+        skipMaintenance = getIntent().getBooleanExtra("skip_maintenance", false);
         makeCheckConnectionRequest();
     }
 
     public void makeCheckConnectionRequest() {
-        JsonObjectRequest checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/versions", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
+        JsonObjectRequest checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/instantiate", JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     if (response.getBoolean("success")) {
                         if (skipUpdate) makeLocationRequest();
-                        int newVersion = Integer.parseInt(response.getJSONObject("data").getString("version_code"));
+                        int newVersion = Integer.parseInt(response.getJSONObject("data").getJSONObject("versions").getString("version_code"));
                         int currentVersion = BuildConfig.VERSION_CODE;
                         if (currentVersion < newVersion) {
                             startActivity(new Intent(SplashActivity.this, UpdateAppActivity.class));
                             finish();
-                        } else makeLocationRequest();
+                        } else if(skipMaintenance || !response.getJSONObject("data").has("maintenance")) makeLocationRequest();
+                        else {
+                            JSONObject maintenance = response.getJSONObject("data").getJSONObject("maintenance");
+                            Intent intent = new Intent(SplashActivity.this, ShowMessageActivity.class);
+                            intent.putExtra("title", maintenance.getString("title"));
+                            intent.putExtra("message", maintenance.getString("message"));
+                            intent.putExtra("image", maintenance.getString("image"));
+                            startActivity(intent);
+                            finish();
+                        }
                     } else Snackbar.make(mainLayout,"Unable to check for updates: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
-                } catch (Exception e) { Actions.handleIgnorableException(SplashActivity.this, e); }
+                } catch (Exception e) { e.printStackTrace(); Actions.handleIgnorableException(SplashActivity.this, e); }
             }
         }, new Response.ErrorListener() {
             @Override
