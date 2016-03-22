@@ -232,6 +232,15 @@ public class ErrorReportActivity extends FoodmashActivity {
             hostHashMap.put("width", String.valueOf(width));
             JSONObject hostJson = new JSONObject(hostHashMap);
             dataJson.put("host", hostJson);
+            if(Info.isLoggedIn(this)) {
+                JSONObject userJson = new JSONObject();
+                userJson.put("name", Info.getName(this));
+                userJson.put("email", Info.getEmail(this));
+                userJson.put("phone", Info.getPhone(this));
+                userJson.put("area", Info.getAreaName(this));
+                userJson.put("city", Info.getCityName(this));
+                dataJson.put("user", userJson);
+            }
             requestJson.put("data", dataJson);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         return requestJson;

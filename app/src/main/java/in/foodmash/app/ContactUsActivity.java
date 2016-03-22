@@ -3,7 +3,10 @@ package in.foodmash.app;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Display;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -31,8 +35,12 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -103,6 +111,8 @@ public class ContactUsActivity extends FoodmashActivity implements View.OnClickL
         issueList.add("Food not Hot");
         issueList.add("Issues in App");
         issueList.add("Bug Report");
+        issueList.add("Feature Request");
+        issueList.add("Enhancement");
         issueList.add("Feedback");
 
         call.setOnClickListener(this);
@@ -130,7 +140,7 @@ public class ContactUsActivity extends FoodmashActivity implements View.OnClickL
             case R.id.refund_policy: goToLegaleseActivity(LegaleseActivity.Legalese.REFUND_POLICY); break;
             case R.id.privacy_policy: goToLegaleseActivity(LegaleseActivity.Legalese.PRIVACY_POLICY); break;
             case R.id.about_us: goToLegaleseActivity(LegaleseActivity.Legalese.ABOUT_US); break;
-            case R.id.send_email: if(isEverythingValid()) makeContactUsRequest(); else Snackbar.make(mainLayout,"One or more data you entered is invalid",Snackbar.LENGTH_LONG).show(); break;
+            case R.id.send_email: if(isEverythingValid()) sendEmail(); else Snackbar.make(mainLayout,"One or more data you entered is invalid",Snackbar.LENGTH_LONG).show(); break;
             case R.id.call:
                 if ( ContextCompat.checkSelfPermission( this, Manifest.permission.CALL_PHONE ) != PackageManager.PERMISSION_GRANTED )
                     ActivityCompat.requestPermissions( this, new String[] {  Manifest.permission.CALL_PHONE  },
@@ -212,6 +222,83 @@ public class ContactUsActivity extends FoodmashActivity implements View.OnClickL
         else if(s==description.getEditableText()) { if(s.toString().trim().length()<2) Animations.fadeInOnlyIfInvisible(descriptionValidate, 500); else Animations.fadeOut(descriptionValidate,500); }
         else if(s==email.getEditableText()) { if(!EmailUtils.isValidEmailAddress(s.toString())) Animations.fadeInOnlyIfInvisible(emailValidate, 500); else Animations.fadeOut(emailValidate,500); }
         else if(s==phone.getEditableText()) { if(!(NumberUtils.isInteger(s.toString()) && s.length()==10)) Animations.fadeInOnlyIfInvisible(phoneValidate, 500); else Animations.fadeOut(phoneValidate,500); }
+    }
+
+    private void sendEmail() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_EMAIL  , new String[]{"bugs@foodmash.in"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "App Error | Issue");
+            intent.putExtra(Intent.EXTRA_TEXT   , getMakeErrorRequestJson().toString(4));
+            startActivity(Intent.createChooser(intent, "Send mail..."));
+        } catch (JSONException e) { Snackbar.make(mainLayout, "Json Exception occurred!", Snackbar.LENGTH_LONG).show(); }
+        catch (Exception e) { Snackbar.make(mainLayout, "There are no email clients installed.", Snackbar.LENGTH_LONG).show(); }
+    }
+
+    private JSONObject getMakeErrorRequestJson() {
+        JSONObject requestJson = (Info.isLoggedIn(this)) ? JsonProvider.getStandardRequestJson(this) : JsonProvider.getAnonymousRequestJson(this);
+        try {
+            HashMap<String, String> dataHashMap = new HashMap<>();
+
+            Calendar calendar = Calendar.getInstance();
+            DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss", Locale.US);
+            String timeNow = dateFormat.format(calendar.getTime());
+
+            dataHashMap.put("issue",issue.getText().toString());
+            dataHashMap.put("description",description.getText().toString());
+            dataHashMap.put("time",timeNow);
+
+            JSONObject dataJson = new JSONObject(dataHashMap);
+            HashMap<String, String> hostHashMap = new HashMap<>();
+            hostHashMap.put("release", Build.VERSION.RELEASE);
+            hostHashMap.put("sdkVersion", String.valueOf(Build.VERSION.SDK_INT));
+            hostHashMap.put("manufacturer", Build.MANUFACTURER);
+            hostHashMap.put("model", Build.MODEL);
+
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            int width = size.x;
+            int height = size.y;
+            String orientation = "";
+            String sizeCategory = "";
+
+            switch (getResources().getConfiguration().orientation) {
+                case Configuration.ORIENTATION_LANDSCAPE: orientation = "landscape"; break;
+                case Configuration.ORIENTATION_PORTRAIT: orientation = "portrait"; break;
+                case Configuration.ORIENTATION_UNDEFINED: orientation = "undefined"; break;
+            }
+
+            switch ((getResources().getConfiguration().screenLayout &
+                    Configuration.SCREENLAYOUT_SIZE_MASK)) {
+                case Configuration.SCREENLAYOUT_SIZE_XLARGE: sizeCategory = "xlarge"; break;
+                case Configuration.SCREENLAYOUT_SIZE_LARGE: sizeCategory = "large"; break;
+                case Configuration.SCREENLAYOUT_SIZE_NORMAL: sizeCategory = "normal"; break;
+                case Configuration.SCREENLAYOUT_SIZE_SMALL: sizeCategory = "small"; break;
+                case Configuration.SCREENLAYOUT_SIZE_UNDEFINED: sizeCategory = "undefined"; break;
+            }
+
+            hostHashMap.put("orientation", orientation);
+            hostHashMap.put("sizeCategory", sizeCategory);
+            hostHashMap.put("height", String.valueOf(height));
+            hostHashMap.put("width", String.valueOf(width));
+            JSONObject hostJson = new JSONObject(hostHashMap);
+            dataJson.put("host", hostJson);
+
+            if(Info.isLoggedIn(this)) {
+                JSONObject userJson = new JSONObject();
+                userJson.put("name", Info.getName(this));
+                userJson.put("email", Info.getEmail(this));
+                userJson.put("phone", Info.getPhone(this));
+                userJson.put("area", Info.getAreaName(this));
+                userJson.put("city", Info.getCityName(this));
+                dataJson.put("user", userJson);
+            }
+
+            requestJson.put("data", dataJson);
+        } catch (Exception e) { Actions.handleIgnorableException(this,e); }
+        return requestJson;
     }
 
 }
