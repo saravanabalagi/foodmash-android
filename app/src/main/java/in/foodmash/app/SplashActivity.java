@@ -92,6 +92,7 @@ public class SplashActivity extends FoodmashActivity {
                             intent.putExtra("title", maintenance.getString("title"));
                             intent.putExtra("message", maintenance.getString("message"));
                             intent.putExtra("image", maintenance.getString("image"));
+                            intent.putExtra("blocking", maintenance.getString("blocking"));
                             startActivity(intent);
                             finish();
                         }
