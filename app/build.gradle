@@ -8,20 +8,20 @@ android {
     signingConfigs {
         config {
             storeFile file('file.location')
-            keyAlias 'Foodmash'
-            keyPassword 'keyPassword'
-            storePassword 'storePassword'
-        }
+        keyAlias 'Foodmash'
+        keyPassword 'keyPassword'
+        storePassword 'storePassword'
     }
-    compileSdkVersion 23
-    buildToolsVersion '23.0.2'
-    defaultConfig {
-        vectorDrawables.useSupportLibrary = true
-        applicationId 'in.foodmash.app'
-        minSdkVersion 16
-        targetSdkVersion 23
-        versionCode 7
-        versionName '1.1 acornsquash'
+}
+compileSdkVersion 23
+buildToolsVersion '23.0.3'
+defaultConfig {
+    vectorDrawables.useSupportLibrary = true
+    applicationId 'in.foodmash.app'
+    minSdkVersion 16
+    targetSdkVersion 23
+    versionCode 7
+    versionName '1.1 acornsquash'
     }
     buildTypes {
         release {
@@ -57,12 +57,12 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'com.mcxiaoke.volley:library:1.0.19'
-    compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.google.android.gms:play-services-maps:8.4.0'
     //Jackson JSON Parsing Libraries
     compile 'com.fasterxml.jackson.core:jackson-core:2.6.1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.6.1'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.6.1'
     //Material Design Compatibility Libraries
-    compile 'com.android.support:design:23.2.0'
+    compile 'com.android.support:design:23.2.1'
 }
