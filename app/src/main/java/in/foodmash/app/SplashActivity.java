@@ -46,7 +46,6 @@ public class SplashActivity extends FoodmashActivity {
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
 
-    private ArrayList<String> citiesArrayList = new ArrayList<>();
     private List<City> cities;
     private boolean skipUpdate = false;
     private boolean skipMaintenance = false;
@@ -92,7 +91,7 @@ public class SplashActivity extends FoodmashActivity {
                             intent.putExtra("title", maintenance.getString("title"));
                             intent.putExtra("message", maintenance.getString("message"));
                             intent.putExtra("image", maintenance.getString("image"));
-                            intent.putExtra("blocking", maintenance.getString("blocking"));
+                            intent.putExtra("blocking", maintenance.getBoolean("blocking"));
                             startActivity(intent);
                             finish();
                         }
@@ -121,6 +120,7 @@ public class SplashActivity extends FoodmashActivity {
                         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
                         Actions.cacheCities(SplashActivity.this, response.getJSONArray("data").toString());
                         cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(SplashActivity.this), City[].class));
+                        ArrayList<String> citiesArrayList = new ArrayList<>();
                         for (City city : cities) citiesArrayList.add(city.getName());
                         ArrayAdapter citySpinnerAdapter = new ArrayAdapter<>(
                                 SplashActivity.this,
