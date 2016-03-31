@@ -47,6 +47,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     @Bind(R.id.promo_discount_layout) LinearLayout promoDiscountLayout;
     @Bind(R.id.promo_discount) TextView promoDiscount;
     @Bind(R.id.vat_percentage) TextView vatPercentage;
+    @Bind(R.id.promo_code) TextView promoCode;
     @Bind(R.id.status) TextView status;
     @Bind(R.id.date) TextView date;
     @Bind(R.id.delivery_charges) TextView deliveryCharges;
@@ -133,6 +134,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
                         grandTotal.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("grand_total")));
                         paymentMethod.setText(WordUtils.titleize(orderJson.getString("payment_method")));
                         if(orderJson.has("promo_discount")) {
+                            if(orderJson.has("promo_code")) promoCode.setText(orderJson.getString("promo_code"));
                             promoDiscount.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("promo_discount")));
                             promoDiscountLayout.setVisibility(View.VISIBLE);
                         }

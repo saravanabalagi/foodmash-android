@@ -109,11 +109,17 @@
                             android:visibility="gone">
 
                             <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Promo Discount "
+                                android:textColor="@color/okay_green" />
+
+                            <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Promo Discount"
-                                android:textColor="@color/okay_green" />
+                                android:id="@+id/promo_code"
+                                android:text="" />
 
                             <TextView
                                 android:id="@+id/promo_discount"
