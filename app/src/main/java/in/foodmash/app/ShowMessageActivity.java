@@ -1,6 +1,7 @@
 package in.foodmash.app;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -20,10 +21,12 @@ public class ShowMessageActivity extends FoodmashActivity {
 
     @Bind(R.id.title) TextView title;
     @Bind(R.id.message) TextView message;
+    @Bind(R.id.url_caption) TextView urlCaption;
     @Bind(R.id.image) NetworkImageView image;
 
     @Bind(R.id.exit) LinearLayout exit;
     @Bind(R.id.okay) LinearLayout okay;
+    @Bind(R.id.url) LinearLayout url;
 
     String titleString;
     String messageString;
@@ -37,6 +40,21 @@ public class ShowMessageActivity extends FoodmashActivity {
 
         if(getIntent().getBooleanExtra("blocking",false)) { exit.setVisibility(View.VISIBLE); okay.setVisibility(View.GONE); }
         else { exit.setVisibility(View.GONE); okay.setVisibility(View.VISIBLE); }
+
+        if(getIntent().getStringExtra("url")!=null) {
+            url.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String uriString = getIntent().getStringExtra("url");
+                    Uri uri = Uri.parse(uriString.startsWith("http")?uriString:"http://"+uriString);
+                    Intent intent = new Intent(Intent.ACTION_VIEW).setData(uri);
+                    startActivity(intent);
+                }
+            });
+            url.setVisibility(View.VISIBLE);
+            urlCaption.setText(getIntent().getStringExtra("url_caption"));
+            if(getIntent().getBooleanExtra("url_hides_exit",false)) exit.setVisibility(View.GONE);
+        }
 
         titleString = getIntent().getStringExtra("title");
         messageString = getIntent().getStringExtra("message");

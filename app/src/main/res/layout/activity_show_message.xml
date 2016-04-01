@@ -71,12 +71,6 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp" />
 
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:background="#FF666666"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -99,6 +93,50 @@
                 android:layout_height="wrap_content"
                 android:text="Okay"
                 android:padding="10dp"
+                android:textSize="17sp"
+                android:layout_weight="1"
+                android:textColor="#ffffff"
+                android:fontFamily="sans-serif-light" />
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:srcCompat="@drawable/svg_right"
+                android:tint="#FFCCCCCC" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="#FF666666"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp" />
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:gravity="center_vertical"
+            android:padding="5dp"
+            android:id="@+id/url"
+            android:background="@drawable/button_transparent_background">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:srcCompat="@drawable/svg_android_web"
+                android:padding="10dp"
+                android:tint="#FFCCCCCC" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Goto Url"
+                android:padding="10dp"
+                android:id="@+id/url_caption"
                 android:textSize="17sp"
                 android:layout_weight="1"
                 android:textColor="#ffffff"
