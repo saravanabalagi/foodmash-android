@@ -257,6 +257,9 @@ public class MainActivity extends FoodmashActivity {
             }
         };
 
+
+        Log.i("Testing","Hello World");
+
         applyFilters.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { drawerLayout.closeDrawer(Gravity.LEFT); } });
         removeFilters.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -318,7 +321,7 @@ public class MainActivity extends FoodmashActivity {
             Animations.fadeIn(fragmentContainer, 300);
         } else {
             try {updateFillLayout(Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(this), Combo[].class))); }
-            catch (Exception e) { Actions.handleIgnorableException(this,e); }
+            catch (Exception e) { e.printStackTrace(); Actions.handleIgnorableException(this,e); }
             snackbar = Snackbar.make(mainLayout, "Updating combos...", Snackbar.LENGTH_INDEFINITE);
             snackbar.show();
         }
@@ -428,7 +431,7 @@ public class MainActivity extends FoodmashActivity {
     }
 
     private class CombosAdapter extends RecyclerView.Adapter {
-        List<Combo> combos;
+        List<Combo> combos = new ArrayList<>();
         public void setCombos(List<Combo> combos) { this.combos = combos; }
         @Override public int getItemCount() { return combos.size(); }
         class ViewHolder extends RecyclerView.ViewHolder {
