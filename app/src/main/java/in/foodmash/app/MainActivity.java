@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -66,7 +67,10 @@ import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
+import in.foodmash.app.custom.ComboDish;
+import in.foodmash.app.custom.ComboOption;
 import in.foodmash.app.custom.Dish;
+import in.foodmash.app.custom.Restaurant;
 import in.foodmash.app.utils.DateUtils;
 
 public class MainActivity extends FoodmashActivity {
@@ -451,13 +455,13 @@ public class MainActivity extends FoodmashActivity {
             TextView addToCartLayout;
             TextView minus;
             LinearLayout countLayout;
-//            LinearLayout contentsLayout;
-//            TextView view;
-//            LinearLayout addedToCartLayout;
-//            TextView viewComboSeparateButton;
-//            LinearLayout clickableLayout;
-//            LinearLayout viewOrCartLayout;
-//            LinearLayout restaurantsLayout;
+            LinearLayout contentsLayout;
+            TextView view;
+            LinearLayout addedToCartLayout;
+            TextView viewComboSeparateButton;
+            LinearLayout clickableLayout;
+            LinearLayout viewOrCartLayout;
+            LinearLayout restaurantsLayout;
 
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -473,13 +477,13 @@ public class MainActivity extends FoodmashActivity {
                 count = (TextView) itemView.findViewById(R.id.count);
                 plus = (TextView) itemView.findViewById(R.id.plus);
                 minus = (TextView) itemView.findViewById(R.id.minus);
-//                contentsLayout = (LinearLayout) itemView.findViewById(R.id.contents_layout);
-//                view = (TextView) itemView.findViewById(R.id.view);
-//                viewComboSeparateButton = (TextView) itemView.findViewById(R.id.view_combo_separate_button);
-//                clickableLayout = (LinearLayout) itemView.findViewById(R.id.clickable_layout);
-//                viewOrCartLayout = (LinearLayout) itemView.findViewById(R.id.view_or_cart_layout);
-//                addedToCartLayout = (LinearLayout) itemView.findViewById(R.id.added_to_cart_layout);
-//                restaurantsLayout = (LinearLayout) itemView.findViewById(R.id.restaurant_layout);
+                contentsLayout = (LinearLayout) itemView.findViewById(R.id.contents_layout);
+                view = (TextView) itemView.findViewById(R.id.view);
+                viewComboSeparateButton = (TextView) itemView.findViewById(R.id.view_combo_separate_button);
+                clickableLayout = (LinearLayout) itemView.findViewById(R.id.clickable_layout);
+                viewOrCartLayout = (LinearLayout) itemView.findViewById(R.id.view_or_cart_layout);
+                addedToCartLayout = (LinearLayout) itemView.findViewById(R.id.added_to_cart_layout);
+                restaurantsLayout = (LinearLayout) itemView.findViewById(R.id.restaurant_layout);
             }
         }
 
@@ -496,7 +500,7 @@ public class MainActivity extends FoodmashActivity {
                 }
             };
             viewHolder.id.setText(String.valueOf(combo.getId()));
-            viewHolder.imageSlider.getLayoutParams().height = (int)(displayMetrics.widthPixels*0.67) - (int)(10 * MainActivity.this.getResources().getDisplayMetrics().density);
+            viewHolder.imageSlider.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * MainActivity.this.getResources().getDisplayMetrics().density);
             viewHolder.imageSlider.setAdapter(new NetworkImageViewSlider(MainActivity.this, combo.getImages(), showDescription));
             viewHolder.imageSlider.setOffscreenPageLimit(1);
             handler.postDelayed(new Runnable() {
@@ -509,22 +513,22 @@ public class MainActivity extends FoodmashActivity {
                 }
             },15000);
             viewHolder.name.setText(combo.getName());
-//            viewHolder.contentsLayout.setOnClickListener(showDescription);
-//            viewHolder.contentsLayout.removeAllViews();
-//            ArrayList<Pair<String,Dish.Label>> contents = combo.getContents();
-//            for (Pair<String, Dish.Label> labelPair: contents) {
-//                LinearLayout contentTextView = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_main_combo_content, viewHolder.contentsLayout, false);
-//                String dishNameString = labelPair.first;
-//                Dish.Label dishLabel = labelPair.second;
-//                ImageView label = (ImageView) contentTextView.findViewById(R.id.label);
-//                switch (dishLabel) {
-//                    case EGG: label.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.egg)); break;
-//                    case VEG: label.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.veg)); break;
-//                    case NON_VEG: label.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.non_veg)); break;
-//                }
-//                ((TextView) contentTextView.findViewById(R.id.content)).setText(dishNameString);
-//                viewHolder.contentsLayout.addView(contentTextView);
-//            }
+            viewHolder.contentsLayout.setOnClickListener(showDescription);
+            viewHolder.contentsLayout.removeAllViews();
+            ArrayList<Pair<String,Dish.Label>> contents = combo.getContents();
+            for (Pair<String, Dish.Label> labelPair: contents) {
+                LinearLayout contentTextView = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_main_combo_content, viewHolder.contentsLayout, false);
+                String dishNameString = labelPair.first;
+                Dish.Label dishLabel = labelPair.second;
+                ImageView label = (ImageView) contentTextView.findViewById(R.id.label);
+                switch (dishLabel) {
+                    case EGG: label.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.egg)); break;
+                    case VEG: label.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.veg)); break;
+                    case NON_VEG: label.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.non_veg)); break;
+                }
+                ((TextView) contentTextView.findViewById(R.id.content)).setText(dishNameString);
+                viewHolder.contentsLayout.addView(contentTextView);
+            }
             viewHolder.price.setText(String.valueOf((int) combo.getPrice()));
             switch (combo.getGroupSize()) {
                 case 1: viewHolder.comboSizeIcon.setImageDrawable(ContextCompat.getDrawable(MainActivity.this,R.drawable.svg_user1)); break;
@@ -534,24 +538,24 @@ public class MainActivity extends FoodmashActivity {
             }
             viewHolder.groupSize.setText(String.valueOf(combo.getGroupSize()));
             if(combo.getGroupSize()==1) viewHolder.groupSize.setVisibility(View.GONE);
-//            viewHolder.view.setOnClickListener(showDescription);
-//            viewHolder.viewComboSeparateButton.setOnClickListener(showDescription);
+            viewHolder.view.setOnClickListener(showDescription);
+            viewHolder.viewComboSeparateButton.setOnClickListener(showDescription);
 //            viewHolder.clickableLayout.setOnClickListener(showDescription);
-            viewHolder.imageSlider.setOnClickListener(showDescription);
+//            viewHolder.imageSlider.setOnClickListener(showDescription);
             if(combo.isAvailable())  {
-//                viewHolder.viewOrCartLayout.setVisibility(View.VISIBLE);
-//                viewHolder.viewComboSeparateButton.setVisibility(View.GONE);
+                viewHolder.viewOrCartLayout.setVisibility(View.VISIBLE);
+                viewHolder.viewComboSeparateButton.setVisibility(View.GONE);
                 viewHolder.comboOverlayLayout.setVisibility(View.GONE);
             } else {
-//                viewHolder.viewOrCartLayout.setVisibility(View.GONE);
-//                viewHolder.viewComboSeparateButton.setVisibility(View.VISIBLE);
+                viewHolder.viewOrCartLayout.setVisibility(View.GONE);
+                viewHolder.viewComboSeparateButton.setVisibility(View.VISIBLE);
                 viewHolder.comboOverlayLayout.setVisibility(View.VISIBLE);
             }
             int quantity = cart.getCount(combo.getId());
             if(!combo.isAvailable()) cart.removeOrder(combo);
             viewHolder.count.setText(String.valueOf(quantity));
             if (quantity > 0) {
-//                viewHolder.addedToCartLayout.setVisibility(View.VISIBLE);
+                viewHolder.addedToCartLayout.setVisibility(View.VISIBLE);
                 viewHolder.addToCartLayout.setVisibility(View.GONE);
                 viewHolder.countLayout.setVisibility(View.VISIBLE);
             }
@@ -570,7 +574,7 @@ public class MainActivity extends FoodmashActivity {
                     cart.decrementFromCart(combo.getId());
                     viewHolder.count.setText(String.valueOf(cart.getCount(combo.getId())));
                     if (cart.getCount(combo.getId()) == 0) {
-//                        Animations.fadeOut(viewHolder.addedToCartLayout, 200);
+                        Animations.fadeOut(viewHolder.addedToCartLayout, 200);
                         Animations.fadeOut(viewHolder.countLayout, 200);
                         Animations.fadeIn(viewHolder.addToCartLayout, 200);
                     }
@@ -581,7 +585,7 @@ public class MainActivity extends FoodmashActivity {
                 @Override
                 public void onClick(View v) {
                     cart.addToCart(new Combo(combo));
-//                    Animations.fadeInOnlyIfInvisible(viewHolder.addedToCartLayout, 500);
+                    Animations.fadeInOnlyIfInvisible(viewHolder.addedToCartLayout, 500);
                     Animations.fadeOut(viewHolder.addToCartLayout, 200);
                     Animations.fadeIn(viewHolder.countLayout, 200);
                     viewHolder.count.setText(String.valueOf(cart.getCount(combo.getId())));
@@ -589,21 +593,21 @@ public class MainActivity extends FoodmashActivity {
                 }
             });
 
-//            viewHolder.restaurantsLayout.removeAllViews();
-//            HashSet<Restaurant> restaurantsList = new HashSet<>();
-//            for (ComboOption comboOption : combo.getComboOptions())
-//                if (comboOption.isFromSameRestaurant())
-//                    restaurantsList.add(comboOption.getComboOptionDishes().get(0).getDish().getRestaurant());
-//                else for (ComboDish comboDish : comboOption.getComboOptionDishes())
-//                    restaurantsList.add(comboDish.getDish().getRestaurant());
-//            for (ComboDish comboDish : combo.getComboDishes())
-//                restaurantsList.add(comboDish.getDish().getRestaurant());
-//            for (Restaurant restaurant : restaurantsList) {
-//                LinearLayout restaurantLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_restaurant_logo, viewHolder.restaurantsLayout, false);
-//                ((TextView) restaurantLayout.findViewById(R.id.name)).setText(restaurant.getName());
-//                ((NetworkImageView) restaurantLayout.findViewById(R.id.logo)).setImageUrl(restaurant.getLogo(), imageLoader);
-//                viewHolder.restaurantsLayout.addView(restaurantLayout);
-//            }
+            viewHolder.restaurantsLayout.removeAllViews();
+            HashSet<Restaurant> restaurantsList = new HashSet<>();
+            for (ComboOption comboOption : combo.getComboOptions())
+                if (comboOption.isFromSameRestaurant())
+                    restaurantsList.add(comboOption.getComboOptionDishes().get(0).getDish().getRestaurant());
+                else for (ComboDish comboDish : comboOption.getComboOptionDishes())
+                    restaurantsList.add(comboDish.getDish().getRestaurant());
+            for (ComboDish comboDish : combo.getComboDishes())
+                restaurantsList.add(comboDish.getDish().getRestaurant());
+            for (Restaurant restaurant : restaurantsList) {
+                LinearLayout restaurantLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_restaurant_logo, viewHolder.restaurantsLayout, false);
+                ((TextView) restaurantLayout.findViewById(R.id.name)).setText(restaurant.getName());
+                ((NetworkImageView) restaurantLayout.findViewById(R.id.logo)).setImageUrl(restaurant.getLogo(), imageLoader);
+                viewHolder.restaurantsLayout.addView(restaurantLayout);
+            }
 
         }
     }
@@ -617,6 +621,7 @@ public class MainActivity extends FoodmashActivity {
             layoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
             this.context = context;
             this.imageUrls = imageUrls;
+            this.onClickListener = onClickListener;
         }
         @Override public int getCount() { return imageUrls.size(); }
         @Override public boolean isViewFromObject(View view, Object object) { return view == ((FrameLayout)object); }
