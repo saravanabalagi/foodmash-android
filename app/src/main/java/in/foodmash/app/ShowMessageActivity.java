@@ -24,9 +24,9 @@ public class ShowMessageActivity extends FoodmashActivity {
     @Bind(R.id.url_caption) TextView urlCaption;
     @Bind(R.id.image) NetworkImageView image;
 
-    @Bind(R.id.exit) LinearLayout exit;
-    @Bind(R.id.okay) LinearLayout okay;
-    @Bind(R.id.url) LinearLayout url;
+    @Bind(R.id.exit_wrapper) LinearLayout exit;
+    @Bind(R.id.okay_wrapper) LinearLayout okay;
+    @Bind(R.id.url_wrapper) LinearLayout url;
 
     String titleString;
     String messageString;

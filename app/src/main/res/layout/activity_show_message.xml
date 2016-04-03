@@ -64,130 +64,148 @@
         android:layout_marginRight="50dp"
         android:layout_marginTop="20dp">
 
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:background="#FF666666"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp" />
-
-
-        <LinearLayout
-            android:orientation="horizontal"
+        <LinearLayout android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:id="@+id/okay"
-            android:background="@drawable/button_transparent_background">
+            android:id="@+id/okay_wrapper"
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:srcCompat="@drawable/svg_android_tick"
-                android:padding="10dp"
-                android:tint="#FFCCCCCC" />
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#FF666666"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp" />
 
-            <TextView
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Okay"
-                android:padding="10dp"
-                android:textSize="17sp"
-                android:layout_weight="1"
-                android:textColor="#ffffff"
-                android:fontFamily="sans-serif-light" />
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:background="@drawable/button_transparent_background">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:srcCompat="@drawable/svg_right"
-                android:tint="#FFCCCCCC" />
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:srcCompat="@drawable/svg_android_tick"
+                    android:padding="10dp"
+                    android:tint="#FFCCCCCC" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Okay"
+                    android:padding="10dp"
+                    android:textSize="17sp"
+                    android:layout_weight="1"
+                    android:textColor="#ffffff"
+                    android:fontFamily="sans-serif-light" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:srcCompat="@drawable/svg_right"
+                    android:tint="#FFCCCCCC" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:background="#FF666666"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp" />
-
-
-        <LinearLayout
-            android:orientation="horizontal"
+        <LinearLayout android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/url_wrapper"
             android:visibility="gone"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:id="@+id/url"
-            android:background="@drawable/button_transparent_background">
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:srcCompat="@drawable/svg_android_web"
-                android:padding="10dp"
-                android:tint="#FFCCCCCC" />
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#FF666666"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp" />
 
-            <TextView
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Goto Url"
-                android:padding="10dp"
-                android:id="@+id/url_caption"
-                android:textSize="17sp"
-                android:layout_weight="1"
-                android:textColor="#ffffff"
-                android:fontFamily="sans-serif-light" />
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:background="@drawable/button_transparent_background">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:srcCompat="@drawable/svg_right"
-                android:tint="#FFCCCCCC" />
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:srcCompat="@drawable/svg_android_web"
+                    android:padding="10dp"
+                    android:tint="#FFCCCCCC" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Goto Url"
+                    android:padding="10dp"
+                    android:id="@+id/url_caption"
+                    android:textSize="17sp"
+                    android:layout_weight="1"
+                    android:textColor="#ffffff"
+                    android:fontFamily="sans-serif-light" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:srcCompat="@drawable/svg_right"
+                    android:tint="#FFCCCCCC" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:background="#FF666666"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp" />
-
-        <LinearLayout
-            android:orientation="horizontal"
+        <LinearLayout android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:id="@+id/exit"
-            android:background="@drawable/button_transparent_background">
+            android:id="@+id/exit_wrapper"
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:srcCompat="@drawable/svg_android_reply_all"
-                android:padding="10dp"
-                android:tint="#FFCCCCCC" />
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#FF666666"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp" />
 
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Exit"
-                android:padding="10dp"
-                android:textSize="17sp"
-                android:layout_weight="1"
-                android:textColor="#ffffff"
-                android:fontFamily="sans-serif-light" />
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:background="@drawable/button_transparent_background">
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:srcCompat="@drawable/svg_right"
-                android:tint="#FFCCCCCC" />
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:srcCompat="@drawable/svg_android_reply_all"
+                    android:padding="10dp"
+                    android:tint="#FFCCCCCC" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Exit"
+                    android:padding="10dp"
+                    android:textSize="17sp"
+                    android:layout_weight="1"
+                    android:textColor="#ffffff"
+                    android:fontFamily="sans-serif-light" />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:srcCompat="@drawable/svg_right"
+                    android:tint="#FFCCCCCC" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <View
