@@ -75,7 +75,6 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     @Bind(R.id.promo_code_input_layout) TextInputLayout promoCodeInputLayout;
     @Bind(R.id.delivery_charges) TextView deliveryCharges;
 
-    private Intent intent;
     private String paymentMethod;
     private String orderId;
     private boolean isPromoApplied = false;
@@ -147,6 +146,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     protected void onResume() {
         super.onResume();
 
+        Intent intent;
         orderId = getIntent().getStringExtra("order_id");
         if (orderId == null) {
             intent = new Intent(CheckoutPaymentActivity.this,CheckoutAddressActivity.class);
@@ -263,7 +263,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                     if(response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
                         String orderId = dataJson.getString("order_id");
-                        intent = new Intent(CheckoutPaymentActivity.this,OrderDescriptionActivity.class);
+                        Intent intent = new Intent(CheckoutPaymentActivity.this,OrderDescriptionActivity.class);
                         intent.putExtra("order_id",orderId);
                         intent.putExtra("cart",true);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -351,6 +351,26 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         Log.i("Payments", "Result: " + payuResponse.getResponseStatus().getResult());
         this.payuResponse = payuResponse;
         fragmentContainer.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String result = data.getStringExtra("result");
+        if(requestCode == RESULT_CANCELED) {
+            Snackbar.make(mainLayout,"Transaction failed. "+result,Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Try again", new View.OnClickListener() { @Override public void onClick(View v) { } })
+                    .show();
+        } else if (requestCode == RESULT_OK) {
+            orderId = data.getStringExtra("order_id");
+            Intent intent = new Intent(CheckoutPaymentActivity.this, OrderDescriptionActivity.class);
+            intent.putExtra("cart", true);
+            intent.putExtra("order_id", orderId);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Cart.getInstance().removeAllOrders();
+            startActivity(intent);
+            finish();
+        }
     }
 
 }
