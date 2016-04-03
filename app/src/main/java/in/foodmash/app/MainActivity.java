@@ -1,11 +1,15 @@
 package in.foodmash.app;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -47,6 +51,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import butterknife.Bind;
@@ -103,6 +108,9 @@ public class MainActivity extends FoodmashActivity {
     private Set<Combo.Size> sizeSelected = new HashSet<>();
     private Set<Dish.Label> preferenceSelected = new HashSet<>();
     private boolean sortPriceLowToHigh = true;
+
+    Handler handler = new Handler();
+    Random random = new Random();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -438,7 +446,7 @@ public class MainActivity extends FoodmashActivity {
             TextView id;
             TextView name;
             TextView price;
-            NetworkImageView comboImage;
+            ViewPager imageSlider;
             ImageView comboSizeIcon;
             TextView groupSize;
             LinearLayout contentsLayout;
@@ -460,7 +468,7 @@ public class MainActivity extends FoodmashActivity {
                 id = (TextView) itemView.findViewById(R.id.id);
                 name = (TextView) itemView.findViewById(R.id.name);
                 price = (TextView) itemView.findViewById(R.id.price);
-                comboImage = (NetworkImageView) itemView.findViewById(R.id.image);
+                imageSlider = (ViewPager) itemView.findViewById(R.id.imageSlider);
                 comboSizeIcon = (ImageView) itemView.findViewById(R.id.combo_size_icon);
                 groupSize = (TextView) itemView.findViewById(R.id.group_size);
                 contentsLayout = (LinearLayout) itemView.findViewById(R.id.contents_layout);
@@ -492,8 +500,18 @@ public class MainActivity extends FoodmashActivity {
                 }
             };
             viewHolder.id.setText(String.valueOf(combo.getId()));
-            viewHolder.comboImage.setImageUrl(combo.getPicture(), imageLoader);
-            viewHolder.comboImage.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * MainActivity.this.getResources().getDisplayMetrics().density);
+            viewHolder.imageSlider.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * MainActivity.this.getResources().getDisplayMetrics().density);
+            viewHolder.imageSlider.setAdapter(new NetworkImageViewSlider(MainActivity.this,combo.getImages()));
+            viewHolder.imageSlider.setOffscreenPageLimit(1);
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    int currentItem = viewHolder.imageSlider.getCurrentItem();
+                    int nextItem = (currentItem == viewHolder.imageSlider.getAdapter().getCount()-1)?0:currentItem+1;
+                    viewHolder.imageSlider.setCurrentItem(nextItem,true);
+                    handler.postDelayed(this, random.nextInt(8000)+4000);
+                }
+            },15000);
             viewHolder.name.setText(combo.getName());
             viewHolder.contentsLayout.setOnClickListener(showDescription);
             viewHolder.contentsLayout.removeAllViews();
@@ -523,7 +541,7 @@ public class MainActivity extends FoodmashActivity {
             viewHolder.view.setOnClickListener(showDescription);
             viewHolder.viewComboSeparateButton.setOnClickListener(showDescription);
 //            viewHolder.clickableLayout.setOnClickListener(showDescription);
-            viewHolder.comboImage.setOnClickListener(showDescription);
+            viewHolder.imageSlider.setOnClickListener(showDescription);
             if(combo.isAvailable())  {
                 viewHolder.viewOrCartLayout.setVisibility(View.VISIBLE);
                 viewHolder.viewComboSeparateButton.setVisibility(View.GONE);
@@ -591,6 +609,28 @@ public class MainActivity extends FoodmashActivity {
                 viewHolder.restaurantsLayout.addView(restaurantLayout);
             }
 
+        }
+    }
+
+    private class NetworkImageViewSlider extends PagerAdapter {
+        Context context;
+        LayoutInflater layoutInflater;
+        ArrayList<String> imageUrls = new ArrayList<>();
+        public NetworkImageViewSlider(Context context, ArrayList<String> imageUrls) {
+            layoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+            this.context = context;
+            this.imageUrls = imageUrls;
+        }
+        @Override public int getCount() { return imageUrls.size(); }
+        @Override public boolean isViewFromObject(View view, Object object) { return view == ((FrameLayout)object); }
+        @Override public void destroyItem(ViewGroup container, int position, Object object) { container.removeView((FrameLayout)object); }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            View view = layoutInflater.inflate(R.layout.repeatable_main_combo_image_slider, container, false);
+            ((NetworkImageView) view.findViewById(R.id.image)).setImageUrl(imageUrls.get(position), Swift.getInstance(context).getImageLoader());
+            container.addView(view);
+            return view;
         }
     }
 }

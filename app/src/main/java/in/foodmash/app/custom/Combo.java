@@ -95,6 +95,16 @@ public class Combo {
         return contents;
     }
 
+    @JsonIgnore public ArrayList<String> getImages() {
+        ArrayList<String> imageArrayList = new ArrayList<>();
+        for(ComboDish comboDish: comboDishes)
+            imageArrayList.add(comboDish.getDish().getPicture());
+        for(ComboOption comboOption: comboOptions)
+            for(ComboDish comboDish: comboOption.getComboOptionDishes())
+                imageArrayList.add(comboDish.getDish().getPicture());
+        return imageArrayList;
+    }
+
     @JsonProperty public void setId(int id) { this.id = id; }
     @JsonProperty public void setGroupSize(int groupSize) {
         this.groupSize = groupSize;
