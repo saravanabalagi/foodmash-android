@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:layout_marginTop="10dp"
@@ -109,6 +111,57 @@
             android:textSize="12sp"
             android:textAllCaps="true"
             android:fontFamily="sans-serif-light" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_height="match_parent">
+
+        <LinearLayout android:orientation="horizontal"
+            android:id="@+id/add_note"
+            android:gravity="center_vertical"
+            android:background="@drawable/button_rounded_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:srcCompat="@drawable/svg_android_bookmark"
+                android:tint="@color/white"
+                android:paddingRight="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Note"
+                android:textSize="12dp"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+        <LinearLayout android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/note_layout"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/svg_android_bookmark"
+                android:paddingRight="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/note"/>
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

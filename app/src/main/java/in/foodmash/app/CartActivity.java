@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -136,6 +138,86 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
                     ((TextView) comboLayout.findViewById(R.id.amount)).setText(String.valueOf((int)combo.calculatePrice() * order.getValue()));
                     total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
                 }});
+            final LinearLayout addNote = (LinearLayout) comboLayout.findViewById(R.id.add_note);
+            final LinearLayout noteLayout = (LinearLayout) comboLayout.findViewById(R.id.note_layout);
+            final TextView note = (TextView) comboLayout.findViewById(R.id.note);
+            addNote.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CartActivity.this);
+                    alertBuilder.setCancelable(true);
+                    LinearLayout linearLayout = new LinearLayout(CartActivity.this);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    linearLayout.setOrientation(LinearLayout.VERTICAL);
+                    linearLayout.setPadding(dpToPx(25),dpToPx(10),dpToPx(25),0);
+                    linearLayout.setLayoutParams(layoutParams);
+                    TextView textView = new TextView(CartActivity.this);
+                    textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    textView.setText("You shall request for customization of dishes here.");
+                    textView.setPadding(0,0,0,dpToPx(10));
+                    linearLayout.addView(textView);
+                    final EditText noteEditText = new EditText(CartActivity.this);
+                    noteEditText.setLayoutParams(layoutParams);
+                    noteEditText.setTextSize(14);
+                    linearLayout.addView(noteEditText);
+                    AlertDialog alertDialog = alertBuilder.create();
+                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Add", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (noteEditText.getText().toString().length() != 0) {
+                                combo.setNote(noteEditText.getText().toString());
+                                note.setText(combo.getNote());
+                                noteLayout.setVisibility(View.VISIBLE);
+                                addNote.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+                    alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() { @Override public void onClick(DialogInterface dialog, int which) {} });
+                    alertDialog.setTitle("Add Note");
+                    alertDialog.setView(linearLayout);
+                    alertDialog.show();
+                }
+            });
+            noteLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CartActivity.this);
+                    alertBuilder.setCancelable(true);
+                    LinearLayout linearLayout = new LinearLayout(CartActivity.this);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    linearLayout.setOrientation(LinearLayout.VERTICAL);
+                    linearLayout.setPadding(dpToPx(25),dpToPx(10),dpToPx(25),0);
+                    linearLayout.setLayoutParams(layoutParams);
+                    final EditText noteEditText = new EditText(CartActivity.this);
+                    noteEditText.setLayoutParams(layoutParams);
+                    noteEditText.setHint("Make noodles spicy!");
+                    noteEditText.setTextSize(14);
+                    linearLayout.addView(noteEditText);
+                    final AlertDialog alertDialog = alertBuilder.create();
+                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Save", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (noteEditText.getText().toString().length() != 0) {
+                                combo.setNote(noteEditText.getText().toString());
+                                note.setText(combo.getNote());
+                                noteLayout.setVisibility(View.VISIBLE);
+                                addNote.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+                    alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Delete", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            combo.setNote("");
+                            addNote.setVisibility(View.VISIBLE);
+                            noteLayout.setVisibility(View.GONE);
+                        }
+                    });
+                    alertDialog.setTitle("Edit Note");
+                    alertDialog.setView(linearLayout);
+                    alertDialog.show();
+                }
+            });
             fillLayout.addView(comboLayout);
         }
 

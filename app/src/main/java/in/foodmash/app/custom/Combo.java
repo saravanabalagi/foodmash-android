@@ -20,6 +20,7 @@ public class Combo {
     private Category category;
     private String name;
     private String description;
+    private String note;
     private boolean available = false;
     private float price;
     public enum Category { REGULAR, BUDGET, CORPORATE, HEALTH }
@@ -52,6 +53,7 @@ public class Combo {
 
     public int getId() { return id; }
     public Size getSize() { return size; }
+    public String getNote() { return note; }
     @JsonIgnore public int getGroupSize() { return groupSize; }
     @JsonIgnore public int getNoOfPurchases() { return noOfPurchases; }
     @JsonIgnore public Dish.Label getLabel() { return label; }
@@ -135,6 +137,7 @@ public class Combo {
     @JsonProperty public void setComboDishes(ArrayList<ComboDish> comboDishes) { this.comboDishes = comboDishes; }
     @JsonProperty public void setComboOptions(ArrayList<ComboOption> comboOptions) { this.comboOptions = comboOptions; }
     @JsonProperty public void setPicture(String picture) { this.picture = picture; }
+    public void setNote(String note) { this.note = note; }
 
     @Override
     public boolean equals(Object o) {
