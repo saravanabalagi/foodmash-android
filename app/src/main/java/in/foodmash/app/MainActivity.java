@@ -16,7 +16,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -93,7 +92,6 @@ public class MainActivity extends FoodmashActivity {
     private TextView cartCount;
     private Cart cart = Cart.getInstance();
     private ImageLoader imageLoader;
-    private DisplayMetrics displayMetrics;
     private ObjectMapper objectMapper;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Filters filters;
@@ -150,8 +148,6 @@ public class MainActivity extends FoodmashActivity {
         try { getSupportActionBar().setDisplayShowTitleEnabled(false); }
         catch (Exception e) { Actions.handleIgnorableException(this,e); }
 
-        displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
@@ -496,7 +492,7 @@ public class MainActivity extends FoodmashActivity {
                 }
             };
             viewHolder.id.setText(String.valueOf(combo.getId()));
-            viewHolder.imageSlider.getLayoutParams().height = (int)(displayMetrics.widthPixels*0.67) - (int)(10 * MainActivity.this.getResources().getDisplayMetrics().density);
+            viewHolder.imageSlider.getLayoutParams().height = (int)(getWidthPx()*0.67) - dpToPx(10);
             viewHolder.imageSlider.setAdapter(new NetworkImageViewSlider(MainActivity.this, combo.getImages(), showDescription));
             viewHolder.imageSlider.setOffscreenPageLimit(1);
             handler.postDelayed(new Runnable() {
