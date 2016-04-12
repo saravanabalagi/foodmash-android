@@ -14,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -61,7 +62,6 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Filters;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
-import in.foodmash.app.commons.LinearLayoutManager;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.commons.VolleyProgressFragment;
@@ -265,9 +265,6 @@ public class MainActivity extends FoodmashActivity {
             }
         };
 
-
-        Log.i("Testing","Hello World");
-
         applyFilters.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { drawerLayout.closeDrawer(Gravity.LEFT); } });
         removeFilters.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -296,13 +293,17 @@ public class MainActivity extends FoodmashActivity {
         combosRecyclerView.hasFixedSize();
         combosRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         combosRecyclerView.setAdapter(combosAdapter);
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                onResume();
+        combosRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            int scrollDy = 0;
+            @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
+            @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                scrollDy += dy;
+                swipeRefreshLayout.setEnabled(scrollDy == 0);
             }
         });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() { @Override public void onRefresh() { onResume(); } });
+        swipeRefreshLayout.setEnabled(false);
 
     }
 
@@ -503,15 +504,6 @@ public class MainActivity extends FoodmashActivity {
             viewHolder.imageSlider.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * MainActivity.this.getResources().getDisplayMetrics().density);
             viewHolder.imageSlider.setAdapter(new NetworkImageViewSlider(MainActivity.this, combo.getImages(), showDescription));
             viewHolder.imageSlider.setOffscreenPageLimit(1);
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    int currentItem = viewHolder.imageSlider.getCurrentItem();
-                    int nextItem = (currentItem == viewHolder.imageSlider.getAdapter().getCount()-1)?0:currentItem+1;
-                    viewHolder.imageSlider.setCurrentItem(nextItem,true);
-                    handler.postDelayed(this, random.nextInt(8000)+4000);
-                }
-            },15000);
             viewHolder.name.setText(combo.getName());
             viewHolder.contentsLayout.setOnClickListener(showDescription);
             viewHolder.contentsLayout.removeAllViews();
