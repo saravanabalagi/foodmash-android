@@ -7,7 +7,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,7 +57,6 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
     private Intent intent;
     private Combo combo;
     private ImageLoader imageLoader;
-    private DisplayMetrics displayMetrics;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -102,10 +100,6 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         setTitle(toolbar,"Combo","contents");
-
-        displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -165,7 +159,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                 ((TextView) comboOptionsLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
                 NetworkImageView comboDishPicture = (NetworkImageView) comboOptionsLayout.findViewById(R.id.image);
                 comboDishPicture.setImageUrl(comboDish.getDish().getPicture(), imageLoader);
-                comboDishPicture.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * getResources().getDisplayMetrics().density);
+                comboDishPicture.getLayoutParams().height = getWidthPx()/2 - dpToPx(10);
                 ((TextView) comboOptionsLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
                 ((TextView) comboOptionsLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());
                 ((NetworkImageView) comboOptionsLayout.findViewById(R.id.restaurant_logo)).setImageUrl(comboDish.getDish().getRestaurant().getLogo(), imageLoader);
@@ -262,7 +256,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
             final LinearLayout comboDishLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_combo_description_combo_dish, fillLayout, false);
             NetworkImageView comboDishPicture = (NetworkImageView) comboDishLayout.findViewById(R.id.image);
             comboDishPicture.setImageUrl(comboDish.getDish().getPicture(), imageLoader);
-            comboDishPicture.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * getResources().getDisplayMetrics().density);
+            comboDishPicture.getLayoutParams().height = getWidthPx()/2 - dpToPx(10);
             ((TextView) comboDishLayout.findViewById(R.id.name)).setText(comboDish.getDish().getName());
             ((TextView) comboDishLayout.findViewById(R.id.description)).setText(comboDish.getDish().getDescription());
             ((TextView) comboDishLayout.findViewById(R.id.restaurant_name)).setText(comboDish.getDish().getRestaurant().getName());

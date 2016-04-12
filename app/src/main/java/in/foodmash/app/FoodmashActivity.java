@@ -40,4 +40,9 @@ public class FoodmashActivity extends AppCompatActivity {
             }
         });
     }
+
+    public int dpToPx(int dp) { return Math.round(dp * getResources().getDisplayMetrics().density); }
+    public int pxToDp(int px) { return Math.round(px / getResources().getDisplayMetrics().density); }
+    public int getWidthPx() { return getResources().getDisplayMetrics().widthPixels; }
+    public int getHeightPx() { return getResources().getDisplayMetrics().heightPixels; }
 }

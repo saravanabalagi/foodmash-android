@@ -14,12 +14,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -62,15 +59,13 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Filters;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
+import in.foodmash.app.commons.LinearLayoutManager;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.custom.Cart;
 import in.foodmash.app.custom.Combo;
-import in.foodmash.app.custom.ComboDish;
-import in.foodmash.app.custom.ComboOption;
 import in.foodmash.app.custom.Dish;
-import in.foodmash.app.custom.Restaurant;
 import in.foodmash.app.utils.DateUtils;
 
 public class MainActivity extends FoodmashActivity {
@@ -97,7 +92,6 @@ public class MainActivity extends FoodmashActivity {
     private TextView cartCount;
     private Cart cart = Cart.getInstance();
     private ImageLoader imageLoader;
-    private DisplayMetrics displayMetrics;
     private ObjectMapper objectMapper;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Filters filters;
@@ -501,7 +495,7 @@ public class MainActivity extends FoodmashActivity {
                 }
             };
             viewHolder.id.setText(String.valueOf(combo.getId()));
-            viewHolder.imageSlider.getLayoutParams().height = displayMetrics.widthPixels/2 - (int)(10 * MainActivity.this.getResources().getDisplayMetrics().density);
+            viewHolder.imageSlider.getLayoutParams().height = (int)(getWidthPx()*0.67) - dpToPx(10);
             viewHolder.imageSlider.setAdapter(new NetworkImageViewSlider(MainActivity.this, combo.getImages(), showDescription));
             viewHolder.imageSlider.setOffscreenPageLimit(1);
             viewHolder.name.setText(combo.getName());
