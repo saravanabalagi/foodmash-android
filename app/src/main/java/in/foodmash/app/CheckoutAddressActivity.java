@@ -5,10 +5,15 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,6 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -49,16 +55,18 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
     @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.add_address) TextView addAddress;
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.address_recycler_view) RecyclerView addressRecyclerView;
     @Bind(R.id.choose_address) LinearLayout chooseAddressLayout;
+    @Bind(R.id.address_progress) LinearLayout addressProgress;
     @Bind(R.id.empty_address_layout) LinearLayout emptyAddressLayout;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
 
     private Intent intent;
     private List<City> cities;
-    private int addressId;
-    private List<Address> addresses;
+    private int addressId = -1;
+    private List<Address> addresses = new ArrayList<>();
+    private AddressAdapter addressAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +83,25 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
 
         confirm.setOnClickListener(this);
         addAddress.setOnClickListener(this);
+        addressAdapter = new AddressAdapter();
+        addressRecyclerView.hasFixedSize();
+        addressRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        addressRecyclerView.setAdapter(addressAdapter);
+        addressRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            int scrollDy = 0;
+            @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
+            @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                scrollDy += dy;
+                swipeRefreshLayout.setEnabled(scrollDy == 0);
+            }
+        });
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 onResume();
             }
         });
+        swipeRefreshLayout.setEnabled(false);
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -126,11 +147,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                 startActivity(intent); break;
             case R.id.confirm:
                 if(isEverythingValid()) makeConfirmOrderRequest();
-                else if(getSelectedAddressCount()==0) Snackbar.make(mainLayout,"Select an address to deliver",Snackbar.LENGTH_LONG).show();
-                else if(getSelectedAddressCount()>1) {
-                    makeAddressRequest();
-                    Snackbar.make(mainLayout,"Please choose your delivery address again!",Snackbar.LENGTH_LONG).show();
-                }
+                else Snackbar.make(mainLayout,"Select an address to deliver",Snackbar.LENGTH_LONG).show();
                 break;
         }
     }
@@ -229,18 +246,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
         Swift.getInstance(this).addToRequestQueue(getCombosRequest, 20000, 2, 1.0f);
     }
 
-    private boolean isEverythingValid() {
-        return getSelectedAddressCount()==1;
-    }
-
-    private int getSelectedAddressCount() {
-        int count = 0;
-        for(int i=0;i<fillLayout.getChildCount();i++)
-            if(fillLayout.getChildAt(i).findViewById(R.id.selected).getVisibility()==View.VISIBLE)
-                count++;
-        return count;
-    }
-
+    private boolean isEverythingValid() { return addressId!=-1; }
     private JSONObject getMakeAddressRequestJson() {
         JSONObject requestJson = JsonProvider.getStandardRequestJson(this);
         try {
@@ -259,89 +265,12 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                 swipeRefreshLayout.setRefreshing(false);
                 try {
                     if(response.getBoolean("success")) {
-                        fillLayout.removeAllViews();
                         final ObjectMapper objectMapper = new ObjectMapper();
                         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
                         addresses = Arrays.asList(objectMapper.readValue(response.getJSONArray("data").toString(), Address[].class));
-                        if(addresses.size()==0) { emptyAddressLayout.setVisibility(View.VISIBLE); fillLayout.setVisibility(View.GONE); return; }
-                        else { fillLayout.setVisibility(View.VISIBLE); emptyAddressLayout.setVisibility(View.GONE); }
-                        for (int i=0;i<addresses.size();i++) {
-                            final Address address = addresses.get(i);
-                            final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_user_address, fillLayout, false);
-                            ((TextView) addressLayout.findViewById(R.id.name)).setText(address.getName());
-                            ((TextView) addressLayout.findViewById(R.id.line1)).setText(address.getLine1());
-                            ((TextView) addressLayout.findViewById(R.id.line2)).setText(address.getLine2());
-                            ((TextView) addressLayout.findViewById(R.id.contact_no)).setText(address.getContactNo());
-
-                            int areaId = address.getAreaId();
-                            int cityPos = -1;
-                            for(int j=0;j<cities.size();j++) if (cities.get(j).indexOf(areaId)!=-1) cityPos = j;
-                            int areaPos = cities.get(cityPos).indexOf(areaId);
-                            String city = cities.get(cityPos).getName();
-                            String area = cities.get(cityPos).getAreas().get(areaPos).getName();
-                            String areaCity = area + ", " + city;
-                            ((TextView) addressLayout.findViewById(R.id.area_city)).setText(areaCity);
-
-                            addressLayout.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(CheckoutAddressActivity.this, PinYourLocationActivity.class);
-                                    try { intent.putExtra("json", objectMapper.writeValueAsString(address)); }
-                                    catch (Exception e) { Actions.handleIgnorableException(CheckoutAddressActivity.this,e); }
-                                    intent.putExtra("edit", true);
-                                    intent.putExtra("cart", true);
-                                    startActivity(intent);
-                                }
-                            });
-
-                            addressLayout.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    final Snackbar deletingAddressSnackbar = Snackbar.make(mainLayout,"Deleting address...",Snackbar.LENGTH_INDEFINITE);
-                                    final Snackbar couldNotDeleteSnackbar = Snackbar.make(mainLayout,"Could not delete",Snackbar.LENGTH_INDEFINITE);
-                                    couldNotDeleteSnackbar.setAction("Try Again", new View.OnClickListener() { @Override public void onClick(View v) { couldNotDeleteSnackbar.dismiss(); } });
-
-                                    JSONObject requestJson = JsonProvider.getStandardRequestJson(CheckoutAddressActivity.this);
-                                    JSONObject dataJson = new JSONObject();
-                                    try {
-                                        dataJson.put("id", address.getId());
-                                        requestJson.put("data", dataJson);
-                                    } catch (JSONException e) { e.printStackTrace(); }
-                                    JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
-                                        @Override
-                                        public void onResponse(JSONObject response) {
-                                            if(deletingAddressSnackbar.isShown()) deletingAddressSnackbar.dismiss();
-                                            try {
-                                                if (response.getBoolean("success")) makeAddressRequest();
-                                                else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
-                                            } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(CheckoutAddressActivity.this,e); }
-                                        }
-                                    }, new Response.ErrorListener() {
-                                        @Override
-                                        public void onErrorResponse(VolleyError error) {
-                                            couldNotDeleteSnackbar.show();
-                                        }
-                                    });
-
-                                    deletingAddressSnackbar.show();
-                                    Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(deleteRequest);
-                                }
-                            });
-
-                            final int cardinalNumber = i+1;
-                            addressLayout.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Snackbar.make(mainLayout, "Address "+cardinalNumber+" Selected", Snackbar.LENGTH_SHORT).show();
-                                    addressId = address.getId();
-                                    for(int i=0; i<fillLayout.getChildCount(); i++)
-                                        fillLayout.getChildAt(i).findViewById(R.id.selected).setVisibility(View.INVISIBLE);
-                                    addressLayout.findViewById(R.id.selected).setVisibility(View.VISIBLE);
-                                    chooseAddressLayout.setVisibility(View.GONE);
-                                }
-                            });
-                            fillLayout.addView(addressLayout);
-                        }
+                        addressAdapter.notifyDataSetChanged();
+                        if(addresses.size()==0) { emptyAddressLayout.setVisibility(View.VISIBLE); addressProgress.setVisibility(View.GONE); addressRecyclerView.setVisibility(View.GONE); return; }
+                        else { addressRecyclerView.setVisibility(View.VISIBLE); addressProgress.setVisibility(View.VISIBLE); emptyAddressLayout.setVisibility(View.GONE); }
                     } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { Actions.handleIgnorableException(CheckoutAddressActivity.this,e); }
             }
@@ -357,6 +286,99 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(addressesRequest);
+    }
+
+    class AddressAdapter extends RecyclerView.Adapter {
+        class ViewHolder extends RecyclerView.ViewHolder {
+            @Bind(R.id.name) TextView name;
+            @Bind(R.id.line1) TextView line1;
+            @Bind(R.id.line2) TextView line2;
+            @Bind(R.id.contact_no) TextView contactNo;
+            @Bind(R.id.area_city) TextView areaCity;
+            @Bind(R.id.edit) ImageView edit;
+            @Bind(R.id.delete) ImageView delete;
+            @Bind(R.id.selected) ImageView selected;
+            ViewHolder(View itemView) {
+                super(itemView);
+                ButterKnife.bind(this, itemView);
+            }
+        }
+        @Override public int getItemCount() { return addresses.size(); }
+        @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) { return new ViewHolder(LayoutInflater.from(CheckoutAddressActivity.this).inflate(R.layout.repeatable_user_address, parent, false)); }
+        @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+            final ViewHolder viewHolder = (ViewHolder) holder;
+            final Address address = addresses.get(position);
+            viewHolder.name.setText(address.getName());
+            viewHolder.line1.setText(address.getLine1());
+            viewHolder.line2.setText(address.getLine2());
+            viewHolder.contactNo.setText(address.getContactNo());
+
+            int areaId = address.getAreaId();
+            int cityPos = -1;
+            for(int j=0;j<cities.size();j++) if (cities.get(j).indexOf(areaId)!=-1) cityPos = j;
+            int areaPos = cities.get(cityPos).indexOf(areaId);
+            String city = cities.get(cityPos).getName();
+            String area = cities.get(cityPos).getAreas().get(areaPos).getName();
+            String areaCity = area + ", " + city;
+            viewHolder.areaCity.setText(areaCity);
+
+            viewHolder.edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(CheckoutAddressActivity.this, PinYourLocationActivity.class);
+                    try { intent.putExtra("json", new ObjectMapper().writeValueAsString(address)); }
+                    catch (Exception e) { Actions.handleIgnorableException(CheckoutAddressActivity.this,e); }
+                    intent.putExtra("edit", true);
+                    intent.putExtra("cart", true);
+                    startActivity(intent);
+                }
+            });
+
+            viewHolder.delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Snackbar deletingAddressSnackbar = Snackbar.make(mainLayout,"Deleting address...",Snackbar.LENGTH_INDEFINITE);
+                    final Snackbar couldNotDeleteSnackbar = Snackbar.make(mainLayout,"Could not delete",Snackbar.LENGTH_INDEFINITE);
+                    couldNotDeleteSnackbar.setAction("Try Again", new View.OnClickListener() { @Override public void onClick(View v) { couldNotDeleteSnackbar.dismiss(); } });
+
+                    JSONObject requestJson = JsonProvider.getStandardRequestJson(CheckoutAddressActivity.this);
+                    JSONObject dataJson = new JSONObject();
+                    try {
+                        dataJson.put("id", address.getId());
+                        requestJson.put("data", dataJson);
+                    } catch (JSONException e) { e.printStackTrace(); }
+                    JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            if(deletingAddressSnackbar.isShown()) deletingAddressSnackbar.dismiss();
+                            try {
+                                if (response.getBoolean("success")) makeAddressRequest();
+                                else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                            } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(CheckoutAddressActivity.this,e); }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            couldNotDeleteSnackbar.show();
+                        }
+                    });
+
+                    deletingAddressSnackbar.show();
+                    Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(deleteRequest);
+                }
+            });
+            if(addressId == address.getId()) viewHolder.selected.setVisibility(View.VISIBLE);
+            else viewHolder.selected.setVisibility(View.INVISIBLE);
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Snackbar.make(mainLayout, "Address "+(position+1)+" Selected", Snackbar.LENGTH_SHORT).show();
+                    addressId = address.getId();
+                    notifyDataSetChanged();
+                    chooseAddressLayout.setVisibility(View.GONE);
+                }
+            });
+        }
     }
 
 }
