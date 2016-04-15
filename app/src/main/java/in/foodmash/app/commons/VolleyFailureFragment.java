@@ -74,12 +74,12 @@ public class VolleyFailureFragment extends Fragment implements View.OnClickListe
         back.setOnClickListener(this);
         logout.setOnClickListener(this);
 
-        if( volleyError instanceof NetworkError) setErrorDescription("Connection Failed","Internet is nowhere to be found.", ContextCompat.getDrawable(getActivity(),R.drawable.png_no_wifi));
-        else if( volleyError instanceof ServerError) setErrorDescription("Server Error","Clouds did not respond properly!", ContextCompat.getDrawable(getActivity(),R.drawable.png_two_minions));
-        else if( volleyError instanceof AuthFailureError) setErrorDescription("Authentication Failed","Log out and try again.", ContextCompat.getDrawable(getActivity(),R.drawable.png_broken_key));
-        else if( volleyError instanceof ParseError) setErrorDescription("Parse Error","App doesn't understand 'Minionese'", ContextCompat.getDrawable(getActivity(),R.drawable.png_minionese));
-        else if( volleyError instanceof TimeoutError) setErrorDescription("Connection Timed Out","Sometimes Internet gets lazy and takes a nap.", ContextCompat.getDrawable(getActivity(),R.drawable.png_broken_clock));
-        else setErrorDescription("Something's not right","Error displaying the error.", ContextCompat.getDrawable(getActivity(),R.drawable.png_minion));
+        if( volleyError instanceof NetworkError) setErrorDescription("Connection Failed","Up above the clouds so high! Give us internet wings", ContextCompat.getDrawable(getActivity(),R.drawable.svg_cloud_closed));
+        else if( volleyError instanceof ServerError) setErrorDescription("Server Error","Perhaps lightning pierced our clouds!", ContextCompat.getDrawable(getActivity(),R.drawable.svg_cloud_error));
+        else if( volleyError instanceof AuthFailureError) setErrorDescription("Authentication Failed","Log out and login again.", ContextCompat.getDrawable(getActivity(),R.drawable.svg_security));
+        else if( volleyError instanceof ParseError) setErrorDescription("Parse Error","Server's talking 'Minionese'", ContextCompat.getDrawable(getActivity(),R.drawable.svg_script));
+        else if( volleyError instanceof TimeoutError) setErrorDescription("Connection Timed Out","Sometimes Internet gets lazy and takes a nap.", ContextCompat.getDrawable(getActivity(),R.drawable.svg_timer));
+        else setErrorDescription("Something's not right","Error displaying the error.", ContextCompat.getDrawable(getActivity(),R.drawable.svg_cloud_error));
 
         if(volleyError instanceof NetworkError || volleyError instanceof TimeoutError) { logoutWrapper.setVisibility(View.GONE); errorWrapper.setVisibility(View.GONE);  }
         else if(volleyError instanceof AuthFailureError) { internetWrapper.setVisibility(View.GONE); errorWrapper.setVisibility(View.GONE);  }
