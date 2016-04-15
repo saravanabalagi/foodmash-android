@@ -80,7 +80,7 @@ public class MainActivity extends FoodmashActivity {
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.filters) RecyclerView filtersRecyclerView;
-    @Bind(R.id.combos) RecyclerView combosRecyclerView;
+    @Bind(R.id.combos_recycler_view) RecyclerView combosRecyclerView;
 
     @Bind(R.id.apply_filters) TextView applyFilters;
     @Bind(R.id.remove_all_filters) TextView removeFilters;
