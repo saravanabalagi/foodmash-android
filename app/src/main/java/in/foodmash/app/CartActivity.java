@@ -39,6 +39,7 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
     @Bind(R.id.buy) FloatingActionButton buy;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.empty_cart_layout) LinearLayout emptyCartLayout;
+    @Bind(R.id.cart_progress) LinearLayout cartProgress;
     @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.cart_recycler_view) RecyclerView cartRecyclerView;
     @Bind(R.id.payable_amount) TextView total;
@@ -66,6 +67,7 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
                         cart.removeAllOrders();
                         cartAdapter.notifyDataSetChanged();
                         total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
+                        Animations.fadeOut(cartProgress,500);
                         Animations.fadeIn(emptyCartLayout,500);
                     }
                 }).setNegativeButton("No, don't remove", new DialogInterface.OnClickListener() {
@@ -124,8 +126,8 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
         }
 
         total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
-        if(cart.getCount()>0) { emptyCartLayout.setVisibility(View.GONE); cartRecyclerView.setVisibility(View.VISIBLE); }
-        else { emptyCartLayout.setVisibility(View.VISIBLE); cartRecyclerView.setVisibility(View.GONE); }
+        if(cart.getCount()>0) { emptyCartLayout.setVisibility(View.GONE); cartProgress.setVisibility(View.VISIBLE); cartRecyclerView.setVisibility(View.VISIBLE); }
+        else { emptyCartLayout.setVisibility(View.VISIBLE); cartProgress.setVisibility(View.GONE); cartRecyclerView.setVisibility(View.GONE); }
 
         cartAdapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
@@ -177,15 +179,13 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
                 @Override public void onClick(View v) {
                     cart.addToCart(combo);
                     viewHolder.count.setText(String.valueOf(cart.getCount(combo)));
-                    viewHolder.amount.setText(String.valueOf((int)combo.calculatePrice() * cart.getOrders().get(combo)));
                     total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
                 }});
             viewHolder.minus.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     viewHolder.count.setText(String.valueOf(cart.decrementFromCart(combo)));
                     cartAdapter.notifyDataSetChanged();
-                    if(cart.getCount()==0) Animations.fadeIn(emptyCartLayout, 500);
-                    viewHolder.amount.setText(String.valueOf((int)combo.calculatePrice() * cart.getOrders().get(combo)));
+                    if(cart.getCount()==0) { Animations.fadeIn(emptyCartLayout, 500); Animations.fadeOut(cartProgress,500); }
                     total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
                 }});
             viewHolder.addNote.setOnClickListener(new View.OnClickListener() {
