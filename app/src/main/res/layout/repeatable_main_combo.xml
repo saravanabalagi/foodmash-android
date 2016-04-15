@@ -23,7 +23,7 @@
             android:layout_height="40dp"
             android:id="@+id/quick_view"
             app:srcCompat="@drawable/svg_info"
-            android:background="@drawable/bg_circular_button"
+            android:background="@drawable/bg_circular_dark_button"
             android:padding="10dp"
             android:layout_margin="10dp"
             android:tint="@color/white"
@@ -126,7 +126,7 @@
                     android:layout_height="40dp"
                     android:id="@+id/add_to_cart_layout"
                     app:srcCompat="@drawable/svg_cart"
-                    android:background="@drawable/bg_circular_button_background"
+                    android:background="@drawable/bg_circular_dark_button_background"
                     android:padding="10dp"
                     android:layout_alignRight="@+id/count_layout" />
 
@@ -146,7 +146,7 @@
                         android:paddingBottom="2dp"
                         android:id="@+id/minus"
                         app:srcCompat="@drawable/svg_minus"
-                        android:background="@drawable/bg_circular_button_background"
+                        android:background="@drawable/bg_circular_dark_button_background"
                         android:gravity="center_horizontal" />
 
                     <TextView
@@ -165,7 +165,7 @@
                         android:text="@string/plus"
                         android:id="@+id/plus"
                         app:srcCompat="@drawable/svg_plus"
-                        android:background="@drawable/bg_circular_button_background"
+                        android:background="@drawable/bg_circular_dark_button_background"
                         android:gravity="center_horizontal" />
 
                 </LinearLayout>

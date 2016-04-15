@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -20,7 +21,7 @@ import java.util.TreeMap;
  */
 public class Cart {
 
-    private HashMap<Combo,Integer> orders = new HashMap<>();
+    private LinkedHashMap<Combo,Integer> orders = new LinkedHashMap<>();
     private TreeMap<Long, Combo> timestamps = new TreeMap<>();
     private static Cart mInstance;
     public synchronized static Cart getInstance() {

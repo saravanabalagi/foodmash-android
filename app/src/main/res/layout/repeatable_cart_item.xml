@@ -62,14 +62,15 @@
             android:gravity="center_vertical|center_horizontal"
             android:layout_centerInParent="true">
 
-            <TextView
-                android:layout_width="35dp"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:text="@string/minus"
+                android:paddingBottom="2dp"
                 android:id="@+id/minus"
-                android:textSize="12sp"
-                android:background="@drawable/button_rounded_left_background"
-                android:textColor="@color/white"
+                app:srcCompat="@drawable/svg_minus"
+                android:tint="@color/black"
+                android:background="@drawable/bg_circular_light_button_background"
                 android:gravity="center_horizontal" />
 
             <TextView
@@ -77,19 +78,18 @@
                 android:layout_height="wrap_content"
                 android:text="@string/count_ipsum_lorem"
                 android:id="@+id/count"
-                android:textSize="12sp"
-                android:gravity="center_horizontal"
-                android:textColor="@color/white"
-                android:background="@drawable/button_dark_background" />
+                android:textSize="20sp"
+                android:gravity="center_horizontal" />
 
-            <TextView
-                android:layout_width="35dp"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:paddingBottom="2dp"
                 android:text="@string/plus"
                 android:id="@+id/plus"
-                android:textSize="12sp"
-                android:textColor="@color/white"
-                android:background="@drawable/button_rounded_right_background"
+                app:srcCompat="@drawable/svg_plus"
+                android:tint="@color/black"
+                android:background="@drawable/bg_circular_light_button_background"
                 android:gravity="center_horizontal" />
 
         </LinearLayout>
@@ -120,25 +120,21 @@
         android:layout_height="match_parent">
 
         <LinearLayout android:orientation="horizontal"
-            android:id="@+id/add_note"
             android:gravity="center_vertical"
-            android:background="@drawable/button_rounded_background"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/add_note">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 app:srcCompat="@drawable/svg_android_bookmark"
-                android:tint="@color/white"
                 android:paddingRight="5dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add Note"
-                android:textSize="12dp"
-                android:textColor="@color/white" />
+                android:text="Tap to add note"/>
 
         </LinearLayout>
 

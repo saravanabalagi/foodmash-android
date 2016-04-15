@@ -20,63 +20,57 @@
             android:layout_weight="1"
             android:id="@+id/swipe_refresh_layout">
 
-            <ScrollView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:gravity="center_vertical|center_horizontal"
+                    android:background="@drawable/bg_white_fading"
+                    android:paddingBottom="30dp"
+                    android:visibility="gone"
+                    android:id="@+id/empty_cart_layout">
 
-                    <LinearLayout
-                        android:orientation="vertical"
+                    <ImageView
                         android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        app:srcCompat="@drawable/svg_empty_cart"
+                        android:cropToPadding="true"
+                        android:paddingLeft="30dp"
+                        android:paddingRight="30dp"
+                        android:contentDescription="@string/empty_cart" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:id="@+id/empty_cart_layout"
-                        android:visibility="gone">
+                        android:text="@string/empty_cart_title"
+                        android:gravity="center_horizontal"
+                        android:textSize="25sp"
+                        android:fontFamily="sans-serif-light"
+                        android:layout_margin="5dp"
+                        android:singleLine="true" />
 
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="200dp"
-                            app:srcCompat="@drawable/svg_empty_cart"
-                            android:cropToPadding="true"
-                            android:paddingLeft="30dp"
-                            android:paddingRight="30dp"
-                            android:contentDescription="@string/empty_cart" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/empty_cart_title"
-                            android:gravity="center_horizontal"
-                            android:textSize="25sp"
-                            android:fontFamily="sans-serif-light"
-                            android:layout_margin="5dp"
-                            android:singleLine="true" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/empty_cart_description"
-                            android:gravity="center_horizontal"
-                            android:fontFamily="sans-serif-light"
-                            android:layout_margin="5dp"
-                            android:singleLine="true" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/fill_layout"
-                        android:paddingBottom="20dp">
-
-                    </LinearLayout>
-
+                        android:text="@string/empty_cart_description"
+                        android:gravity="center_horizontal"
+                        android:fontFamily="sans-serif-light"
+                        android:layout_margin="5dp"
+                        android:singleLine="true" />
                 </LinearLayout>
-            </ScrollView>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/cart_recycler_view"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent">
+                </android.support.v7.widget.RecyclerView>
+
+            </LinearLayout>
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
