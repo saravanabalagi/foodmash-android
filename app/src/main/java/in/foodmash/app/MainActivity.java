@@ -430,54 +430,34 @@ public class MainActivity extends FoodmashActivity {
         return filteredComboList;
     }
 
-    private class CombosAdapter extends RecyclerView.Adapter {
+    class CombosAdapter extends RecyclerView.Adapter {
         List<Combo> combos = new ArrayList<>();
         public void setCombos(List<Combo> combos) { this.combos = combos; }
         @Override public int getItemCount() { return combos.size(); }
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView id;
-            TextView name;
-            TextView price;
-            ViewPager imageSlider;
-            ImageView comboSizeIcon;
-            TextView groupSize;
-            TextView count;
-            ImageView plus;
-            LinearLayout unavailableLayout;
-            ImageView addToCartLayout;
-            ImageView minus;
-            ImageView quickView;
-            ImageView closeInfoLayout;
-            LinearLayout countLayout;
-            LinearLayout bottomBar;
-            RelativeLayout comboInfoLayout;
-            RelativeLayout comboLayout;
-            LinearLayout contentsWrapper;
-            LinearLayout contentsLayout;
-            LinearLayout restaurantsLayout;
-
+            @Bind(R.id.id) TextView id;
+            @Bind(R.id.name) TextView name;
+            @Bind(R.id.price) TextView price;
+            @Bind(R.id.imageSlider) ViewPager imageSlider;
+            @Bind(R.id.combo_size_icon) ImageView comboSizeIcon;
+            @Bind(R.id.group_size) TextView groupSize;
+            @Bind(R.id.add_to_cart_layout) ImageView addToCartLayout;
+            @Bind(R.id.unavailable_layout) LinearLayout unavailableLayout;
+            @Bind(R.id.count_layout) LinearLayout countLayout;
+            @Bind(R.id.count) TextView count;
+            @Bind(R.id.plus) ImageView plus;
+            @Bind(R.id.minus) ImageView minus;
+            @Bind(R.id.quick_view) ImageView quickView;
+            @Bind(R.id.close_info_layout) ImageView closeInfoLayout;
+            @Bind(R.id.bottom_bar) LinearLayout bottomBar;
+            @Bind(R.id.combo_info_layout) RelativeLayout comboInfoLayout;
+            @Bind(R.id.combo_layout) RelativeLayout comboLayout;
+            @Bind(R.id.contents_wrapper) LinearLayout contentsWrapper;
+            @Bind(R.id.combo_contents_layout) LinearLayout contentsLayout;
+            @Bind(R.id.restaurants_layout) LinearLayout restaurantsLayout;
             public ViewHolder(View itemView) {
                 super(itemView);
-                id = (TextView) itemView.findViewById(R.id.id);
-                name = (TextView) itemView.findViewById(R.id.name);
-                price = (TextView) itemView.findViewById(R.id.price);
-                imageSlider = (ViewPager) itemView.findViewById(R.id.imageSlider);
-                comboSizeIcon = (ImageView) itemView.findViewById(R.id.combo_size_icon);
-                groupSize = (TextView) itemView.findViewById(R.id.group_size);
-                addToCartLayout = (ImageView) itemView.findViewById(R.id.add_to_cart_layout);
-                unavailableLayout = (LinearLayout) itemView.findViewById(R.id.unavailable_layout);
-                countLayout = (LinearLayout) itemView.findViewById(R.id.count_layout);
-                count = (TextView) itemView.findViewById(R.id.count);
-                plus = (ImageView) itemView.findViewById(R.id.plus);
-                minus = (ImageView) itemView.findViewById(R.id.minus);
-                quickView = (ImageView) itemView.findViewById(R.id.quick_view);
-                closeInfoLayout = (ImageView) itemView.findViewById(R.id.close_info_layout);
-                bottomBar = (LinearLayout) itemView.findViewById(R.id.bottom_bar);
-                comboInfoLayout = (RelativeLayout) itemView.findViewById(R.id.combo_info_layout);
-                comboLayout = (RelativeLayout) itemView.findViewById(R.id.combo_layout);
-                contentsWrapper = (LinearLayout) itemView.findViewById(R.id.contents_wrapper);
-                contentsLayout = (LinearLayout) itemView.findViewById(R.id.combo_contents_layout);
-                restaurantsLayout = (LinearLayout) itemView.findViewById(R.id.restaurants_layout);
+                ButterKnife.bind(this, itemView);
             }
         }
 
