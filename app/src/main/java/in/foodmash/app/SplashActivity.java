@@ -32,7 +32,7 @@ import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
-import in.foodmash.app.custom.City;
+import in.foodmash.app.models.City;
 
 /**
  * Created by Zeke on Jul 19 2015.

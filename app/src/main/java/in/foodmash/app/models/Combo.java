@@ -1,4 +1,4 @@
-package in.foodmash.app.custom;
+package in.foodmash.app.models;
 
 import android.util.Pair;
 

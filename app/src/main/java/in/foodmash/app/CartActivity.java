@@ -23,8 +23,8 @@ import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
-import in.foodmash.app.custom.Cart;
-import in.foodmash.app.custom.Combo;
+import in.foodmash.app.models.Cart;
+import in.foodmash.app.models.Combo;
 import in.foodmash.app.utils.NumberUtils;
 
 /**

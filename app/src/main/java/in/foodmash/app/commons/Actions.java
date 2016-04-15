@@ -20,7 +20,7 @@ import java.util.Date;
 import in.foodmash.app.ErrorReportActivity;
 import in.foodmash.app.LoginActivity;
 import in.foodmash.app.R;
-import in.foodmash.app.custom.Cart;
+import in.foodmash.app.models.Cart;
 import in.foodmash.app.utils.DateUtils;
 
 /**

@@ -1,4 +1,4 @@
-package in.foodmash.app.custom;
+package in.foodmash.app.models;
 
 /**
  * Created by Zeke on Sep 11 2015.

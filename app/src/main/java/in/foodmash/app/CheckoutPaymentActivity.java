@@ -46,7 +46,7 @@ import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.commons.VolleyProgressFragment;
-import in.foodmash.app.custom.Cart;
+import in.foodmash.app.models.Cart;
 import in.foodmash.app.payment.CashOnDeliveryFragment;
 import in.foodmash.app.payment.CreditDebitCardFragment;
 import in.foodmash.app.payment.NetbankingFragment;
