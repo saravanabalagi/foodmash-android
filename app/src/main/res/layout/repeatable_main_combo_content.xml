@@ -3,11 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
 
     <ImageView
-        android:layout_width="15dp"
-        android:layout_height="15dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:id="@+id/label"
         app:srcCompat="@drawable/svg_label"
         android:contentDescription="@string/label" />
@@ -17,8 +18,9 @@
         android:layout_height="wrap_content"
         android:text="@string/food_description_lorem_ipsum"
         android:fontFamily="sans-serif-light"
-        android:textSize="14sp"
+        android:textSize="17sp"
         android:id="@+id/content"
-        android:clickable="true" />
+        android:clickable="true"
+        android:textColor="@color/white" />
 
 </LinearLayout>
