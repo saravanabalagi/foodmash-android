@@ -104,6 +104,21 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Retry"
+                android:id="@+id/retry"
+                android:background="@drawable/bg_combo_description_price_background"
+                android:layout_centerInParent="true"
+                android:layout_margin="30dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
         </RelativeLayout>
 
     </LinearLayout>

@@ -43,6 +43,9 @@ public class SplashActivity extends FoodmashActivity {
     @Bind(R.id.area) Spinner areaSpinner;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
+    @Bind(R.id.loading_layout) LinearLayout loadingLayout;
+    @Bind(R.id.location_layout) LinearLayout locationLayout;
+    @Bind(R.id.retry) TextView retryButton;
 
     private List<City> cities;
     private boolean skipUpdate = false;
@@ -55,6 +58,7 @@ public class SplashActivity extends FoodmashActivity {
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
 
+        retryButton.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { onResume(); } });
         makeCheckConnectionRequest();
     }
 
@@ -100,6 +104,7 @@ public class SplashActivity extends FoodmashActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Animations.fadeOutAndFadeIn(loadingLayout,retryButton,500);
                 fragmentContainer.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeCheckConnectionRequest")).commit();
                 getSupportFragmentManager().executePendingTransactions();
@@ -163,15 +168,14 @@ public class SplashActivity extends FoodmashActivity {
                                 finish();
                             }
                         });
-                        Animations.fadeOutAndFadeIn(
-                                SplashActivity.this.findViewById(R.id.loading_layout),
-                                SplashActivity.this.findViewById(R.id.location_layout), 500);
+                        Animations.fadeOutAndFadeIn(loadingLayout,locationLayout, 500);
                     } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { Actions.handleIgnorableException(SplashActivity.this, e); }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Animations.fadeOutAndFadeIn(loadingLayout, retryButton, 500);
                 fragmentContainer.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLocationRequest")).commit();
                 getSupportFragmentManager().executePendingTransactions();
