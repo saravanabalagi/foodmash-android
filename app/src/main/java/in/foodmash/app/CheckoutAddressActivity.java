@@ -180,6 +180,12 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
         return comboRequestJson;
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
     private void makeConfirmOrderRequest() {
         JsonObjectRequest getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override

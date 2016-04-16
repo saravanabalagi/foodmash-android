@@ -148,6 +148,12 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
     class CartAdapter extends RecyclerView.Adapter {
 
         class ViewHolder extends RecyclerView.ViewHolder {
