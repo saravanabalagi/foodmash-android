@@ -47,7 +47,8 @@ import in.foodmash.app.utils.WordUtils;
 public class OrderHistoryActivity extends FoodmashActivity {
 
     @Bind(R.id.main_layout) LinearLayout mainLayout;
-    @Bind(R.id.order_history_recycler_view) RecyclerView orderHistoryRecylerView;
+    @Bind(R.id.empty_orders_layout) LinearLayout emptyOrdersLayout;
+    @Bind(R.id.order_history_recycler_view) RecyclerView orderHistoryRecyclerView;
     @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.toolbar) Toolbar toolbar;
@@ -67,10 +68,10 @@ public class OrderHistoryActivity extends FoodmashActivity {
         setTitle(toolbar,"Order","history");
 
         orderHistoryAdapter = new OrderHistoryAdapter();
-        orderHistoryRecylerView.hasFixedSize();
-        orderHistoryRecylerView.setLayoutManager(new LinearLayoutManager(this));
-        orderHistoryRecylerView.setAdapter(orderHistoryAdapter);
-        orderHistoryRecylerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        orderHistoryRecyclerView.hasFixedSize();
+        orderHistoryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        orderHistoryRecyclerView.setAdapter(orderHistoryAdapter);
+        orderHistoryRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             int scrollDy = 0;
             @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
             @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -170,6 +171,13 @@ public class OrderHistoryActivity extends FoodmashActivity {
                 try {
                     if (response.getBoolean("success")) {
                         JSONArray ordersJson = response.getJSONArray("data");
+                        if(ordersJson.length()==0) {
+                            emptyOrdersLayout.setVisibility(View.VISIBLE);
+                            orderHistoryRecyclerView.setVisibility(View.GONE);
+                            return;
+                        }
+                        emptyOrdersLayout.setVisibility(View.GONE);
+                        orderHistoryRecyclerView.setVisibility(View.VISIBLE);
                         ArrayList<Pair<Date,JSONObject>> orderHistoryArrayList = new ArrayList<>();
                         for (int i=0; i<ordersJson.length(); i++) orderHistoryArrayList.add(new Pair<>(DateUtils.railsDateStringToJavaDate(ordersJson.getJSONObject(i).getString("updated_at")),ordersJson.getJSONObject(i)));
                         Collections.sort(orderHistoryArrayList, new Comparator<Pair<Date, JSONObject>>() {
@@ -250,6 +258,11 @@ public class OrderHistoryActivity extends FoodmashActivity {
                         startActivity(intent);
                     }
                 });
+                if(position == this.getItemCount()-1) {
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.setMargins(dpToPx(10),dpToPx(10),dpToPx(10),dpToPx(40));
+                    viewHolder.itemView.setLayoutParams(layoutParams);
+                }
             } catch (Exception e) { e.printStackTrace(); }
         }
     }

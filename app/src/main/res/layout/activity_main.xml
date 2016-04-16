@@ -30,10 +30,12 @@
                     android:layout_height="match_parent">
 
                     <LinearLayout
+                        android:paddingBottom="30dp"
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical|center_horizontal"
+                        android:background="@drawable/bg_white_fading"
                         android:id="@+id/empty_combo_layout"
                         android:visibility="gone">
 

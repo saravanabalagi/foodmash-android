@@ -266,6 +266,11 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
                     alertDialog.show();
                 }
             });
+            if(position == this.getItemCount()-1) {
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                layoutParams.setMargins(dpToPx(10),dpToPx(10),dpToPx(10),dpToPx(40));
+                viewHolder.itemView.setLayoutParams(layoutParams);
+            }
         }
     }
 

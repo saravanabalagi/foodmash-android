@@ -25,9 +25,11 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
+                    android:paddingBottom="30dp"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_white_fading"
                     android:gravity="center_vertical|center_horizontal"
                     android:id="@+id/empty_address_layout"
                     android:visibility="gone">

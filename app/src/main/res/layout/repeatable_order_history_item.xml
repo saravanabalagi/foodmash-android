@@ -152,9 +152,7 @@
                         android:layout_height="wrap_content"
                         android:text="Delivered"
                         android:id="@+id/status"
-                        android:textSize="14sp"
-                        android:inputType="textCapWords"
-                        android:clickable="false" />
+                        android:textSize="14sp" />
                 </LinearLayout>
 
             </LinearLayout>
