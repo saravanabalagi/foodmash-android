@@ -65,10 +65,10 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:padding="8dp"
                 android:text="@string/minus"
-                android:paddingBottom="2dp"
                 android:id="@+id/minus"
-                app:srcCompat="@drawable/svg_minus"
+                app:srcCompat="@drawable/svg_android_minus"
                 android:tint="@color/black"
                 android:background="@drawable/bg_circular_light_button_background"
                 android:gravity="center_horizontal" />
@@ -84,10 +84,10 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:paddingBottom="2dp"
+                android:padding="8dp"
                 android:text="@string/plus"
                 android:id="@+id/plus"
-                app:srcCompat="@drawable/svg_plus"
+                app:srcCompat="@drawable/svg_android_plus"
                 android:tint="@color/black"
                 android:background="@drawable/bg_circular_light_button_background"
                 android:gravity="center_horizontal" />
