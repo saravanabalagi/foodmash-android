@@ -297,7 +297,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
             @Bind(R.id.area_city) TextView areaCity;
             @Bind(R.id.edit) ImageView edit;
             @Bind(R.id.delete) ImageView delete;
-            @Bind(R.id.selected) ImageView selected;
+            @Bind(R.id.selected_indicator) View selected;
             ViewHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);

@@ -5,31 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
-    android:padding="10dp"
     android:background="@color/white"
-    android:layout_marginTop="5dp"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp">
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp">
 
-    <LinearLayout
+    <FrameLayout
         android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/selected"
-            android:contentDescription="@string/edit"
-            android:background="@color/transparent"
-            app:srcCompat="@drawable/svg_tick_filled"
-            android:tint="@color/okay_green"
-            android:scaleType="centerCrop"
-            android:visibility="gone" />
-
-    </LinearLayout>
+        android:visibility="gone"
+        android:id="@+id/selected_indicator"
+        android:layout_width="5dp"
+        android:background="@color/okay_green"
+        android:layout_height="match_parent">
+    </FrameLayout>
 
     <LinearLayout
+        android:padding="10dp"
         android:orientation="vertical"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
