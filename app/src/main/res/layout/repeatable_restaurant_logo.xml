@@ -6,9 +6,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:gravity="center_vertical"
     android:layout_marginRight="10dp">
+
     <com.android.volley.toolbox.NetworkImageView
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="30dp"
         android:id="@+id/logo"
         android:contentDescription="@string/restaurant_logo" />
 

@@ -294,7 +294,6 @@ public class MainActivity extends FoodmashActivity {
         });
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() { @Override public void onRefresh() { onResume(); } });
-        swipeRefreshLayout.setEnabled(false);
 
     }
 
@@ -552,7 +551,7 @@ public class MainActivity extends FoodmashActivity {
                 for(Dish.Label label: labels) {
                     ImageView labelImageView = new ImageView(MainActivity.this);
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(dpToPx(30),dpToPx(30));
-                    layoutParams.setMargins(dpToPx(5),0,dpToPx(5),0);
+                    layoutParams.setMargins(0,0,dpToPx(-8),0);
                     labelImageView.setLayoutParams(layoutParams);
                     labelImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.svg_label));
                     switch (label) {

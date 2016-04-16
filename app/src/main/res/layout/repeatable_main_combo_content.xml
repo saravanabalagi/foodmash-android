@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical|center_horizontal">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -17,8 +17,6 @@
         android:text="@string/food_description_lorem_ipsum"
         android:fontFamily="sans-serif-light"
         android:textSize="17sp"
-        android:id="@+id/content"
-        android:clickable="true"
-        android:textColor="@color/white" />
+        android:id="@+id/content" />
 
 </LinearLayout>
