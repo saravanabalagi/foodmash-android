@@ -368,7 +368,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                 }
             });
             if(addressId == address.getId()) viewHolder.selected.setVisibility(View.VISIBLE);
-            else viewHolder.selected.setVisibility(View.INVISIBLE);
+            else viewHolder.selected.setVisibility(View.GONE);
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
