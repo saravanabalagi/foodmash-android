@@ -86,13 +86,13 @@
                         <ImageView
                             android:layout_marginRight="-30dp"
                             app:srcCompat="@drawable/svg_progress_middle"
-                            android:tint="#AAAAAA"
+                            android:tint="@color/grey_disabled"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
 
                         <ImageView
                             app:srcCompat="@drawable/svg_progress_end"
-                            android:tint="#AAAAAA"
+                            android:tint="@color/grey_disabled"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
 
