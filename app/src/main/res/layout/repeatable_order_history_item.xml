@@ -87,7 +87,7 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:id="@+id/statusIcon"
+                    android:id="@+id/status_icon"
                     app:srcCompat="@drawable/svg_tick_filled"
                     android:tint="@color/okay_green"
                     android:layout_marginRight="5dp" />

@@ -13,20 +13,18 @@
         android:id="@+id/swipe_refresh_layout"
         android:layout_height="match_parent">
 
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/main_layout">
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/fill_layout"
-                android:paddingBottom="5dp">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/order_history_recycler_view"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent">
+            </android.support.v7.widget.RecyclerView>
 
-            </LinearLayout>
-        </ScrollView>
+        </LinearLayout>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

@@ -5,13 +5,16 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -43,11 +46,12 @@ import in.foodmash.app.utils.WordUtils;
  */
 public class OrderHistoryActivity extends FoodmashActivity {
 
-    @Bind(R.id.main_layout) ScrollView mainLayout;
-    @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.main_layout) LinearLayout mainLayout;
+    @Bind(R.id.order_history_recycler_view) RecyclerView orderHistoryRecylerView;
     @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.toolbar) Toolbar toolbar;
+    private OrderHistoryAdapter orderHistoryAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,18 @@ public class OrderHistoryActivity extends FoodmashActivity {
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         setTitle(toolbar,"Order","history");
 
+        orderHistoryAdapter = new OrderHistoryAdapter();
+        orderHistoryRecylerView.hasFixedSize();
+        orderHistoryRecylerView.setLayoutManager(new LinearLayoutManager(this));
+        orderHistoryRecylerView.setAdapter(orderHistoryAdapter);
+        orderHistoryRecylerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            int scrollDy = 0;
+            @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
+            @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                scrollDy += dy;
+                swipeRefreshLayout.setEnabled(scrollDy == 0);
+            }
+        });
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -93,38 +109,19 @@ public class OrderHistoryActivity extends FoodmashActivity {
                 swipeRefreshLayout.setRefreshing(false);
                 try {
                     if (response.getBoolean("success")) {
-                        fillLayout.removeAllViews();
                         JSONArray ordersJson = response.getJSONArray("data");
-                        ArrayList<Pair<Date,LinearLayout>> orderHistoryArrayList = new ArrayList<>();
-                        for(int i=0;i<ordersJson.length();i++) {
-                            final JSONObject orderJson = ordersJson.getJSONObject(i);
-                            LinearLayout orderLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_order_history_item,fillLayout,false);
-                            ((TextView) orderLayout.findViewById(R.id.order_id)).setText(orderJson.getString("order_id"));
-                            ((TextView) orderLayout.findViewById(R.id.date)).setText(DateUtils.railsDateStringToReadableTime(orderJson.getString("updated_at")));
-                            ((TextView) orderLayout.findViewById(R.id.status)).setText(WordUtils.titleize(orderJson.getString("aasm_state")));
-                            ((TextView) orderLayout.findViewById(R.id.price)).setText(orderJson.getString("total"));
-                            setStatus((ImageView) orderLayout.findViewById(R.id.statusIcon), orderJson.getString("aasm_state"));
-                            orderLayout.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    String orderId = "";
-                                    try { orderId = orderJson.getString("order_id"); }
-                                    catch (JSONException e) { e.printStackTrace(); }
-                                    Intent intent = new Intent(OrderHistoryActivity.this, OrderDescriptionActivity.class);
-                                    intent.putExtra("order_id",orderId);
-                                    startActivity(intent);
-                                }
-                            });
-                            orderHistoryArrayList.add(new Pair(DateUtils.railsDateStringToJavaDate(orderJson.getString("updated_at")), orderLayout));
-                        }
-                        Collections.sort(orderHistoryArrayList, new Comparator<Pair<Date, LinearLayout>>() {
+                        ArrayList<Pair<Date,JSONObject>> orderHistoryArrayList = new ArrayList<>();
+                        for (int i=0; i<ordersJson.length(); i++) orderHistoryArrayList.add(new Pair<>(DateUtils.railsDateStringToJavaDate(ordersJson.getJSONObject(i).getString("updated_at")),ordersJson.getJSONObject(i)));
+                        Collections.sort(orderHistoryArrayList, new Comparator<Pair<Date, JSONObject>>() {
                             @Override
-                            public int compare(Pair<Date, LinearLayout> lhs, Pair<Date, LinearLayout> rhs) {
+                            public int compare(Pair<Date, JSONObject> lhs, Pair<Date, JSONObject> rhs) {
                                 return rhs.first.compareTo(lhs.first);
                             }
                         });
-                        for (Pair<Date,LinearLayout> orderHistory: orderHistoryArrayList)
-                            fillLayout.addView(orderHistory.second);
+                        JSONArray orderedJsonArray = new JSONArray();
+                        for (Pair<Date,JSONObject> orderHistory: orderHistoryArrayList)
+                            orderedJsonArray.put(orderHistory.second);
+                        orderHistoryAdapter.setOrdersJsonArray(orderedJsonArray);
                     } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(OrderHistoryActivity.this,e); }
             }
@@ -142,5 +139,44 @@ public class OrderHistoryActivity extends FoodmashActivity {
         Swift.getInstance(OrderHistoryActivity.this).addToRequestQueue(orderHistoryRequest);
     }
 
+    class OrderHistoryAdapter extends RecyclerView.Adapter {
+        JSONArray ordersJsonArray = new JSONArray();
+        public void setOrdersJsonArray(JSONArray ordersJsonArray) { this.ordersJsonArray = ordersJsonArray; notifyDataSetChanged(); }
+        class ViewHolder extends RecyclerView.ViewHolder {
+            @Bind(R.id.order_id) TextView orderId;
+            @Bind(R.id.date) TextView date;
+            @Bind(R.id.status) TextView status;
+            @Bind(R.id.price) TextView price;
+            @Bind(R.id.status_icon) ImageView statusIcon;
+            ViewHolder(View itemView) {
+                super(itemView);
+                ButterKnife.bind(this, itemView);
+            }
+        }
+        @Override public int getItemCount() { return ordersJsonArray.length(); }
+        @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) { return new ViewHolder(LayoutInflater.from(OrderHistoryActivity.this).inflate(R.layout.repeatable_order_history_item,parent,false)); }
+        @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            try {
+                ViewHolder viewHolder = (ViewHolder) holder;
+                final JSONObject orderJson = ordersJsonArray.getJSONObject(position);
+                viewHolder.orderId.setText(orderJson.getString("order_id"));
+                viewHolder.date.setText(DateUtils.railsDateStringToReadableTime(orderJson.getString("updated_at")));
+                viewHolder.status.setText(WordUtils.titleize(orderJson.getString("aasm_state")));
+                viewHolder.price.setText(orderJson.getString("total"));
+                setStatus(viewHolder.statusIcon, orderJson.getString("aasm_state"));
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String orderId = "";
+                        try { orderId = orderJson.getString("order_id");
+                        } catch (JSONException e) { e.printStackTrace(); }
+                        Intent intent = new Intent(OrderHistoryActivity.this, OrderDescriptionActivity.class);
+                        intent.putExtra("order_id", orderId);
+                        startActivity(intent);
+                    }
+                });
+            } catch (Exception e) { e.printStackTrace(); }
+        }
+    }
 
 }
