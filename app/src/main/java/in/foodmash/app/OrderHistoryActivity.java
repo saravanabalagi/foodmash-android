@@ -93,11 +93,71 @@ public class OrderHistoryActivity extends FoodmashActivity {
         makeOrderHistoryRequest();
     }
 
-    private void setStatus (ImageView statusImageView, String status) {
+    private void setStatus (View statusIndicator,
+                            View divider,
+                            View statusMeter,
+                            View statusPurchased,
+                            View statusOrdered,
+                            View statusDispatched,
+                            View statusDelivered,
+                            ImageView statusImageView,
+                            String status) {
         switch (status) {
-            case "delivered": statusImageView.setImageResource(R.drawable.svg_tick_filled); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); break;
-            case "cancelled": statusImageView.setImageResource(R.drawable.svg_close_filled); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); break;
-            default: statusImageView.setImageResource(R.drawable.svg_circle_filled); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.warning_orange)); break;
+            case "purchased":
+                statusIndicator.setBackgroundColor(ContextCompat.getColor(this, R.color.warning_orange));
+                statusPurchased.setBackgroundColor(ContextCompat.getColor(this, R.color.okay_green));
+                statusOrdered.setBackgroundColor(ContextCompat.getColor(this, R.color.grey_disabled));
+                statusDispatched.setBackgroundColor(ContextCompat.getColor(this, R.color.grey_disabled));
+                statusDelivered.setBackgroundColor(ContextCompat.getColor(this, R.color.grey_disabled));
+                statusImageView.setImageResource(R.drawable.svg_android_tick);
+                statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.warning_orange));
+                divider.setVisibility(View.GONE);
+                statusMeter.setVisibility(View.VISIBLE);
+                break;
+            case "ordered":
+                statusIndicator.setBackgroundColor(ContextCompat.getColor(this, R.color.warning_orange));
+                statusPurchased.setBackgroundColor(ContextCompat.getColor(this, R.color.okay_green));
+                statusOrdered.setBackgroundColor(ContextCompat.getColor(this, R.color.okay_green));
+                statusDispatched.setBackgroundColor(ContextCompat.getColor(this, R.color.grey_disabled));
+                statusDelivered.setBackgroundColor(ContextCompat.getColor(this, R.color.grey_disabled));
+                statusImageView.setImageResource(R.drawable.svg_android_timer);
+                statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.warning_orange));
+                divider.setVisibility(View.GONE);
+                statusMeter.setVisibility(View.VISIBLE);
+                break;
+            case "dispatched":
+                statusIndicator.setBackgroundColor(ContextCompat.getColor(this, R.color.warning_orange));
+                statusPurchased.setBackgroundColor(ContextCompat.getColor(this, R.color.okay_green));
+                statusOrdered.setBackgroundColor(ContextCompat.getColor(this, R.color.okay_green));
+                statusDispatched.setBackgroundColor(ContextCompat.getColor(this, R.color.okay_green));
+                statusDelivered.setBackgroundColor(ContextCompat.getColor(this, R.color.grey_disabled));
+                statusImageView.setImageResource(R.drawable.svg_android_timer);
+                statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.warning_orange));
+                divider.setVisibility(View.GONE);
+                statusMeter.setVisibility(View.VISIBLE);
+                break;
+            case "delivered":
+                statusIndicator.setBackgroundColor(ContextCompat.getColor(this, R.color.okay_green));
+                statusPurchased.setBackgroundColor(ContextCompat.getColor(this, R.color.okay_green));
+                statusOrdered.setBackgroundColor(ContextCompat.getColor(this, R.color.okay_green));
+                statusDispatched.setBackgroundColor(ContextCompat.getColor(this, R.color.okay_green));
+                statusDelivered.setBackgroundColor(ContextCompat.getColor(this, R.color.okay_green));
+                statusImageView.setImageResource(R.drawable.svg_android_double_tick);
+                statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                statusMeter.setVisibility(View.GONE);
+                divider.setVisibility(View.VISIBLE);
+                break;
+            case "cancelled":
+                statusIndicator.setBackgroundColor(ContextCompat.getColor(this, R.color.accent));
+                statusPurchased.setBackgroundColor(ContextCompat.getColor(this, R.color.accent));
+                statusOrdered.setBackgroundColor(ContextCompat.getColor(this, R.color.accent));
+                statusDispatched.setBackgroundColor(ContextCompat.getColor(this, R.color.accent));
+                statusDelivered.setBackgroundColor(ContextCompat.getColor(this, R.color.accent));
+                statusImageView.setImageResource(R.drawable.svg_android_close);
+                statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.accent));
+                statusMeter.setVisibility(View.GONE);
+                divider.setVisibility(View.VISIBLE);
+                break;
         }
     }
 
@@ -148,6 +208,13 @@ public class OrderHistoryActivity extends FoodmashActivity {
             @Bind(R.id.status) TextView status;
             @Bind(R.id.price) TextView price;
             @Bind(R.id.status_icon) ImageView statusIcon;
+            @Bind(R.id.status_indicator) View statusIndicator;
+            @Bind(R.id.status_meter) View statusMeter;
+            @Bind(R.id.status_purchased) View statusPurchased;
+            @Bind(R.id.status_ordered) View statusOrdered;
+            @Bind(R.id.status_dispatched) View statusDispatched;
+            @Bind(R.id.status_delivered) View statusDelivered;
+            @Bind(R.id.divider) View divider;
             ViewHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
@@ -163,7 +230,15 @@ public class OrderHistoryActivity extends FoodmashActivity {
                 viewHolder.date.setText(DateUtils.railsDateStringToReadableTime(orderJson.getString("updated_at")));
                 viewHolder.status.setText(WordUtils.titleize(orderJson.getString("aasm_state")));
                 viewHolder.price.setText(orderJson.getString("total"));
-                setStatus(viewHolder.statusIcon, orderJson.getString("aasm_state"));
+                setStatus(viewHolder.statusIndicator,
+                        viewHolder.divider,
+                        viewHolder.statusMeter,
+                        viewHolder.statusPurchased,
+                        viewHolder.statusOrdered,
+                        viewHolder.statusDispatched,
+                        viewHolder.statusDelivered,
+                        viewHolder.statusIcon,
+                        orderJson.getString("aasm_state"));
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

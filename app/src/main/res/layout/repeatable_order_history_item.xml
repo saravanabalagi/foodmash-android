@@ -1,133 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:paddingTop="5dp"
-    android:paddingBottom="5dp"
-    android:layout_marginTop="5dp"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp">
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <FrameLayout
+        android:background="@color/okay_green"
+        android:id="@+id/status_indicator"
+        android:layout_width="5dp"
+        android:layout_height="match_parent" />
+
+    <LinearLayout android:orientation="vertical"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:paddingLeft="20dp"
-        android:paddingRight="5dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Order ID"
-            android:id="@+id/order_id"
-            android:layout_weight="1"
-            android:textSize="17sp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:textAllCaps="true"
-            android:clickable="false" />
-
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:id="@+id/clear_fields"
-            app:srcCompat="@android:drawable/ic_menu_revert"
-            android:layout_centerVertical="true"
-            android:padding="10dp"
-            android:tint="@color/accent_white_bg"
-            android:background="@color/transparent"
-            android:cropToPadding="true"
-            android:scaleType="centerCrop"
-            android:visibility="invisible" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:background="#EEE"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp" >
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="10dp"
-            android:paddingBottom="5dp">
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="5dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Aug 04, 06:15 pm"
-                android:id="@+id/date"
-                android:textSize="14sp"
+                android:text="Order ID"
+                android:id="@+id/order_id"
+                android:layout_weight="1"
+                android:textSize="17sp"
+                android:paddingTop="5dp"
                 android:paddingBottom="5dp"
+                android:textAllCaps="true"
                 android:clickable="false" />
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:id="@+id/status_icon"
-                    app:srcCompat="@drawable/svg_tick_filled"
-                    android:tint="@color/okay_green"
-                    android:layout_marginRight="5dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Delivered"
-                    android:id="@+id/status"
-                    android:textSize="14sp"
-                    android:inputType="textCapWords"
-                    android:clickable="false" />
-            </LinearLayout>
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/clear_fields"
+                app:srcCompat="@android:drawable/ic_menu_revert"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:tint="@color/accent_white_bg"
+                android:background="@color/transparent"
+                android:cropToPadding="true"
+                android:scaleType="centerCrop"
+                android:visibility="invisible" />
 
         </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
+            android:id="@+id/status_meter"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="2dp">
+
+            <View
+                android:background="@color/okay_green"
+                android:id="@+id/status_purchased"
+                android:layout_marginRight="3dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+
+            <View
+                android:background="@color/grey_disabled"
+                android:id="@+id/status_ordered"
+                android:layout_marginRight="3dp"
+                android:layout_marginLeft="3dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+
+            <View
+                android:background="@color/grey_disabled"
+                android:id="@+id/status_dispatched"
+                android:layout_marginRight="3dp"
+                android:layout_marginLeft="3dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+
+            <View
+                android:background="@color/grey_disabled"
+                android:id="@+id/status_delivered"
+                android:layout_marginLeft="3dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+        <View
             android:layout_width="wrap_content"
+            android:layout_height="2dp"
+            android:id="@+id/divider"
+            android:background="#EEE"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical" >
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp" >
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/rupee"
-                android:textSize="16sp"
-                android:layout_marginRight="2dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/price_lorem_ipsum"
-                android:id="@+id/price"
-                android:textSize="18sp"
+                android:layout_weight="1"
                 android:paddingTop="10dp"
-                android:paddingBottom="10dp" />
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aug 04, 06:15 pm"
+                    android:id="@+id/date"
+                    android:textSize="14sp"
+                    android:paddingBottom="5dp"
+                    android:clickable="false" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:id="@+id/status_icon"
+                        app:srcCompat="@drawable/svg_android_double_tick"
+                        android:tint="@color/okay_green"
+                        android:layout_marginRight="5dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Delivered"
+                        android:id="@+id/status"
+                        android:textSize="14sp"
+                        android:inputType="textCapWords"
+                        android:clickable="false" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rupee"
+                    android:textSize="16sp"
+                    android:layout_marginRight="2dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/price_lorem_ipsum"
+                    android:id="@+id/price"
+                    android:textSize="18sp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp" />
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>
+
+
 
 
 </LinearLayout>
