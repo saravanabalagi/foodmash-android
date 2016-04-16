@@ -5,11 +5,15 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -22,6 +26,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,17 +47,18 @@ import in.foodmash.app.models.City;
 public class AddressActivity extends FoodmashActivity implements View.OnClickListener {
 
     @Bind(R.id.add_address) FloatingActionButton addAddress;
-    @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.address_recycler_view) RecyclerView addressRecyclerView;
     @Bind(R.id.empty_address_layout) LinearLayout emptyAddressLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
-    @Bind(R.id.main_layout) ScrollView mainLayout;
+    @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     private Intent intent;
-    private List<Address> addresses;
+    private List<Address> addresses = new ArrayList<>();
     private ObjectMapper objectMapper;
     private List<City> cities;
+    private AddressAdapter addressAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +79,19 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
             cities = Arrays.asList(objectMapper.readValue(Info.getCityJsonArrayString(this), City[].class));
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         addAddress.setOnClickListener(this);
+
+        addressAdapter = new AddressAdapter();
+        addressRecyclerView.hasFixedSize();
+        addressRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        addressRecyclerView.setAdapter(addressAdapter);
+        addressRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            int scrollDy = 0;
+            @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
+            @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                scrollDy += dy;
+                swipeRefreshLayout.setEnabled(scrollDy == 0);
+            }
+        });
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -102,74 +121,12 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
                 swipeRefreshLayout.setRefreshing(false);
                 try {
                     if(response.getBoolean("success")) {
-                        fillLayout.removeAllViews();
                         final ObjectMapper objectMapper = new ObjectMapper();
                         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
                         addresses = Arrays.asList(objectMapper.readValue(response.getJSONArray("data").toString(), Address[].class));
-                        if(addresses.size()==0) { emptyAddressLayout.setVisibility(View.VISIBLE); fillLayout.setVisibility(View.GONE); return; }
-                        else { fillLayout.setVisibility(View.VISIBLE); emptyAddressLayout.setVisibility(View.GONE); }
-                        for (final Address address: addresses) {
-                            final LinearLayout addressLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_user_address, fillLayout, false);
-                            ((TextView) addressLayout.findViewById(R.id.name)).setText(address.getName());
-                            ((TextView) addressLayout.findViewById(R.id.line1)).setText(address.getLine1());
-                            ((TextView) addressLayout.findViewById(R.id.line2)).setText(address.getLine2());
-                            ((TextView) addressLayout.findViewById(R.id.contact_no)).setText(address.getContactNo());
-
-                            int areaId = address.getAreaId();
-                            int cityPos = -1;
-                            for(int j=0;j<cities.size();j++) if (cities.get(j).indexOf(areaId)!=-1) cityPos = j;
-                            int areaPos = cities.get(cityPos).indexOf(areaId);
-                            String city = cities.get(cityPos).getName();
-                            String area = cities.get(cityPos).getAreas().get(areaPos).getName();
-                            String areaCity = area + ", " + city;
-                            ((TextView) addressLayout.findViewById(R.id.area_city)).setText(areaCity);
-
-                            addressLayout.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(AddressActivity.this, PinYourLocationActivity.class);
-                                    try { intent.putExtra("json", objectMapper.writeValueAsString(address)); }
-                                    catch (Exception e) { Actions.handleIgnorableException(AddressActivity.this,e); }
-                                    intent.putExtra("edit", true);
-                                    startActivity(intent);
-                                }
-                            });
-
-                            addressLayout.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    final Snackbar deletingAddressSnackbar = Snackbar.make(mainLayout,"Deleting address...",Snackbar.LENGTH_INDEFINITE);
-                                    final Snackbar couldNotDeleteSnackbar = Snackbar.make(mainLayout,"Could not delete",Snackbar.LENGTH_INDEFINITE);
-                                    couldNotDeleteSnackbar.setAction("Try Again", new View.OnClickListener() { @Override public void onClick(View v) { couldNotDeleteSnackbar.dismiss(); } });
-
-                                    JSONObject requestJson = JsonProvider.getStandardRequestJson(AddressActivity.this);
-                                    JSONObject dataJson = new JSONObject();
-                                    try {
-                                        dataJson.put("id", address.getId());
-                                        requestJson.put("data", dataJson);
-                                    } catch (JSONException e) { e.printStackTrace(); }
-                                    JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
-                                        @Override
-                                        public void onResponse(JSONObject response) {
-                                            if(deletingAddressSnackbar.isShown()) deletingAddressSnackbar.dismiss();
-                                            try {
-                                                if (response.getBoolean("success")) fillLayout.removeView(addressLayout);
-                                                else if (response.getBoolean("success")) Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
-                                            } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(AddressActivity.this,e); }
-                                        }
-                                    }, new Response.ErrorListener() {
-                                        @Override
-                                        public void onErrorResponse(VolleyError error) {
-                                            couldNotDeleteSnackbar.show();
-                                        }
-                                    });
-
-                                    deletingAddressSnackbar.show();
-                                    Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteRequest);
-                                }
-                            });
-                            fillLayout.addView(addressLayout);
-                        }
+                        addressAdapter.notifyDataSetChanged();
+                        if(addresses.size()==0) { emptyAddressLayout.setVisibility(View.VISIBLE); addressRecyclerView.setVisibility(View.GONE); }
+                        else { addressRecyclerView.setVisibility(View.VISIBLE); emptyAddressLayout.setVisibility(View.GONE); }
                     } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { Actions.handleIgnorableException(AddressActivity.this,e); }
             }
@@ -185,6 +142,86 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(AddressActivity.this).addToRequestQueue(getAddressesRequest);
+    }
+
+    class AddressAdapter extends RecyclerView.Adapter {
+        class ViewHolder extends RecyclerView.ViewHolder {
+            @Bind(R.id.name) TextView name;
+            @Bind(R.id.line1) TextView line1;
+            @Bind(R.id.line2) TextView line2;
+            @Bind(R.id.contact_no) TextView contactNo;
+            @Bind(R.id.area_city) TextView areaCity;
+            @Bind(R.id.edit) ImageView edit;
+            @Bind(R.id.delete) ImageView delete;
+            ViewHolder(View itemView) {
+                super(itemView);
+                ButterKnife.bind(this, itemView);
+            }
+        }
+        @Override public int getItemCount() { return addresses.size(); }
+        @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) { return new ViewHolder(LayoutInflater.from(AddressActivity.this).inflate(R.layout.repeatable_user_address, parent, false)); }
+        @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            ViewHolder viewHolder = (ViewHolder) holder;
+            final Address address = addresses.get(position);
+            viewHolder.name.setText(address.getName());
+            viewHolder.line1.setText(address.getLine1());
+            viewHolder.line2.setText(address.getLine2());
+            viewHolder.contactNo.setText(address.getContactNo());
+
+            int areaId = address.getAreaId();
+            int cityPos = -1;
+            for(int j=0;j<cities.size();j++) if (cities.get(j).indexOf(areaId)!=-1) cityPos = j;
+            int areaPos = cities.get(cityPos).indexOf(areaId);
+            String city = cities.get(cityPos).getName();
+            String area = cities.get(cityPos).getAreas().get(areaPos).getName();
+            String areaCity = area + ", " + city;
+            viewHolder.areaCity.setText(areaCity);
+
+            viewHolder.edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AddressActivity.this, PinYourLocationActivity.class);
+                    try { intent.putExtra("json", objectMapper.writeValueAsString(address)); }
+                    catch (Exception e) { Actions.handleIgnorableException(AddressActivity.this,e); }
+                    intent.putExtra("edit", true);
+                    startActivity(intent);
+                }
+            });
+
+            viewHolder.delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Snackbar deletingAddressSnackbar = Snackbar.make(mainLayout,"Deleting address...",Snackbar.LENGTH_INDEFINITE);
+                    final Snackbar couldNotDeleteSnackbar = Snackbar.make(mainLayout,"Could not delete",Snackbar.LENGTH_INDEFINITE);
+                    couldNotDeleteSnackbar.setAction("Try Again", new View.OnClickListener() { @Override public void onClick(View v) { couldNotDeleteSnackbar.dismiss(); } });
+
+                    JSONObject requestJson = JsonProvider.getStandardRequestJson(AddressActivity.this);
+                    JSONObject dataJson = new JSONObject();
+                    try {
+                        dataJson.put("id", address.getId());
+                        requestJson.put("data", dataJson);
+                    } catch (JSONException e) { e.printStackTrace(); }
+                    JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            if(deletingAddressSnackbar.isShown()) deletingAddressSnackbar.dismiss();
+                            try {
+                                if (response.getBoolean("success")) makeAddressRequest();
+                                else if (response.getBoolean("success")) Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                            } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(AddressActivity.this,e); }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            couldNotDeleteSnackbar.show();
+                        }
+                    });
+
+                    deletingAddressSnackbar.show();
+                    Swift.getInstance(AddressActivity.this).addToRequestQueue(deleteRequest);
+                }
+            });
+        }
     }
 
 }
