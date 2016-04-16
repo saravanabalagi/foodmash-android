@@ -492,7 +492,6 @@ public class MainActivity extends FoodmashActivity {
             int quantity = cart.getCount(combo.getId());
             if(!combo.isAvailable()) cart.removeOrder(combo);
             viewHolder.count.setText(String.valueOf(quantity));
-            Log.e("Testing", "Quantity: " + quantity + " for " + combo.getName());
             if (quantity > 0) Animations.fadeOutAndFadeIn(viewHolder.addToCartLayout,viewHolder.countLayout,500);
             else Animations.fadeOutAndFadeIn(viewHolder.countLayout, viewHolder.addToCartLayout,500);
             viewHolder.plus.setOnClickListener(new View.OnClickListener() {

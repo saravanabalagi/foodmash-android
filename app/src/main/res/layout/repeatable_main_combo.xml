@@ -5,7 +5,6 @@
     android:layout_marginTop="10dp"
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
-    android:background="@drawable/bg_combo"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
@@ -228,8 +227,8 @@
 
         <ImageView
             app:srcCompat="@drawable/svg_close"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:id="@+id/close_info_layout"
             android:layout_margin="10dp"
             android:tint="@color/white"
