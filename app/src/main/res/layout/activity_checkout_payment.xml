@@ -14,6 +14,36 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <LinearLayout android:orientation="horizontal"
+            android:id="@+id/payment_progress"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="-10dp"
+            android:layout_marginBottom="-20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_marginRight="-30dp"
+                app:srcCompat="@drawable/svg_progress_start"
+                android:tint="@color/okay_green"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:layout_marginRight="-30dp"
+                app:srcCompat="@drawable/svg_progress_middle"
+                android:tint="@color/okay_green"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                app:srcCompat="@drawable/svg_progress_end"
+                android:tint="@color/accent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
         <android.support.v4.view.ViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
