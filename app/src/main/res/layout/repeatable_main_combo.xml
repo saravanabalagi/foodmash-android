@@ -123,7 +123,7 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:id="@+id/add_to_cart_layout"
+                    android:id="@+id/add_to_cart"
                     app:srcCompat="@drawable/svg_android_plus"
                     android:tint="@color/black"
                     android:background="@drawable/bg_circular_light_button_background"

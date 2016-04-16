@@ -3,16 +3,17 @@ package in.foodmash.app.models;
 /**
  * Created by Zeke on Sep 11 2015.
  */
-public class ComboDish {
+public class ComboOptionDish {
 
     private int id;
     private int priority;
     private int minCount = 0;
     private int quantity = 0;
+    private int price;
     private Dish dish;
 
-    public ComboDish() {}
-    public ComboDish(ComboDish c) {
+    public ComboOptionDish() {}
+    public ComboOptionDish(ComboOptionDish c) {
         this.id = c.id;
         this.priority = c.priority;
         this.minCount = c.minCount;
@@ -23,11 +24,12 @@ public class ComboDish {
     public int getId() { return id; }
     public Dish getDish() { return dish; }
     public int getPriority() { return priority; }
-
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public int getPrice() { return price; }
     public int getMinCount() { return minCount; }
     public int getQuantity() { return quantity; }
 
+    public void setPrice(int price) { this.price = price; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
     public void setId(int id) { this.id = id; }
     public void setPriority(int priority) { this.priority = priority; }
     public void setDish(Dish dish) { this.dish = dish; }
@@ -38,9 +40,9 @@ public class ComboDish {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ComboDish)) return false;
+        if (!(o instanceof ComboOptionDish)) return false;
         if (o == this) return true;
-        ComboDish comboDish = (ComboDish) o;
+        ComboOptionDish comboDish = (ComboOptionDish) o;
         return this.getId() == comboDish.getId() && this.getQuantity() == comboDish.getQuantity();
     }
 

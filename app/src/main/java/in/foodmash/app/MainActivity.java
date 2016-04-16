@@ -18,7 +18,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -49,6 +48,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -64,8 +64,8 @@ import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.models.Cart;
 import in.foodmash.app.models.Combo;
-import in.foodmash.app.models.ComboDish;
 import in.foodmash.app.models.ComboOption;
+import in.foodmash.app.models.ComboOptionDish;
 import in.foodmash.app.models.Dish;
 import in.foodmash.app.models.Restaurant;
 import in.foodmash.app.utils.DateUtils;
@@ -441,7 +441,7 @@ public class MainActivity extends FoodmashActivity {
             @Bind(R.id.imageSlider) ViewPager imageSlider;
             @Bind(R.id.combo_size_icon) ImageView comboSizeIcon;
             @Bind(R.id.group_size) TextView groupSize;
-            @Bind(R.id.add_to_cart_layout) ImageView addToCartLayout;
+            @Bind(R.id.add_to_cart) ImageView addToCart;
             @Bind(R.id.unavailable_layout) LinearLayout unavailableLayout;
             @Bind(R.id.count_layout) LinearLayout countLayout;
             @Bind(R.id.count) TextView count;
@@ -492,8 +492,8 @@ public class MainActivity extends FoodmashActivity {
             int quantity = cart.getCount(combo.getId());
             if(!combo.isAvailable()) cart.removeOrder(combo);
             viewHolder.count.setText(String.valueOf(quantity));
-            if (quantity > 0) Animations.fadeOutAndFadeIn(viewHolder.addToCartLayout,viewHolder.countLayout,500);
-            else Animations.fadeOutAndFadeIn(viewHolder.countLayout, viewHolder.addToCartLayout,500);
+            if (quantity > 0) { Animations.fadeOut(viewHolder.addToCart,500); Animations.fadeInOnlyIfInvisible(viewHolder.countLayout,500); }
+            else { Animations.fadeOut(viewHolder.countLayout,500); Animations.fadeInOnlyIfInvisible(viewHolder.addToCart,500); }
             viewHolder.plus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -510,16 +510,16 @@ public class MainActivity extends FoodmashActivity {
                     viewHolder.count.setText(String.valueOf(cart.getCount(combo.getId())));
                     if (cart.getCount(combo.getId()) == 0) {
                         Animations.fadeOut(viewHolder.countLayout, 200);
-                        Animations.fadeIn(viewHolder.addToCartLayout, 200);
+                        Animations.fadeIn(viewHolder.addToCart, 200);
                     }
                     Actions.updateCartCount(cartCount);
                 }
             });
-            viewHolder.addToCartLayout.setOnClickListener(new View.OnClickListener() {
+            viewHolder.addToCart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     cart.addToCart(new Combo(combo));
-                    Animations.fadeOut(viewHolder.addToCartLayout, 200);
+                    Animations.fadeOut(viewHolder.addToCart, 200);
                     Animations.fadeIn(viewHolder.countLayout, 200);
                     viewHolder.count.setText(String.valueOf(cart.getCount(combo.getId())));
                     Actions.updateCartCount(cartCount);
@@ -545,30 +545,32 @@ public class MainActivity extends FoodmashActivity {
             viewHolder.contentsWrapper.getLayoutParams().height = viewHolder.comboLayout.getHeight();
             viewHolder.contentsLayout.setOnClickListener(showDescription);
             viewHolder.contentsLayout.removeAllViews();
-            ArrayList<Pair<String,Dish.Label>> contents = combo.getContents();
-            for (Pair<String, Dish.Label> labelPair: contents) {
+            for (ComboOption comboOption: combo.getComboOptions()) {
                 LinearLayout contentTextView = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_main_combo_content, viewHolder.contentsLayout, false);
-                String dishNameString = labelPair.first;
-                Dish.Label dishLabel = labelPair.second;
-                ImageView label = (ImageView) contentTextView.findViewById(R.id.label);
-                switch (dishLabel) {
-                    case EGG: label.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.egg)); break;
-                    case VEG: label.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.veg)); break;
-                    case NON_VEG: label.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.non_veg)); break;
+                LinkedHashSet<Dish.Label> labels = comboOption.getLabels();
+                ((LinearLayout) contentTextView.findViewById(R.id.labels)).removeAllViews();
+                for(Dish.Label label: labels) {
+                    ImageView labelImageView = new ImageView(MainActivity.this);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(dpToPx(30),dpToPx(30));
+                    layoutParams.setMargins(dpToPx(5),0,dpToPx(5),0);
+                    labelImageView.setLayoutParams(layoutParams);
+                    labelImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.svg_label));
+                    switch (label) {
+                        case EGG: labelImageView.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.egg)); break;
+                        case VEG: labelImageView.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.veg)); break;
+                        case NON_VEG: labelImageView.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.non_veg)); break;
+                    }
+                    ((LinearLayout) contentTextView.findViewById(R.id.labels)).addView(labelImageView);
                 }
-                ((TextView) contentTextView.findViewById(R.id.content)).setText(dishNameString);
+                ((TextView) contentTextView.findViewById(R.id.content)).setText(comboOption.getName());
                 viewHolder.contentsLayout.addView(contentTextView);
             }
 
             viewHolder.restaurantsLayout.removeAllViews();
             HashSet<Restaurant> restaurantsList = new HashSet<>();
             for (ComboOption comboOption : combo.getComboOptions())
-                if (comboOption.isFromSameRestaurant())
-                    restaurantsList.add(comboOption.getComboOptionDishes().get(0).getDish().getRestaurant());
-                else for (ComboDish comboDish : comboOption.getComboOptionDishes())
+                for (ComboOptionDish comboDish : comboOption.getComboOptionDishes())
                     restaurantsList.add(comboDish.getDish().getRestaurant());
-            for (ComboDish comboDish : combo.getComboDishes())
-                restaurantsList.add(comboDish.getDish().getRestaurant());
             for (Restaurant restaurant : restaurantsList) {
                 LinearLayout restaurantLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_restaurant_logo, viewHolder.restaurantsLayout, false);
                 ((TextView) restaurantLayout.findViewById(R.id.name)).setText(restaurant.getName());
@@ -576,7 +578,7 @@ public class MainActivity extends FoodmashActivity {
                 viewHolder.restaurantsLayout.addView(restaurantLayout);
             }
 
-            if(position == combosAdapter.getItemCount()-1) {
+            if(position == this.getItemCount()-1) {
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 layoutParams.setMargins(dpToPx(10),dpToPx(10),dpToPx(10),dpToPx(40));
                 viewHolder.itemView.setLayoutParams(layoutParams);
