@@ -492,10 +492,9 @@ public class MainActivity extends FoodmashActivity {
             int quantity = cart.getCount(combo.getId());
             if(!combo.isAvailable()) cart.removeOrder(combo);
             viewHolder.count.setText(String.valueOf(quantity));
-            if (quantity > 0) {
-                viewHolder.addToCartLayout.setVisibility(View.GONE);
-                viewHolder.countLayout.setVisibility(View.VISIBLE);
-            }
+            Log.e("Testing", "Quantity: " + quantity + " for " + combo.getName());
+            if (quantity > 0) Animations.fadeOutAndFadeIn(viewHolder.addToCartLayout,viewHolder.countLayout,500);
+            else Animations.fadeOutAndFadeIn(viewHolder.countLayout, viewHolder.addToCartLayout,500);
             viewHolder.plus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

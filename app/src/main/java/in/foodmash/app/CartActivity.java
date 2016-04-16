@@ -67,7 +67,7 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
                         cart.removeAllOrders();
                         cartAdapter.notifyDataSetChanged();
                         total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
-                        Animations.fadeOut(cartProgress,500);
+                        cartProgress.setVisibility(View.GONE);
                         Animations.fadeIn(emptyCartLayout,500);
                     }
                 }).setNegativeButton("No, don't remove", new DialogInterface.OnClickListener() {
@@ -185,7 +185,7 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
                 @Override public void onClick(View v) {
                     viewHolder.count.setText(String.valueOf(cart.decrementFromCart(combo)));
                     cartAdapter.notifyDataSetChanged();
-                    if(cart.getCount()==0) { Animations.fadeIn(emptyCartLayout, 500); Animations.fadeOut(cartProgress,500); }
+                    if(cart.getCount()==0) { Animations.fadeIn(emptyCartLayout, 500); cartProgress.setVisibility(View.GONE); }
                     total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
                 }});
             viewHolder.addNote.setOnClickListener(new View.OnClickListener() {
