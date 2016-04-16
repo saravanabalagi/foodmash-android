@@ -87,7 +87,7 @@ public class ComboOption {
     public boolean incrementQuantity(ComboOptionDish comboOptionDish) {
         if(this.getComprisedDishesQuantity()+1>BULK_ORDER_CONSTANT) return false;
         if(!getSelectedComboOptionDishes().contains(comboOptionDish)) addToSelected(comboOptionDish);
-        comboOptionDish.setQuantity(comboOptionDish.getQuantity()+1);
+        else comboOptionDish.setQuantity(comboOptionDish.getQuantity()+1);
         return true;
     }
     public boolean decrementQuantity(ComboOptionDish comboDish) {
