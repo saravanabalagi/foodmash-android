@@ -19,12 +19,12 @@
             android:id="@+id/imageSlider" />
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:id="@+id/quick_view"
             app:srcCompat="@drawable/svg_info"
-            android:background="@drawable/bg_circular_dark_button"
-            android:padding="10dp"
+            android:background="@drawable/bg_circular_dark_button_background"
+            android:padding="5dp"
             android:layout_margin="10dp"
             android:tint="@color/white"
             android:layout_alignParentRight="true" />
@@ -92,17 +92,17 @@
                 android:padding="5dp">
 
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:id="@+id/combo_size_icon"
                     android:tint="@color/white"
                     app:srcCompat="@drawable/svg_user3"
                     android:contentDescription="@string/label"
-                    android:background="@drawable/bg_rounded_bordered"
-                    android:padding="5dp"
+                    android:padding="2dp"
                     android:layout_margin="5dp"/>
 
                 <TextView
+                    android:paddingTop="3dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Awesome Combo"
@@ -116,18 +116,19 @@
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="60dp"
+                android:layout_height="50dp"
                 android:padding="10dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:id="@+id/add_to_cart_layout"
-                    app:srcCompat="@drawable/svg_cart"
-                    android:background="@drawable/bg_circular_dark_button_background"
-                    android:padding="10dp"
+                    app:srcCompat="@drawable/svg_android_plus"
+                    android:tint="@color/black"
+                    android:background="@drawable/bg_circular_light_button_background"
+                    android:padding="8dp"
                     android:layout_alignRight="@+id/count_layout" />
 
                 <LinearLayout
@@ -146,8 +147,8 @@
                         android:text="@string/minus"
                         android:id="@+id/minus"
                         app:srcCompat="@drawable/svg_android_minus"
-                        android:tint="@color/white"
-                        android:background="@drawable/bg_circular_dark_button_background"
+                        android:tint="@color/black"
+                        android:background="@drawable/bg_circular_light_button_background"
                         android:gravity="center_horizontal" />
 
                     <TextView
@@ -166,8 +167,8 @@
                         android:text="@string/plus"
                         android:id="@+id/plus"
                         app:srcCompat="@drawable/svg_android_plus"
-                        android:tint="@color/white"
-                        android:background="@drawable/bg_circular_dark_button_background"
+                        android:tint="@color/black"
+                        android:background="@drawable/bg_circular_light_button_background"
                         android:gravity="center_horizontal" />
 
                 </LinearLayout>
