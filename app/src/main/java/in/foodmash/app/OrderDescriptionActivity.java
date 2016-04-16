@@ -5,10 +5,14 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -43,7 +47,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
-    @Bind(R.id.fill_layout) LinearLayout fillLayout;
+    @Bind(R.id.order_description_recycler_view) RecyclerView orderDescriptionRecyclerView;
     @Bind(R.id.promo_discount_layout) LinearLayout promoDiscountLayout;
     @Bind(R.id.promo_discount) TextView promoDiscount;
     @Bind(R.id.vat_percentage) TextView vatPercentage;
@@ -56,11 +60,15 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     @Bind(R.id.payable_amount) TextView grandTotal;
     @Bind(R.id.payment_method) TextView paymentMethod;
     @Bind(R.id.status_icon) ImageView statusIcon;
+    @Bind(R.id.placed) ImageView placed;
+    @Bind(R.id.aggregated) ImageView aggregated;
+    @Bind(R.id.dispatched) ImageView dispatched;
+    @Bind(R.id.delivered) ImageView delivered;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     private String orderId;
     private boolean cart;
-
+    private OrderDescriptionAdapter orderDescriptionAdapter;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -84,6 +92,18 @@ public class OrderDescriptionActivity extends FoodmashActivity {
         cart = getIntent().getBooleanExtra("cart", false);
         orderId = getIntent().getStringExtra("order_id");
 
+        orderDescriptionAdapter = new OrderDescriptionAdapter();
+        orderDescriptionRecyclerView.hasFixedSize();
+        orderDescriptionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        orderDescriptionRecyclerView.setAdapter(orderDescriptionAdapter);
+        orderDescriptionRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            int scrollDy = 0;
+            @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
+            @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                scrollDy += dy;
+                swipeRefreshLayout.setEnabled(scrollDy==0);
+            }
+        });
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -127,7 +147,6 @@ public class OrderDescriptionActivity extends FoodmashActivity {
                 try {
                     if (response.getBoolean("success")) {
                         Log.i("Json Response", response.toString());
-                        fillLayout.removeAllViews();
                         JSONArray orderJsonArray = response.getJSONArray("data");
                         JSONObject orderJson = orderJsonArray.getJSONObject(0);
                         grandTotal.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("grand_total")));
@@ -145,25 +164,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
                         if(orderJson.has("vat_percentage")) vatPercentage.setText(orderJson.getString("vat_percentage"));
                         vat.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("vat")));
                         deliveryCharges.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("delivery_charge")));
-                        JSONArray subOrdersJson = orderJson.getJSONArray("orders");
-                        for(int i=0; i<subOrdersJson.length(); i++) {
-                            JSONObject subOrderJson = subOrdersJson.getJSONObject(i);
-                            JSONObject productJson = subOrderJson.getJSONObject("product");
-                            JSONArray comboDishesJson = subOrderJson.getJSONArray("order_items");
-                            String dishes = "";
-                            for(int j=0; j<comboDishesJson.length(); j++) {
-                                JSONObject comboDishJson = comboDishesJson.getJSONObject(j);
-                                JSONObject dishJson = comboDishJson.getJSONObject("item");
-                                dishes += dishJson.getString("name") + ((j==comboDishesJson.length()-1)?"":"\n");
-                            }
-                            LinearLayout comboLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_order_description_item, fillLayout, false);
-                            int quantity = Integer.parseInt(subOrderJson.getString("quantity"));
-                            if(quantity > 1) ((TextView) comboLayout.findViewById(R.id.name)).setText(quantity+" x "+productJson.getString("name"));
-                            else ((TextView) comboLayout.findViewById(R.id.name)).setText(productJson.getString("name"));
-                            ((TextView) comboLayout.findViewById(R.id.amount)).setText(subOrderJson.getString("total"));
-                            ((TextView) comboLayout.findViewById(R.id.dishes)).setText(dishes);
-                            fillLayout.addView(comboLayout);
-                        }
+                        orderDescriptionAdapter.setJsonArray(orderJson.getJSONArray("orders"));
                     } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { Actions.handleIgnorableException(OrderDescriptionActivity.this,e); }
             }
@@ -183,9 +184,81 @@ public class OrderDescriptionActivity extends FoodmashActivity {
 
     private void setStatus (ImageView statusImageView, String status) {
         switch (status) {
-            case "delivered": statusImageView.setImageResource(R.drawable.svg_tick_filled); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green)); break;
-            case "cancelled": statusImageView.setImageResource(R.drawable.svg_close_filled); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.accent)); break;
-            default: statusImageView.setImageResource(R.drawable.svg_circle_filled); statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.warning_orange)); break;
+            case "purchased":
+                statusImageView.setImageResource(R.drawable.svg_tick_filled);
+                statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.warning_orange));
+                placed.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                aggregated.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
+                dispatched.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
+                delivered.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
+                break;
+            case "ordered":
+                statusImageView.setImageResource(R.drawable.svg_tick_filled);
+                statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.warning_orange));
+                placed.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                aggregated.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                dispatched.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
+                delivered.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
+                break;
+            case "dispatched":
+                statusImageView.setImageResource(R.drawable.svg_tick_filled);
+                statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.warning_orange));
+                placed.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                aggregated.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                dispatched.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                delivered.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
+                break;
+            case "delivered":
+                statusImageView.setImageResource(R.drawable.svg_tick_filled);
+                statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                placed.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                aggregated.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                dispatched.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                delivered.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                break;
+            case "cancelled":
+                statusImageView.setImageResource(R.drawable.svg_close_filled);
+                statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.accent));
+                placed.setColorFilter(ContextCompat.getColor(this, R.color.accent));
+                aggregated.setColorFilter(ContextCompat.getColor(this, R.color.accent));
+                dispatched.setColorFilter(ContextCompat.getColor(this, R.color.accent));
+                delivered.setColorFilter(ContextCompat.getColor(this, R.color.accent));
+                break;
+        }
+    }
+
+    class OrderDescriptionAdapter extends RecyclerView.Adapter {
+        JSONArray subOrdersJson = new JSONArray();
+        void setJsonArray(JSONArray subOrdersJson) { this.subOrdersJson = subOrdersJson; notifyDataSetChanged(); }
+        class ViewHolder extends RecyclerView.ViewHolder {
+            @Bind(R.id.name) TextView name;
+            @Bind(R.id.amount) TextView amount;
+            @Bind(R.id.dishes) TextView dishes;
+            ViewHolder(View itemView) {
+                super(itemView);
+                ButterKnife.bind(this, itemView);
+            }
+        }
+        @Override public int getItemCount() { return subOrdersJson.length(); }
+        @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) { return new ViewHolder(LayoutInflater.from(OrderDescriptionActivity.this).inflate(R.layout.repeatable_order_description_item,parent,false)); }
+        @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            try {
+                ViewHolder viewHolder = (ViewHolder) holder;
+                JSONObject subOrderJson = subOrdersJson.getJSONObject(position);
+                JSONObject productJson = subOrderJson.getJSONObject("product");
+                JSONArray comboDishesJson = subOrderJson.getJSONArray("order_items");
+                String dishes = "";
+                for(int j=0; j<comboDishesJson.length(); j++) {
+                    JSONObject comboDishJson = comboDishesJson.getJSONObject(j);
+                    JSONObject dishJson = comboDishJson.getJSONObject("item");
+                    dishes += dishJson.getString("name") + ((j==comboDishesJson.length()-1)?"":"\n");
+                }
+                int quantity = Integer.parseInt(subOrderJson.getString("quantity"));
+                if(quantity > 1) viewHolder.name.setText(quantity+" x "+productJson.getString("name"));
+                else ((TextView) viewHolder.name.findViewById(R.id.name)).setText(productJson.getString("name"));
+                viewHolder.amount.setText(subOrderJson.getString("total"));
+                viewHolder.dishes.setText(dishes);
+            } catch (Exception e) { e.printStackTrace(); }
         }
     }
 }
