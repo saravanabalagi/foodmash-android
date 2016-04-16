@@ -60,8 +60,8 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     @Bind(R.id.payable_amount) TextView grandTotal;
     @Bind(R.id.payment_method) TextView paymentMethod;
     @Bind(R.id.status_icon) ImageView statusIcon;
-    @Bind(R.id.placed) ImageView placed;
-    @Bind(R.id.aggregated) ImageView aggregated;
+    @Bind(R.id.placed) ImageView purchased;
+    @Bind(R.id.aggregated) ImageView ordered;
     @Bind(R.id.dispatched) ImageView dispatched;
     @Bind(R.id.delivered) ImageView delivered;
     @Bind(R.id.toolbar) Toolbar toolbar;
@@ -185,42 +185,42 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     private void setStatus (ImageView statusImageView, String status) {
         switch (status) {
             case "purchased":
-                statusImageView.setImageResource(R.drawable.svg_tick_filled);
+                statusImageView.setImageResource(R.drawable.svg_android_tick);
                 statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.warning_orange));
-                placed.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
-                aggregated.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
+                purchased.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                ordered.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
                 dispatched.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
                 delivered.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
                 break;
             case "ordered":
-                statusImageView.setImageResource(R.drawable.svg_tick_filled);
+                statusImageView.setImageResource(R.drawable.svg_android_timer);
                 statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.warning_orange));
-                placed.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
-                aggregated.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                purchased.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                ordered.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
                 dispatched.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
                 delivered.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
                 break;
             case "dispatched":
-                statusImageView.setImageResource(R.drawable.svg_tick_filled);
+                statusImageView.setImageResource(R.drawable.svg_android_timer);
                 statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.warning_orange));
-                placed.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
-                aggregated.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                purchased.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                ordered.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
                 dispatched.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
                 delivered.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
                 break;
             case "delivered":
-                statusImageView.setImageResource(R.drawable.svg_tick_filled);
+                statusImageView.setImageResource(R.drawable.svg_android_double_tick);
                 statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
-                placed.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
-                aggregated.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                purchased.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
+                ordered.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
                 dispatched.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
                 delivered.setColorFilter(ContextCompat.getColor(this, R.color.okay_green));
                 break;
             case "cancelled":
-                statusImageView.setImageResource(R.drawable.svg_close_filled);
+                statusImageView.setImageResource(R.drawable.svg_android_close);
                 statusImageView.setColorFilter(ContextCompat.getColor(this, R.color.accent));
-                placed.setColorFilter(ContextCompat.getColor(this, R.color.accent));
-                aggregated.setColorFilter(ContextCompat.getColor(this, R.color.accent));
+                purchased.setColorFilter(ContextCompat.getColor(this, R.color.accent));
+                ordered.setColorFilter(ContextCompat.getColor(this, R.color.accent));
                 dispatched.setColorFilter(ContextCompat.getColor(this, R.color.accent));
                 delivered.setColorFilter(ContextCompat.getColor(this, R.color.accent));
                 break;
