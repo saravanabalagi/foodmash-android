@@ -36,7 +36,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
@@ -190,7 +189,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
         JsonObjectRequest getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Animations.fadeOut(fragmentContainer,100);
+                fragmentContainer.setVisibility(View.GONE);
                 try {
                     if (response.getBoolean("success")) {
                         Log.i("Combos", response.getJSONObject("data").getJSONArray("combos").length() + " combos found");
@@ -231,7 +230,6 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                                     fragmentContainer.setVisibility(View.VISIBLE);
                                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeConfirmOrderRequest")).commit();
                                     getSupportFragmentManager().executePendingTransactions();
-                                    Log.e("Testing", "Error on addCart1 " + error.getMessage());
                                 }
                             });
                             fragmentContainer.setVisibility(View.VISIBLE);
