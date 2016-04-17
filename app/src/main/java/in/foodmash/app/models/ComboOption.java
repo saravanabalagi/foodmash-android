@@ -1,7 +1,5 @@
 package in.foodmash.app.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
@@ -71,7 +69,7 @@ public class ComboOption {
         if(non_veg>0) labels.add(Dish.Label.NON_VEG);
         return labels;
     }
-    @JsonProperty("combo_option_dishes") public ArrayList<ComboOptionDish> getSelectedComboOptionDishes() { return new ArrayList<>(selectedComboOptionDishes); }
+    public ArrayList<ComboOptionDish> getSelectedComboOptionDishes() { return new ArrayList<>(selectedComboOptionDishes); }
 
     public void setMinCount(int minCount) {
         this.minCount = minCount;
@@ -122,7 +120,7 @@ public class ComboOption {
         comboOptionDishes.get(0).setQuantity(minCount);
         this.selectedComboOptionDishes.add(comboOptionDishes.get(0));
     }
-    @JsonProperty public void setComboOptionDishes(ArrayList<ComboOptionDish> comboOptionDishes) {
+    public void setComboOptionDishes(ArrayList<ComboOptionDish> comboOptionDishes) {
         this.comboOptionDishes = comboOptionDishes;
         this.selectedComboOptionDishes = new ArrayList<>();
         if(minCount>0) this.resetSelectedComboOptionDishes();

@@ -46,7 +46,6 @@ public class Combo {
             this.comboOptions.add(new ComboOption(comboOption));
     }
 
-
     public int getId() { return id; }
     public int getGroupSize() { return groupSize; }
     public int getNoOfPurchases() { return noOfPurchases; }
@@ -61,6 +60,7 @@ public class Combo {
     public float getPrice() { return price; }
     public String getPicture() { return picture; }
     public ArrayList<ComboOption> getComboOptions() { return comboOptions; }
+    public String getType() { return this.getClass().getSimpleName(); }
 
     public void setId(int id) { this.id = id; }
     public void setNoOfPurchases(int noOfPurchases) { this.noOfPurchases = noOfPurchases; }
