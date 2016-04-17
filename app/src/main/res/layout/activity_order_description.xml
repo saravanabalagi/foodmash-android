@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:layout_marginRight="-30dp"
+                    android:layout_marginRight="-40dp"
                     app:srcCompat="@drawable/svg_progress_start"
                     android:tint="@color/okay_green"
                     android:id="@+id/placed"
@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content" />
 
                 <ImageView
-                    android:layout_marginRight="-30dp"
+                    android:layout_marginRight="-40dp"
                     android:id="@+id/aggregated"
                     app:srcCompat="@drawable/svg_progress_middle"
                     android:tint="@color/grey_disabled"
@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content" />
 
                 <ImageView
-                    android:layout_marginRight="-30dp"
+                    android:layout_marginRight="-40dp"
                     android:id="@+id/dispatched"
                     app:srcCompat="@drawable/svg_progress_middle"
                     android:tint="@color/grey_disabled"
