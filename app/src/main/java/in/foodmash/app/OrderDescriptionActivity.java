@@ -2,6 +2,7 @@ package in.foodmash.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -67,8 +68,18 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     private String orderId;
+    private String aasmState;
     private boolean cart;
     private OrderDescriptionAdapter orderDescriptionAdapter;
+    private final Handler refreshHandler = new Handler();
+    private final Runnable keepRefreshing = new Runnable() {
+        @Override
+        public void run() {
+            onResume();
+            if(aasmState.equals("delivered") || aasmState.equals("cancelled")) refreshHandler.removeCallbacks(this);
+            else refreshHandler.postDelayed(this,30000);
+        }
+    };
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -113,10 +124,23 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        refreshHandler.removeCallbacks(keepRefreshing);
+        super.onDestroy();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         swipeRefreshLayout.setRefreshing(true);
         makeOrderDescriptionRequest();
+        refreshHandler.postDelayed(keepRefreshing, 30000);
+    }
+
+    @Override
+    protected void onPause() {
+        refreshHandler.removeCallbacks(keepRefreshing);
+        super.onPause();
     }
 
     @Override
@@ -183,6 +207,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     }
 
     private void setStatus (ImageView statusImageView, String status) {
+        this.aasmState = status;
         switch (status) {
             case "purchased":
                 statusImageView.setImageResource(R.drawable.svg_android_tick);

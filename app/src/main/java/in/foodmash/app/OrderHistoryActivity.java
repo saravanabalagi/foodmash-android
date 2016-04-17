@@ -2,6 +2,7 @@ package in.foodmash.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -53,6 +54,14 @@ public class OrderHistoryActivity extends FoodmashActivity {
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.toolbar) Toolbar toolbar;
     private OrderHistoryAdapter orderHistoryAdapter;
+    private final Handler handler = new Handler();
+    private final Runnable keepRefreshing = new Runnable() {
+        @Override
+        public void run() {
+            onResume();
+            handler.postDelayed(this,30000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +97,23 @@ public class OrderHistoryActivity extends FoodmashActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        handler.removeCallbacks(keepRefreshing);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        handler.removeCallbacks(keepRefreshing);
+        super.onPause();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         swipeRefreshLayout.setRefreshing(true);
         makeOrderHistoryRequest();
+        handler.postDelayed(keepRefreshing,30000);
     }
 
     private void setStatus (View statusIndicator,
