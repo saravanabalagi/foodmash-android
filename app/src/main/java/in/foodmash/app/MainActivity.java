@@ -69,6 +69,7 @@ import in.foodmash.app.models.ComboOptionDish;
 import in.foodmash.app.models.Dish;
 import in.foodmash.app.models.Restaurant;
 import in.foodmash.app.utils.DateUtils;
+import in.foodmash.app.utils.NumberUtils;
 
 public class MainActivity extends FoodmashActivity {
 
@@ -82,6 +83,7 @@ public class MainActivity extends FoodmashActivity {
     @Bind(R.id.filters) RecyclerView filtersRecyclerView;
     @Bind(R.id.combos_recycler_view) RecyclerView combosRecyclerView;
 
+    @Bind(R.id.mash_cash) TextView mashCash;
     @Bind(R.id.apply_filters) TextView applyFilters;
     @Bind(R.id.remove_all_filters) TextView removeFilters;
     @Bind(R.id.filter_combos_text) TextView filterCombosText;
@@ -340,7 +342,10 @@ public class MainActivity extends FoodmashActivity {
                         Log.i("Combos", response.getJSONObject("data").getJSONArray("combos").length() + " combos found");
                         String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
                         updateFillLayout(Arrays.asList(objectMapper.readValue(comboJsonArrayString, Combo[].class)));
+                        JSONObject userJson = response.getJSONObject("user");
+                        Actions.cacheUserDetails(MainActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"), userJson.getDouble("mash_cash"));
                         Actions.cacheCombos(MainActivity.this, comboJsonArrayString, new Date());
+                        mashCash.setText(NumberUtils.getCurrencyFormat(Info.getMashCash(MainActivity.this)));
                     } else Snackbar.make(mainLayout,"Unable to load combos: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { e.printStackTrace(); Actions.handleIgnorableException(MainActivity.this,e); }
             }
