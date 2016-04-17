@@ -190,9 +190,9 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
         JsonObjectRequest getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                Animations.fadeOut(fragmentContainer,100);
                 try {
                     if (response.getBoolean("success")) {
-                        Animations.fadeOut(fragmentContainer,100);
                         Log.i("Combos", response.getJSONObject("data").getJSONArray("combos").length() + " combos found");
                         String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
                         Actions.cacheCombos(CheckoutAddressActivity.this, comboJsonArrayString, new Date());
@@ -231,9 +231,12 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                                     fragmentContainer.setVisibility(View.VISIBLE);
                                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeConfirmOrderRequest")).commit();
                                     getSupportFragmentManager().executePendingTransactions();
+                                    Log.e("Testing", "Error on addCart1 " + error.getMessage());
                                 }
                             });
                             fragmentContainer.setVisibility(View.VISIBLE);
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+                            getSupportFragmentManager().executePendingTransactions();
                             Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(confirmOrderRequest);
                         }
                     } else Snackbar.make(mainLayout,"Request Failed. Reason: "+response.getString("error"),Snackbar.LENGTH_INDEFINITE).show();
@@ -242,11 +245,12 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyFailureFragment()).commit();
-                getSupportFragmentManager().executePendingTransactions();
+                fragmentContainer.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeConfirmOrderRequest")).commit();
+                getSupportFragmentManager().executePendingTransactions();
             }
         });
+        fragmentContainer.setVisibility(View.VISIBLE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(this).addToRequestQueue(getCombosRequest, 20000, 2, 1.0f);
@@ -264,6 +268,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
     }
 
     public void makeAddressRequest() {
+        Log.e("Testing", "MakeAddressCalled");
         JsonObjectRequest addressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",getMakeAddressRequestJson(),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -332,7 +337,9 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(CheckoutAddressActivity.this, PinYourLocationActivity.class);
-                    try { intent.putExtra("json", new ObjectMapper().writeValueAsString(address)); }
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+                    try { intent.putExtra("json", objectMapper.writeValueAsString(address)); }
                     catch (Exception e) { Actions.handleIgnorableException(CheckoutAddressActivity.this,e); }
                     intent.putExtra("edit", true);
                     intent.putExtra("cart", true);
