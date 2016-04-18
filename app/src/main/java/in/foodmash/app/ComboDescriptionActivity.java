@@ -26,6 +26,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.Bind;
@@ -115,6 +117,12 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
             Actions.handleIgnorableException(this,e);
         }
 
+        Collections.sort(combo.getComboOptions(), new Comparator<ComboOption>() {
+            @Override
+            public int compare(ComboOption lhs, ComboOption rhs) {
+                return lhs.getPriority()-rhs.getPriority();
+            }
+        });
         comboOptionViewPager.setAdapter(new ComboOptionAdapter());
         buy.setOnClickListener(this);
         back.setOnClickListener(this);
