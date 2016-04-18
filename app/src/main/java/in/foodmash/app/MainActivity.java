@@ -454,6 +454,7 @@ public class MainActivity extends FoodmashActivity {
             @Bind(R.id.quick_view) ImageView quickView;
             @Bind(R.id.close_info_layout) ImageView closeInfoLayout;
             @Bind(R.id.bottom_bar) LinearLayout bottomBar;
+            @Bind(R.id.price_layout) LinearLayout priceLayout;
             @Bind(R.id.combo_info_layout) RelativeLayout comboInfoLayout;
             @Bind(R.id.combo_layout) RelativeLayout comboLayout;
             @Bind(R.id.contents_wrapper) LinearLayout contentsWrapper;
@@ -580,6 +581,18 @@ public class MainActivity extends FoodmashActivity {
                 ((TextView) restaurantLayout.findViewById(R.id.name)).setText(restaurant.getName());
                 ((NetworkImageView) restaurantLayout.findViewById(R.id.logo)).setImageUrl(restaurant.getLogo(), Swift.getInstance(MainActivity.this).getImageLoader());
                 viewHolder.restaurantsLayout.addView(restaurantLayout);
+            }
+
+            if(combo.isCustomizable()) {
+                viewHolder.priceLayout.setVisibility(View.GONE);
+                viewHolder.quickView.setVisibility(View.GONE);
+                viewHolder.addToCart.setVisibility(View.GONE);
+                viewHolder.comboSizeIcon.setVisibility(View.GONE);
+            } else {
+                viewHolder.priceLayout.setVisibility(View.VISIBLE);
+                viewHolder.quickView.setVisibility(View.VISIBLE);
+                viewHolder.addToCart.setVisibility(View.VISIBLE);
+                viewHolder.comboSizeIcon.setVisibility(View.VISIBLE);
             }
 
             if(position == this.getItemCount()-1) {
