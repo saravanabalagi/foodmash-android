@@ -174,7 +174,40 @@
                         android:visibility="gone" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:tint="@color/black_222"
+                        app:srcCompat="@drawable/svg_cart" />
+
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:id="@+id/mash_cash"
+                        android:layout_margin="5dp"
+                        android:gravity="center"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:text="0.00"
+                        android:singleLine="true"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:layout_margin="5dp"
+                        android:text="MashCash available"
+                        android:singleLine="true"/>
+
+                </LinearLayout>
 
                 <android.support.v7.widget.SwitchCompat
                     android:layout_width="wrap_content"

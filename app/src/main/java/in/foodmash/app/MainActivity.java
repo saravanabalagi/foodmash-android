@@ -69,6 +69,7 @@ import in.foodmash.app.models.ComboOptionDish;
 import in.foodmash.app.models.Dish;
 import in.foodmash.app.models.Restaurant;
 import in.foodmash.app.utils.DateUtils;
+import in.foodmash.app.utils.NumberUtils;
 
 public class MainActivity extends FoodmashActivity {
 
@@ -82,6 +83,7 @@ public class MainActivity extends FoodmashActivity {
     @Bind(R.id.filters) RecyclerView filtersRecyclerView;
     @Bind(R.id.combos_recycler_view) RecyclerView combosRecyclerView;
 
+    @Bind(R.id.mash_cash) TextView mashCash;
     @Bind(R.id.apply_filters) TextView applyFilters;
     @Bind(R.id.remove_all_filters) TextView removeFilters;
     @Bind(R.id.filter_combos_text) TextView filterCombosText;
@@ -340,7 +342,10 @@ public class MainActivity extends FoodmashActivity {
                         Log.i("Combos", response.getJSONObject("data").getJSONArray("combos").length() + " combos found");
                         String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
                         updateFillLayout(Arrays.asList(objectMapper.readValue(comboJsonArrayString, Combo[].class)));
+                        JSONObject userJson = response.getJSONObject("user");
+                        Actions.cacheUserDetails(MainActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"), userJson.getDouble("mash_cash"));
                         Actions.cacheCombos(MainActivity.this, comboJsonArrayString, new Date());
+                        mashCash.setText(NumberUtils.getCurrencyFormat(Info.getMashCash(MainActivity.this)));
                     } else Snackbar.make(mainLayout,"Unable to load combos: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { e.printStackTrace(); Actions.handleIgnorableException(MainActivity.this,e); }
             }
@@ -449,6 +454,7 @@ public class MainActivity extends FoodmashActivity {
             @Bind(R.id.quick_view) ImageView quickView;
             @Bind(R.id.close_info_layout) ImageView closeInfoLayout;
             @Bind(R.id.bottom_bar) LinearLayout bottomBar;
+            @Bind(R.id.price_layout) LinearLayout priceLayout;
             @Bind(R.id.combo_info_layout) RelativeLayout comboInfoLayout;
             @Bind(R.id.combo_layout) RelativeLayout comboLayout;
             @Bind(R.id.contents_wrapper) LinearLayout contentsWrapper;
@@ -575,6 +581,18 @@ public class MainActivity extends FoodmashActivity {
                 ((TextView) restaurantLayout.findViewById(R.id.name)).setText(restaurant.getName());
                 ((NetworkImageView) restaurantLayout.findViewById(R.id.logo)).setImageUrl(restaurant.getLogo(), Swift.getInstance(MainActivity.this).getImageLoader());
                 viewHolder.restaurantsLayout.addView(restaurantLayout);
+            }
+
+            if(combo.isCustomizable()) {
+                viewHolder.priceLayout.setVisibility(View.GONE);
+                viewHolder.quickView.setVisibility(View.GONE);
+                viewHolder.addToCart.setVisibility(View.GONE);
+                viewHolder.comboSizeIcon.setVisibility(View.GONE);
+            } else {
+                viewHolder.priceLayout.setVisibility(View.VISIBLE);
+                viewHolder.quickView.setVisibility(View.VISIBLE);
+                viewHolder.addToCart.setVisibility(View.VISIBLE);
+                viewHolder.comboSizeIcon.setVisibility(View.VISIBLE);
             }
 
             if(position == this.getItemCount()-1) {

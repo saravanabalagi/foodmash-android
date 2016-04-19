@@ -63,4 +63,9 @@ public class Info {
         return sharedPreferences.getString("name",null);
     }
 
+    public static double getMashCash(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
+        return sharedPreferences.getFloat("mash_cash",0);
+    }
+
 }

@@ -50,6 +50,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
     @Bind(R.id.main_layout) ScrollView mainLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.change_password) TextView changePassword;
+    @Bind(R.id.mash_cash) TextView mashCash;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     @Bind(R.id.name) EditText name;
@@ -143,7 +144,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
                 fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
-                        Actions.cacheUserDetails(ProfileActivity.this, name.getText().toString().trim(), email.getText().toString().trim(), phone.getText().toString().trim());
+                        Actions.cacheUserDetails(ProfileActivity.this, name.getText().toString().trim(), email.getText().toString().trim(), phone.getText().toString().trim(), Double.parseDouble(mashCash.getText().toString().trim()));
                         finish();
                     } else Snackbar.make(mainLayout, response.getString("error"), Snackbar.LENGTH_LONG).show();
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -175,6 +176,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
                         dob.setText(userJson.getString("dob").equals("null")?null:userJson.getString("dob"));
                         email.setText(userJson.getString("email"));
                         phone.setText(userJson.getString("mobile_no"));
+                        mashCash.setText(NumberUtils.getCurrencyFormat(userJson.getDouble("mash_cash")));
                         promotionalOffers.setChecked(userJson.getBoolean("offers"));
                     } else Snackbar.make(mainLayout,"Unable to save details: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(ProfileActivity.this,e); }
