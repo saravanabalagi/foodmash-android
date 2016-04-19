@@ -195,7 +195,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                         Log.i("Combos", response.getJSONObject("data").getJSONArray("combos").length() + " combos found");
                         String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
                         Actions.cacheCombos(CheckoutAddressActivity.this, comboJsonArrayString, new Date());
-                        if(!Cart.getInstance().areCombosAvailableIn(comboJsonArrayString)) {
+                        if(!Cart.getInstance().areCombosInCartAvailableIn(comboJsonArrayString)) {
                             Intent intent = new Intent(CheckoutAddressActivity.this, CartActivity.class);
                             intent.putExtra("combo_error", true);
                             startActivity(intent);
