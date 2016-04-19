@@ -12,7 +12,7 @@ public class ComboOption {
     private int id;
     private int priority;
     private int minCount = 0;
-    private String name = "ComboOption";
+    private String name;
     private String description;
     private ArrayList<ComboOptionDish> selectedComboOptionDishes;
     private ArrayList<ComboOptionDish> comboOptionDishes = new ArrayList<>();
