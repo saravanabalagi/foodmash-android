@@ -63,8 +63,24 @@ public class Cart {
 
     public boolean hasCombo(Combo combo) {
         for(Combo entry: this.orders.keySet())
-            if(entry.getId()==combo.getId()) return true;
+            if(entry.equals(combo)) return true;
         return false;
+    }
+
+    public boolean hasCombo(int comboId) {
+        for(Combo entry: this.orders.keySet())
+            if(entry.getId()==comboId) return true;
+        return false;
+    }
+
+    public Combo fetchLastCombo(int comboId) {
+        if(!this.hasCombo(comboId)) return null;
+        for(Long timestamp: timestamps.descendingKeySet()) {
+            Combo iteratedCombo = timestamps.get(timestamp);
+            if(iteratedCombo.getId()==comboId)
+                return iteratedCombo;
+        }
+        return null;
     }
 
     public int decrementFromCart(int comboId) {
@@ -127,7 +143,7 @@ public class Cart {
         printTimestampsContents();
     }
 
-    public boolean areCombosAvailableIn(String comboJsonArrayString) {
+    public boolean areCombosInCartAvailableIn(String comboJsonArrayString) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
         try {
