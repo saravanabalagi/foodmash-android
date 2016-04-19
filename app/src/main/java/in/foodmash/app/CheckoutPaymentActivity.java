@@ -299,7 +299,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     }
 
     public void makePromoCodeRequest() {
-        JsonObjectRequest makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/payments/validatePromoCode", getPromoCodeJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/payments/applyPromoCode", getPromoCodeJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
