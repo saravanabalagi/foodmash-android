@@ -9,7 +9,6 @@ public class ComboOptionDish {
     private int priority;
     private int minCount = 0;
     private int quantity = 0;
-    private int price;
     private Dish dish;
 
     public ComboOptionDish() {}
@@ -24,11 +23,9 @@ public class ComboOptionDish {
     public int getId() { return id; }
     public Dish getDish() { return dish; }
     public int getPriority() { return priority; }
-    public int getPrice() { return price; }
     public int getMinCount() { return minCount; }
     public int getQuantity() { return quantity; }
 
-    public void setPrice(int price) { this.price = price; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
     public void setId(int id) { this.id = id; }
     public void setPriority(int priority) { this.priority = priority; }
