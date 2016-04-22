@@ -82,19 +82,33 @@
                     android:visibility="gone"
                     app:srcCompat="@drawable/svg_tick_filled" />
 
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/promo_code_input_layout"
+                <RelativeLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
 
-                    <EditText
-                        android:id="@+id/promo_code"
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/promo_code_input_layout"
+                        android:hint="Promo Code / Mash Cash"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/promo_code"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Promo Code" />
+                        android:textColor="@color/okay_green"
+                        android:textSize="20sp"
+                        android:visibility="gone"
+                        android:id="@+id/confirmed_promo_mash_cash"/>
 
-                </android.support.design.widget.TextInputLayout>
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/apply"
@@ -191,10 +205,11 @@
                     android:visibility="gone">
 
                     <TextView
+                        android:id="@+id/promo_discount_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Promo Discount"
+                        android:text="Promo Discount / Mash Cash"
                         android:textColor="@color/okay_green" />
 
                     <TextView

@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -70,6 +72,8 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     @Bind(R.id.vat_percentage) TextView vatPercentage;
     @Bind(R.id.apply) TextView apply;
     @Bind(R.id.promo_discount) TextView promoDiscount;
+    @Bind(R.id.promo_discount_text) TextView promoDiscountText;
+    @Bind(R.id.confirmed_promo_mash_cash) TextView confirmedPromoMashCash;
     @Bind(R.id.promo_discount_layout) LinearLayout promoDiscountLayout;
     @Bind(R.id.promo_code) EditText promoCode;
     @Bind(R.id.promo_code_input_layout) TextInputLayout promoCodeInputLayout;
@@ -77,7 +81,8 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
 
     private String paymentMethod;
     private String orderId;
-    private boolean isPromoApplied = false;
+    private Cart cart = Cart.getInstance();
+    private Cart.Discount discount = Cart.Discount.NIL;
 
     PayuConfig payuConfig = new PayuConfig();
     PayuResponse payuResponse = new PayuResponse();
@@ -139,6 +144,14 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         }
         PaymentPagerAdapter paymentPagerAdapter = new PaymentPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(paymentPagerAdapter);
+        promoCode.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override public void afterTextChanged(Editable s) {
+                processDiscountType(s.toString().trim());
+                promoCodeInputLayout.setErrorEnabled(false);
+            }
+        });
         //getHashAndPaymentRelatedDetails();
     }
 
@@ -146,10 +159,9 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     protected void onResume() {
         super.onResume();
 
-        Intent intent;
         orderId = getIntent().getStringExtra("order_id");
         if (orderId == null) {
-            intent = new Intent(CheckoutPaymentActivity.this,CheckoutAddressActivity.class);
+            Intent intent = new Intent(CheckoutPaymentActivity.this,CheckoutAddressActivity.class);
             intent.putExtra("order_id_error", true);
             startActivity(intent);
             finish();
@@ -163,7 +175,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         payableAmount.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("grand_total", 0)));
         total.setText(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("total", 0)));
         if (getIntent().getDoubleExtra("total",0) == 0) {
-            intent = new Intent(CheckoutPaymentActivity.this,CheckoutAddressActivity.class);
+            Intent intent = new Intent(CheckoutPaymentActivity.this,CheckoutAddressActivity.class);
             intent.putExtra("total_error", true);
             startActivity(intent);
             finish();
@@ -248,7 +260,11 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         try {
             JSONObject dataJson = new JSONObject();
             dataJson.put("payment_method",paymentMethod);
-            if(isPromoApplied) dataJson.put("promo_code",promoCode.getText().toString().trim());
+            switch (discount) {
+                case PROMO_CODE: dataJson.put("promo_code",promoCode.getText().toString().trim()); break;
+                case MASH_CASH: dataJson.put("mash_cash", promoCode.getText().toString().trim()); break;
+                case NIL: break;
+            }
             requestJson.put("data",dataJson);
         } catch (JSONException e) { e.printStackTrace(); }
         return requestJson;
@@ -267,7 +283,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                         intent.putExtra("order_id",orderId);
                         intent.putExtra("cart",true);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        Cart.getInstance().removeAllOrders();
+                        cart.removeAllOrders();
                         startActivity(intent);
                         finish();
                     } else Snackbar.make(mainLayout, "Wrong Password", Snackbar.LENGTH_LONG).show();
@@ -298,31 +314,67 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         return requestJson;
     }
 
+    private void processDiscountType(String discountString) {
+        try { 
+            if(discountString.length()==0) discount = Cart.Discount.NIL;
+            else { 
+                Integer.parseInt(discountString); 
+                discount = Cart.Discount.MASH_CASH;
+            }
+        } catch (NumberFormatException e) { discount = Cart.Discount.PROMO_CODE; }
+        switch (discount) {
+            case MASH_CASH: promoCodeInputLayout.setHint("Mash Cash"); break;
+            case PROMO_CODE: promoCodeInputLayout.setHint("Promo Code"); break;
+            case NIL: promoCodeInputLayout.setHint("Mash Cash / Promo Code");
+        }
+    }
+
     public void makePromoCodeRequest() {
-        JsonObjectRequest makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/payments/applyPromoCode", getPromoCodeJson(), new Response.Listener<JSONObject>() {
+        if(discount== Cart.Discount.NIL) { Snackbar.make(mainLayout, "PromoCode or MashCash is empty", Snackbar.LENGTH_SHORT); return; }
+        JsonObjectRequest makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + ((discount== Cart.Discount.MASH_CASH)?"/payments/applyMashCash":"/payments/applyPromoCode"), getPromoCodeJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
-                        Snackbar.make(mainLayout, "Promo Code applied successfully", Snackbar.LENGTH_SHORT).show();
-                        apply.setText("Applied");
+                        Snackbar.make(mainLayout, ((discount== Cart.Discount.MASH_CASH)?"Mash Cash applied successfully":"Promo Code applied successfully"), Snackbar.LENGTH_SHORT).show();
+                        apply.setText("Remove");
+                        apply.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                onResume();
+                                promoCode.setText("");
+                                promoValidate.setVisibility(View.GONE);
+                                promoDiscountLayout.setVisibility(View.GONE);
+                                promoDiscount.setText("");
+                                cart.discount = Cart.Discount.NIL;
+                                confirmedPromoMashCash.setText("");
+                                confirmedPromoMashCash.setVisibility(View.GONE);
+                                promoCode.setVisibility(View.VISIBLE);
+                                apply.setText("Apply");
+                            }
+                        });
                         payableAmount.setText(NumberUtils.getCurrencyFormat(response.getJSONObject("data").getDouble("grand_total")));
                         promoDiscount.setText(NumberUtils.getCurrencyFormat(response.getJSONObject("data").getDouble("promo_discount")));
                         promoDiscountLayout.setVisibility(View.VISIBLE);
-                        isPromoApplied = true;
+                        cart.discount = discount;
+                        confirmedPromoMashCash.setText(promoCode.getText().toString().trim());
+                        confirmedPromoMashCash.setVisibility(View.VISIBLE);
+                        promoCode.setVisibility(View.GONE);
                         promoCodeInputLayout.setErrorEnabled(false);
                         promoValidate.setVisibility(View.VISIBLE);
-                        promoCode.setFocusable(false);
-                        promoCode.clearFocus();
                     } else {
-                        promoCodeInputLayout.setError("Invalid Promo Code. Try again");
-                        Snackbar.make(mainLayout, "Promo Code not applied", Snackbar.LENGTH_LONG).show();
-                        promoDiscountLayout.setVisibility(View.GONE);
+                        onResume();
+                        confirmedPromoMashCash.setText("");
+                        confirmedPromoMashCash.setVisibility(View.GONE);
+                        promoCode.setVisibility(View.VISIBLE);
                         promoValidate.setVisibility(View.GONE);
-                        promoCode.setText("");
-                        isPromoApplied = false;
+                        promoDiscountLayout.setVisibility(View.GONE);
+                        promoDiscount.setText("");
+                        cart.discount = Cart.Discount.NIL;
                         promoCode.requestFocus();
+                        promoCodeInputLayout.setError(((discount == Cart.Discount.MASH_CASH) ? "Not enough Mash Cash" : "Invalid Promo Code"));
+                        Snackbar.make(mainLayout, ((discount == Cart.Discount.MASH_CASH) ? "Mash Cash not applied" : "Promo Code not applied"), Snackbar.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
             }
@@ -367,7 +419,8 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
             intent.putExtra("cart", true);
             intent.putExtra("order_id", orderId);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Cart.getInstance().removeAllOrders();
+            cart.removeAllOrders();
+            cart.discount = Cart.Discount.NIL;
             startActivity(intent);
             finish();
         }
