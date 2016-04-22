@@ -40,7 +40,7 @@ public class ComboOption {
     public int getMinCount() { return minCount; }
     public String getName() { return name; }
     public String getDescription() { return description; }
-    @JsonProperty("ComboOptionDishes") public ArrayList<ComboOptionDish> getSelectedComboOptionDishes() { return new ArrayList<>(selectedComboOptionDishes); }
+    @JsonProperty("combo_option_dishes") public ArrayList<ComboOptionDish> getSelectedComboOptionDishes() { return new ArrayList<>(selectedComboOptionDishes); }
 
     @JsonIgnore public ArrayList<ComboOptionDish> getComboOptionDishes() { return comboOptionDishes; }
     public void setId(int id) { this.id = id; }
