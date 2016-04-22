@@ -1,5 +1,8 @@
 package in.foodmash.app.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
@@ -37,14 +40,15 @@ public class ComboOption {
     public int getMinCount() { return minCount; }
     public String getName() { return name; }
     public String getDescription() { return description; }
-    public ArrayList<ComboOptionDish> getComboOptionDishes() { return comboOptionDishes; }
+    @JsonProperty("ComboOptionDishes") public ArrayList<ComboOptionDish> getSelectedComboOptionDishes() { return new ArrayList<>(selectedComboOptionDishes); }
 
+    @JsonIgnore public ArrayList<ComboOptionDish> getComboOptionDishes() { return comboOptionDishes; }
     public void setId(int id) { this.id = id; }
     public void setPriority(int priority) { this.priority = priority; }
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }
-    public void setSelectedComboOptionDishes(ArrayList<ComboOptionDish> selectedComboOptionDishes) { this.selectedComboOptionDishes = selectedComboOptionDishes; }
 
+    public void setSelectedComboOptionDishes(ArrayList<ComboOptionDish> selectedComboOptionDishes) { this.selectedComboOptionDishes = selectedComboOptionDishes; }
     private int getComprisedDishesQuantity() {
         int quantity=0;
         for(ComboOptionDish comboDish: this.selectedComboOptionDishes)
@@ -69,7 +73,6 @@ public class ComboOption {
         if(non_veg>0) labels.add(Dish.Label.NON_VEG);
         return labels;
     }
-    public ArrayList<ComboOptionDish> getSelectedComboOptionDishes() { return new ArrayList<>(selectedComboOptionDishes); }
 
     public void setMinCount(int minCount) {
         this.minCount = minCount;
@@ -120,7 +123,7 @@ public class ComboOption {
         comboOptionDishes.get(0).setQuantity(minCount);
         this.selectedComboOptionDishes.add(comboOptionDishes.get(0));
     }
-    public void setComboOptionDishes(ArrayList<ComboOptionDish> comboOptionDishes) {
+    @JsonProperty public void setComboOptionDishes(ArrayList<ComboOptionDish> comboOptionDishes) {
         this.comboOptionDishes = comboOptionDishes;
         this.selectedComboOptionDishes = new ArrayList<>();
         if(minCount>0) this.resetSelectedComboOptionDishes();
