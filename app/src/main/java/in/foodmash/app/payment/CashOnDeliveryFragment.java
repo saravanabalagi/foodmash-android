@@ -25,8 +25,8 @@ public class CashOnDeliveryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_cash_on_delivery, container, false);
 
         email = (TextView) rootView.findViewById(R.id.email);
-        email = (TextView) rootView.findViewById(R.id.phone);
-        email = (TextView) rootView.findViewById(R.id.mash_cash_available);
+        phone = (TextView) rootView.findViewById(R.id.phone);
+        mashCash = (TextView) rootView.findViewById(R.id.mash_cash_available);
 
         email.setText(Info.getEmail(getActivity()));
         phone.setText(Info.getPhone(getActivity()));
