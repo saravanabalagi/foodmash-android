@@ -1,11 +1,15 @@
 package in.foodmash.app;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -45,6 +49,7 @@ import in.foodmash.app.utils.WordUtils;
  */
 public class OrderDescriptionActivity extends FoodmashActivity {
 
+    public static final int NOTIFICATION_ID = 67337;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
@@ -70,7 +75,10 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     private String orderId;
     private String aasmState;
     private boolean cart;
+    private boolean notif;
     private OrderDescriptionAdapter orderDescriptionAdapter;
+    private NotificationManager notificationManager;
+    private String notificationDesc;
     private final Handler refreshHandler = new Handler();
     private final Runnable keepRefreshing = new Runnable() {
         @Override
@@ -101,8 +109,10 @@ public class OrderDescriptionActivity extends FoodmashActivity {
         setTitle(toolbar,"Order","contents");
 
         cart = getIntent().getBooleanExtra("cart", false);
+        notif = getIntent().getBooleanExtra("notif", false);
         orderId = getIntent().getStringExtra("order_id");
 
+        notificationManager= (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         orderDescriptionAdapter = new OrderDescriptionAdapter();
         orderDescriptionRecyclerView.hasFixedSize();
         orderDescriptionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -145,7 +155,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
 
     @Override
     public void onBackPressed() {
-        if(cart) {
+        if(cart || notif) {
             Intent intent = new Intent(OrderDescriptionActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); startActivity(intent); }
         else { finish(); }
@@ -174,7 +184,6 @@ public class OrderDescriptionActivity extends FoodmashActivity {
                         JSONArray orderJsonArray = response.getJSONArray("data");
                         JSONObject orderJson = orderJsonArray.getJSONObject(0);
                         grandTotal.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("grand_total")));
-                        grandTotal.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("grand_total")));
                         paymentMethod.setText(WordUtils.titleize(orderJson.getString("payment_method")));
                         if(orderJson.has("promo_discount")) {
                             if(orderJson.has("promo_code")) promoCode.setText(orderJson.getString("promo_code"));
@@ -189,6 +198,19 @@ public class OrderDescriptionActivity extends FoodmashActivity {
                         vat.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("vat")));
                         deliveryCharges.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("delivery_charge")));
                         orderDescriptionAdapter.setJsonArray(orderJson.getJSONArray("orders"));
+                        if(cart && aasmState.equals("purchased") && notificationDesc!=null) {
+                            Intent notifIntent = new Intent(OrderDescriptionActivity.this,OrderDescriptionActivity.class);
+                            notifIntent.putExtra("notif", true);
+                            PendingIntent pendingIntent = PendingIntent.getActivity(OrderDescriptionActivity.this, 0, notifIntent, 0);
+                            android.support.v4.app.NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(OrderDescriptionActivity.this)
+                                    .setSmallIcon(android.R.drawable.ic_menu_info_details)
+                                    .setContentTitle("Your order has been successful")
+                                    .setContentText(notificationDesc)
+                                    .setContentIntent(pendingIntent)
+                                    .setTicker("We received your order")
+                                    .setWhen(System.currentTimeMillis());
+                            notificationManager.notify(NOTIFICATION_ID,notificationBuilder.build());
+                        }
                     } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { Actions.handleIgnorableException(OrderDescriptionActivity.this,e); }
             }
@@ -216,6 +238,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
                 ordered.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
                 dispatched.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
                 delivered.setColorFilter(ContextCompat.getColor(this, R.color.grey_disabled));
+                notificationDesc = "Order amount INR "+grandTotal.getText().toString()+" Tap to check status.";
                 break;
             case "ordered":
                 statusImageView.setImageResource(R.drawable.svg_android_timer);
