@@ -7,6 +7,8 @@ public class NumberUtils {
 
     public static String getCurrencyFormat(float f) { return String.format("%.2f",f); }
     public static String getCurrencyFormat(double d) { return String.format("%.2f",d); }
+    public static String getCurrencyFormatWithoutDecimals(float d) { return String.format("%.0f",d); }
+    public static String getCurrencyFormatWithoutDecimals(double d) { return String.format("%.0f",d); }
     public static boolean isInteger(String string) {
         if (string == null) { return false; }
         if (string.length() == 0) { return false; }
