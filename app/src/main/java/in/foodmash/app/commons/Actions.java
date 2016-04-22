@@ -105,6 +105,7 @@ public class Actions {
     }
 
     public static void handleIgnorableException(final Context context, final Throwable e) {
+        if(e!=null) e.printStackTrace();
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context)
                 .setCancelable(true)
                 .setTitle("App encountered an error")
