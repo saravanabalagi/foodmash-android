@@ -11,12 +11,43 @@
         android:padding="20dp"
         android:gravity="center_horizontal">
 
-        <TextView
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Invoice will be sent to"
+            android:gravity="center_vertical"
+            android:background="@drawable/button_transparent_background"
+            android:layout_marginTop="-5dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:srcCompat="@drawable/svg_android_wallet"
+                android:padding="10dp"
+                android:tint="@color/okay_green" />
+
+            <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="200"
             android:padding="10dp"
-            android:textSize="20sp" />
+            android:textSize="17sp"
+            android:layout_weight="1"
+            android:textColor="@color/black_222"
+            android:fontFamily="sans-serif-light"
+            android:id="@+id/mash_cash_available" />
+
+            <TextView
+                android:layout_marginLeft="-15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MashCash available"
+                android:padding="10dp"
+                android:textSize="17sp"
+                android:textColor="@color/black_222"
+                android:fontFamily="sans-serif-light" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -43,6 +74,34 @@
                 android:textColor="@color/black_222"
                 android:fontFamily="sans-serif-light"
                 android:id="@+id/email" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:background="@drawable/button_transparent_background"
+            android:layout_marginTop="-5dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:srcCompat="@drawable/svg_call_filled"
+                android:padding="5dp"
+                android:tint="@color/accent" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="99999 99999"
+                android:padding="10dp"
+                android:textSize="17sp"
+                android:layout_weight="1"
+                android:textColor="@color/black_222"
+                android:fontFamily="sans-serif-light"
+                android:id="@+id/phone" />
 
         </LinearLayout>
 

@@ -8,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import in.foodmash.app.R;
 import in.foodmash.app.commons.Info;
 
@@ -18,6 +16,8 @@ import in.foodmash.app.commons.Info;
  */
 public class CashOnDeliveryFragment extends Fragment {
     TextView email;
+    TextView phone;
+    TextView mashCash;
 
     @Nullable
     @Override
@@ -25,7 +25,12 @@ public class CashOnDeliveryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_cash_on_delivery, container, false);
 
         email = (TextView) rootView.findViewById(R.id.email);
+        email = (TextView) rootView.findViewById(R.id.phone);
+        email = (TextView) rootView.findViewById(R.id.mash_cash_available);
+
         email.setText(Info.getEmail(getActivity()));
+        phone.setText(Info.getPhone(getActivity()));
+        mashCash.setText(String.valueOf(Info.getMashCash(getActivity())));
 
         return rootView;
     }

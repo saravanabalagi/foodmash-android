@@ -21,6 +21,8 @@ import java.util.TreeMap;
  */
 public class Cart {
 
+    public enum Discount { PROMO_CODE, MASH_CASH, NIL }
+    public Discount discount = Discount.NIL;
     private LinkedHashMap<Combo,Integer> orders = new LinkedHashMap<>();
     private TreeMap<Long, Combo> timestamps = new TreeMap<>();
     private static Cart mInstance;
