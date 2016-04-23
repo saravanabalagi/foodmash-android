@@ -291,6 +291,7 @@ public class MainActivity extends FoodmashActivity {
             int scrollDy = 0;
             @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
             @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if(scrollDy > 50) mashCashLayout.animate().translationY(dpToPx(mashCashLayout.getHeight()));
                 scrollDy += dy;
                 swipeRefreshLayout.setEnabled(scrollDy == 0);
             }
@@ -347,7 +348,7 @@ public class MainActivity extends FoodmashActivity {
                             JSONObject userJson = response.getJSONObject("user");
                             Actions.cacheUserDetails(MainActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"), userJson.getDouble("mash_cash"));
                             Actions.cacheCombos(MainActivity.this, comboJsonArrayString, new Date());
-                            mashCash.setText(NumberUtils.getCurrencyFormat(Info.getMashCash(MainActivity.this)));
+                            mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(Info.getMashCash(MainActivity.this)));
                             mashCashLayout.setVisibility(View.VISIBLE);
                         } else mashCashLayout.setVisibility(View.GONE);
                     } else Snackbar.make(mainLayout,"Unable to load combos: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
@@ -501,8 +502,8 @@ public class MainActivity extends FoodmashActivity {
             int quantity = cart.getCount(combo.getId());
             if(!combo.isAvailable()) cart.removeOrder(combo);
             viewHolder.count.setText(String.valueOf(quantity));
-            if (quantity > 0) { Animations.fadeOut(viewHolder.addToCart,500); Animations.fadeInOnlyIfInvisible(viewHolder.countLayout,500); }
-            else { Animations.fadeOut(viewHolder.countLayout,500); Animations.fadeInOnlyIfInvisible(viewHolder.addToCart,500); }
+            if (quantity > 0) { viewHolder.addToCart.setVisibility(View.GONE); viewHolder.countLayout.setVisibility(View.VISIBLE); }
+            else { viewHolder.countLayout.setVisibility(View.GONE); viewHolder.addToCart.setVisibility(View.VISIBLE); }
             viewHolder.plus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -591,12 +592,8 @@ public class MainActivity extends FoodmashActivity {
                 viewHolder.priceLayout.setVisibility(View.GONE);
                 viewHolder.quickView.setVisibility(View.GONE);
                 viewHolder.addToCart.setVisibility(View.GONE);
+                viewHolder.countLayout.setVisibility(View.GONE);
                 viewHolder.comboSizeIcon.setVisibility(View.GONE);
-            } else {
-                viewHolder.priceLayout.setVisibility(View.VISIBLE);
-                viewHolder.quickView.setVisibility(View.VISIBLE);
-                viewHolder.addToCart.setVisibility(View.VISIBLE);
-                viewHolder.comboSizeIcon.setVisibility(View.VISIBLE);
             }
 
             if(position == this.getItemCount()-1) {
