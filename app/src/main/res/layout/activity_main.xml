@@ -78,8 +78,8 @@
                         <ImageView
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:tint="@color/white"
-                            app:srcCompat="@drawable/svg_android_wallet"/>
+                            android:tint="@color/warning_yellow"
+                            app:srcCompat="@drawable/svg_coins"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -96,7 +96,25 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/white"
-                            android:text="MashCash available"
+                            android:text="Mash"
+                            android:gravity="center_horizontal"
+                            android:padding="20dp"/>
+
+                        <TextView
+                            android:layout_marginLeft="-40dp"
+                            android:layout_marginRight="-35dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/warning_yellow"
+                            android:text="Cash"
+                            android:gravity="center_horizontal"
+                            android:padding="20dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:text="available"
                             android:gravity="center_horizontal"
                             android:padding="20dp"/>
 
