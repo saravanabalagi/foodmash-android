@@ -186,7 +186,7 @@ public class ContactUsActivity extends FoodmashActivity implements View.OnClickL
     }
 
     public void makeContactUsRequest() {
-        JsonObjectRequest contactUsRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/contact_us", getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest contactUsRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "", getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);

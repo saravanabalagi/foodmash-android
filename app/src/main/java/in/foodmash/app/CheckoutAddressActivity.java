@@ -186,7 +186,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
     }
 
     private void makeConfirmOrderRequest() {
-        JsonObjectRequest getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/combos", getComboRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.get_combos), getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
@@ -201,7 +201,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                             startActivity(intent);
                             finish();
                         } else {
-                            JsonObjectRequest confirmOrderRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/addCart", getConfirmRequestJson(), new Response.Listener<JSONObject>() {
+                            JsonObjectRequest confirmOrderRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.submit_cart), getConfirmRequestJson(), new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     Log.i("Json Request", response.toString());
@@ -267,7 +267,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
 
     public void makeAddressRequest() {
         Log.e("Testing", "MakeAddressCalled");
-        JsonObjectRequest addressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses",getMakeAddressRequestJson(),new Response.Listener<JSONObject>() {
+        JsonObjectRequest addressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.get_delivery_address),getMakeAddressRequestJson(),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
@@ -358,7 +358,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                         dataJson.put("id", address.getId());
                         requestJson.put("data", dataJson);
                     } catch (JSONException e) { e.printStackTrace(); }
-                    JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/delivery_addresses/destroy", requestJson, new Response.Listener<JSONObject>() {
+                    JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.destroy_delivery_address), requestJson, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             if(deletingAddressSnackbar.isShown()) deletingAddressSnackbar.dismiss();

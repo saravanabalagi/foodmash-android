@@ -173,7 +173,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     }
 
     public void makeOrderDescriptionRequest() {
-        JsonObjectRequest orderDescriptionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/carts/history", getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest orderDescriptionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.get_order), getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);

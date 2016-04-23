@@ -146,7 +146,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
     }
 
     public void makeSignUpRequest() {
-        JsonObjectRequest signUpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations",getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest signUpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.sign_up),getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
@@ -233,7 +233,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
     }
 
     private void makeCheckEmailRequest() {
-        JsonObjectRequest checkEmailRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkEmail", getCheckEmailJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest checkEmailRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.check_email), getCheckEmailJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -267,7 +267,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
     }
 
     private void makeCheckPhoneRequest() {
-        JsonObjectRequest checkPhoneRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "/registrations/checkMobileNo", getCheckPhoneJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest checkPhoneRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.check_mobile), getCheckPhoneJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {

@@ -3,13 +3,13 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_layout">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include layout="@layout/appbar"/>
 
     <LinearLayout android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -41,6 +41,7 @@
         </android.support.v4.view.ViewPager>
 
         <LinearLayout
+            android:id="@+id/cost_layout"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="50dp"
