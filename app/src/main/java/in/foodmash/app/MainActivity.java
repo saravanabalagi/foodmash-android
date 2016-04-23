@@ -309,6 +309,7 @@ public class MainActivity extends FoodmashActivity {
 
         filters.changeLocation(Info.getAreaName(this));
         filters.notifyDataSetChanged();
+        combosAdapter.notifyDataSetChanged();
 
         Date comboUpdatedAt;
         boolean areCombosOutdated = true;
@@ -503,8 +504,8 @@ public class MainActivity extends FoodmashActivity {
             int quantity = cart.getCount(combo.getId());
             if(!combo.isAvailable()) cart.removeOrder(combo);
             viewHolder.count.setText(String.valueOf(quantity));
-            if (quantity > 0) { viewHolder.addToCart.setVisibility(View.GONE); viewHolder.countLayout.setVisibility(View.VISIBLE); }
-            else { viewHolder.countLayout.setVisibility(View.GONE); viewHolder.addToCart.setVisibility(View.VISIBLE); }
+            if (quantity > 0) { viewHolder.addToCart.setVisibility(View.GONE); viewHolder.countLayout.setVisibility(View.VISIBLE); viewHolder.countLayout.setAlpha(1f); }
+            else { viewHolder.addToCart.setVisibility(View.VISIBLE); viewHolder.addToCart.setAlpha(1f); viewHolder.countLayout.setVisibility(View.GONE);  }
             viewHolder.plus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
