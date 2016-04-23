@@ -134,7 +134,11 @@ public class ComboOption {
         if (!(o instanceof ComboOption)) return false;
         if (o == this) return true;
         ComboOption comboOption = (ComboOption) o;
-        return this.id == comboOption.id && this.selectedComboOptionDishes == comboOption.selectedComboOptionDishes;
+        if(this.id != comboOption.id) return false;
+        if(this.selectedComboOptionDishes!=null && comboOption.selectedComboOptionDishes!=null)
+            for(ComboOptionDish comboOptionDish: this.selectedComboOptionDishes)
+                if(!comboOption.selectedComboOptionDishes.contains(comboOptionDish)) return false;
+        return true;
     }
 
     @Override

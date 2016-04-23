@@ -124,11 +124,11 @@ public class Combo {
         if (!(o instanceof Combo)) return false;
         if (o == this) return true;
         Combo combo = (Combo) o;
-        if(this.id == combo.id) {
-            if(this.comboOptions.size()!=0)
-                if (!(comboOptions.equals(((Combo) o).comboOptions))) return false;
-            return true;
-        } else return false;
+        if(this.id != combo.id) return false;
+        if(this.comboOptions!=null && combo.comboOptions!=null)
+            for (ComboOption comboOption : this.comboOptions)
+                if (!(combo.comboOptions.contains(comboOption))) return false;
+        return true;
     }
 
     @Override
