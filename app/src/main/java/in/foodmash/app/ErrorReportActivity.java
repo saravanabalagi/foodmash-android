@@ -144,7 +144,6 @@ public class ErrorReportActivity extends FoodmashActivity {
 
         if(e!=null) {
 
-            e.printStackTrace();
             stackTrace = "";
             stackTrace += "[ERROR] "+e.getMessage()+"\r\n";
             StackTraceElement stackTraceElements[] = e.getStackTrace();

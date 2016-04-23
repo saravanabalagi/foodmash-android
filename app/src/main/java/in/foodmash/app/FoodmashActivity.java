@@ -30,6 +30,7 @@ public class FoodmashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler() {
             @Override public void uncaughtException (Thread thread, Throwable e) {
+                e.printStackTrace();
                 Intent intent = new Intent(FoodmashActivity.this, ErrorReportActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 Bundle bundle = new Bundle();
