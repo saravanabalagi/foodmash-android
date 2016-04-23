@@ -153,12 +153,12 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeProfileRequest")).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeProfileRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(ProfileActivity.this).addToRequestQueue(profileRequest);
     }
@@ -185,12 +185,12 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeProfileDetailsRequest")).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeProfileDetailsRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(this).addToRequestQueue(getProfileDetailsRequest);
     }

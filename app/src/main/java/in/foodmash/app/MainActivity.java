@@ -153,7 +153,7 @@ public class MainActivity extends FoodmashActivity {
         objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -321,7 +321,7 @@ public class MainActivity extends FoodmashActivity {
         }
         if(Info.getComboJsonArrayString(this)==null || areCombosOutdated) {
             if(!(getSupportFragmentManager().findFragmentById(R.id.fragment_container) instanceof VolleyProgressFragment))
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
             ((VolleyProgressFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
                     .setLoadingText("Loading Combos...", "We are loading as fast as we can");
             Animations.fadeIn(fragmentContainer, 300);
@@ -362,7 +362,7 @@ public class MainActivity extends FoodmashActivity {
             public void onErrorResponse(VolleyError error) {
                 if (snackbar!=null && snackbar.isShown()) snackbar.setText("Update Failed!");
                 else {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeComboRequest")).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeComboRequest")).commitAllowingStateLoss();
                     getSupportFragmentManager().executePendingTransactions();
                 }
             }

@@ -264,12 +264,12 @@ public class AddAddressActivity extends FoodmashActivity implements TextWatcher 
             public void onErrorResponse(VolleyError error) {
                 Log.i("Json Request", error.toString());
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeAddAddressRequest")).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeAddAddressRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(AddAddressActivity.this).addToRequestQueue(addAddressRequest);
     }

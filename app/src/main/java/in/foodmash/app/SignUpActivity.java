@@ -176,11 +176,11 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeSignUpRequest")).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeSignUpRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(SignUpActivity.this).addToRequestQueue(signUpRequest);
     }

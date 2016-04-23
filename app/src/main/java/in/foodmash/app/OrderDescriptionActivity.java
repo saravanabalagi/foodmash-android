@@ -218,12 +218,12 @@ public class OrderDescriptionActivity extends FoodmashActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeOrderDescriptionRequest")).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeOrderDescriptionRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(OrderDescriptionActivity.this).addToRequestQueue(orderDescriptionRequest);
     }
