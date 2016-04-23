@@ -114,7 +114,7 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
     }
 
     public void makeAddressRequest() {
-        JsonObjectRequest getAddressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.get_delivery_address), JsonProvider.getStandardRequestJson(AddressActivity.this),new Response.Listener<JSONObject>() {
+        JsonObjectRequest getAddressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_get_delivery_address), JsonProvider.getStandardRequestJson(AddressActivity.this),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
@@ -201,7 +201,7 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
                         dataJson.put("id", address.getId());
                         requestJson.put("data", dataJson);
                     } catch (JSONException e) { e.printStackTrace(); }
-                    JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.destroy_delivery_address), requestJson, new Response.Listener<JSONObject>() {
+                    JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_destroy_delivery_address), requestJson, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             if(deletingAddressSnackbar.isShown()) deletingAddressSnackbar.dismiss();

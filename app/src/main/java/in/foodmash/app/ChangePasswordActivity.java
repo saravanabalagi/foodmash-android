@@ -113,7 +113,7 @@ public class ChangePasswordActivity extends FoodmashActivity implements View.OnC
     }
 
     public void makeChangePasswordRequest() {
-        JsonObjectRequest changePasswordRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + ((forgot) ? getString(R.string.reset_password_from_token): getString(R.string.change_password)), getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest changePasswordRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + ((forgot) ? getString(R.string.routes_reset_password_from_token): getString(R.string.routes_change_password)), getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);

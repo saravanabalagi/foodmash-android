@@ -333,7 +333,7 @@ public class MainActivity extends FoodmashActivity {
     }
 
     public void makeComboRequest() {
-        JsonObjectRequest getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.get_combos), getComboRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_get_combos), getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 swipeRefreshLayout.setRefreshing(false);

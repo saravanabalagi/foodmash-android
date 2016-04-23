@@ -185,12 +185,13 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
                 @Override public void onClick(View v) {
                     cart.addToCart(combo);
                     viewHolder.count.setText(String.valueOf(cart.getCount(combo)));
+                    viewHolder.amount.setText(String.valueOf((int)combo.calculatePrice() * cart.getOrders().get(combo)));
                     total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
                 }});
             viewHolder.minus.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     viewHolder.count.setText(String.valueOf(cart.decrementFromCart(combo)));
-                    cartAdapter.notifyDataSetChanged();
+                    viewHolder.amount.setText(String.valueOf((int)combo.calculatePrice() * cart.getOrders().get(combo)));
                     if(cart.getCount()==0) { Animations.fadeIn(emptyCartLayout, 500); cartProgress.setVisibility(View.GONE); }
                     total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
                 }});

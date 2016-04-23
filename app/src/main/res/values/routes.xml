@@ -1,60 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Root Path-->
-    <string name="api_root_path">http://10.0.3.2:3000/api/v1</string>
+    <string name="routes_api_root_path">http://10.0.3.2:3000/api/v1</string>
     <!--<string name="api_root_path">http://192.168.1.111:3000/api/v1</string>-->
     <!--<string name="api_root_path">http://www.foodmash.in/api/v1</string>-->
 
     <!--Splash-->
-    <string name="instantiate">/instantiate</string>
-    <string name="get_cities">/cities</string>
+    <string name="routes_instantiate">/instantiate</string>
+    <string name="routes_get_cities">/cities</string>
 
     <!--Main-->
-    <string name="get_combos">/combos</string>
+    <string name="routes_get_combos">/combos</string>
 
     <!--CheckoutAddress-->
-    <string name="submit_cart">/carts/addCart</string>
+    <string name="routes_submit_cart">/carts/addCart</string>
 
     <!--Address-->
-    <string name="create_delivery_address">/delivery_addresses/create</string>
-    <string name="update_delivery_address">/delivery_addresses/update</string>
-    <string name="destroy_delivery_address">/delivery_addresses/destroy</string>
-    <string name="get_delivery_address">/delivery_addresses</string>
+    <string name="routes_create_delivery_address">/delivery_addresses/create</string>
+    <string name="routes_update_delivery_address">/delivery_addresses/update</string>
+    <string name="routes_destroy_delivery_address">/delivery_addresses/destroy</string>
+    <string name="routes_get_delivery_address">/delivery_addresses</string>
 
     <!--Payment-->
-    <string name="get_payment_hash">/payments/getHash</string>
-    <string name="pay_by_cod">/payments/purchaseByCod</string>
-    <string name="apply_mash_cash">/payments/applyMashCash</string>
-    <string name="apply_promo_code">/payments/applyPromoCode</string>
-    <string name="payment_success">/payment/success</string>
-    <string name="payment_failure">/payment/failure</string>
+    <string name="routes_get_payment_hash">/payments/getHash</string>
+    <string name="routes_pay_by_cod">/payments/purchaseByCod</string>
+    <string name="routes_apply_mash_cash">/payments/applyMashCash</string>
+    <string name="routes_apply_promo_code">/payments/applyPromoCode</string>
+    <string name="routes_payment_success">/payment/success</string>
+    <string name="routes_payment_failure">/payment/failure</string>
 
     <!--Order-->
-    <string name="get_order">/carts/history</string>
+    <string name="routes_get_order">/carts/history</string>
 
     <!--Profile-->
-    <string name="get_profile">/profile</string>
-    <string name="update_profile">/profile/update</string>
+    <string name="routes_get_profile">/profile</string>
+    <string name="routes_update_profile">/profile/update</string>
 
     <!--Contact Us-->
-    <string name="contact_us">/contact_us</string>
-    <string name="get_legalese">/legalese</string>
+    <string name="routes_contact_us">/contact_us</string>
+    <string name="routes_get_legalese">/legalese</string>
 
     <!--Submit Error-->
-    <string name="add_error">/error/addError</string>
+    <string name="routes_add_error">/error/addError</string>
 
     <!--Login-->
-    <string name="sessions">/sessions</string>
+    <string name="routes_sessions">/sessions</string>
 
     <!--Sign Up-->
-    <string name="check_email">/registrations/checkEmail</string>
-    <string name="check_mobile">/registrations/checkMobileNo</string>
-    <string name="sign_up">/registrations</string>
+    <string name="routes_check_email">/registrations/checkEmail</string>
+    <string name="routes_check_mobile">/registrations/checkMobileNo</string>
+    <string name="routes_sign_up">/registrations</string>
 
     <!--Forgot and Reset Password-->
-    <string name="forgot_password">/registrations/forgotPassword</string>
-    <string name="check_otp">/registrations/checkOtp</string>
-    <string name="change_password">/registrations/changePassword</string>
-    <string name="reset_password_from_token">/registrations/resetPasswordFromToken</string>
+    <string name="routes_forgot_password">/registrations/forgotPassword</string>
+    <string name="routes_check_otp">/registrations/checkOtp</string>
+    <string name="routes_change_password">/registrations/changePassword</string>
+    <string name="routes_reset_password_from_token">/registrations/resetPasswordFromToken</string>
 
 </resources>

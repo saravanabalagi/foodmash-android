@@ -71,7 +71,7 @@ public class SplashActivity extends FoodmashActivity {
     }
 
     public void makeCheckConnectionRequest() {
-        JsonObjectRequest checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.instantiate), JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
+        JsonObjectRequest checkConnectionRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_instantiate), JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -115,7 +115,7 @@ public class SplashActivity extends FoodmashActivity {
     }
 
     public void makeLocationRequest() {
-        JsonObjectRequest locationRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.get_cities), JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
+        JsonObjectRequest locationRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_get_cities), JsonProvider.getAnonymousRequestJson(SplashActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {

@@ -245,7 +245,7 @@ public class AddAddressActivity extends FoodmashActivity implements TextWatcher 
     }
 
     public void makeAddAddressRequest() {
-        JsonObjectRequest addAddressRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + ((edit)? getString(R.string.update_delivery_address) :getString(R.string.create_delivery_address)), getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest addAddressRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + ((edit)? getString(R.string.routes_update_delivery_address) :getString(R.string.routes_create_delivery_address)), getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);

@@ -71,7 +71,7 @@ public class Actions {
     }
 
     public static void logout(final Context context) {
-        Swift.getInstance(context).addToRequestQueue(new JsonObjectRequest(Request.Method.POST, context.getString(R.string.api_root_path) + "/sessions/destroy", JsonProvider.getStandardRequestJson(context), new Response.Listener<JSONObject>() {
+        Swift.getInstance(context).addToRequestQueue(new JsonObjectRequest(Request.Method.POST, context.getString(R.string.routes_api_root_path) + "/sessions/destroy", JsonProvider.getStandardRequestJson(context), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 performLogout(context);

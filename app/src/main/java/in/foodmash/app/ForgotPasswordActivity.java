@@ -106,7 +106,7 @@ public class ForgotPasswordActivity extends FoodmashActivity implements View.OnC
     }
 
     public void makeForgotRequest() {
-        JsonObjectRequest forgotRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.forgot_password), getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest forgotRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_forgot_password), getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);

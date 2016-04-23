@@ -194,8 +194,8 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         paymentParams.setPhone(Info.getPhone(this));
         paymentParams.setEmail(Info.getEmail(this));
         paymentParams.setTxnId(orderId);
-        paymentParams.setSurl(getString(R.string.api_root_path)+getString(R.string.payment_success));
-        paymentParams.setFurl(getString(R.string.api_root_path)+getString(R.string.payment_failure));
+        paymentParams.setSurl(getString(R.string.routes_api_root_path)+getString(R.string.routes_payment_success));
+        paymentParams.setFurl(getString(R.string.routes_api_root_path)+getString(R.string.routes_payment_failure));
         paymentParams.setUdf1("");
         paymentParams.setUdf2("");
         paymentParams.setUdf3("");
@@ -205,7 +205,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         paymentParams.setOfferKey("");
         payuConfig.setEnvironment(PayuConstants.MOBILE_STAGING_ENV);
 
-        JsonObjectRequest makeHashRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.get_payment_hash), JsonProvider.getStandardRequestJson(CheckoutPaymentActivity.this), new Response.Listener<JSONObject>() {
+        JsonObjectRequest makeHashRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_get_payment_hash), JsonProvider.getStandardRequestJson(CheckoutPaymentActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
@@ -271,7 +271,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     }
 
     public void makeCodPaymentRequest() {
-        JsonObjectRequest makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.pay_by_cod), getPaymentJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_pay_by_cod), getPaymentJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
@@ -331,7 +331,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
 
     public void makePromoCodeRequest() {
         if(discount== Cart.Discount.NIL) { Snackbar.make(mainLayout, "PromoCode or MashCash is empty", Snackbar.LENGTH_SHORT); return; }
-        JsonObjectRequest makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + ((discount== Cart.Discount.MASH_CASH)?getString(R.string.apply_mash_cash):getString(R.string.apply_promo_code)), getPromoCodeJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + ((discount== Cart.Discount.MASH_CASH)?getString(R.string.routes_apply_mash_cash):getString(R.string.routes_apply_promo_code)), getPromoCodeJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);

@@ -138,7 +138,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
     }
 
     public void makeProfileRequest() {
-        JsonObjectRequest profileRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.update_profile), getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest profileRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_update_profile), getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
@@ -164,7 +164,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
     }
 
     public void makeProfileDetailsRequest() {
-        JsonObjectRequest getProfileDetailsRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.get_profile), JsonProvider.getStandardRequestJson(ProfileActivity.this), new Response.Listener<JSONObject>() {
+        JsonObjectRequest getProfileDetailsRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_get_profile), JsonProvider.getStandardRequestJson(ProfileActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);

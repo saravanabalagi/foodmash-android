@@ -122,7 +122,7 @@ public class ForgotPasswordOtpActivity extends FoodmashActivity implements View.
     }
 
     public void makeCheckOtpRequest() {
-        JsonObjectRequest checkOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.check_otp), getRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest checkOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_check_otp), getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
@@ -170,7 +170,7 @@ public class ForgotPasswordOtpActivity extends FoodmashActivity implements View.
     }
 
     public void resendOtpRequest() {
-        resendOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.forgot_password), getOtpRequestJson(), new Response.Listener<JSONObject>() {
+        resendOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_forgot_password), getOtpRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);

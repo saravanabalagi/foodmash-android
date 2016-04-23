@@ -73,7 +73,7 @@ public class LegaleseActivity extends FoodmashActivity {
     }
 
     public void makeLegaleseRequest() {
-        JsonObjectRequest legaleseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.get_legalese) + getStringFromLegalese(legalese), (signedIn)?JsonProvider.getStandardRequestJson(this):JsonProvider.getAnonymousRequestJson(this), new Response.Listener<JSONObject>() {
+        JsonObjectRequest legaleseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_get_legalese) + getStringFromLegalese(legalese), (signedIn)?JsonProvider.getStandardRequestJson(this):JsonProvider.getAnonymousRequestJson(this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);

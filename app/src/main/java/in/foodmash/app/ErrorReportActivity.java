@@ -247,7 +247,7 @@ public class ErrorReportActivity extends FoodmashActivity {
     }
 
     public void makeErrorRequest() {
-        JsonObjectRequest errorRequestJson = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.add_error), getMakeErrorRequestJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest errorRequestJson = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_add_error), getMakeErrorRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
