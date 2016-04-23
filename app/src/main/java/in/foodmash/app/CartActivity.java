@@ -52,8 +52,9 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_activity_cart, menu);
         this.menu = menu;
+        getMenuInflater().inflate(R.menu.menu_activity_cart, menu);
+        updateDeleteButtonVisibility();
         return true;
     }
 
