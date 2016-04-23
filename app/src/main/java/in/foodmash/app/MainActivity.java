@@ -319,6 +319,8 @@ public class MainActivity extends FoodmashActivity {
             } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         }
         if(Info.getComboJsonArrayString(this)==null || areCombosOutdated) {
+            if(!(getSupportFragmentManager().findFragmentById(R.id.fragment_container) instanceof VolleyProgressFragment))
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commit();
             ((VolleyProgressFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
                     .setLoadingText("Loading Combos...", "We are loading as fast as we can");
             Animations.fadeIn(fragmentContainer, 300);
@@ -359,9 +361,8 @@ public class MainActivity extends FoodmashActivity {
             public void onErrorResponse(VolleyError error) {
                 if (snackbar!=null && snackbar.isShown()) snackbar.setText("Update Failed!");
                 else {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyFailureFragment()).commit();
-                    getSupportFragmentManager().executePendingTransactions();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeComboRequest")).commit();
+                    getSupportFragmentManager().executePendingTransactions();
                 }
             }
         });
