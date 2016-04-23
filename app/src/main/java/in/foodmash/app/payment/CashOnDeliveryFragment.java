@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import in.foodmash.app.R;
 import in.foodmash.app.commons.Info;
+import in.foodmash.app.utils.NumberUtils;
 
 /**
  * Created by Zeke on Oct 28 2015.
@@ -30,7 +31,7 @@ public class CashOnDeliveryFragment extends Fragment {
 
         email.setText(Info.getEmail(getActivity()));
         phone.setText(Info.getPhone(getActivity()));
-        mashCash.setText(String.valueOf(Info.getMashCash(getActivity())));
+        mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(Info.getMashCash(getActivity())));
 
         return rootView;
     }
