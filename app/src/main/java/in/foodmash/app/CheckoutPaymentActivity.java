@@ -205,7 +205,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         paymentParams.setOfferKey("");
         payuConfig.setEnvironment(PayuConstants.MOBILE_STAGING_ENV);
 
-        JsonObjectRequest makeHashRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + "", JsonProvider.getStandardRequestJson(CheckoutPaymentActivity.this), new Response.Listener<JSONObject>() {
+        JsonObjectRequest makeHashRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.api_root_path) + getString(R.string.get_payment_hash), JsonProvider.getStandardRequestJson(CheckoutPaymentActivity.this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
