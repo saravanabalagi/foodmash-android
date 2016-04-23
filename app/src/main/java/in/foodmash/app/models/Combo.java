@@ -1,6 +1,5 @@
 package in.foodmash.app.models;
 
-import android.util.Log;
 import android.util.Pair;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -134,7 +133,7 @@ public class Combo {
     public boolean isValid() {
         ArrayList<ComboOption> comboOptionsMinCountZero = new ArrayList<>();
         for (ComboOption comboOption : comboOptions) {
-            if (!(comboOption.getMinCount() > 0 && comboOption.getComprisedDishesQuantity() > comboOption.getMinCount())) return false;
+            if (!(comboOption.getMinCount() > 0 && comboOption.getComprisedDishesQuantity() >= comboOption.getMinCount())) return false;
             if(comboOption.getMinCount() == 0) comboOptionsMinCountZero.add(comboOption);
         }
         if(comboOptionsMinCountZero.size()==0) return true;
@@ -144,10 +143,9 @@ public class Combo {
         return comboOptionsMinCountZeroQuantity != 0;
     }
     public void makeValid() {
-        Log.e("Testing", "Make valid begun");
         ArrayList<ComboOption> comboOptionsMinCountZero = new ArrayList<>();
         for (ComboOption comboOption : comboOptions) {
-            if(!(comboOption.getMinCount() > 0 && comboOption.getComprisedDishesQuantity() > comboOption.getMinCount())) comboOption.resetSelectedComboOptionDishes();
+            if(!(comboOption.getMinCount() > 0 && comboOption.getComprisedDishesQuantity() >= comboOption.getMinCount())) comboOption.resetSelectedComboOptionDishes();
             if(comboOption.getMinCount() == 0) comboOptionsMinCountZero.add(comboOption);
         }
         if(comboOptionsMinCountZero.size()==0) return;
@@ -166,7 +164,6 @@ public class Combo {
             });
             comboOptionDishesFromComboOptionsMinCountZero.get(0).first.addToSelected(comboOptionDishesFromComboOptionsMinCountZero.get(0).second);
         }
-        Log.e("Testing", "Is valid after makeValid() "+this.isValid());
     }
 
     @Override
