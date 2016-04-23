@@ -1,8 +1,13 @@
 package in.foodmash.app.models;
 
+import android.util.Log;
+import android.util.Pair;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by Zeke on Sep 10 2015.
@@ -86,7 +91,7 @@ public class Combo {
         for (ComboOption comboOption : this.comboOptions)
             for(ComboOptionDish comboDish: comboOption.getSelectedComboOptionDishes())
                 dishNames += ((comboDish.getQuantity()==1)?"":(comboDish.getQuantity() + " x ")) + comboDish.getDish().getName() + " ("+comboDish.getDish().getRestaurant().getName()+") " +  "\n";
-        return dishNames.substring(0,dishNames.length()-1);
+        return dishNames.substring(0,dishNames.length()-2);
     }
 
     public ArrayList<String> getImages() {
@@ -117,6 +122,51 @@ public class Combo {
             case "Corporate": this.category = Category.CORPORATE; break;
             case "Health": this.category = Category.HEALTH; break;
         }
+    }
+
+    public String getOptionalComboOptionsNames() {
+        String optionalComboOptions = "";
+        if(comboOptions!=null)
+            for (ComboOption comboOption: comboOptions)
+                if(comboOption.getMinCount()==0) optionalComboOptions += comboOption.getName() + " / ";
+        return (optionalComboOptions.length()>4)?optionalComboOptions.substring(0, optionalComboOptions.length()-4):"";
+    }
+    public boolean isValid() {
+        ArrayList<ComboOption> comboOptionsMinCountZero = new ArrayList<>();
+        for (ComboOption comboOption : comboOptions) {
+            if (!(comboOption.getMinCount() > 0 && comboOption.getComprisedDishesQuantity() > comboOption.getMinCount())) return false;
+            if(comboOption.getMinCount() == 0) comboOptionsMinCountZero.add(comboOption);
+        }
+        if(comboOptionsMinCountZero.size()==0) return true;
+        int comboOptionsMinCountZeroQuantity = 0;
+        for(ComboOption comboOption: comboOptionsMinCountZero)
+            comboOptionsMinCountZeroQuantity += comboOption.getComprisedDishesQuantity();
+        return comboOptionsMinCountZeroQuantity != 0;
+    }
+    public void makeValid() {
+        Log.e("Testing", "Make valid begun");
+        ArrayList<ComboOption> comboOptionsMinCountZero = new ArrayList<>();
+        for (ComboOption comboOption : comboOptions) {
+            if(!(comboOption.getMinCount() > 0 && comboOption.getComprisedDishesQuantity() > comboOption.getMinCount())) comboOption.resetSelectedComboOptionDishes();
+            if(comboOption.getMinCount() == 0) comboOptionsMinCountZero.add(comboOption);
+        }
+        if(comboOptionsMinCountZero.size()==0) return;
+        int comboOptionsMinCountZeroQuantity = 0;
+        for(ComboOption comboOption: comboOptionsMinCountZero)
+            comboOptionsMinCountZeroQuantity += comboOption.getComprisedDishesQuantity();
+        if(comboOptionsMinCountZeroQuantity != 0) {
+            ArrayList<Pair<ComboOption,ComboOptionDish>> comboOptionDishesFromComboOptionsMinCountZero = new ArrayList<>();
+            for(ComboOption comboOption: comboOptionsMinCountZero)
+                comboOptionDishesFromComboOptionsMinCountZero.add(new Pair<>(comboOption, comboOption.getComboOptionDishes().get(0)));
+            Collections.sort(comboOptionDishesFromComboOptionsMinCountZero, new Comparator<Pair<ComboOption, ComboOptionDish>>() {
+                @Override
+                public int compare(Pair<ComboOption, ComboOptionDish> lhs, Pair<ComboOption, ComboOptionDish> rhs) {
+                    return Float.compare(lhs.second.getDish().getPrice(), rhs.second.getDish().getPrice());
+                }
+            });
+            comboOptionDishesFromComboOptionsMinCountZero.get(0).first.addToSelected(comboOptionDishesFromComboOptionsMinCountZero.get(0).second);
+        }
+        Log.e("Testing", "Is valid after makeValid() "+this.isValid());
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 
 /**
@@ -49,11 +51,12 @@ public class ComboOption {
     public void setDescription(String description) { this.description = description; }
 
     public void setSelectedComboOptionDishes(ArrayList<ComboOptionDish> selectedComboOptionDishes) { this.selectedComboOptionDishes = selectedComboOptionDishes; }
-    private int getComprisedDishesQuantity() {
+    protected int getComprisedDishesQuantity() {
         int quantity=0;
         for(ComboOptionDish comboDish: this.selectedComboOptionDishes)
             quantity+=comboDish.getQuantity();
-        if(quantity<minCount) return -1;
+        try { if(quantity<minCount) throw new Exception("Quantity less than minCount. Quantity: " + quantity + ", MinCount: " + minCount); }
+        catch (Exception e) { e.printStackTrace(); }
         return quantity;
     }
     public LinkedHashSet<Dish.Label> getLabels() {
@@ -105,11 +108,6 @@ public class ComboOption {
             return true;
         } else return false;
     }
-    public void addToSelectedAfterClear(ComboOptionDish comboDish) {
-        this.selectedComboOptionDishes.clear();
-        comboDish.setQuantity(minCount);
-        this.selectedComboOptionDishes.add(comboDish);
-    }
     public boolean removeFromSelected(ComboOptionDish comboDish) {
         if(this.selectedComboOptionDishes.contains(comboDish))  {
             this.selectedComboOptionDishes.remove(comboDish);
@@ -118,8 +116,15 @@ public class ComboOption {
         } else return false;
     }
     public void resetSelectedComboOptionDishes() {
+        Collections.sort(comboOptionDishes, new Comparator<ComboOptionDish>() {
+            @Override
+            public int compare(ComboOptionDish lhs, ComboOptionDish rhs) {
+                return Float.compare(lhs.getDish().getPrice(), rhs.getDish().getPrice());
+            }
+        });
         if(selectedComboOptionDishes!=null)
             this.selectedComboOptionDishes.clear();
+        if(minCount==0) return;
         comboOptionDishes.get(0).setQuantity(minCount);
         this.selectedComboOptionDishes.add(comboOptionDishes.get(0));
     }

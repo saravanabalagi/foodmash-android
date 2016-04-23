@@ -40,6 +40,7 @@ import in.foodmash.app.models.Cart;
 import in.foodmash.app.models.Combo;
 import in.foodmash.app.models.ComboOption;
 import in.foodmash.app.models.ComboOptionDish;
+import in.foodmash.app.utils.NumberUtils;
 
 /**
  * Created by Zeke on Sep 30 2015.
@@ -53,6 +54,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
     @Bind(R.id.buy) FloatingActionButton buy;
     @Bind(R.id.back) FloatingActionButton back;
     @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.cost_layout) LinearLayout costLayout;
 
     private TextView cartCount;
     private Cart cart = Cart.getInstance();
@@ -112,17 +114,21 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
             List<Combo> combos = Arrays.asList(objectMapper.readValue(Info.getComboJsonArrayString(this), Combo[].class));
             for (Combo c : combos) if (c.getId() ==comboId) combo = c;
             if(combo==null) throw new NullPointerException("Combo is not found");
+            if(combo.isCustomizable())
+                if(cart.hasCombo(combo.getId()))
+                    combo = cart.fetchLastCombo(combo.getId());
+            Collections.sort(combo.getComboOptions(), new Comparator<ComboOption>() {
+                @Override
+                public int compare(ComboOption lhs, ComboOption rhs) {
+                    return lhs.getPriority()-rhs.getPriority();
+                }
+            });
         } catch (Exception e) {
             Snackbar.make(mainLayout,"Something went wrong. Try again later!",Snackbar.LENGTH_LONG).show();
-            Actions.handleIgnorableException(this,e);
+            e.printStackTrace();
+            finish();
         }
 
-        Collections.sort(combo.getComboOptions(), new Comparator<ComboOption>() {
-            @Override
-            public int compare(ComboOption lhs, ComboOption rhs) {
-                return lhs.getPriority()-rhs.getPriority();
-            }
-        });
         comboOptionViewPager.setAdapter(new ComboOptionAdapter());
         buy.setOnClickListener(this);
         back.setOnClickListener(this);
@@ -136,6 +142,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
             buy.setVisibility(View.GONE);
             back.setVisibility(View.VISIBLE);
         }
+        updatePrice();
     }
 
     private void updatePrice() {
@@ -149,6 +156,13 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buy:
+                if(!combo.isValid()) {
+                    Snackbar.make(mainLayout, "Combo should contain atleast one " + combo.getOptionalComboOptionsNames(), Snackbar.LENGTH_SHORT);
+                    return;
+                }
+                if(combo.isCustomizable())
+                    if(cart.hasCombo(combo.getId()))
+                        cart.decrementFromCart(combo.getId());
                 cart.addToCart(new Combo(combo));
                 Snackbar.make(mainLayout, "Added to Cart", Snackbar.LENGTH_LONG)
                     .setAction("Undo", new View.OnClickListener() { @Override public void onClick(View v) {
@@ -193,7 +207,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
             }
             viewHolder.id.setText(String.valueOf(comboOptionDish.getId()));
             viewHolder.name.setText(comboOptionDish.getDish().getName());
-            viewHolder.price.setText(String.valueOf(comboOptionDish.getPrice()));
+            viewHolder.price.setText(NumberUtils.getCurrencyFormatWithoutDecimals(comboOptionDish.getDish().getPrice()));
             viewHolder.image.getLayoutParams().height = (int)(getWidthPx()*0.6) - dpToPx(10);
             viewHolder.image.setImageUrl(comboOptionDish.getDish().getPicture(), imageLoader);
             viewHolder.restaurantLogo.setImageUrl(comboOptionDish.getDish().getRestaurant().getLogo(), imageLoader);
@@ -248,6 +262,16 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
             comboDishRecyclerView.hasFixedSize();
             comboDishRecyclerView.setLayoutManager(new LinearLayoutManager(ComboDescriptionActivity.this));
             comboDishRecyclerView.setAdapter(new ComboDishAdapter(combo.getComboOptions().get(position)));
+            comboDishRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                int scrollDy = 0;
+                @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
+                @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    scrollDy+= dy;
+//                    if(scrollDy > 40) ((View)toolbar.getParent()).animate().translationY(-toolbar.getHeight());
+//                    else ((View)toolbar.getParent()).animate().translationY(0);
+                }
+            });
             container.addView(view);
             return view;
         }

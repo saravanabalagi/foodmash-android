@@ -56,6 +56,7 @@ public class Cart {
 
 
     public void addToCart(Combo combo) {
+        if(!combo.isValid()) combo.makeValid();
         timestamps.put(System.currentTimeMillis(),combo);
         if(orders.containsKey(combo)) orders.put(combo, orders.get(combo) + 1);
         else orders.put(combo, 1);
