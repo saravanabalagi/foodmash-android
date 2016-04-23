@@ -46,12 +46,14 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     private Intent intent;
+    private Menu menu;
     private Cart cart = Cart.getInstance();
     private CartAdapter cartAdapter;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_cart, menu);
+        this.menu = menu;
         return true;
     }
 
@@ -69,6 +71,7 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
                         total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
                         cartProgress.setVisibility(View.GONE);
                         Animations.fadeIn(emptyCartLayout,500);
+                        updateDeleteButtonVisibility();
                     }
                 }).setNegativeButton("No, don't remove", new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialog, int which) { }
@@ -76,6 +79,12 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateDeleteButtonVisibility() {
+        if(menu == null) return;
+        if(cart.getCount()==0) menu.findItem(R.id.menu_delete_cart).setVisible(false);
+        else menu.findItem(R.id.menu_delete_cart).setVisible(true);
     }
 
     @Override
@@ -113,6 +122,7 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
         super.onResume();
         swipeRefreshLayout.setRefreshing(true);
 
+        updateDeleteButtonVisibility();
         if(getIntent().getBooleanExtra("order_id_error",false)) {
             final Snackbar totalErrorSnackbar = Snackbar.make(mainLayout, "Something went wrong!", Snackbar.LENGTH_INDEFINITE);
             totalErrorSnackbar.setAction("Try Again", new View.OnClickListener() { @Override public void onClick(View v) { totalErrorSnackbar.dismiss(); } });
@@ -187,13 +197,16 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
                     viewHolder.count.setText(String.valueOf(cart.getCount(combo)));
                     viewHolder.amount.setText(String.valueOf((int)combo.calculatePrice() * cart.getOrders().get(combo)));
                     total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
+                    updateDeleteButtonVisibility();
                 }});
             viewHolder.minus.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     viewHolder.count.setText(String.valueOf(cart.decrementFromCart(combo)));
-                    viewHolder.amount.setText(String.valueOf((int)combo.calculatePrice() * cart.getOrders().get(combo)));
+                    if(cart.hasCombo(combo)) viewHolder.amount.setText(String.valueOf((int)combo.calculatePrice() * cart.getOrders().get(combo)));
                     if(cart.getCount()==0) { Animations.fadeIn(emptyCartLayout, 500); cartProgress.setVisibility(View.GONE); }
                     total.setText(NumberUtils.getCurrencyFormat(cart.getTotal()));
+                    updateDeleteButtonVisibility();
+                    notifyDataSetChanged();
                 }});
             viewHolder.addNote.setOnClickListener(new View.OnClickListener() {
                 @Override
