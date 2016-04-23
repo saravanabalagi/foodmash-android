@@ -2,13 +2,15 @@
 <android.support.design.widget.CoordinatorLayout
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:animateLayoutChanges="true"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include layout="@layout/appbar"/>
 
     <LinearLayout android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:paddingTop="55dp"
+        android:layout_gravity="top"
         android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

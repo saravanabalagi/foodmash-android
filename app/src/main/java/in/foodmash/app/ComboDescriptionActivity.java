@@ -36,6 +36,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
+import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.models.Cart;
@@ -280,13 +281,17 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
             comboDishRecyclerView.setLayoutManager(new LinearLayoutManager(ComboDescriptionActivity.this));
             comboDishRecyclerView.setAdapter(new ComboDishAdapter(combo.getComboOptions().get(position)));
             comboDishRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                int scrollDy = 0;
                 @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
                 @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    scrollDy+= dy;
-//                    if(scrollDy > 40) getSupportActionBar().hide();
-//                    else getSupportActionBar().show();
+                    if(dy > 50) {
+                        ((View) toolbar.getParent()).animate().translationY(-toolbar.getBottom()).setDuration(300);
+                        Animations.topPad(mainLayout,0,300);
+                    }
+                    else if(dy<-20) {
+                        ((View) toolbar.getParent()).animate().translationY(0).setDuration(300);
+                        Animations.topPad(mainLayout,dpToPx(55),300);
+                    }
                 }
             });
             container.addView(view);
