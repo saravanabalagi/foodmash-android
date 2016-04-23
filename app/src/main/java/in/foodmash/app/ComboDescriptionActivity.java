@@ -162,7 +162,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
         switch (v.getId()) {
             case R.id.buy:
                 if(!combo.isValid()) {
-                    Snackbar.make(mainLayout, "Combo should contain atleast one " + combo.getOptionalComboOptionsNames(), Snackbar.LENGTH_SHORT);
+                    Snackbar.make(mainLayout, "Combo should contain atleast one " + combo.getOptionalComboOptionsNames(), Snackbar.LENGTH_SHORT).show();
                     return;
                 }
                 if(combo.isCustomizable())
