@@ -1,9 +1,12 @@
 package in.foodmash.app;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -46,6 +49,8 @@ import in.foodmash.app.utils.NumberUtils;
  * Created by Zeke on Sep 30 2015.
  */
 public class ComboDescriptionActivity extends FoodmashActivity implements View.OnClickListener {
+
+    private static final int MY_PERMISSION_CALL_PHONE = 17;
 
     @Bind(R.id.main_layout) View mainLayout;
     @Bind(R.id.combo_option_view_pager) ViewPager comboOptionViewPager;
@@ -219,7 +224,20 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                 @Override
                 public void onClick(View v) {
                     if(!comboOption.incrementQuantity(comboOptionDish))
-                        Snackbar.make(mainLayout, "For bulk orders, contact Foodmash", Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(mainLayout, "For bulk orders, contact Foodmash", Snackbar.LENGTH_LONG)
+                                .setAction("Call", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        if ( ContextCompat.checkSelfPermission( ComboDescriptionActivity.this, android.Manifest.permission.CALL_PHONE ) != PackageManager.PERMISSION_GRANTED )
+                                            ActivityCompat.requestPermissions( ComboDescriptionActivity.this, new String[] {  android.Manifest.permission.CALL_PHONE  },
+                                                    MY_PERMISSION_CALL_PHONE );
+                                        else {
+                                            Intent callIntent = new Intent(Intent.ACTION_CALL);
+                                            callIntent.setData(Uri.parse("tel:+918056249612"));
+                                            startActivity(callIntent);
+                                        }
+                                    }
+                                }).show();
                     int quantity = comboOptionDish.getQuantity();
                     viewHolder.count.setText(String.valueOf(quantity));
                     if(quantity>0) { Animations.fadeOut(viewHolder.addToCart,500); Animations.fadeInOnlyIfInvisible(viewHolder.countLayout,500); }
@@ -268,8 +286,8 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                 @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
                     scrollDy+= dy;
-//                    if(scrollDy > 40) ((View)toolbar.getParent()).animate().translationY(-toolbar.getHeight());
-//                    else ((View)toolbar.getParent()).animate().translationY(0);
+//                    if(scrollDy > 40) getSupportActionBar().hide();
+//                    else getSupportActionBar().show();
                 }
             });
             container.addView(view);
