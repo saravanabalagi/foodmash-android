@@ -559,10 +559,11 @@ public class MainActivity extends FoodmashActivity {
                 LinearLayout contentTextView = (LinearLayout) getLayoutInflater().inflate(R.layout.repeatable_main_combo_content, viewHolder.contentsLayout, false);
                 LinkedHashSet<Dish.Label> labels = comboOption.getLabels();
                 ((LinearLayout) contentTextView.findViewById(R.id.labels)).removeAllViews();
-                for(Dish.Label label: labels) {
+                for(int i=0; i<labels.size(); i++) {
+                    Dish.Label label = new ArrayList<>(labels).get(i);
                     ImageView labelImageView = new ImageView(MainActivity.this);
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(dpToPx(30),dpToPx(30));
-                    layoutParams.setMargins(0,0,dpToPx(-8),0);
+                    if(i!=labels.size()-1) layoutParams.setMargins(0,0,dpToPx(-12),0);
                     labelImageView.setLayoutParams(layoutParams);
                     labelImageView.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.svg_label));
                     switch (label) {
