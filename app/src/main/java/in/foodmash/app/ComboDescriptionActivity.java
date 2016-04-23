@@ -36,7 +36,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.models.Cart;
@@ -218,8 +217,8 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
             viewHolder.restaurantLogo.setImageUrl(comboOptionDish.getDish().getRestaurant().getLogo(), imageLoader);
             int quantity = comboOptionDish.getQuantity();
             viewHolder.count.setText(String.valueOf(quantity));
-            if(quantity>0) { Animations.fadeOut(viewHolder.addToCart,500); Animations.fadeInOnlyIfInvisible(viewHolder.countLayout,500); }
-            else { Animations.fadeOut(viewHolder.countLayout,500); Animations.fadeInOnlyIfInvisible(viewHolder.addToCart,500); }
+            if(quantity>0) { viewHolder.addToCart.setVisibility(View.GONE); viewHolder.countLayout.setVisibility(View.VISIBLE); }
+            else { viewHolder.countLayout.setVisibility(View.GONE); viewHolder.addToCart.setVisibility(View.VISIBLE); }
             View.OnClickListener incrementQuantity = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -240,8 +239,8 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                                 }).show();
                     int quantity = comboOptionDish.getQuantity();
                     viewHolder.count.setText(String.valueOf(quantity));
-                    if(quantity>0) { Animations.fadeOut(viewHolder.addToCart,500); Animations.fadeInOnlyIfInvisible(viewHolder.countLayout,500); }
-                    else { Animations.fadeOut(viewHolder.countLayout,500); Animations.fadeInOnlyIfInvisible(viewHolder.addToCart,500); }
+                    if(quantity>0) { viewHolder.addToCart.setVisibility(View.GONE); viewHolder.countLayout.setVisibility(View.VISIBLE); }
+                    else { viewHolder.countLayout.setVisibility(View.GONE); viewHolder.addToCart.setVisibility(View.VISIBLE); }
                     updatePrice();
                 }
             };
@@ -255,8 +254,8 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                         Snackbar.make(mainLayout, "Combo should contain minimum "+comboOption.getMinCount()+" "+comboOption.getName(), Snackbar.LENGTH_SHORT).show();
                     int quantity = comboOptionDish.getQuantity();
                     viewHolder.count.setText(String.valueOf(quantity));
-                    if(quantity>0) { Animations.fadeOut(viewHolder.addToCart,500); Animations.fadeInOnlyIfInvisible(viewHolder.countLayout,500); }
-                    else { Animations.fadeOut(viewHolder.countLayout,500); Animations.fadeInOnlyIfInvisible(viewHolder.addToCart,500); }
+                    if(quantity>0) { viewHolder.addToCart.setVisibility(View.GONE); viewHolder.countLayout.setVisibility(View.VISIBLE); }
+                    else { viewHolder.countLayout.setVisibility(View.GONE); viewHolder.addToCart.setVisibility(View.VISIBLE); }
                     updatePrice();
                 }
             });
