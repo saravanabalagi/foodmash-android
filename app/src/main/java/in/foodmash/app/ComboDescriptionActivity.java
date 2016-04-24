@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -36,7 +37,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.models.Cart;
@@ -54,18 +54,20 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
 
     @Bind(R.id.main_layout) View mainLayout;
     @Bind(R.id.combo_option_view_pager) ViewPager comboOptionViewPager;
-    @Bind(R.id.price) TextView currentPrice;
+    @Bind(R.id.amount) TextView currentPrice;
+    @Bind(R.id.dishes) TextView dishNames;
     @Bind(R.id.combo_unavailable) TextView comboUnavailable;
     @Bind(R.id.buy) FloatingActionButton buy;
     @Bind(R.id.back) FloatingActionButton back;
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.cost_layout) LinearLayout costLayout;
+    @Bind(R.id.contents_layout) View contensLayout;
 
     private TextView cartCount;
     private Cart cart = Cart.getInstance();
     private Intent intent;
     private Combo combo;
     private ImageLoader imageLoader;
+    private BottomSheetBehavior bottomSheetBehavior;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -144,6 +146,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
         super.onResume();
         if (!combo.isAvailable()) {
             comboUnavailable.setVisibility(View.VISIBLE);
+            contensLayout.setVisibility(View.GONE);
             buy.setVisibility(View.GONE);
             back.setVisibility(View.VISIBLE);
         }
@@ -156,6 +159,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
             for(ComboOptionDish comboDish: comboOption.getSelectedComboOptionDishes())
                 price += comboDish.getDish().getPrice()*comboDish.getQuantity();
         currentPrice.setText(String.valueOf((int)price));
+        dishNames.setText(combo.getDishNames());
     }
 
     public void onClick(View v) {
@@ -284,14 +288,14 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                 @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
                 @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    if(dy > 50) {
-                        ((View) toolbar.getParent()).animate().translationY(-toolbar.getBottom()).setDuration(300);
-                        Animations.topPad(mainLayout,0,300);
-                    }
-                    else if(dy<-20) {
-                        ((View) toolbar.getParent()).animate().translationY(0).setDuration(300);
-                        Animations.topPad(mainLayout,dpToPx(55),300);
-                    }
+//                    if(dy > 50) {
+//                        ((View) toolbar.getParent()).animate().translationY(-toolbar.getBottom());
+//                        Animations.topPad(mainLayout,0,300);
+//                    }
+//                    else if(dy<-20) {
+//                        ((View) toolbar.getParent()).animate().translationY(0);
+//                        Animations.topPad(mainLayout,dpToPx(55),500);
+//                    }
                 }
             });
             container.addView(view);

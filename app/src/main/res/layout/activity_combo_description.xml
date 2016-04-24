@@ -38,55 +38,62 @@
                 android:layout_gravity="top"
                 android:paddingBottom="15dp"
                 android:paddingTop="15dp"
-                android:textColor="@color/okay_green_dark" />
+                android:background="@color/black_333"
+                android:textColor="@color/white" />
 
         </android.support.v4.view.ViewPager>
 
-        <LinearLayout
-            android:id="@+id/cost_layout"
-            android:orientation="horizontal"
+        <LinearLayout android:orientation="vertical"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center_vertical|center_horizontal"
-            android:background="@color/black_333">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/price_of_combo"
-                android:textSize="13sp"
-                android:textColor="@color/primary_text_dark"
-                android:fontFamily="sans-serif-light"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:textAllCaps="true" />
+            android:gravity="center_vertical"
+            android:background="@color/black_333"
+            android:id="@+id/contents_layout"
+            android:padding="15dp">
 
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_combo_description_price_background"
-                android:paddingLeft="15dp"
-                android:paddingTop="5dp"
-                android:paddingRight="15dp"
-                android:paddingBottom="5dp"
-                android:layout_marginRight="50dp">
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-                <TextView
+                <LinearLayout
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:orientation="horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/rupee"
-                    android:textColor="@color/primary_text_dark"
-                    android:layout_marginRight="1dp"
-                    android:textSize="12sp" />
+                    android:background="@drawable/bg_combo_description_price_background"
+                    android:layout_marginRight="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rupee"
+                        android:textSize="17sp"
+                        android:textColor="@color/white"
+                        android:layout_marginRight="2dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/price_lorem_ipsum"
+                        android:textSize="20sp"
+                        android:id="@+id/amount"
+                        android:textColor="@color/white"
+                        android:singleLine="true" />
+                </LinearLayout>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/price_lorem_ipsum"
-                    android:textSize="15sp"
-                    android:id="@+id/price"
-                    android:textColor="@color/primary_text_dark" />
+                    android:id="@+id/dishes"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:textAllCaps="true"/>
+
             </LinearLayout>
         </LinearLayout>
 
@@ -97,8 +104,9 @@
         android:id="@+id/buy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:layout_gravity="bottom|end"
+        app:layout_anchor="@id/contents_layout"
+        app:layout_anchorGravity="end"
+        app:useCompatPadding="true"
         android:tint="@color/material_button_tint" />
 
     <android.support.design.widget.FloatingActionButton
@@ -106,9 +114,9 @@
         android:id="@+id/back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:layout_gravity="bottom|end"
+        android:layout_margin="10dp"
         android:visibility="gone"
+        android:layout_gravity="bottom|end"
         android:tint="@color/material_button_tint" />
 
 </android.support.design.widget.CoordinatorLayout>
