@@ -320,8 +320,10 @@ public class MainActivity extends FoodmashActivity {
             } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         }
         if(Info.getComboJsonArrayString(this)==null || areCombosOutdated) {
-            if(!(getSupportFragmentManager().findFragmentById(R.id.fragment_container) instanceof VolleyProgressFragment))
+            if(!(getSupportFragmentManager().findFragmentById(R.id.fragment_container) instanceof VolleyProgressFragment)) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
+                getSupportFragmentManager().executePendingTransactions();
+            }
             ((VolleyProgressFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
                     .setLoadingText("Loading Combos...", "We are loading as fast as we can");
             Animations.fadeIn(fragmentContainer, 300);
