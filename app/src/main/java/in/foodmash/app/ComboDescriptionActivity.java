@@ -267,9 +267,13 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                 }
             });
 
-            if(position == this.getItemCount()-1) {
+            if(viewHolder.getLayoutPosition() == this.getItemCount()-1) {
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 layoutParams.setMargins(dpToPx(10),dpToPx(10),dpToPx(10),dpToPx(40));
+                viewHolder.itemView.setLayoutParams(layoutParams);
+            } else {
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                layoutParams.setMargins(dpToPx(10),dpToPx(10),dpToPx(10),dpToPx(0));
                 viewHolder.itemView.setLayoutParams(layoutParams);
             }
         }
