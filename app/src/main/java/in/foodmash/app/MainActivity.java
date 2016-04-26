@@ -293,7 +293,6 @@ public class MainActivity extends FoodmashActivity {
 //                if(scrollDy > 50) mashCashLayout.animate().translationY(dpToPx(mashCashLayout.getHeight()));
                 super.onScrolled(recyclerView,dx,dy);
                 swipeRefreshLayout.setEnabled(linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0);
-                Log.e("Testing", "Position: " + linearLayoutManager.findFirstCompletelyVisibleItemPosition());
             }
         });
 
