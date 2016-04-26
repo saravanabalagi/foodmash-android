@@ -2,14 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:gravity="center_vertical|center_horizontal">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
+    <ImageView
+        android:layout_width="30dp"
         android:layout_height="30dp"
-        android:id="@+id/labels"></LinearLayout>
+        android:padding="5dp"
+        android:id="@+id/label"
+        android:tint="@color/black_222"
+        app:srcCompat="@drawable/svg_cutlery"
+        android:contentDescription="@string/label" />
 
     <TextView
         android:layout_width="wrap_content"
