@@ -188,7 +188,7 @@ public class MainActivity extends FoodmashActivity {
 
         filtersRecyclerView.setHasFixedSize(true);
         filtersRecyclerView.setAdapter(filters);
-        filtersRecyclerView.setLayoutManager(linearLayoutManager);
+        filtersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         filtersRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
 
             private void makeActive(View view, Integer position, Combo.Category category) {
@@ -293,6 +293,7 @@ public class MainActivity extends FoodmashActivity {
 //                if(scrollDy > 50) mashCashLayout.animate().translationY(dpToPx(mashCashLayout.getHeight()));
                 super.onScrolled(recyclerView,dx,dy);
                 swipeRefreshLayout.setEnabled(linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0);
+                Log.e("Testing", "Position: " + linearLayoutManager.findFirstCompletelyVisibleItemPosition());
             }
         });
 
