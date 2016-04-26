@@ -291,7 +291,7 @@ public class MainActivity extends FoodmashActivity {
             int scrollDy = 0;
             @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
             @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if(scrollDy > 50) mashCashLayout.animate().translationY(dpToPx(mashCashLayout.getHeight()));
+//                if(scrollDy > 50) mashCashLayout.animate().translationY(dpToPx(mashCashLayout.getHeight()));
                 scrollDy += dy;
                 swipeRefreshLayout.setEnabled(scrollDy == 0);
             }
@@ -603,7 +603,7 @@ public class MainActivity extends FoodmashActivity {
 
             if(position == this.getItemCount()-1) {
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                layoutParams.setMargins(dpToPx(10),dpToPx(10),dpToPx(10),dpToPx(40));
+                layoutParams.setMargins(dpToPx(10),dpToPx(10),dpToPx(10),dpToPx(60));
                 viewHolder.itemView.setLayoutParams(layoutParams);
             }
         }
