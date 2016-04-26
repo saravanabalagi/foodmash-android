@@ -90,7 +90,9 @@ public class Combo {
         for (ComboOption comboOption : this.comboOptions)
             for(ComboOptionDish comboDish: comboOption.getSelectedComboOptionDishes())
                 dishNames += ((comboDish.getQuantity()==1)?"":(comboDish.getQuantity() + " x ")) + comboDish.getDish().getName() + " ("+comboDish.getDish().getRestaurant().getName()+") " +  "\n";
-        return dishNames.substring(0,dishNames.length()-2);
+        if(!isMandatoryComboOptionsSelected()) dishNames += "Select at least one "+getUnselectedMandatoryComboOptionNames()+"\n";
+        if(!isOneFromOptionalComboOptionsSelected()) dishNames += "Select at least one "+getOptionalComboOptionsNames()+"\n";
+        return (dishNames.length()==0)?"":dishNames.substring(0,dishNames.length()-1);
     }
 
     public ArrayList<String> getImages() {
@@ -123,12 +125,45 @@ public class Combo {
         }
     }
 
+    public void removeAllSelected() { for (ComboOption comboOption: this.comboOptions) comboOption.removeAllSelectedComboOptionDishes(); }
+    public String getUnselectedMandatoryComboOptionNames() {
+        String mandatoryComboOptions = "";
+        if(comboOptions!=null)
+            for(ComboOption comboOption: this.comboOptions)
+                if(comboOption.getMinCount()>0 && comboOption.getComprisedDishesQuantity()<comboOption.getMinCount()) mandatoryComboOptions += comboOption.getName() + ", ";
+        return (mandatoryComboOptions.length()==0)?"":mandatoryComboOptions.substring(0, mandatoryComboOptions.length()-2);
+    }
+    public String getMandatoryComboOptionNames() {
+        String mandatoryComboOptions = "";
+        if(comboOptions!=null)
+            for(ComboOption comboOption: this.comboOptions)
+                if(comboOption.getMinCount()>0) mandatoryComboOptions += comboOption.getName() + ", ";
+        return (mandatoryComboOptions.length()==0)?"":mandatoryComboOptions.substring(0, mandatoryComboOptions.length()-2);
+    }
     public String getOptionalComboOptionsNames() {
         String optionalComboOptions = "";
         if(comboOptions!=null)
             for (ComboOption comboOption: comboOptions)
                 if(comboOption.getMinCount()==0) optionalComboOptions += comboOption.getName() + " / ";
-        return (optionalComboOptions.length()>4)?optionalComboOptions.substring(0, optionalComboOptions.length()-4):"";
+        return (optionalComboOptions.length()==0)?"":optionalComboOptions.substring(0, optionalComboOptions.length()-3);
+    }
+    public boolean isMandatoryComboOptionsSelected() {
+        if(comboOptions!=null)
+            for (ComboOption comboOption: comboOptions)
+                if(comboOption.getMinCount()>0)
+                    if(comboOption.getComprisedDishesQuantity()<comboOption.getMinCount())
+                        return false;
+        return true;
+    }
+    public boolean isOneFromOptionalComboOptionsSelected() {
+        ArrayList<ComboOption> comboOptionsMinCountZero = new ArrayList<>();
+        for (ComboOption comboOption : comboOptions)
+            if(comboOption.getMinCount() == 0) comboOptionsMinCountZero.add(comboOption);
+        if(comboOptionsMinCountZero.size()==0) return true;
+        int comboOptionsMinCountZeroQuantity = 0;
+        for(ComboOption comboOption: comboOptionsMinCountZero)
+            comboOptionsMinCountZeroQuantity += comboOption.getComprisedDishesQuantity();
+        return comboOptionsMinCountZeroQuantity != 0;
     }
     public boolean isValid() {
         ArrayList<ComboOption> comboOptionsMinCountZero = new ArrayList<>();

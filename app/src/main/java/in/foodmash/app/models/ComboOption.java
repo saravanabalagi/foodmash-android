@@ -55,8 +55,8 @@ public class ComboOption {
         int quantity=0;
         for(ComboOptionDish comboDish: this.selectedComboOptionDishes)
             quantity+=comboDish.getQuantity();
-        try { if(quantity<minCount) throw new Exception("Quantity less than minCount. Quantity: " + quantity + ", MinCount: " + minCount); }
-        catch (Exception e) { e.printStackTrace(); }
+//        try { if(quantity<minCount) throw new Exception("Quantity less than minCount. Quantity: " + quantity + ", MinCount: " + minCount); }
+//        catch (Exception e) { e.printStackTrace(); }
         return quantity;
     }
     public LinkedHashSet<Dish.Label> getLabels() {
@@ -95,7 +95,7 @@ public class ComboOption {
         return true;
     }
     public boolean decrementQuantity(ComboOptionDish comboDish) {
-        if(this.getComprisedDishesQuantity()-1< minCount) return false;
+        if(this.getComprisedDishesQuantity()-1< 0) return false;
         if(!getSelectedComboOptionDishes().contains(comboDish)) return false;
         if(comboDish.getQuantity()==1) return removeFromSelected(comboDish);
         comboDish.setQuantity(comboDish.getQuantity()-1);
@@ -127,6 +127,11 @@ public class ComboOption {
         if(minCount==0) return;
         comboOptionDishes.get(0).setQuantity(minCount);
         this.selectedComboOptionDishes.add(comboOptionDishes.get(0));
+    }
+    public void removeAllSelectedComboOptionDishes() {
+        for (ComboOptionDish comboOptionDish : this.comboOptionDishes)
+            comboOptionDish.setQuantity(0);
+        this.selectedComboOptionDishes.clear();
     }
     @JsonProperty public void setComboOptionDishes(ArrayList<ComboOptionDish> comboOptionDishes) {
         this.comboOptionDishes = comboOptionDishes;

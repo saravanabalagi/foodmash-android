@@ -130,6 +130,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                     return lhs.getPriority()-rhs.getPriority();
                 }
             });
+            combo.removeAllSelected();
         } catch (Exception e) {
             Snackbar.make(mainLayout,"Something went wrong. Try again later!",Snackbar.LENGTH_LONG).show();
             e.printStackTrace();
@@ -166,7 +167,8 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
         switch (v.getId()) {
             case R.id.buy:
                 if(!combo.isValid()) {
-                    Snackbar.make(mainLayout, "Combo should contain atleast one " + combo.getOptionalComboOptionsNames(), Snackbar.LENGTH_SHORT).show();
+                    if(!combo.isMandatoryComboOptionsSelected()) Snackbar.make(mainLayout, "Combo should contain atleast one " + combo.getUnselectedMandatoryComboOptionNames(), Snackbar.LENGTH_SHORT).show();
+                    else if(!combo.isOneFromOptionalComboOptionsSelected()) Snackbar.make(mainLayout, "Combo should contain atleast one " + combo.getOptionalComboOptionsNames(), Snackbar.LENGTH_SHORT).show();
                     return;
                 }
                 if(combo.isCustomizable())
