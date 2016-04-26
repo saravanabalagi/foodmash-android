@@ -76,6 +76,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
     private String aasmState;
     private boolean cart;
     private boolean notif;
+    private LinearLayoutManager linearLayoutManager;
     private OrderDescriptionAdapter orderDescriptionAdapter;
     private NotificationManager notificationManager;
     private String notificationDesc;
@@ -115,14 +116,14 @@ public class OrderDescriptionActivity extends FoodmashActivity {
         notificationManager= (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         orderDescriptionAdapter = new OrderDescriptionAdapter();
         orderDescriptionRecyclerView.hasFixedSize();
-        orderDescriptionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        linearLayoutManager = new LinearLayoutManager(this);
+        orderDescriptionRecyclerView.setLayoutManager(linearLayoutManager);
         orderDescriptionRecyclerView.setAdapter(orderDescriptionAdapter);
         orderDescriptionRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            int scrollDy = 0;
             @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
             @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                scrollDy += dy;
-                swipeRefreshLayout.setEnabled(scrollDy==0);
+                super.onScrolled(recyclerView,dx,dy);
+                swipeRefreshLayout.setEnabled(linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0);
             }
         });
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

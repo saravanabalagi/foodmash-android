@@ -100,6 +100,7 @@ public class MainActivity extends FoodmashActivity {
     private Filters filters;
     private CombosAdapter combosAdapter;
     private GestureDetector tapGesture;
+    private LinearLayoutManager linearLayoutManager;
 
     private Set<Combo.Category> categorySelected = new HashSet<>();
     private Set<Combo.Size> sizeSelected = new HashSet<>();
@@ -155,7 +156,6 @@ public class MainActivity extends FoodmashActivity {
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
 
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         tapGesture = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener(){
             @Override public boolean onSingleTapUp(MotionEvent e) { return true; } });
         filters = new Filters();
@@ -284,15 +284,15 @@ public class MainActivity extends FoodmashActivity {
 
         combosAdapter = new CombosAdapter();
         combosRecyclerView.hasFixedSize();
-        combosRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        linearLayoutManager = new LinearLayoutManager(this);
+        combosRecyclerView.setLayoutManager(linearLayoutManager);
         combosRecyclerView.setAdapter(combosAdapter);
         combosRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            int scrollDy = 0;
             @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
             @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 //                if(scrollDy > 50) mashCashLayout.animate().translationY(dpToPx(mashCashLayout.getHeight()));
-                scrollDy += dy;
-                swipeRefreshLayout.setEnabled(scrollDy == 0);
+                super.onScrolled(recyclerView,dx,dy);
+                swipeRefreshLayout.setEnabled(linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0);
             }
         });
 

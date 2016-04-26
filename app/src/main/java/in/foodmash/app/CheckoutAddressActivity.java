@@ -66,6 +66,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
     private int addressId = -1;
     private List<Address> addresses = new ArrayList<>();
     private AddressAdapter addressAdapter;
+    private LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,14 +85,14 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
         addAddress.setOnClickListener(this);
         addressAdapter = new AddressAdapter();
         addressRecyclerView.hasFixedSize();
-        addressRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        linearLayoutManager = new LinearLayoutManager(this);
+        addressRecyclerView.setLayoutManager(linearLayoutManager);
         addressRecyclerView.setAdapter(addressAdapter);
         addressRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            int scrollDy = 0;
             @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
             @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                scrollDy += dy;
-                swipeRefreshLayout.setEnabled(scrollDy == 0);
+                super.onScrolled(recyclerView,dx,dy);
+                swipeRefreshLayout.setEnabled(linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0);
             }
         });
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

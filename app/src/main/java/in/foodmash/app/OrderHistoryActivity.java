@@ -54,6 +54,7 @@ public class OrderHistoryActivity extends FoodmashActivity {
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.toolbar) Toolbar toolbar;
     private OrderHistoryAdapter orderHistoryAdapter;
+    private LinearLayoutManager linearLayoutManager;
     private final Handler handler = new Handler();
     private final Runnable keepRefreshing = new Runnable() {
         @Override
@@ -78,14 +79,14 @@ public class OrderHistoryActivity extends FoodmashActivity {
 
         orderHistoryAdapter = new OrderHistoryAdapter();
         orderHistoryRecyclerView.hasFixedSize();
-        orderHistoryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        linearLayoutManager = new LinearLayoutManager(this);
+        orderHistoryRecyclerView.setLayoutManager(linearLayoutManager);
         orderHistoryRecyclerView.setAdapter(orderHistoryAdapter);
         orderHistoryRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            int scrollDy = 0;
             @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
             @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                scrollDy += dy;
-                swipeRefreshLayout.setEnabled(scrollDy == 0);
+                super.onScrolled(recyclerView,dx,dy);
+                swipeRefreshLayout.setEnabled(linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0);
             }
         });
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

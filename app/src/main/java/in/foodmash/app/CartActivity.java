@@ -49,6 +49,7 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
     private Menu menu;
     private Cart cart = Cart.getInstance();
     private CartAdapter cartAdapter;
+    private LinearLayoutManager linearLayoutManager;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,14 +104,14 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
         buy.setOnClickListener(this);
         cartAdapter = new CartAdapter();
         cartRecyclerView.hasFixedSize();
-        cartRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        linearLayoutManager = new LinearLayoutManager(this);
+        cartRecyclerView.setLayoutManager(linearLayoutManager);
         cartRecyclerView.setAdapter(cartAdapter);
         cartRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            int scrollDy = 0;
             @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) { super.onScrollStateChanged(recyclerView, newState); }
             @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                scrollDy += dy;
-                swipeRefreshLayout.setEnabled(scrollDy == 0);
+                super.onScrolled(recyclerView,dx,dy);
+                swipeRefreshLayout.setEnabled(linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0);
             }
         });
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() { @Override public void onRefresh() { onResume(); } });
