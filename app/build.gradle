@@ -21,7 +21,7 @@ defaultConfig {
     minSdkVersion 16
     targetSdkVersion 23
     versionCode 11
-    versionName '1.1.4 acornsquash'
+    versionName '1.2 acornsquash'
     }
     buildTypes {
         release {
