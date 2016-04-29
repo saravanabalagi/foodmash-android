@@ -301,8 +301,20 @@ public class MainActivity extends FoodmashActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+
+        if(getIntent().getBooleanExtra("combo_error",false)) {
+            final Snackbar totalErrorSnackbar = Snackbar.make(mainLayout, "Could not open combo! Try again later", Snackbar.LENGTH_INDEFINITE);
+            totalErrorSnackbar.show();
+        }
+
         swipeRefreshLayout.setRefreshing(true);
         invalidateOptionsMenu();
 
