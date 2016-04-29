@@ -20,7 +20,7 @@
 -dontwarn com.fasterxml.jackson.**
 -keepnames class com.fasterxml.jackson.** { *; }
 -keepnames interface com.fasterxml.jackson.** { *; }
--keepclassmembers class in.foodmash.app.custom.** { *; }
+-keepclassmembers class in.foodmash.app.models.** { *; }
 -keepattributes Signature,*Annotation*,EnclosingMethod
 
 # ButterKnife
