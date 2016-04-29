@@ -373,7 +373,11 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                         promoDiscount.setText("");
                         cart.discount = Cart.Discount.NIL;
                         promoCode.requestFocus();
-                        promoCodeInputLayout.setError(((discount == Cart.Discount.MASH_CASH) ? "Not enough Mash Cash" : "Invalid Promo Code"));
+                        String messageFromServer = "";
+                        if(response.has("message") && !response.isNull("message"))
+                            messageFromServer = response.getString("message");
+                        if(messageFromServer.length()>0) promoCodeInputLayout.setError(messageFromServer);
+                        else promoCodeInputLayout.setError(((discount == Cart.Discount.MASH_CASH) ? "Not enough Mash Cash" : "Invalid Promo Code"));
                         Snackbar.make(mainLayout, ((discount == Cart.Discount.MASH_CASH) ? "Mash Cash not applied" : "Promo Code not applied"), Snackbar.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
