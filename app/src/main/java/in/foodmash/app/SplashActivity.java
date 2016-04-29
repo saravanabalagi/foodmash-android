@@ -82,7 +82,7 @@ public class SplashActivity extends FoodmashActivity {
                         if (currentVersion < newVersion) {
                             startActivity(new Intent(SplashActivity.this, UpdateAppActivity.class));
                             finish();
-                        } else if(skipMaintenance || !response.getJSONObject("data").has("maintenance")) makeLocationRequest();
+                        } else if(skipMaintenance || !response.getJSONObject("data").has("maintenance") || response.getJSONObject("data").isNull("maintenance")) makeLocationRequest();
                         else {
                             JSONObject maintenance = response.getJSONObject("data").getJSONObject("maintenance");
                             Intent intent = new Intent(SplashActivity.this, ShowMessageActivity.class);
