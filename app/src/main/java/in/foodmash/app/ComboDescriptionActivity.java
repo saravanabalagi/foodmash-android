@@ -136,8 +136,6 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
             buy.setOnClickListener(this);
             back.setOnClickListener(this);
         } catch (Exception e) {
-            Snackbar.make(mainLayout,"Something went wrong. Try again later!",Snackbar.LENGTH_LONG).show();
-            e.printStackTrace();
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("combo_error", true);
             startActivity(intent);
