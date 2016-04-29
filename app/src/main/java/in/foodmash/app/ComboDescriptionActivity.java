@@ -131,20 +131,29 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
                 }
             });
             combo.removeAllSelected();
+
+            comboOptionViewPager.setAdapter(new ComboOptionAdapter());
+            buy.setOnClickListener(this);
+            back.setOnClickListener(this);
         } catch (Exception e) {
             Snackbar.make(mainLayout,"Something went wrong. Try again later!",Snackbar.LENGTH_LONG).show();
             e.printStackTrace();
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("combo_error", true);
+            startActivity(intent);
             finish();
         }
-
-        comboOptionViewPager.setAdapter(new ComboOptionAdapter());
-        buy.setOnClickListener(this);
-        back.setOnClickListener(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if(combo == null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("combo_error", true);
+            startActivity(intent);
+            finish();
+        }
         if (!combo.isAvailable()) {
             comboUnavailable.setVisibility(View.VISIBLE);
             contensLayout.setVisibility(View.GONE);
