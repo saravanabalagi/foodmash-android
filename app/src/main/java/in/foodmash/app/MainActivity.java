@@ -414,7 +414,7 @@ public class MainActivity extends FoodmashActivity {
     private void updateFillLayout(List<Combo> combos) {
         final List<Combo> filteredCombos = applyFilters(combos);
         if(filteredCombos.size()==0) { emptyComboLayout.setVisibility(View.VISIBLE); combosRecyclerView.setVisibility(View.GONE); mashCashLayout.setVisibility(View.GONE); return; }
-        else { emptyComboLayout.setVisibility(View.GONE); combosRecyclerView.setVisibility(View.VISIBLE); mashCashLayout.setVisibility(View.VISIBLE); }
+        else { emptyComboLayout.setVisibility(View.GONE); combosRecyclerView.setVisibility(View.VISIBLE); if(Info.isLoggedIn(MainActivity.this)) mashCashLayout.setVisibility(View.VISIBLE); }
 
         combosAdapter.setCombos(filteredCombos);
         combosAdapter.notifyDataSetChanged();
