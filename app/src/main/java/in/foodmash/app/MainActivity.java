@@ -361,8 +361,8 @@ public class MainActivity extends FoodmashActivity {
                         String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
                         Actions.cacheCombos(MainActivity.this, comboJsonArrayString, new Date());
                         updateFillLayout(Arrays.asList(objectMapper.readValue(comboJsonArrayString, Combo[].class)));
-                        if (Info.isLoggedIn(MainActivity.this) && !response.isNull("user")) {
-                            JSONObject userJson = response.getJSONObject("user");
+                        if (Info.isLoggedIn(MainActivity.this) && response.getJSONObject("data").has("user") && !response.getJSONObject("data").isNull("user")) {
+                            JSONObject userJson = response.getJSONObject("data").getJSONObject("user");
                             Actions.cacheUserDetails(MainActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"), userJson.getDouble("mash_cash"));
                             mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(Info.getMashCash(MainActivity.this)));
                             mashCashLayout.setVisibility(View.VISIBLE);
