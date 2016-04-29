@@ -168,8 +168,8 @@ public class Combo {
     public boolean isValid() {
         ArrayList<ComboOption> comboOptionsMinCountZero = new ArrayList<>();
         for (ComboOption comboOption : comboOptions) {
-            if (!(comboOption.getMinCount() > 0 && comboOption.getComprisedDishesQuantity() >= comboOption.getMinCount())) return false;
             if(comboOption.getMinCount() == 0) comboOptionsMinCountZero.add(comboOption);
+            else if(comboOption.getComprisedDishesQuantity() < comboOption.getMinCount()) return false;
         }
         if(comboOptionsMinCountZero.size()==0) return true;
         int comboOptionsMinCountZeroQuantity = 0;
@@ -180,8 +180,9 @@ public class Combo {
     public void makeValid() {
         ArrayList<ComboOption> comboOptionsMinCountZero = new ArrayList<>();
         for (ComboOption comboOption : comboOptions) {
-            if(!(comboOption.getMinCount() > 0 && comboOption.getComprisedDishesQuantity() >= comboOption.getMinCount())) comboOption.resetSelectedComboOptionDishes();
             if(comboOption.getMinCount() == 0) comboOptionsMinCountZero.add(comboOption);
+            else if(comboOption.getComprisedDishesQuantity() < comboOption.getMinCount())
+                comboOption.resetSelectedComboOptionDishes();
         }
         if(comboOptionsMinCountZero.size()==0) return;
         int comboOptionsMinCountZeroQuantity = 0;
