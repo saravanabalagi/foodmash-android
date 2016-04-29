@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
 
@@ -104,20 +106,44 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Retry"
-                android:id="@+id/retry"
-                android:background="@drawable/bg_combo_description_price_background"
-                android:layout_centerInParent="true"
-                android:layout_margin="30dp"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:textColor="@color/white"
-                android:visibility="gone" />
+                android:id="@+id/retry_layout"
+                android:gravity="center_horizontal"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Connection"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="error"
+                        android:textColor="@color/accent"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:text="Retry"
+                    app:srcCompat="@drawable/svg_android_retry"
+                    android:id="@+id/retry"
+                    android:padding="10dp"
+                    android:background="@drawable/bg_circular_light_button_background"
+                    android:layout_margin="30dp"/>
+            </LinearLayout>
 
         </RelativeLayout>
 

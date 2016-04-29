@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -45,7 +46,8 @@ public class SplashActivity extends FoodmashActivity {
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.loading_layout) LinearLayout loadingLayout;
     @Bind(R.id.location_layout) LinearLayout locationLayout;
-    @Bind(R.id.retry) TextView retryButton;
+    @Bind(R.id.retry_layout) LinearLayout retryButtonLayout;
+    @Bind(R.id.retry) ImageView retryButton;
 
     private List<City> cities;
     private boolean skipUpdate = false;
@@ -58,7 +60,10 @@ public class SplashActivity extends FoodmashActivity {
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
 
-        retryButton.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { onResume(); } });
+        retryButton.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) {
+            Animations.fadeOutAndFadeIn(retryButtonLayout,loadingLayout,500);
+            onResume();
+        } });
         makeCheckConnectionRequest();
     }
 
@@ -104,7 +109,7 @@ public class SplashActivity extends FoodmashActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeOutAndFadeIn(loadingLayout,retryButton,500);
+                Animations.fadeOutAndFadeIn(loadingLayout,retryButtonLayout,500);
                 fragmentContainer.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeCheckConnectionRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
@@ -175,7 +180,7 @@ public class SplashActivity extends FoodmashActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Animations.fadeOutAndFadeIn(loadingLayout, retryButton, 500);
+                Animations.fadeOutAndFadeIn(loadingLayout, retryButtonLayout, 500);
                 fragmentContainer.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLocationRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
