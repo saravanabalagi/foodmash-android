@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -60,14 +59,13 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
     @Bind(R.id.buy) FloatingActionButton buy;
     @Bind(R.id.back) FloatingActionButton back;
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.contents_layout) View contensLayout;
+    @Bind(R.id.contents_layout) View contentsLayout;
 
     private TextView cartCount;
     private Cart cart = Cart.getInstance();
     private Intent intent;
     private Combo combo;
     private ImageLoader imageLoader;
-    private BottomSheetBehavior bottomSheetBehavior;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -154,7 +152,7 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
         }
         if (!combo.isAvailable()) {
             comboUnavailable.setVisibility(View.VISIBLE);
-            contensLayout.setVisibility(View.GONE);
+            contentsLayout.setVisibility(View.GONE);
             buy.setVisibility(View.GONE);
             back.setVisibility(View.VISIBLE);
         }
