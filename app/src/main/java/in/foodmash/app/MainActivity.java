@@ -347,11 +347,11 @@ public class MainActivity extends FoodmashActivity {
                         Animations.fadeOut(fragmentContainer,100);
                         Log.i("Combos", response.getJSONObject("data").getJSONArray("combos").length() + " combos found");
                         String comboJsonArrayString = response.getJSONObject("data").getJSONArray("combos").toString();
+                        Actions.cacheCombos(MainActivity.this, comboJsonArrayString, new Date());
                         updateFillLayout(Arrays.asList(objectMapper.readValue(comboJsonArrayString, Combo[].class)));
                         if (Info.isLoggedIn(MainActivity.this) && !response.isNull("user")) {
                             JSONObject userJson = response.getJSONObject("user");
                             Actions.cacheUserDetails(MainActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"), userJson.getDouble("mash_cash"));
-                            Actions.cacheCombos(MainActivity.this, comboJsonArrayString, new Date());
                             mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(Info.getMashCash(MainActivity.this)));
                             mashCashLayout.setVisibility(View.VISIBLE);
                         } else mashCashLayout.setVisibility(View.GONE);
