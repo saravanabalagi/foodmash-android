@@ -190,7 +190,7 @@ public class Combo {
     }
     public boolean isValid() {
         if(isCustomizable()) {
-            if (Cart.getInstance().getCount() > 0 && !Cart.getInstance().hasCombo(this.getId()))
+            if (Cart.getInstance().getCount()>1 || (Cart.getInstance().getCount() > 0 && !Cart.getInstance().hasCombo(this.getId())))
                 return isMandatoryComboOptionsSelected() && isOneFromOptionalComboOptionsSelected();
             else return isMandatoryComboOptionsSelected() && isDishesFromAtLeastTwoDifferentOptionalComboOptionsSelected();
         } else return isMandatoryComboOptionsSelected() && isOneFromOptionalComboOptionsSelected();
