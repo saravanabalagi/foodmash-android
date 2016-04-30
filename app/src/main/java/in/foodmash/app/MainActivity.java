@@ -532,8 +532,17 @@ public class MainActivity extends FoodmashActivity {
             int quantity = cart.getCount(combo.getId());
             if(!combo.isAvailable()) cart.removeOrder(combo);
             viewHolder.count.setText(String.valueOf(quantity));
-            if (quantity > 0) { viewHolder.addToCart.setVisibility(View.GONE); viewHolder.countLayout.setVisibility(View.VISIBLE); viewHolder.countLayout.setAlpha(1f); }
-            else { viewHolder.addToCart.setVisibility(View.VISIBLE); viewHolder.addToCart.setAlpha(1f); viewHolder.countLayout.setVisibility(View.GONE);  }
+            if(!combo.isCustomizable()) {
+                if (quantity > 0) {
+                    viewHolder.addToCart.setVisibility(View.GONE);
+                    viewHolder.countLayout.setVisibility(View.VISIBLE);
+                    viewHolder.countLayout.setAlpha(1f);
+                } else {
+                    viewHolder.addToCart.setVisibility(View.VISIBLE);
+                    viewHolder.addToCart.setAlpha(1f);
+                    viewHolder.countLayout.setVisibility(View.GONE);
+                }
+            }
             viewHolder.plus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

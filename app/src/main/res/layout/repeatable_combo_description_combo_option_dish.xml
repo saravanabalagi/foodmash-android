@@ -128,7 +128,7 @@
                 android:layout_weight="1"
                 android:textSize="15sp"
                 android:textColor="@color/white"
-                android:layout_marginRight="60dp" />
+                android:layout_marginRight="110dp" />
 
         </LinearLayout>
 
