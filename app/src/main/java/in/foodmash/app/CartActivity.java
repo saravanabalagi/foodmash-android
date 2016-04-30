@@ -189,7 +189,8 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
         @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             final ViewHolder viewHolder = (ViewHolder) holder;
             final Combo combo = new ArrayList<>(cart.getOrders().keySet()).get(position);
-            viewHolder.name.setText(combo.getName());
+            if(combo.isCustomizable() && cart.getCount()>1 && combo.isOneFromOptionalComboOptionsSelected() && !combo.isDishesFromAtLeastTwoDifferentOptionalComboOptionsSelected()) viewHolder.name.setText("Add-On");
+            else viewHolder.name.setText(combo.getName());
             viewHolder.dishes.setText(combo.getDishNames());
             viewHolder.count.setText(String.valueOf(cart.getOrders().get(combo)));
             viewHolder.amount.setText(String.valueOf((int)combo.calculatePrice() * cart.getOrders().get(combo)));
