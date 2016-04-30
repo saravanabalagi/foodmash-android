@@ -14,6 +14,9 @@ import java.util.Comparator;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Combo {
 
+    public enum Category { REGULAR, BUDGET, CORPORATE, HEALTH }
+    public enum Size { MICRO, MEDIUM, MEGA }
+
     private int id;
     private int groupSize;
     private int noOfPurchases;
@@ -26,9 +29,6 @@ public class Combo {
     private boolean available = false;
     private boolean customizable = false;
     private float price;
-    public enum Category { REGULAR, BUDGET, CORPORATE, HEALTH }
-    public enum Size { MICRO, MEDIUM, MEGA }
-
     private String picture;
     private ArrayList<ComboOption> comboOptions = new ArrayList<>();
 
@@ -43,6 +43,7 @@ public class Combo {
         this.name = c.name;
         this.description = c.description;
         this.available = c.available;
+        this.customizable = c.customizable;
         this.price = c.price;
         this.picture = c.picture;
         this.comboOptions = new ArrayList<>();
@@ -91,7 +92,16 @@ public class Combo {
             for(ComboOptionDish comboDish: comboOption.getSelectedComboOptionDishes())
                 dishNames += ((comboDish.getQuantity()==1)?"":(comboDish.getQuantity() + " x ")) + comboDish.getDish().getName() + " ("+comboDish.getDish().getRestaurant().getName()+") " +  "\n";
         if(!isMandatoryComboOptionsSelected()) dishNames += "Select at least one "+getUnselectedMandatoryComboOptionNames()+"\n";
-        if(!isOneFromOptionalComboOptionsSelected()) dishNames += "Select at least one "+getOptionalComboOptionsNames()+"\n";
+        if(isCustomizable()) {
+            if(Cart.getInstance().getCount()>1 || (Cart.getInstance().getCount()==1 && !Cart.getInstance().hasCombo(this.getId()))) {
+                if (!isOneFromOptionalComboOptionsSelected())
+                    dishNames += "Select at least one dish from any category" + "\n";
+            } else if (!isOneFromOptionalComboOptionsSelected())
+                dishNames += "Select dishes from at least two categories"+"\n";
+            else if (!isDishesFromAtLeastTwoDifferentOptionalComboOptionsSelected())
+                dishNames += "Select one more dish from a different category"+"\n";
+        } else if(!isOneFromOptionalComboOptionsSelected())
+            dishNames += "Select at least one "+getOptionalComboOptionsNames()+"\n";
         return (dishNames.length()==0)?"":dishNames.substring(0,dishNames.length()-1);
     }
 
@@ -163,9 +173,28 @@ public class Combo {
         int comboOptionsMinCountZeroQuantity = 0;
         for(ComboOption comboOption: comboOptionsMinCountZero)
             comboOptionsMinCountZeroQuantity += comboOption.getComprisedDishesQuantity();
-        return comboOptionsMinCountZeroQuantity != 0;
+        return comboOptionsMinCountZeroQuantity > 0;
     }
-    public boolean isValid() { return isMandatoryComboOptionsSelected() && isOneFromOptionalComboOptionsSelected(); }
+    public boolean isDishesFromAtLeastTwoDifferentOptionalComboOptionsSelected() {
+        ArrayList<ComboOption> comboOptionsMinCountZero = new ArrayList<>();
+        for (ComboOption comboOption : comboOptions)
+            if(comboOption.getMinCount() == 0) comboOptionsMinCountZero.add(comboOption);
+        if(comboOptionsMinCountZero.size()==0) return true;
+        int comboOptionsMinCountZeroQuantity = 0;
+        int noOfDifferentComboOptionsSelected = 0;
+        for(ComboOption comboOption: comboOptionsMinCountZero) {
+            comboOptionsMinCountZeroQuantity += comboOption.getComprisedDishesQuantity();
+            if(comboOption.getComprisedDishesQuantity()>0) noOfDifferentComboOptionsSelected++;
+        }
+        return (comboOptionsMinCountZeroQuantity >= 2) && noOfDifferentComboOptionsSelected >= 2;
+    }
+    public boolean isValid() {
+        if(isCustomizable()) {
+            if (Cart.getInstance().getCount() > 0 && !Cart.getInstance().hasCombo(this.getId()))
+                return isMandatoryComboOptionsSelected() && isOneFromOptionalComboOptionsSelected();
+            else return isMandatoryComboOptionsSelected() && isDishesFromAtLeastTwoDifferentOptionalComboOptionsSelected();
+        } else return isMandatoryComboOptionsSelected() && isOneFromOptionalComboOptionsSelected();
+    }
 
     public void makeValid() {
         if(!isMandatoryComboOptionsSelected())

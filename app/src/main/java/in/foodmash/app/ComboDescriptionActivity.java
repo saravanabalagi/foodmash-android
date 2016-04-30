@@ -121,14 +121,14 @@ public class ComboDescriptionActivity extends FoodmashActivity implements View.O
             if(combo==null) throw new NullPointerException("Combo is not found");
             if(combo.isCustomizable())
                 if(cart.hasCombo(combo.getId()))
-                    combo = cart.fetchLastCombo(combo.getId());
+                    combo = new Combo(cart.fetchLastCombo(combo.getId()));
             Collections.sort(combo.getComboOptions(), new Comparator<ComboOption>() {
                 @Override
                 public int compare(ComboOption lhs, ComboOption rhs) {
                     return lhs.getPriority()-rhs.getPriority();
                 }
             });
-            combo.removeAllSelected();
+            if(!combo.isCustomizable()) combo.removeAllSelected();
 
             comboOptionViewPager.setAdapter(new ComboOptionAdapter());
             buy.setOnClickListener(this);
