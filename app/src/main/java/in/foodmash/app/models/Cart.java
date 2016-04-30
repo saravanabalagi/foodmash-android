@@ -54,6 +54,11 @@ public class Cart {
         return total;
     }
 
+    public boolean isValid() {
+        for(Combo combo: this.orders.keySet())
+            if(!combo.isValid()) return false;
+        return true;
+    }
 
     public void addToCart(Combo combo) {
         if(!combo.isValid()) combo.makeValid();

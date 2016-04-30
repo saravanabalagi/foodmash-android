@@ -150,6 +150,7 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
         switch (v.getId()) {
             case R.id.buy:
                 if(cart.getCount()==0) Snackbar.make(mainLayout,"Cart is empty, Add some combos and we'll give it a go!",Snackbar.LENGTH_LONG).show();
+                else if(!cart.isValid()) Snackbar.make(mainLayout,"Invalid combos found. Please check the combo contents!",Snackbar.LENGTH_LONG).show();
                 else if(Info.isLoggedIn(this)) startActivity(new Intent(CartActivity.this, CheckoutAddressActivity.class));
                 else {
                     Intent intent = new Intent(CartActivity.this, LoginActivity.class);
