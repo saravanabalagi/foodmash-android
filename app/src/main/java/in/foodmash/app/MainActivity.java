@@ -498,6 +498,21 @@ public class MainActivity extends FoodmashActivity {
                     startActivity(intent);
                 }
             };
+
+
+            viewHolder.comboInfoLayout.setVisibility(View.GONE);
+            if(combo.isCustomizable()) {
+                viewHolder.priceLayout.setVisibility(View.GONE);
+                viewHolder.quickView.setVisibility(View.GONE);
+                viewHolder.addToCart.setVisibility(View.GONE);
+                viewHolder.countLayout.setVisibility(View.GONE);
+                viewHolder.comboSizeIcon.setVisibility(View.GONE);
+            } else {
+                viewHolder.priceLayout.setVisibility(View.VISIBLE);
+                viewHolder.quickView.setVisibility(View.VISIBLE);
+                viewHolder.comboSizeIcon.setVisibility(View.VISIBLE);
+            }
+
             viewHolder.id.setText(String.valueOf(combo.getId()));
             viewHolder.imageSlider.getLayoutParams().height = (int)(getWidthPx()*0.67) - dpToPx(10);
             viewHolder.imageSlider.setAdapter(new NetworkImageViewSlider(MainActivity.this, combo.getImages(), showDescription));
@@ -586,14 +601,6 @@ public class MainActivity extends FoodmashActivity {
                 ((TextView) restaurantLayout.findViewById(R.id.name)).setText(restaurant.getName());
                 ((NetworkImageView) restaurantLayout.findViewById(R.id.logo)).setImageUrl(restaurant.getLogo(), Swift.getInstance(MainActivity.this).getImageLoader());
                 viewHolder.restaurantsLayout.addView(restaurantLayout);
-            }
-
-            if(combo.isCustomizable()) {
-                viewHolder.priceLayout.setVisibility(View.GONE);
-                viewHolder.quickView.setVisibility(View.GONE);
-                viewHolder.addToCart.setVisibility(View.GONE);
-                viewHolder.countLayout.setVisibility(View.GONE);
-                viewHolder.comboSizeIcon.setVisibility(View.GONE);
             }
 
             if(viewHolder.getLayoutPosition() == this.getItemCount()-1) {
