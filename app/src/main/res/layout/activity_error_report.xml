@@ -46,7 +46,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:text="Help us fix the error soon by sending this error report a mail! Tap the mail button to send the mail"/>
+                    android:text="Tap the mail button and choose an email client app (Gmail, Inbox, Outlook, etc.) and we'll do the rest for you. "/>
 
             </LinearLayout>
 
