@@ -165,40 +165,33 @@ public class Combo {
             comboOptionsMinCountZeroQuantity += comboOption.getComprisedDishesQuantity();
         return comboOptionsMinCountZeroQuantity != 0;
     }
-    public boolean isValid() {
-        ArrayList<ComboOption> comboOptionsMinCountZero = new ArrayList<>();
-        for (ComboOption comboOption : comboOptions) {
-            if(comboOption.getMinCount() == 0) comboOptionsMinCountZero.add(comboOption);
-            else if(comboOption.getComprisedDishesQuantity() < comboOption.getMinCount()) return false;
-        }
-        if(comboOptionsMinCountZero.size()==0) return true;
-        int comboOptionsMinCountZeroQuantity = 0;
-        for(ComboOption comboOption: comboOptionsMinCountZero)
-            comboOptionsMinCountZeroQuantity += comboOption.getComprisedDishesQuantity();
-        return comboOptionsMinCountZeroQuantity != 0;
-    }
+    public boolean isValid() { return isMandatoryComboOptionsSelected() && isOneFromOptionalComboOptionsSelected(); }
+
     public void makeValid() {
-        ArrayList<ComboOption> comboOptionsMinCountZero = new ArrayList<>();
-        for (ComboOption comboOption : comboOptions) {
-            if(comboOption.getMinCount() == 0) comboOptionsMinCountZero.add(comboOption);
-            else if(comboOption.getComprisedDishesQuantity() < comboOption.getMinCount())
-                comboOption.resetSelectedComboOptionDishes();
-        }
-        if(comboOptionsMinCountZero.size()==0) return;
-        int comboOptionsMinCountZeroQuantity = 0;
-        for(ComboOption comboOption: comboOptionsMinCountZero)
-            comboOptionsMinCountZeroQuantity += comboOption.getComprisedDishesQuantity();
-        if(comboOptionsMinCountZeroQuantity != 0) {
-            ArrayList<Pair<ComboOption,ComboOptionDish>> comboOptionDishesFromComboOptionsMinCountZero = new ArrayList<>();
-            for(ComboOption comboOption: comboOptionsMinCountZero)
-                comboOptionDishesFromComboOptionsMinCountZero.add(new Pair<>(comboOption, comboOption.getComboOptionDishes().get(0)));
-            Collections.sort(comboOptionDishesFromComboOptionsMinCountZero, new Comparator<Pair<ComboOption, ComboOptionDish>>() {
-                @Override
-                public int compare(Pair<ComboOption, ComboOptionDish> lhs, Pair<ComboOption, ComboOptionDish> rhs) {
-                    return Float.compare(lhs.second.getDish().getPrice(), rhs.second.getDish().getPrice());
-                }
-            });
-            comboOptionDishesFromComboOptionsMinCountZero.get(0).first.addToSelected(comboOptionDishesFromComboOptionsMinCountZero.get(0).second);
+        if(!isMandatoryComboOptionsSelected())
+            for (ComboOption comboOption : comboOptions)
+                if (comboOption.getComprisedDishesQuantity() < comboOption.getMinCount())
+                    comboOption.resetSelectedComboOptionDishes();
+        if(!isOneFromOptionalComboOptionsSelected()) {
+            ArrayList<ComboOption> comboOptionsMinCountZero = new ArrayList<>();
+            for (ComboOption comboOption : comboOptions)
+                if (comboOption.getMinCount() == 0) comboOptionsMinCountZero.add(comboOption);
+            if (comboOptionsMinCountZero.size() == 0) return;
+            int comboOptionsMinCountZeroQuantity = 0;
+            for (ComboOption comboOption : comboOptionsMinCountZero)
+                comboOptionsMinCountZeroQuantity += comboOption.getComprisedDishesQuantity();
+            if (comboOptionsMinCountZeroQuantity == 0) {
+                ArrayList<Pair<ComboOption, ComboOptionDish>> comboOptionDishesFromComboOptionsMinCountZero = new ArrayList<>();
+                for (ComboOption comboOption : comboOptionsMinCountZero)
+                    comboOptionDishesFromComboOptionsMinCountZero.add(new Pair<>(comboOption, comboOption.getComboOptionDishes().get(0)));
+                Collections.sort(comboOptionDishesFromComboOptionsMinCountZero, new Comparator<Pair<ComboOption, ComboOptionDish>>() {
+                    @Override
+                    public int compare(Pair<ComboOption, ComboOptionDish> lhs, Pair<ComboOption, ComboOptionDish> rhs) {
+                        return Float.compare(lhs.second.getDish().getPrice(), rhs.second.getDish().getPrice());
+                    }
+                });
+                comboOptionDishesFromComboOptionsMinCountZero.get(0).first.addToSelected(comboOptionDishesFromComboOptionsMinCountZero.get(0).second);
+            }
         }
     }
 
