@@ -128,6 +128,14 @@ public class PinYourLocationActivity extends FoodmashActivity implements View.On
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        if(locationManager!=null && locationListener!=null)
+            if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED )
+                locationManager.removeUpdates(locationListener);
+        super.onDestroy();
+    }
+
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.proceed:
@@ -166,8 +174,10 @@ public class PinYourLocationActivity extends FoodmashActivity implements View.On
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, (edit)?16:14));
         locationListener = new LocationListener() {
             @Override public void onLocationChanged(Location location) {
-                initialLocation = new LatLng(location.getLatitude(),location.getLongitude());
-                mapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation,15));
+                if(mapFragment!=null && locationListener!=null) {
+                    initialLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    mapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 15));
+                }
             }
             @Override public void onStatusChanged(String provider, int status, Bundle extras) {  }
             @Override public void onProviderEnabled(String provider) {}
