@@ -1,6 +1,5 @@
 package in.foodmash.app;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,8 +7,6 @@ import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -462,7 +459,7 @@ public class MainActivity extends FoodmashActivity {
             @Bind(R.id.id) TextView id;
             @Bind(R.id.name) TextView name;
             @Bind(R.id.price) TextView price;
-            @Bind(R.id.imageSlider) ViewPager imageSlider;
+            @Bind(R.id.image) NetworkImageView image;
             @Bind(R.id.combo_size_icon) ImageView comboSizeIcon;
             @Bind(R.id.group_size) TextView groupSize;
             @Bind(R.id.add_to_cart) ImageView addToCart;
@@ -514,9 +511,9 @@ public class MainActivity extends FoodmashActivity {
             }
 
             viewHolder.id.setText(String.valueOf(combo.getId()));
-            viewHolder.imageSlider.getLayoutParams().height = (int)(getWidthPx()*0.67) - dpToPx(10);
-            viewHolder.imageSlider.setAdapter(new NetworkImageViewSlider(MainActivity.this, combo.getImages(), showDescription));
-            viewHolder.imageSlider.setOffscreenPageLimit(1);
+            viewHolder.image.getLayoutParams().height = (int)(getWidthPx()*0.67) - dpToPx(10);
+            viewHolder.image.setImageUrl(combo.getPicture(),Swift.getInstance(MainActivity.this).getImageLoader());
+            viewHolder.image.setOnClickListener(showDescription);
             viewHolder.name.setText(combo.getName());
             viewHolder.price.setText(String.valueOf((int) combo.getPrice()));
             switch (combo.getGroupSize()) {
@@ -526,7 +523,6 @@ public class MainActivity extends FoodmashActivity {
                 default: viewHolder.comboSizeIcon.setImageDrawable(ContextCompat.getDrawable(MainActivity.this,R.drawable.svg_user3)); break;
             }
             viewHolder.groupSize.setText("Serves "+combo.getGroupSize());
-            viewHolder.imageSlider.setOnClickListener(showDescription);
             if(combo.isAvailable()) viewHolder.unavailableLayout.setVisibility(View.GONE);
             else viewHolder.unavailableLayout.setVisibility(View.VISIBLE);
             int quantity = cart.getCount(combo.getId());
@@ -624,29 +620,4 @@ public class MainActivity extends FoodmashActivity {
         }
     }
 
-    private class NetworkImageViewSlider extends PagerAdapter {
-        Context context;
-        LayoutInflater layoutInflater;
-        View.OnClickListener onClickListener;
-        ArrayList<String> imageUrls = new ArrayList<>();
-        public NetworkImageViewSlider(Context context, ArrayList<String> imageUrls, View.OnClickListener onClickListener) {
-            layoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
-            this.context = context;
-            this.imageUrls = imageUrls;
-            this.onClickListener = onClickListener;
-        }
-        @Override public int getCount() { return imageUrls.size(); }
-        @Override public boolean isViewFromObject(View view, Object object) { return view == ((FrameLayout)object); }
-        @Override public void destroyItem(ViewGroup container, int position, Object object) { container.removeView((FrameLayout)object); }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            View view = layoutInflater.inflate(R.layout.repeatable_main_combo_image_slider, container, false);
-            NetworkImageView imageView = (NetworkImageView) view.findViewById(R.id.image);
-            imageView.setImageUrl(imageUrls.get(position), Swift.getInstance(context).getImageLoader());
-            imageView.setOnClickListener(onClickListener);
-            container.addView(view);
-            return view;
-        }
-    }
 }
