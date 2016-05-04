@@ -166,22 +166,12 @@ public class MainActivity extends FoodmashActivity {
         filters.addFilter("Corporate", R.drawable.svg_sitemap);
         filters.addFilter("Health", R.drawable.svg_heartbeat);
 
-        filters.addHeader("Size");
-        filters.addFilter("Micro", R.drawable.svg_user1);
-        filters.addFilter("Medium", R.drawable.svg_user2);
-        filters.addFilter("Mega", R.drawable.svg_user3);
-
-        filters.addHeader("Preference");
-        filters.addFilter("Veg", R.drawable.svg_leaf);
-        filters.addFilter("Egg", R.drawable.svg_egg);
-        filters.addFilter("Non-Veg", R.drawable.svg_meat);
-
         filters.addHeader("Price");
         filters.addFilter("Low to High", R.drawable.svg_sort_amount_asc);
         filters.addFilter("High to Low", R.drawable.svg_sort_amount_desc);
 
         filters.setSelected(1);
-        filters.setSelected(16);
+        filters.setSelected(8);
 
         filtersRecyclerView.setHasFixedSize(true);
         filtersRecyclerView.setAdapter(filters);
@@ -217,16 +207,8 @@ public class MainActivity extends FoodmashActivity {
                         case 5: makeActive(child, position, Combo.Category.CORPORATE); break;
                         case 6: makeActive(child, position, Combo.Category.HEALTH); break;
 
-                        case 8: makeActive(child, position, Combo.Size.MICRO); break;
-                        case 9: makeActive(child, position, Combo.Size.MEDIUM); break;
-                        case 10: makeActive(child, position, Combo.Size.MEGA); break;
-
-                        case 12: makeActive(child, position, Dish.Label.VEG); break;
-                        case 13: makeActive(child, position, Dish.Label.EGG); break;
-                        case 14: makeActive(child, position, Dish.Label.NON_VEG); break;
-
-                        case 16: sortPriceLowToHigh = true; if (!child.isActivated()) { filters.setSelected(position); filters.notifyItemChanged(position); filters.removeSelected(17); filters.notifyItemChanged(17); } break;
-                        case 17: sortPriceLowToHigh = false; if (!child.isActivated()) { filters.setSelected(position); filters.notifyItemChanged(position); filters.removeSelected(16); filters.notifyItemChanged(16); } break;
+                        case 8: sortPriceLowToHigh = true; if (!child.isActivated()) { filters.setSelected(position); filters.notifyItemChanged(position); filters.removeSelected(9); filters.notifyItemChanged(9); } break;
+                        case 9: sortPriceLowToHigh = false; if (!child.isActivated()) { filters.setSelected(position); filters.notifyItemChanged(position); filters.removeSelected(8); filters.notifyItemChanged(8); } break;
                     }
                 }
                 return false;
@@ -260,7 +242,7 @@ public class MainActivity extends FoodmashActivity {
             public void onClick(View v) {
                 filters.clearAllSelected();
                 filters.setSelected(1);
-                filters.setSelected(16);
+                filters.setSelected(8);
                 filters.notifyDataSetChanged();
                 categorySelected.clear();
                 sizeSelected.clear();
