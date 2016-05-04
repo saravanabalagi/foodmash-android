@@ -245,6 +245,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
                     } else {
                         isEmailAvailable = false;
                         setCancelOnImageView(emailValidate);
+                        Snackbar.make(mainLayout, "Email address already registered", Snackbar.LENGTH_INDEFINITE).setAction("Dismiss", new View.OnClickListener() { @Override public void onClick(View v) { } }).show();
                         Animations.fadeOutAndFadeIn(emailProgressBar,emailValidate,500);
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -278,6 +279,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
                     } else {
                         isPhoneAvailable = false;
                         setCancelOnImageView(phoneValidate);
+                        Snackbar.make(mainLayout, "Mobile no. already registered", Snackbar.LENGTH_INDEFINITE).setAction("Dismiss", new View.OnClickListener() { @Override public void onClick(View v) { } }).show();
                         Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
