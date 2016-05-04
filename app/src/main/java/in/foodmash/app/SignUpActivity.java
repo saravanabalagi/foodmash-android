@@ -149,6 +149,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
         JsonObjectRequest signUpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_sign_up),getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                create.setVisibility(View.VISIBLE);
                 fragmentContainer.setVisibility(View.GONE);
                 intent = new Intent(SignUpActivity.this, MainActivity.class);
                 if(fromCart) intent = new Intent(SignUpActivity.this, CartActivity.class);
@@ -175,6 +176,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                create.setVisibility(View.VISIBLE);
                 fragmentContainer.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeSignUpRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
@@ -182,6 +184,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
         });
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
+        create.setVisibility(View.GONE);
         Swift.getInstance(SignUpActivity.this).addToRequestQueue(signUpRequest);
     }
 

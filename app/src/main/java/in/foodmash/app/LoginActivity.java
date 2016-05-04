@@ -147,6 +147,7 @@ public class LoginActivity extends FoodmashActivity implements View.OnClickListe
         JsonObjectRequest loginRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path)+getString(R.string.routes_sessions),getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                login.setVisibility(View.VISIBLE);
                 fragmentContainer.setVisibility(View.GONE);
                 if(fromCart) intent = new Intent(LoginActivity.this, CartActivity.class);
                 else intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -172,6 +173,7 @@ public class LoginActivity extends FoodmashActivity implements View.OnClickListe
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                login.setVisibility(View.VISIBLE);
                 fragmentContainer.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLocationRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
@@ -180,6 +182,7 @@ public class LoginActivity extends FoodmashActivity implements View.OnClickListe
         fragmentContainer.setVisibility(View.VISIBLE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
+        login.setVisibility(View.GONE);
         Swift.getInstance(LoginActivity.this).addToRequestQueue(loginRequest);
     }
 
