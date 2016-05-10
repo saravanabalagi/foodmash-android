@@ -20,8 +20,8 @@ defaultConfig {
     applicationId 'in.foodmash.app'
     minSdkVersion 16
     targetSdkVersion 23
-    versionCode 13
-    versionName '1.2.2 acornsquash'
+    versionCode 14
+    versionName '1.2.3 acornsquash'
     }
     buildTypes {
         release {
