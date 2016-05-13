@@ -21,6 +21,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,6 +40,7 @@ import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.commons.VolleyProgressFragment;
+import in.foodmash.app.models.User;
 import in.foodmash.app.utils.EmailUtils;
 import in.foodmash.app.utils.NumberUtils;
 
@@ -63,6 +66,8 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
     @Bind(R.id.email_validate) ImageView emailValidate;
     @Bind(R.id.contact_validate) ImageView phoneValidate;
 
+    private ObjectMapper objectMapper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +82,8 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
 
         save.setOnClickListener(this);
         changePassword.setOnClickListener(this);
+        objectMapper = new ObjectMapper();
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
         name.addTextChangedListener(this);
         dob.setOnClickListener(new View.OnClickListener() {
@@ -144,7 +151,8 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
                 fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
-                        Actions.cacheUserDetails(ProfileActivity.this, name.getText().toString().trim(), email.getText().toString().trim(), phone.getText().toString().trim(), Double.parseDouble(mashCash.getText().toString().trim()));
+                        User user = User.getInstance();
+                        Actions.cacheUserDetails(ProfileActivity.this, user.getName(), user.getEmail(), user.getMobileNo());
                         finish();
                     } else Snackbar.make(mainLayout, response.getString("error"), Snackbar.LENGTH_LONG).show();
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -168,28 +176,31 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                save.setVisibility(View.VISIBLE);
                 try {
                     if(response.getBoolean("success")) {
-                        JSONObject dataJson = response.getJSONObject("data");
-                        JSONObject userJson = dataJson.getJSONObject("user");
-                        name.setText(userJson.getString("name"));
-                        dob.setText(userJson.getString("dob").equals("null")?null:userJson.getString("dob"));
-                        email.setText(userJson.getString("email"));
-                        phone.setText(userJson.getString("mobile_no"));
-                        mashCash.setText(NumberUtils.getCurrencyFormat(userJson.getDouble("mash_cash")));
-                        promotionalOffers.setChecked(userJson.getBoolean("offers"));
+                        User.setInstance(objectMapper.readValue(response.getJSONObject("data").getJSONObject("user").toString(), User.class));
+                        User user = User.getInstance();
+                        name.setText(user.getName());
+                        dob.setText((user.getDob() == null) ? null : new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(user.getDob()));
+                        email.setText(user.getEmail());
+                        phone.setText(user.getMobileNo());
+                        mashCash.setText(NumberUtils.getCurrencyFormat(user.getMashCash()));
+                        promotionalOffers.setChecked(user.isOffers());
                     } else Snackbar.make(mainLayout,"Unable to save details: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
-                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(ProfileActivity.this,e); }
+                } catch (Exception e) { e.printStackTrace(); Actions.handleIgnorableException(ProfileActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
+                save.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeProfileDetailsRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
+        save.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(this).addToRequestQueue(getProfileDetailsRequest);

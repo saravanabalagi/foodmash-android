@@ -20,6 +20,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +37,7 @@ import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.commons.VolleyProgressFragment;
+import in.foodmash.app.models.User;
 import in.foodmash.app.utils.EmailUtils;
 
 /**
@@ -72,6 +75,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
     private boolean isPhoneAvailable = false;
     private boolean isEmailValidationInProgress = false;
     private boolean isPhoneValidationInProgress = false;
+    private ObjectMapper objectMapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +92,9 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
 
         fromCart = getIntent().getBooleanExtra("from_cart", false);
         create.setOnClickListener(this);
+
+        objectMapper = new ObjectMapper();
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
         nameValidate = (ImageView) findViewById(R.id.name_validate);
         emailValidate = (ImageView) findViewById(R.id.email_validate);
@@ -156,8 +163,9 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
                 try {
                     if (response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
-                        JSONObject userJson = dataJson.getJSONObject("user");
-                        Actions.cacheUserDetails(SignUpActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"), userJson.getDouble("mash_cash"));
+                        User.setInstance(objectMapper.readValue(dataJson.getJSONObject("user").toString(),User.class));
+                        User user = User.getInstance();
+                        Actions.cacheUserDetails(SignUpActivity.this, user.getName(), user.getEmail(), user.getMobileNo());
                         String userToken = dataJson.getString("user_token");
                         String sessionToken = dataJson.getString("session_token");
                         SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
@@ -171,7 +179,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
                         startActivity(intent);
                         finish();
                     } else Snackbar.make(mainLayout,"Unable to register your account: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
-                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(SignUpActivity.this,e);}
+                } catch (Exception e) { e.printStackTrace(); Actions.handleIgnorableException(SignUpActivity.this,e);}
             }
         }, new Response.ErrorListener() {
             @Override

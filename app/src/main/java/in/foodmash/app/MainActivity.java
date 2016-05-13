@@ -64,6 +64,7 @@ import in.foodmash.app.models.ComboOption;
 import in.foodmash.app.models.ComboOptionDish;
 import in.foodmash.app.models.Dish;
 import in.foodmash.app.models.Restaurant;
+import in.foodmash.app.models.User;
 import in.foodmash.app.utils.DateUtils;
 import in.foodmash.app.utils.NumberUtils;
 
@@ -341,8 +342,8 @@ public class MainActivity extends FoodmashActivity {
                         Actions.cacheCombos(MainActivity.this, comboJsonArrayString, new Date());
                         updateFillLayout(Arrays.asList(objectMapper.readValue(comboJsonArrayString, Combo[].class)));
                         if (Info.isLoggedIn(MainActivity.this) && response.getJSONObject("data").has("user") && !response.getJSONObject("data").isNull("user")) {
-                            JSONObject userJson = response.getJSONObject("data").getJSONObject("user");
-                            Actions.cacheUserDetails(MainActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"), userJson.getDouble("mash_cash"));
+                            User user = objectMapper.readValue(response.getJSONObject("data").getJSONObject("user").toString(), User.class);
+                            Actions.cacheUserDetails(MainActivity.this, user.getName(), user.getEmail(), user.getMobileNo());
                             mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(Info.getMashCash(MainActivity.this)));
                             mashCashLayout.setVisibility(View.VISIBLE);
                         } else mashCashLayout.setVisibility(View.GONE);

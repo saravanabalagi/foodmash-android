@@ -21,6 +21,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +39,7 @@ import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.commons.VolleyProgressFragment;
+import in.foodmash.app.models.User;
 import in.foodmash.app.utils.EmailUtils;
 import in.foodmash.app.utils.NumberUtils;
 
@@ -63,6 +66,7 @@ public class LoginActivity extends FoodmashActivity implements View.OnClickListe
     private ImageView passwordValidate;
 
     private Intent intent;
+    private ObjectMapper objectMapper;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -104,6 +108,8 @@ public class LoginActivity extends FoodmashActivity implements View.OnClickListe
             }, 1000);
         }
 
+        objectMapper = new ObjectMapper();
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
         register.setOnClickListener(this);
         forgotPassword.setOnClickListener(this);
         skip.setOnClickListener(this);
@@ -154,8 +160,9 @@ public class LoginActivity extends FoodmashActivity implements View.OnClickListe
                 try {
                     if (response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
-                        JSONObject userJson = dataJson.getJSONObject("user");
-                        Actions.cacheUserDetails(LoginActivity.this, userJson.getString("name"), userJson.getString("email"), userJson.getString("mobile_no"), userJson.getDouble("mash_cash"));
+                        User.setInstance(objectMapper.readValue(dataJson.getJSONObject("user").toString(), User.class));
+                        User user = User.getInstance();
+                        Actions.cacheUserDetails(LoginActivity.this, user.getName(), user.getEmail(), user.getMobileNo());
                         String userToken = dataJson.getString("user_token");
                         String sessionToken = dataJson.getString("session_token");
                         SharedPreferences sharedPreferences = getSharedPreferences("session", 0);
@@ -168,7 +175,7 @@ public class LoginActivity extends FoodmashActivity implements View.OnClickListe
                         startActivity(intent);
                         finish();
                     } else Snackbar.make(mainLayout, response.getString("error"), Snackbar.LENGTH_LONG).show();
-                } catch (JSONException e) { Snackbar.make(mainLayout, "Wrong username or password!", Snackbar.LENGTH_LONG).show(); }
+                } catch (Exception e) { Snackbar.make(mainLayout, "Wrong username or password!", Snackbar.LENGTH_LONG).show(); }
             }
         }, new Response.ErrorListener() {
             @Override

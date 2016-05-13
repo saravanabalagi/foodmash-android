@@ -28,13 +28,12 @@ import in.foodmash.app.utils.DateUtils;
  */
 public class Actions {
 
-    public static void cacheUserDetails(Context context,String name, String email, String phone, double mashCash) {
+    public static void cacheUserDetails(Context context,String name, String email, String phone) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("cache", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("email",email);
         editor.putString("phone",phone);
         editor.putString("name",name);
-        editor.putFloat("mash_cash", (float) mashCash);
         editor.apply();
     }
 
