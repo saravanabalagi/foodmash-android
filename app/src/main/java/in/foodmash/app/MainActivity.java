@@ -363,7 +363,7 @@ public class MainActivity extends FoodmashActivity {
                             Actions.cacheUserDetails(MainActivity.this, user.getName(), user.getEmail(), user.getMobileNo());
                             if(!user.isVerified()) {
                                 Intent intent = new Intent(MainActivity.this,OtpActivity.class);
-                                intent.putExtra("type", "verify_user");
+                                intent.putExtra("type", "verify_account");
                                 startActivityForResult(intent, VERIFY_USER_REQUEST_CODE);
                             }
                             mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(Info.getMashCash(MainActivity.this)));

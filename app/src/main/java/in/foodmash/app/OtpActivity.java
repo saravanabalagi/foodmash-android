@@ -83,11 +83,11 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
             if (recoveryMode.equals("email")) otpInfo.setText("We have sent an OTP (One Time Password) to your email '" + phoneOrEmailValue + "' enter it below to reset your account password. You can resend the OTP once the timer expires.");
             else if (recoveryMode.equals("phone")) otpInfo.setText("We have sent an OTP (One Time Password) to your phone " + "+91" + phoneOrEmailValue + " via a private message, enter it below to reset your account password. You can resend the OTP once the timer expires.");
         } else if(getIntent().getStringExtra("type").equals("verify_account")) {
-            if(!Info.isLoggedIn(this)) finish();
+            if(!Info.isLoggedIn(this)) { setResult(RESULT_CANCELED); finish(); }
             setTitle(toolbar,"Verify","Account");
             type = getIntent().getStringExtra("type");
             otpInfo.setText("We have sent an OTP (One Time Password) to your email '" + Info.getEmail(this) + "' and to your phone " + Info.getPhone(this) + "via a private message, enter it below to verify your account. You can resend the OTP once the timer expires.");
-        } else finish();
+        } else { setResult(RESULT_CANCELED); finish(); }
 
         handler.removeCallbacks(setOtpTime);
         handler.postDelayed(setOtpTime, 1000);
@@ -137,7 +137,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
                 fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
-                        if(type.equals("verify_user")) { setResult(RESULT_OK, new Intent()); finish(); }
+                        if(type.equals("verify_user")) { setResult(RESULT_OK); finish(); }
                         if(type.equals("forgot_password")) {
                             JSONObject dataJson = response.getJSONObject("data");
                             intent = new Intent(OtpActivity.this, ChangePasswordActivity.class);
