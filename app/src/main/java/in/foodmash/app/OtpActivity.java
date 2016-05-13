@@ -91,14 +91,16 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
             type = getIntent().getStringExtra("type");
             phoneOrEmailValue = getIntent().getStringExtra("value");
             recoveryMode = getIntent().getStringExtra("recovery_mode");
-            if (recoveryMode.equals("email")) otpInfo.setText("We have sent an OTP (One Time Password) to your email '" + phoneOrEmailValue + "' enter it below to reset your account password. You can resend the OTP once the timer expires.");
-            else if (recoveryMode.equals("phone")) otpInfo.setText("We have sent an OTP (One Time Password) to your phone " + "+91" + phoneOrEmailValue + " via a private message, enter it below to reset your account password. You can resend the OTP once the timer expires.");
+            if (recoveryMode.equals("email")) otpInfo.setText("We have sent an OTP (One Time Password) to your email '" + phoneOrEmailValue + "' and to the mobile no. linked with this account. Enter it below to reset your account password. You can resend the OTP once the timer expires.");
+            else if (recoveryMode.equals("phone")) otpInfo.setText("We have sent an OTP (One Time Password) to your phone " + "+91" + phoneOrEmailValue + " via a private message and an email to the email address linked with this account. Enter it below to reset your account password. You can resend the OTP once the timer expires.");
         } else if(getIntent().getStringExtra("type").equals("verify_account")) {
             if(!Info.isLoggedIn(this)) { setResult(RESULT_CANCELED); finish(); }
             setTitle(toolbar,"Verify","Account");
             type = getIntent().getStringExtra("type");
             otpInfo.setText("We have sent an OTP (One Time Password) to your email '" + Info.getEmail(this) + "' and to your phone " + Info.getPhone(this) + "via a private message, enter it below to verify your account. You can resend the OTP once the timer expires.");
-        } else { setResult(RESULT_CANCELED); finish(); }
+            resendOtpRequest();
+        }
+        else { setResult(RESULT_CANCELED); finish(); }
 
         handler.removeCallbacks(setOtpTime);
         handler.postDelayed(setOtpTime, 1000);
@@ -142,13 +144,16 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
     }
 
     public void makeCheckOtpRequest() {
-        JsonObjectRequest checkOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_check_otp), getRequestJson(), new Response.Listener<JSONObject>() {
+        String url = "";
+        if(type.equals("verify_account")) url = getString(R.string.routes_verify_profile);
+        else if(type.equals("forgot_password")) url = getString(R.string.routes_check_otp);
+        JsonObjectRequest checkOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + url, getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
-                        if(type.equals("verify_user")) { setResult(RESULT_OK); finish(); }
+                        if(type.equals("verify_account")) { setResult(RESULT_OK); finish(); }
                         if(type.equals("forgot_password")) {
                             JSONObject dataJson = response.getJSONObject("data");
                             intent = new Intent(OtpActivity.this, ChangePasswordActivity.class);
@@ -177,7 +182,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
     private boolean isEverythingValid() { return !otpExpired && otp.getText().toString().trim().length()>=5; }
     private JSONObject getOtpRequestJson() {
         JSONObject requestJson = null;
-        if(type.equals("verify_user")) requestJson = JsonProvider.getStandardRequestJson(OtpActivity.this);
+        if(type.equals("verify_account")) requestJson = JsonProvider.getStandardRequestJson(OtpActivity.this);
         else if(type.equals("forgot_password")) {
             requestJson = JsonProvider.getAnonymousRequestJson(OtpActivity.this);
             try {
@@ -194,7 +199,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
 
     public void resendOtpRequest() {
         String url = "";
-        if(type.equals("verify_user")) url = getString(R.string.routes_verify_profile);
+        if(type.equals("verify_account")) url = getString(R.string.routes_get_otp_profile);
         else if(type.equals("forgot_password")) url = getString(R.string.routes_forgot_password);
         JsonObjectRequest resendOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + url, getOtpRequestJson(), new Response.Listener<JSONObject>() {
             @Override
