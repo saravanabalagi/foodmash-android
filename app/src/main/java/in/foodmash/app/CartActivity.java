@@ -29,6 +29,7 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.models.Cart;
 import in.foodmash.app.models.Combo;
+import in.foodmash.app.models.User;
 import in.foodmash.app.utils.NumberUtils;
 
 /**
@@ -36,6 +37,7 @@ import in.foodmash.app.utils.NumberUtils;
  */
 public class CartActivity extends FoodmashActivity implements View.OnClickListener {
 
+    public static final int VERIFY_USER_REQUEST_CODE = 101;
     @Bind(R.id.buy) FloatingActionButton buy;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.empty_cart_layout) LinearLayout emptyCartLayout;
@@ -120,6 +122,21 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == VERIFY_USER_REQUEST_CODE) {
+            if(resultCode==RESULT_OK) {
+                Snackbar.make(mainLayout,"User verified successfully",Snackbar.LENGTH_LONG)
+                        .setAction("Dismiss", new View.OnClickListener() { @Override public void onClick(View v) { } })
+                        .show();
+                buy.setVisibility(View.VISIBLE);
+            } else Snackbar.make(mainLayout,"Could not verify user!",Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Go Back", new View.OnClickListener() { @Override public void onClick(View v) { } })
+                    .show();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         swipeRefreshLayout.setRefreshing(true);
@@ -141,6 +158,12 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
         if(cart.getCount()>0) { emptyCartLayout.setVisibility(View.GONE); cartProgress.setVisibility(View.VISIBLE); cartRecyclerView.setVisibility(View.VISIBLE); }
         else { emptyCartLayout.setVisibility(View.VISIBLE); cartProgress.setVisibility(View.GONE); cartRecyclerView.setVisibility(View.GONE); }
 
+        if(!User.getInstance().isVerified()) {
+            buy.setVisibility(View.GONE);
+            Intent intent = new Intent(CartActivity.this,OtpActivity.class);
+            intent.putExtra("type", "verify_user");
+            startActivityForResult(intent, VERIFY_USER_REQUEST_CODE);
+        }
         cartAdapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
     }

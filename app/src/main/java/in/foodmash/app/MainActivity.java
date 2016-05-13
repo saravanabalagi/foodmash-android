@@ -70,6 +70,7 @@ import in.foodmash.app.utils.NumberUtils;
 
 public class MainActivity extends FoodmashActivity {
 
+    public static final int VERIFY_USER_REQUEST_CODE = 100;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.empty_combo_layout) LinearLayout emptyComboLayout;
@@ -328,6 +329,21 @@ public class MainActivity extends FoodmashActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == VERIFY_USER_REQUEST_CODE) {
+            if(resultCode==RESULT_OK) {
+                Snackbar.make(mainLayout,"User verified successfully",Snackbar.LENGTH_LONG)
+                        .setAction("Dismiss", new View.OnClickListener() { @Override public void onClick(View v) { } })
+                        .show();
+                makeComboRequest();
+            } else Snackbar.make(mainLayout,"Could not verify user!",Snackbar.LENGTH_LONG)
+                    .setAction("Dismiss", new View.OnClickListener() { @Override public void onClick(View v) { } })
+                    .show();
+        }
+    }
+
     public void makeComboRequest() {
         JsonObjectRequest getCombosRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_get_combos), getComboRequestJson(), new Response.Listener<JSONObject>() {
             @Override
@@ -342,8 +358,14 @@ public class MainActivity extends FoodmashActivity {
                         Actions.cacheCombos(MainActivity.this, comboJsonArrayString, new Date());
                         updateFillLayout(Arrays.asList(objectMapper.readValue(comboJsonArrayString, Combo[].class)));
                         if (Info.isLoggedIn(MainActivity.this) && response.getJSONObject("data").has("user") && !response.getJSONObject("data").isNull("user")) {
-                            User user = objectMapper.readValue(response.getJSONObject("data").getJSONObject("user").toString(), User.class);
+                            User.setInstance(objectMapper.readValue(response.getJSONObject("data").getJSONObject("user").toString(), User.class));
+                            User user = User.getInstance();
                             Actions.cacheUserDetails(MainActivity.this, user.getName(), user.getEmail(), user.getMobileNo());
+                            if(!user.isVerified()) {
+                                Intent intent = new Intent(MainActivity.this,OtpActivity.class);
+                                intent.putExtra("type", "verify_user");
+                                startActivityForResult(intent, VERIFY_USER_REQUEST_CODE);
+                            }
                             mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(Info.getMashCash(MainActivity.this)));
                             mashCashLayout.setVisibility(View.VISIBLE);
                         } else mashCashLayout.setVisibility(View.GONE);
