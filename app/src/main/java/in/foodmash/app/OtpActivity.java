@@ -137,12 +137,15 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
                 fragmentContainer.setVisibility(View.GONE);
                 try {
                     if(response.getBoolean("success")) {
-                        JSONObject dataJson = response.getJSONObject("data");
-                        intent = new Intent(OtpActivity.this, ChangePasswordActivity.class);
-                        intent.putExtra("otp_token",dataJson.getString("otp_token"));
-                        intent.putExtra("forgot",true);
-                        startActivity(intent);
-                        finish();
+                        if(type.equals("verify_user")) { setResult(RESULT_OK, new Intent()); finish(); }
+                        if(type.equals("forgot_password")) {
+                            JSONObject dataJson = response.getJSONObject("data");
+                            intent = new Intent(OtpActivity.this, ChangePasswordActivity.class);
+                            intent.putExtra("otp_token",dataJson.getString("otp_token"));
+                            intent.putExtra("forgot", true);
+                            startActivity(intent);
+                            finish();
+                        }
                     } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(OtpActivity.this,e);}
             }
