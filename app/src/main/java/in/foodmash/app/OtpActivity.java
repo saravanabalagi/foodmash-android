@@ -24,6 +24,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
@@ -32,8 +33,9 @@ import in.foodmash.app.commons.VolleyProgressFragment;
 /**
  * Created by Zeke on Aug 08 2015.
  */
-public class ForgotPasswordOtpActivity extends FoodmashActivity implements View.OnClickListener{
+public class OtpActivity extends FoodmashActivity implements View.OnClickListener{
 
+    public static final int TIMER_MINUTES = 5;
     @Bind(R.id.proceed) FloatingActionButton proceed;
     @Bind(R.id.otp_time_layout) LinearLayout otpTimeLayout;
     @Bind(R.id.otp_expired_layout) LinearLayout otpExpiredLayout;
@@ -46,22 +48,21 @@ public class ForgotPasswordOtpActivity extends FoodmashActivity implements View.
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     private EditText otp;
-    private String recoveryKey=null;
+    private String phoneOrEmailValue =null;
+    private String recoveryMode;
     private String type;
 
     private Handler handler=new Handler();
-    private int timerMinutes=3;
+    private int timerMinutes=TIMER_MINUTES;
     private int timerSeconds=0;
     private boolean otpExpired = false;
-    private JsonObjectRequest checkOtpRequest;
-    private JsonObjectRequest resendOtpRequest;
 
     private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forgot_password_otp);
+        setContentView(R.layout.activity_otp);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
@@ -69,16 +70,24 @@ public class ForgotPasswordOtpActivity extends FoodmashActivity implements View.
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
-        setTitle(toolbar,"Forgot","Password");
 
         proceed.setOnClickListener(this);
         resendOtp.setOnClickListener(this);
         otp = (EditText) findViewById(R.id.otp);
 
-        recoveryKey=getIntent().getStringExtra("value");
-        type = getIntent().getStringExtra("type");
-        if(type.equals("email")) otpInfo.setText("We have sent an OTP (One Time Password) to your email '"+recoveryKey+"', enter it below to reset your account password. You can resend the OTP once the timer expires.");
-        else if(type.equals("phone")) otpInfo.setText("We have sent an OTP (One Time Password) to your phone "+"+91"+recoveryKey+" via a private message, enter it below to reset your account password. You can resend the OTP once the timer expires.");
+        if(getIntent().getStringExtra("type").equals("forgot_password")) {
+            setTitle(toolbar,"Forgot","Password");
+            type = getIntent().getStringExtra("type");
+            phoneOrEmailValue = getIntent().getStringExtra("value");
+            recoveryMode = getIntent().getStringExtra("recovery_mode");
+            if (recoveryMode.equals("email")) otpInfo.setText("We have sent an OTP (One Time Password) to your email '" + phoneOrEmailValue + "' enter it below to reset your account password. You can resend the OTP once the timer expires.");
+            else if (recoveryMode.equals("phone")) otpInfo.setText("We have sent an OTP (One Time Password) to your phone " + "+91" + phoneOrEmailValue + " via a private message, enter it below to reset your account password. You can resend the OTP once the timer expires.");
+        } else if(getIntent().getStringExtra("type").equals("verify_account")) {
+            if(!Info.isLoggedIn(this)) finish();
+            setTitle(toolbar,"Verify","Account");
+            type = getIntent().getStringExtra("type");
+            otpInfo.setText("We have sent an OTP (One Time Password) to your email '" + Info.getEmail(this) + "' and to your phone " + Info.getPhone(this) + "via a private message, enter it below to verify your account. You can resend the OTP once the timer expires.");
+        } else finish();
 
         handler.removeCallbacks(setOtpTime);
         handler.postDelayed(setOtpTime, 1000);
@@ -112,7 +121,7 @@ public class ForgotPasswordOtpActivity extends FoodmashActivity implements View.
     };
 
     private JSONObject getRequestJson() {
-        JSONObject requestJson = JsonProvider.getAnonymousRequestJson(ForgotPasswordOtpActivity.this);
+        JSONObject requestJson = JsonProvider.getAnonymousRequestJson(OtpActivity.this);
         try {
             JSONObject dataJson = new JSONObject();
             dataJson.put("otp",otp.getText().toString().trim());
@@ -129,13 +138,13 @@ public class ForgotPasswordOtpActivity extends FoodmashActivity implements View.
                 try {
                     if(response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
-                        intent = new Intent(ForgotPasswordOtpActivity.this, ChangePasswordActivity.class);
+                        intent = new Intent(OtpActivity.this, ChangePasswordActivity.class);
                         intent.putExtra("otp_token",dataJson.getString("otp_token"));
                         intent.putExtra("forgot",true);
                         startActivity(intent);
                         finish();
                     } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
-                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(ForgotPasswordOtpActivity.this,e);}
+                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(OtpActivity.this,e);}
             }
         }, new Response.ErrorListener() {
             @Override
@@ -148,47 +157,57 @@ public class ForgotPasswordOtpActivity extends FoodmashActivity implements View.
         fragmentContainer.setVisibility(View.VISIBLE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
-        Swift.getInstance(ForgotPasswordOtpActivity.this).addToRequestQueue(checkOtpRequest);
+        Swift.getInstance(OtpActivity.this).addToRequestQueue(checkOtpRequest);
     }
 
-    private boolean isEverythingValid() {
-        return !otpExpired &&
-                otp.getText().toString().trim().length()>=5;
-    }
-
+    private boolean isEverythingValid() { return !otpExpired && otp.getText().toString().trim().length()>=5; }
     private JSONObject getOtpRequestJson() {
-        JSONObject requestJson = JsonProvider.getAnonymousRequestJson(ForgotPasswordOtpActivity.this);
-        try {
-            JSONObject userJson = new JSONObject();
-            if(type.equals("phone")) userJson.put("mobile_no",recoveryKey);
-            else if(type.equals("email")) userJson.put("email",recoveryKey);
-            JSONObject dataJson = new JSONObject();
-            dataJson.put("user",userJson);
-            requestJson.put("data",dataJson);
-        } catch (JSONException e) { e.printStackTrace(); }
+        JSONObject requestJson = null;
+        if(type.equals("verify_user")) requestJson = JsonProvider.getStandardRequestJson(OtpActivity.this);
+        else if(type.equals("forgot_password")) {
+            requestJson = JsonProvider.getAnonymousRequestJson(OtpActivity.this);
+            try {
+                JSONObject userJson = new JSONObject();
+                if (recoveryMode.equals("phone")) userJson.put("mobile_no", phoneOrEmailValue);
+                else if (recoveryMode.equals("email")) userJson.put("email", phoneOrEmailValue);
+                JSONObject dataJson = new JSONObject();
+                dataJson.put("user",userJson);
+                requestJson.put("data",dataJson);
+            } catch (JSONException e) { e.printStackTrace(); }
+        }
         return requestJson;
     }
 
     public void resendOtpRequest() {
-        resendOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_forgot_password), getOtpRequestJson(), new Response.Listener<JSONObject>() {
+        String url = "";
+        if(type.equals("verify_user")) url = getString(R.string.routes_verify_profile);
+        else if(type.equals("forgot_password")) url = getString(R.string.routes_forgot_password);
+        JsonObjectRequest resendOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + url, getOtpRequestJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                proceed.setVisibility(View.VISIBLE);
                 try {
-                    if(response.getBoolean("success")) {
+                    if (response.getBoolean("success")) {
                         otpExpired = false;
-                        timerMinutes = 3; timerSeconds = 0;
+                        timerMinutes = TIMER_MINUTES;
+                        timerSeconds = 0;
                         Animations.fadeOutAndFadeIn(otpExpiredLayout, otpTimeLayout, 500);
                         Animations.fadeIn(otpFillLayout, 500);
                         handler.removeCallbacks(setOtpTime);
                         handler.postDelayed(setOtpTime, 1000);
-                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
-                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(ForgotPasswordOtpActivity.this,e); }
+                    } else
+                        Snackbar.make(mainLayout, "Unable to process your request: " + response.getString("error"), Snackbar.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Actions.handleIgnorableException(OtpActivity.this, e);
+                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
+                proceed.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLocationRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
@@ -196,7 +215,8 @@ public class ForgotPasswordOtpActivity extends FoodmashActivity implements View.
         fragmentContainer.setVisibility(View.VISIBLE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
-        Swift.getInstance(ForgotPasswordOtpActivity.this).addToRequestQueue(resendOtpRequest);
+        proceed.setVisibility(View.GONE);
+        Swift.getInstance(OtpActivity.this).addToRequestQueue(resendOtpRequest);
     }
 
 }

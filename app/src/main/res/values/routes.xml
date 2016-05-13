@@ -34,6 +34,7 @@
 
     <!--Profile-->
     <string name="routes_get_profile">/profile</string>
+    <string name="routes_verify_profile">/profile/verify</string>
     <string name="routes_update_profile">/profile/update</string>
 
     <!--Contact Us-->

@@ -36,8 +36,7 @@
         <activity android:name=".CheckoutPaymentActivity" android:launchMode="singleTask" android:parentActivityName=".CheckoutAddressActivity" />
         <activity android:name=".ComboDescriptionActivity" android:launchMode="singleTask" android:parentActivityName=".MainActivity" />
         <activity android:name=".ContactUsActivity" android:launchMode="singleTask" android:parentActivityName=".MainActivity" />
-        <activity android:name=".ForgotPasswordActivity" android:launchMode="singleTask" android:parentActivityName=".LoginActivity" />
-        <activity android:name=".ForgotPasswordOtpActivity" android:launchMode="singleTask" android:parentActivityName=".LoginActivity" />
+        <activity android:name=".OtpActivity" android:launchMode="singleTask" android:parentActivityName=".LoginActivity" />
         <activity android:name=".LoginActivity" android:launchMode="singleTask" />
         <activity android:name=".MainActivity" android:launchMode="singleTask" />
         <activity android:name=".ErrorReportActivity" android:launchMode="singleTask" />

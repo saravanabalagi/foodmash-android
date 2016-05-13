@@ -113,8 +113,9 @@ public class ForgotPasswordActivity extends FoodmashActivity implements View.OnC
                 try {
                     if(response.getBoolean("success")) {
                         Log.i("Security",response.getString("otp"));
-                        intent = new Intent(ForgotPasswordActivity.this, ForgotPasswordOtpActivity.class);
-                        intent.putExtra("type",(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)?"phone":"email");
+                        intent = new Intent(ForgotPasswordActivity.this, OtpActivity.class);
+                        intent.putExtra("type", "forgot_password");
+                        intent.putExtra("recovery_mode",(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)?"phone":"email");
                         intent.putExtra("value",(otpMethodRadioGroup.getCheckedRadioButtonId()==R.id.phone_radio)?phone.getText().toString().trim():email.getText().toString().trim());
                         startActivity(intent);
                     } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
