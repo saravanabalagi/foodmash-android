@@ -146,7 +146,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
                             startActivity(intent);
                             finish();
                         }
-                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                    } else Snackbar.make(mainLayout,"OTP mismatch!",Snackbar.LENGTH_LONG).show();
                 } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(OtpActivity.this,e);}
             }
         }, new Response.ErrorListener() {
