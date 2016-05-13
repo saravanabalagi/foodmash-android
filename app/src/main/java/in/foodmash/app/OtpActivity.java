@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -58,6 +59,16 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
     private boolean otpExpired = false;
 
     private Intent intent;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home) {
+            if(type.equals("verify_account")) { setResult(RESULT_CANCELED); finish(); }
+            else if (type.equals("forgot_password")) finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
