@@ -76,6 +76,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
     private boolean isEmailValidationInProgress = false;
     private boolean isPhoneValidationInProgress = false;
     private ObjectMapper objectMapper;
+    private Snackbar snackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,11 +253,14 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
                     if(response.getBoolean("success")) {
                         isEmailAvailable = true;
                         setOkayOnImageView(emailValidate);
+                        if(snackbar.isShown() && isPhoneAvailable) snackbar.dismiss();
                         Animations.fadeOutAndFadeIn(emailProgressBar,emailValidate,500);
                     } else {
                         isEmailAvailable = false;
                         setCancelOnImageView(emailValidate);
-                        Snackbar.make(mainLayout, "Email address already registered", Snackbar.LENGTH_INDEFINITE).setAction("Dismiss", new View.OnClickListener() { @Override public void onClick(View v) { } }).show();
+                        snackbar = Snackbar.make(mainLayout, "Email address already registered", Snackbar.LENGTH_INDEFINITE);
+                        snackbar.setAction("Login", new View.OnClickListener() { @Override public void onClick(View v) { finish(); } });
+                        snackbar.show();
                         Animations.fadeOutAndFadeIn(emailProgressBar,emailValidate,500);
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -264,7 +268,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mainLayout, "No connection",Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(mainLayout, "No connection",Snackbar.LENGTH_LONG);
                 snackbar.setAction("Try again", new View.OnClickListener() { @Override public void onClick(View v) { makeCheckEmailRequest(); } });
                 snackbar.show();
                 isEmailValidationInProgress = false;
@@ -286,11 +290,14 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
                     if(response.getBoolean("success")) {
                         isPhoneAvailable = true;
                         setOkayOnImageView(phoneValidate);
+                        if(snackbar.isShown() && isEmailAvailable) snackbar.dismiss();
                         Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);
                     } else {
                         isPhoneAvailable = false;
                         setCancelOnImageView(phoneValidate);
-                        Snackbar.make(mainLayout, "Mobile no. already registered", Snackbar.LENGTH_INDEFINITE).setAction("Dismiss", new View.OnClickListener() { @Override public void onClick(View v) { } }).show();
+                        snackbar = Snackbar.make(mainLayout, "Mobile no. already registered", Snackbar.LENGTH_INDEFINITE);
+                        snackbar.setAction("Login", new View.OnClickListener() { @Override public void onClick(View v) { finish(); } });
+                        snackbar.show();
                         Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);
                     }
                 } catch (JSONException e) { e.printStackTrace(); }
@@ -298,7 +305,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Snackbar snackbar = Snackbar.make(mainLayout, "No connection",Snackbar.LENGTH_LONG);
+                snackbar = Snackbar.make(mainLayout, "No connection",Snackbar.LENGTH_LONG);
                 snackbar.setAction("Try again", new View.OnClickListener() { @Override public void onClick(View v) { makeCheckPhoneRequest(); } });
                 snackbar.show();
                 isPhoneValidationInProgress = false;
