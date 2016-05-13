@@ -412,21 +412,23 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String result = data.getStringExtra("result");
-        if(requestCode == RESULT_CANCELED) {
-            Snackbar.make(mainLayout,"Transaction failed. "+result,Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Try again", new View.OnClickListener() { @Override public void onClick(View v) { } })
-                    .show();
-        } else if (requestCode == RESULT_OK) {
-            orderId = data.getStringExtra("order_id");
-            Intent intent = new Intent(CheckoutPaymentActivity.this, OrderDescriptionActivity.class);
-            intent.putExtra("cart", true);
-            intent.putExtra("order_id", orderId);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            cart.removeAllOrders();
-            cart.discount = Cart.Discount.NIL;
-            startActivity(intent);
-            finish();
+        if(requestCode == PayuConstants.PAYU_REQUEST_CODE) {
+            String result = data.getStringExtra("result");
+            if (resultCode == RESULT_CANCELED) {
+                Snackbar.make(mainLayout, "Transaction failed. " + result, Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Try again", new View.OnClickListener() { @Override public void onClick(View v) { } })
+                        .show();
+            } else if (resultCode == RESULT_OK) {
+                orderId = data.getStringExtra("order_id");
+                Intent intent = new Intent(CheckoutPaymentActivity.this, OrderDescriptionActivity.class);
+                intent.putExtra("cart", true);
+                intent.putExtra("order_id", orderId);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                cart.removeAllOrders();
+                cart.discount = Cart.Discount.NIL;
+                startActivity(intent);
+                finish();
+            }
         }
     }
 
