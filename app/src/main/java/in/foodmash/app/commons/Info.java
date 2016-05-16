@@ -68,4 +68,14 @@ public class Info {
         return sharedPreferences.getFloat("mash_cash",0);
     }
 
+    public static boolean isMashCashEnabled(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("settings", 0);
+        return sharedPreferences.getBoolean("mash_cash",false);
+    }
+
+    public static boolean isVerifyUserEnabled(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("settings", 0);
+        return sharedPreferences.getBoolean("verify_user",false);
+    }
+
 }
