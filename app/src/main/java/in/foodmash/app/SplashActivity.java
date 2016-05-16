@@ -95,10 +95,15 @@ public class SplashActivity extends FoodmashActivity {
                             intent.putExtra("message", maintenance.getString("message"));
                             intent.putExtra("image", maintenance.getString("image"));
                             intent.putExtra("blocking", maintenance.getBoolean("blocking"));
-                            if(maintenance.has("url")) {
+                            if(maintenance.has("url") && !maintenance.isNull("url")) {
                                 intent.putExtra("url", maintenance.getString("url"));
                                 intent.putExtra("url_caption", maintenance.getString("url_caption"));
                                 intent.putExtra("url_hides_exit", maintenance.getBoolean("url_hides_exit"));
+                            } if(response.getJSONObject("data").has("settings") && !response.getJSONObject("data").isNull("settings")) {
+                                JSONObject settings = response.getJSONObject("data").getJSONObject("settings");
+                                Actions.cacheSettings(SplashActivity.this,
+                                        (settings.has("verify_user") && !settings.isNull("verify_user")) && settings.getBoolean("verify_user"),
+                                        (settings.has("mash_cash") && !settings.isNull("mash_cash")) && settings.getBoolean("mash_cash"));
                             }
                             startActivity(intent);
                             finish();
