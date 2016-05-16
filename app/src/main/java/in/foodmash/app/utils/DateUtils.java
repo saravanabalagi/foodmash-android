@@ -31,6 +31,13 @@ public class DateUtils {
             return utcDateFormat.parse(railsUtcDateFormat);
         } catch (ParseException e) { e.printStackTrace(); return null; }
     }
+    public static Date ddmmyyslashDateStringToJavaDate(String ddmmyyyyslashUtcDateFormat) {
+        try {
+            DateFormat utcDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            utcDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return utcDateFormat.parse(ddmmyyyyslashUtcDateFormat);
+        } catch (ParseException e) { e.printStackTrace(); return null; }
+    }
 
     public static long howOldInHours(Date date) { return TimeUnit.MILLISECONDS.toHours(new Date().getTime() - date.getTime()); }
     public static long howOldInDays(Date date) { return TimeUnit.MILLISECONDS.toDays(new Date().getTime() - date.getTime()); }
