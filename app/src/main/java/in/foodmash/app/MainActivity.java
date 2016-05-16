@@ -379,7 +379,8 @@ public class MainActivity extends FoodmashActivity {
                             if(!user.isVerified() && !notVerified) {
                                 Intent intent = new Intent(MainActivity.this,OtpActivity.class);
                                 intent.putExtra("type", "verify_account");
-                                startActivityForResult(intent, VERIFY_USER_REQUEST_CODE);
+                                if (Info.isVerifyUserEnabled(MainActivity.this))
+                                    startActivityForResult(intent, VERIFY_USER_REQUEST_CODE);
                             }
                             mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(Info.getMashCash(MainActivity.this)));
                             mashCashLayout.setVisibility(View.VISIBLE);

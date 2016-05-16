@@ -158,7 +158,7 @@ public class CartActivity extends FoodmashActivity implements View.OnClickListen
         if(cart.getCount()>0) { emptyCartLayout.setVisibility(View.GONE); cartProgress.setVisibility(View.VISIBLE); cartRecyclerView.setVisibility(View.VISIBLE); }
         else { emptyCartLayout.setVisibility(View.VISIBLE); cartProgress.setVisibility(View.GONE); cartRecyclerView.setVisibility(View.GONE); }
 
-        if(!User.getInstance().isVerified()) {
+        if(Info.isVerifyUserEnabled(this) && Info.isLoggedIn(this) && !User.getInstance().isVerified()) {
             buy.setVisibility(View.GONE);
             Intent intent = new Intent(CartActivity.this,OtpActivity.class);
             intent.putExtra("type", "verify_user");
