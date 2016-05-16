@@ -72,7 +72,6 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     @Bind(R.id.vat_percentage) TextView vatPercentage;
     @Bind(R.id.apply) TextView apply;
     @Bind(R.id.promo_discount) TextView promoDiscount;
-    @Bind(R.id.promo_discount_text) TextView promoDiscountText;
     @Bind(R.id.confirmed_promo_mash_cash) TextView confirmedPromoMashCash;
     @Bind(R.id.promo_discount_layout) LinearLayout promoDiscountLayout;
     @Bind(R.id.promo_code) EditText promoCode;
@@ -121,7 +120,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
 
         class PaymentPagerAdapter extends FragmentPagerAdapter {
             public PaymentPagerAdapter(FragmentManager fm) { super(fm); }
-            @Override public int getCount() { return 1; }
+            @Override public int getCount() { return 2; }
             @Override public Fragment getItem(int position) {
                 switch (position) {
                     case 0: return new CashOnDeliveryFragment();
@@ -152,7 +151,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                 promoCodeInputLayout.setErrorEnabled(false);
             }
         });
-        //getHashAndPaymentRelatedDetails();
+        getHashAndPaymentRelatedDetails();
     }
 
     @Override
@@ -211,7 +210,10 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                 fragmentContainer.setVisibility(View.GONE);
                 try {
                     if (response.getBoolean("success")) {
+                        Log.e("Testing", response.toString());
                         payuHashes.setPaymentHash(response.getJSONObject("data").getString("hash"));
+                        payuHashes.setPaymentRelatedDetailsForMobileSdkHash(response.getJSONObject("data").getString("mobile_sdk_hash"));
+                        paymentParams.setTxnId(response.getJSONObject("data").getString("txn_id"));
                         paymentParams.setHash(payuHashes.getPaymentHash());
                         Log.i("Payments", "Key: " + paymentParams.getKey());
                         Log.i("Payments", "Amount: " + paymentParams.getAmount());
@@ -233,6 +235,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                         merchantWebService.setHash(payuHashes.getPaymentRelatedDetailsForMobileSdkHash());
                         PostData postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
                         if (postData.getCode() == PayuErrors.NO_ERROR) {
+                            Log.i("Payments", "No errora");
                             payuConfig.setData(postData.getResult());
                             GetPaymentRelatedDetailsTask paymentRelatedDetailsForMobileSdkTask = new GetPaymentRelatedDetailsTask(CheckoutPaymentActivity.this);
                             paymentRelatedDetailsForMobileSdkTask.execute(payuConfig);
