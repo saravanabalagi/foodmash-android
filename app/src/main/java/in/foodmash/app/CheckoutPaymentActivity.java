@@ -43,12 +43,12 @@ import org.json.JSONObject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
-import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
 import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.models.Cart;
+import in.foodmash.app.models.User;
 import in.foodmash.app.payment.CashOnDeliveryFragment;
 import in.foodmash.app.payment.CreditDebitCardFragment;
 import in.foodmash.app.payment.NetbankingFragment;
@@ -82,6 +82,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     private String orderId;
     private Cart cart = Cart.getInstance();
     private Cart.Discount discount = Cart.Discount.NIL;
+    public boolean mobileSdkObtained = false;
 
     PayuConfig payuConfig = new PayuConfig();
     PayuResponse payuResponse = new PayuResponse();
@@ -113,19 +114,18 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                 if(fragment instanceof CashOnDeliveryFragment) {
                     paymentMethod=getResources().getString(R.string.payment_cod);
                     if(isEverythingValid()) makeCodPaymentRequest();
-                } else if(fragment instanceof NetbankingFragment) { paymentMethod = getString(R.string.payment_netbanking); ((NetbankingFragment) fragment).doPayment(); }
-                else if(fragment instanceof CreditDebitCardFragment) { paymentMethod = getString(R.string.payment_card); ((CreditDebitCardFragment) fragment).doPayment(); }
+                } else getHashAndDoPayment();
             }
         });
 
         class PaymentPagerAdapter extends FragmentPagerAdapter {
             public PaymentPagerAdapter(FragmentManager fm) { super(fm); }
-            @Override public int getCount() { return 2; }
+            @Override public int getCount() { return 3; }
             @Override public Fragment getItem(int position) {
                 switch (position) {
-                    case 0: return new CashOnDeliveryFragment();
-                    case 1: return new CreditDebitCardFragment();
-                    case 2: return new NetbankingFragment();
+                    case 0: return new NetbankingFragment();
+                    case 1: return new CashOnDeliveryFragment();
+                    case 2: return new CreditDebitCardFragment();
                     default:
                         Toast.makeText(CheckoutPaymentActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
                         return new CashOnDeliveryFragment();
@@ -134,15 +134,24 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
             @Override
             public CharSequence getPageTitle(int position) {
                 switch (position) {
-                    case 0: return getResources().getString(R.string.cash_on_delivery);
-                    case 1: return getResources().getString(R.string.credit_debit_cart);
-                    case 2: return getResources().getString(R.string.net_banking);
+                    case 0: return getResources().getString(R.string.net_banking);
+                    case 1: return getResources().getString(R.string.cash_on_delivery);
+                    case 2: return getResources().getString(R.string.credit_debit_cart);
                     default: return getResources().getString(R.string.cash_on_delivery);
                 }
             }
         }
         PaymentPagerAdapter paymentPagerAdapter = new PaymentPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(paymentPagerAdapter);
+        viewPager.setCurrentItem(1);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
+            @Override public void onPageScrollStateChanged(int state) { }
+            @Override public void onPageSelected(int position) {
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + viewPager.getCurrentItem());
+                if(fragment instanceof NetbankingFragment) { ((NetbankingFragment) fragment).fillLayout(); }
+            }
+        });
         promoCode.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
@@ -151,13 +160,16 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                 promoCodeInputLayout.setErrorEnabled(false);
             }
         });
-        getHashAndPaymentRelatedDetails();
+
+        setPaymentParams();
+        getMobileSdkHash();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
+        if(!mobileSdkObtained) getMobileSdkHash();
         orderId = getIntent().getStringExtra("order_id");
         if (orderId == null) {
             Intent intent = new Intent(CheckoutPaymentActivity.this,CheckoutAddressActivity.class);
@@ -185,13 +197,12 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
 
     }
 
-    public void getHashAndPaymentRelatedDetails() {
+    private void setPaymentParams() {
         paymentParams.setKey("gtKFFx");
         paymentParams.setAmount(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("grand_total", 0)));
         paymentParams.setProductInfo("a bunch of combos from Foodmash");
-        paymentParams.setFirstName(Info.getName(this));
-        paymentParams.setPhone(Info.getPhone(this));
-        paymentParams.setEmail(Info.getEmail(this));
+        paymentParams.setFirstName(User.getInstance().getName());
+        paymentParams.setEmail(User.getInstance().getEmail());
         paymentParams.setTxnId(orderId);
         paymentParams.setSurl(getString(R.string.routes_api_root_path)+getString(R.string.routes_payment_success));
         paymentParams.setFurl(getString(R.string.routes_api_root_path)+getString(R.string.routes_payment_failure));
@@ -200,55 +211,36 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         paymentParams.setUdf3("");
         paymentParams.setUdf4("");
         paymentParams.setUdf5("");
-        paymentParams.setUserCredentials("gtKFFx:foodmash@payu.in");
         paymentParams.setOfferKey("");
         payuConfig.setEnvironment(PayuConstants.MOBILE_STAGING_ENV);
+    }
 
-        JsonObjectRequest makeHashRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_get_payment_hash), JsonProvider.getStandardRequestJson(CheckoutPaymentActivity.this), new Response.Listener<JSONObject>() {
+    private void getMobileSdkHash() {
+        JsonObjectRequest makeHashRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_get_mobile_sdk_hash), JsonProvider.getStandardRequestJson(this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                fragmentContainer.setVisibility(View.GONE);
                 try {
                     if (response.getBoolean("success")) {
-                        Log.e("Testing", response.toString());
-                        payuHashes.setPaymentHash(response.getJSONObject("data").getString("hash"));
-                        payuHashes.setPaymentRelatedDetailsForMobileSdkHash(response.getJSONObject("data").getString("mobile_sdk_hash"));
-                        paymentParams.setTxnId(response.getJSONObject("data").getString("order_id"));
-                        paymentParams.setHash(payuHashes.getPaymentHash());
-                        Log.i("Payments", "Key: " + paymentParams.getKey());
-                        Log.i("Payments", "Amount: " + paymentParams.getAmount());
-                        Log.i("Payments", "Product Info: " + paymentParams.getProductInfo());
-                        Log.i("Payments", "Firstname: " + paymentParams.getFirstName());
-                        Log.i("Payments", "Phone: " + paymentParams.getPhone());
-                        Log.i("Payments", "Email: " + paymentParams.getEmail());
-                        Log.i("Payments", "TxnId: " + paymentParams.getTxnId());
-                        Log.i("Payments", "Udf1: " + paymentParams.getUdf1());
-                        Log.i("Payments", "Udf2: " + paymentParams.getUdf2());
-                        Log.i("Payments", "Udf3: " + paymentParams.getUdf3());
-                        Log.i("Payments", "Udf4: " + paymentParams.getUdf4());
-                        Log.i("Payments", "Udf5: " + paymentParams.getUdf5());
-                        Log.i("Payments", "Hash: " + payuHashes.getPaymentHash());
+                        payuHashes.setPaymentRelatedDetailsForMobileSdkHash(response.getJSONObject("data").getString("hash"));
                         MerchantWebService merchantWebService = new MerchantWebService();
                         merchantWebService.setKey(paymentParams.getKey());
                         merchantWebService.setCommand(PayuConstants.PAYMENT_RELATED_DETAILS_FOR_MOBILE_SDK);
-                        merchantWebService.setVar1(paymentParams.getUserCredentials());
+                        merchantWebService.setVar1("default");
                         merchantWebService.setHash(payuHashes.getPaymentRelatedDetailsForMobileSdkHash());
                         PostData postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
                         if (postData.getCode() == PayuErrors.NO_ERROR) {
-                            Log.i("Payments", "No errora");
                             payuConfig.setData(postData.getResult());
                             GetPaymentRelatedDetailsTask paymentRelatedDetailsForMobileSdkTask = new GetPaymentRelatedDetailsTask(CheckoutPaymentActivity.this);
                             paymentRelatedDetailsForMobileSdkTask.execute(payuConfig);
-                            Log.i("Payments", "Making paymentDetails Request");
                         } else Snackbar.make(mainLayout, postData.getResult(), Snackbar.LENGTH_LONG).show();
-                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
-                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(CheckoutPaymentActivity.this,e); }
+                    } else Snackbar.make(mainLayout, "Unable to process your request: " + response.getString("error"), Snackbar.LENGTH_LONG).show();
+                } catch (Exception e) { Actions.handleIgnorableException(CheckoutPaymentActivity.this,e); }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "getHashAndPaymentRelatedDetails")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "getMobileSdkHash")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
@@ -258,7 +250,51 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makeHashRequest);
     }
 
-    private JSONObject getPaymentJson() {
+    public void getHashAndDoPayment() {
+        JsonObjectRequest makeHashRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_get_payment_hash), getPromoMashCashJson(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
+                try {
+                    if (response.getBoolean("success")) {
+                        Log.e("Testing", response.toString());
+                        payuHashes.setPaymentHash(response.getJSONObject("data").getString("hash"));
+//                        payuHashes.setPaymentRelatedDetailsForMobileSdkHash(response.getJSONObject("data").getString("mobile_sdk_hash"));
+                        paymentParams.setTxnId(response.getJSONObject("data").getString("order_id"));
+                        paymentParams.setHash(payuHashes.getPaymentHash());
+                        Log.i("Payments", "Key: " + paymentParams.getKey());
+                        Log.i("Payments", "Amount: " + paymentParams.getAmount());
+                        Log.i("Payments", "Product Info: " + paymentParams.getProductInfo());
+                        Log.i("Payments", "Firstname: " + paymentParams.getFirstName());
+                        Log.i("Payments", "Email: " + paymentParams.getEmail());
+                        Log.i("Payments", "TxnId: " + paymentParams.getTxnId());
+                        Log.i("Payments", "Udf1: " + paymentParams.getUdf1());
+                        Log.i("Payments", "Udf2: " + paymentParams.getUdf2());
+                        Log.i("Payments", "Udf3: " + paymentParams.getUdf3());
+                        Log.i("Payments", "Udf4: " + paymentParams.getUdf4());
+                        Log.i("Payments", "Udf5: " + paymentParams.getUdf5());
+                        Log.i("Payments", "Hash: " + payuHashes.getPaymentHash());
+                        Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + viewPager.getCurrentItem());
+                        if(fragment instanceof NetbankingFragment) { paymentMethod = getString(R.string.payment_netbanking); ((NetbankingFragment) fragment).doPayment(); }
+                        else if(fragment instanceof CreditDebitCardFragment) { paymentMethod = getString(R.string.payment_card); ((CreditDebitCardFragment) fragment).doPayment(); }
+                    } else Snackbar.make(mainLayout,"Unable to process your request: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
+                } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(CheckoutPaymentActivity.this,e); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                fragmentContainer.setVisibility(View.VISIBLE);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "getHashAndDoPayment")).commitAllowingStateLoss();
+                getSupportFragmentManager().executePendingTransactions();
+            }
+        });
+        fragmentContainer.setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
+        getSupportFragmentManager().executePendingTransactions();
+        Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makeHashRequest);
+    }
+
+    private JSONObject getPromoMashCashJson() {
         JSONObject requestJson = JsonProvider.getStandardRequestJson(CheckoutPaymentActivity.this);
         try {
             JSONObject dataJson = new JSONObject();
@@ -274,7 +310,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     }
 
     public void makeCodPaymentRequest() {
-        JsonObjectRequest makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_pay_by_cod), getPaymentJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_pay_by_cod), getPromoMashCashJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
@@ -406,10 +442,12 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
 
     @Override
     public void onPaymentRelatedDetailsResponse(PayuResponse payuResponse) {
-        Log.i("Payments", payuResponse.getResponseStatus().getCode()+", "+payuResponse.getResponseStatus().getStatus());
         Log.i("Payments", "Result: " + payuResponse.getResponseStatus().getResult());
         this.payuResponse = payuResponse;
+        mobileSdkObtained = true;
         fragmentContainer.setVisibility(View.GONE);
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + viewPager.getCurrentItem());
+        if(fragment instanceof NetbankingFragment) { ((NetbankingFragment) fragment).fillLayout(); }
     }
 
     @Override
