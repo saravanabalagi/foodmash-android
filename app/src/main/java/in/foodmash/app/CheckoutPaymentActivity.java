@@ -213,7 +213,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                         Log.e("Testing", response.toString());
                         payuHashes.setPaymentHash(response.getJSONObject("data").getString("hash"));
                         payuHashes.setPaymentRelatedDetailsForMobileSdkHash(response.getJSONObject("data").getString("mobile_sdk_hash"));
-                        paymentParams.setTxnId(response.getJSONObject("data").getString("txn_id"));
+                        paymentParams.setTxnId(response.getJSONObject("data").getString("order_id"));
                         paymentParams.setHash(payuHashes.getPaymentHash());
                         Log.i("Payments", "Key: " + paymentParams.getKey());
                         Log.i("Payments", "Amount: " + paymentParams.getAmount());
