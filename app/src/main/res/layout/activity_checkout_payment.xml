@@ -245,7 +245,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="50dp"
-                    android:background="@drawable/bg_combo_description_price_background"
+                    android:background="@drawable/bg_combo_payment_price_background"
                     android:orientation="horizontal"
                     android:paddingBottom="5dp"
                     android:paddingLeft="15dp"
