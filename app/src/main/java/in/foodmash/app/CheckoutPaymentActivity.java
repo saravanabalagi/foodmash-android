@@ -43,6 +43,7 @@ import org.json.JSONObject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
@@ -375,6 +376,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
 
     public void makePromoCodeRequest() {
         if(discount== Cart.Discount.NIL) { Snackbar.make(mainLayout, "PromoCode or MashCash is empty", Snackbar.LENGTH_SHORT); return; }
+        if(discount== Cart.Discount.MASH_CASH && !Info.isMashCashEnabled(this)) { Snackbar.make(mainLayout, "MashCash is not available yet", Snackbar.LENGTH_SHORT); return; }
         JsonObjectRequest makePurchaseRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + ((discount== Cart.Discount.MASH_CASH)?getString(R.string.routes_apply_mash_cash):getString(R.string.routes_apply_promo_code)), getPromoCodeJson(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

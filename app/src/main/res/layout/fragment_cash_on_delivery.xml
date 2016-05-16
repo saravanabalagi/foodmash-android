@@ -11,7 +11,7 @@
         android:padding="20dp"
         android:gravity="center_horizontal">
 
-        <LinearLayout
+        <LinearLayout android:id="@+id/mash_cash_layout"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

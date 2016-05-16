@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import in.foodmash.app.R;
@@ -19,6 +20,7 @@ public class CashOnDeliveryFragment extends Fragment {
     TextView email;
     TextView phone;
     TextView mashCash;
+    LinearLayout mashCashLayout;
 
     @Nullable
     @Override
@@ -28,6 +30,8 @@ public class CashOnDeliveryFragment extends Fragment {
         email = (TextView) rootView.findViewById(R.id.email);
         phone = (TextView) rootView.findViewById(R.id.phone);
         mashCash = (TextView) rootView.findViewById(R.id.mash_cash_available);
+        mashCashLayout = (LinearLayout) rootView.findViewById(R.id.mash_cash_layout);
+        if(!Info.isMashCashEnabled(getActivity())) mashCashLayout.setVisibility(View.GONE);
 
         email.setText(Info.getEmail(getActivity()));
         phone.setText(Info.getPhone(getActivity()));

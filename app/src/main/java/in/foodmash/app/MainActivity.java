@@ -383,7 +383,8 @@ public class MainActivity extends FoodmashActivity {
                                     startActivityForResult(intent, VERIFY_USER_REQUEST_CODE);
                             }
                             mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(Info.getMashCash(MainActivity.this)));
-                            mashCashLayout.setVisibility(View.VISIBLE);
+                            if(Info.isMashCashEnabled(MainActivity.this))
+                                mashCashLayout.setVisibility(View.VISIBLE);
                         } else mashCashLayout.setVisibility(View.GONE);
                     } else Snackbar.make(mainLayout,"Unable to load combos: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { e.printStackTrace(); Actions.handleIgnorableException(MainActivity.this,e); }
@@ -432,7 +433,7 @@ public class MainActivity extends FoodmashActivity {
     private void updateFillLayout(List<Combo> combos) {
         final List<Combo> filteredCombos = applyFilters(combos);
         if(filteredCombos.size()==0) { emptyComboLayout.setVisibility(View.VISIBLE); combosRecyclerView.setVisibility(View.GONE); mashCashLayout.setVisibility(View.GONE); return; }
-        else { emptyComboLayout.setVisibility(View.GONE); combosRecyclerView.setVisibility(View.VISIBLE); if(Info.isLoggedIn(MainActivity.this)) mashCashLayout.setVisibility(View.VISIBLE); }
+        else { emptyComboLayout.setVisibility(View.GONE); combosRecyclerView.setVisibility(View.VISIBLE); if(Info.isLoggedIn(MainActivity.this)) if(Info.isMashCashEnabled(this)) mashCashLayout.setVisibility(View.VISIBLE); }
 
         combosAdapter.setCombos(filteredCombos);
         combosAdapter.notifyDataSetChanged();

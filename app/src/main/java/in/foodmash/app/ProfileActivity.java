@@ -14,6 +14,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -36,6 +37,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Animations;
+import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.commons.Swift;
 import in.foodmash.app.commons.VolleyFailureFragment;
@@ -54,6 +56,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
     @Bind(R.id.change_password) TextView changePassword;
     @Bind(R.id.mash_cash) TextView mashCash;
+    @Bind(R.id.mash_cash_layout) LinearLayout mashCashLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     @Bind(R.id.name) EditText name;
@@ -186,6 +189,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
                         email.setText(user.getEmail());
                         phone.setText(user.getMobileNo());
                         mashCash.setText(NumberUtils.getCurrencyFormat(user.getMashCash()));
+                        if(!Info.isMashCashEnabled(ProfileActivity.this)) mashCashLayout.setVisibility(View.GONE);
                         promotionalOffers.setChecked(user.isOffers());
                     } else Snackbar.make(mainLayout,"Unable to save details: "+response.getString("error"),Snackbar.LENGTH_LONG).show();
                 } catch (Exception e) { e.printStackTrace(); Actions.handleIgnorableException(ProfileActivity.this,e); }
