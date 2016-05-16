@@ -76,7 +76,7 @@ public class NetbankingFragment extends Fragment {
     public void fillLayout() {
         class PayUNetBankingAdapter extends BaseAdapter {
             Context mContext;
-            ArrayList<PaymentDetails> mNetBankingList;
+            ArrayList<PaymentDetails> mNetBankingList = new ArrayList<>();
             public PayUNetBankingAdapter(Context context, ArrayList<PaymentDetails> netBankingList) {
                 mContext = context;
                 mNetBankingList = netBankingList;
