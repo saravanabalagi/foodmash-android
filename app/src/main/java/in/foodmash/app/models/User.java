@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
 
+import in.foodmash.app.utils.DateUtils;
+
 /**
  * Created by Zeke on May 13, 2016.
  */
@@ -35,7 +37,7 @@ public class User {
 
     public void setEmail(String email) { this.email = email; }
     public void setMobileNo(String mobileNo) { this.mobileNo = mobileNo; }
-    public void setDob(Date dob) { this.dob = dob; }
+    public void setDob(String dob) { this.dob = DateUtils.ddmmyyslashDateStringToJavaDate(dob); }
     public void setOffers(boolean offers) { this.offers = offers; }
     public void setVerified(boolean verified) { this.verified = verified; }
     public void setMashCash(double mashCash) { this.mashCash = mashCash; }
