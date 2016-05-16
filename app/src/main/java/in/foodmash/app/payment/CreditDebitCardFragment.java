@@ -104,6 +104,12 @@ public class CreditDebitCardFragment extends Fragment {
         saveCardCheckBox = (CheckBox) rootView.findViewById(R.id.check_box_save_card);
         cardType = (ImageView) rootView.findViewById(R.id.card_type);
 
+        cardNumberEditText.setText("5123456789012346");
+        cardNameEditText.setText("Test Card");
+        cardCvvEditText.setText("123");
+        cardExpiryMonthEditText.setText("05");
+        cardExpiryYearEditText.setText("2017");
+
         // lets get payment default params and hashes
         payuHashes = ((CheckoutPaymentActivity) getActivity()).getPayuHashes();
         paymentParams = ((CheckoutPaymentActivity) getActivity()).getPaymentParams();
