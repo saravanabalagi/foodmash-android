@@ -22,6 +22,7 @@ import com.payu.india.Model.PayuConfig;
 import com.payu.india.Payu.PayuConstants;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import in.foodmash.app.R;
 
 
@@ -50,6 +51,7 @@ public class PaymentsActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_payments);
         context = PaymentsActivity.this;
+        ButterKnife.bind(this);
 
         //region Replace the whole code by the commented code if you are NOT using custombrowser
         // Replace the whole code by the commented code if you are NOT using custombrowser.
