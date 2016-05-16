@@ -9,20 +9,51 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/text_view_select_net_banking"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="Select your Bank for Netbanking"
-            android:textStyle="bold" />
+            android:id="@+id/main_layout"
+            android:visibility="gone">
 
-        <Spinner
-            android:id="@+id/spinner_netbanking"
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:text="Select your Bank for Netbanking"
+                android:gravity="center_horizontal" />
+
+            <Spinner
+                android:id="@+id/spinner_netbanking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_spinner_rounded_background"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="-10dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_gravity="center_horizontal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@color/transparent" />
+            android:layout_height="match_parent"
+            android:id="@+id/loading_layout">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:text="Loading Bank Details..."
+                android:gravity="center_horizontal" />
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:indeterminate="true" />
+        </LinearLayout>
 
     </LinearLayout>
 

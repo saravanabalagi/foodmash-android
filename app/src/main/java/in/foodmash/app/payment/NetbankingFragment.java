@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,9 @@ public class NetbankingFragment extends Fragment {
     private PaymentParams paymentParams;
     private PayuHashes payuHashes;
     private PayuConfig payuConfig;
+    private Spinner spinnerNetbanking;
+    private LinearLayout loadingLayout;
+    private LinearLayout mainLayout;
 
     public void doPayment() {
         paymentParams.setHash(payuHashes.getPaymentHash());
@@ -52,17 +56,48 @@ public class NetbankingFragment extends Fragment {
         } else Toast.makeText(getActivity(), postData.getResult(), Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(((CheckoutPaymentActivity) getActivity()).mobileSdkObtained) fillLayout();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_netbanking, container, false);
+        spinnerNetbanking = (Spinner) rootView.findViewById(R.id.spinner_netbanking);
+        loadingLayout = (LinearLayout) rootView.findViewById(R.id.loading_layout);
+        mainLayout = (LinearLayout) rootView.findViewById(R.id.main_layout);
+        if(((CheckoutPaymentActivity) getActivity()).mobileSdkObtained) fillLayout();
+        return rootView;
+    }
+
+    public void fillLayout() {
         class PayUNetBankingAdapter extends BaseAdapter {
             Context mContext;
             ArrayList<PaymentDetails> mNetBankingList;
-            public PayUNetBankingAdapter(Context context, ArrayList<PaymentDetails> netBankingList) { mContext = context; mNetBankingList = netBankingList; }
+            public PayUNetBankingAdapter(Context context, ArrayList<PaymentDetails> netBankingList) {
+                mContext = context;
+                mNetBankingList = netBankingList;
+            }
             @Override public int getCount() { return mNetBankingList.size(); }
             @Override public Object getItem(int i) { if (null != mNetBankingList) return mNetBankingList.get(i); else return 0; }
             @Override public long getItemId(int i) { return 0; }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                NetbankingViewHolder netbankingViewHolder = null;
+                if (convertView == null) {
+                    LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+                    convertView = mInflater.inflate(R.layout.spinner_dropdown_item, null);
+                    netbankingViewHolder = new NetbankingViewHolder(convertView);
+                    convertView.setTag(netbankingViewHolder);
+                } else netbankingViewHolder = (NetbankingViewHolder) convertView.getTag();
+                PaymentDetails paymentDetails = mNetBankingList.get(position);
+                netbankingViewHolder.netbankingTextView.setText(paymentDetails.getBankName());
+                return convertView;
+            }
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -80,11 +115,10 @@ public class NetbankingFragment extends Fragment {
 
             class NetbankingViewHolder {
                 TextView netbankingTextView;
-                NetbankingViewHolder(View view) { netbankingTextView = (TextView) ((ViewGroup)view).getChildAt(0); }
+                NetbankingViewHolder(View view) { if (view instanceof TextView) netbankingTextView = (TextView) view; }
             }
         }
 
-        Spinner spinnerNetbanking = (Spinner) rootView.findViewById(R.id.spinner_netbanking);
         netBankingList = ((CheckoutPaymentActivity) getActivity()).getPayuResponse().getNetBanks();
         PayUNetBankingAdapter payUNetBankingAdapter = new PayUNetBankingAdapter(getActivity(), netBankingList);
         spinnerNetbanking.setAdapter(payUNetBankingAdapter);
@@ -101,7 +135,7 @@ public class NetbankingFragment extends Fragment {
         payuHashes = ((CheckoutPaymentActivity) getActivity()).getPayuHashes();
         paymentParams = ((CheckoutPaymentActivity) getActivity()).getPaymentParams();
         payuConfig = ((CheckoutPaymentActivity) getActivity()).getPayuConfig();
-
-        return rootView;
+        loadingLayout.setVisibility(View.GONE);
+        mainLayout.setVisibility(View.VISIBLE);
     }
 }
