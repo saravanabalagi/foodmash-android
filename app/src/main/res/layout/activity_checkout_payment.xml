@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
+            <LinearLayout android:id="@+id/promo_code_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
@@ -126,7 +126,7 @@
                     android:textColor="@color/white" />
             </LinearLayout>
 
-            <View
+            <View android:id="@+id/billing_divider"
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
                 android:layout_marginLeft="30dp"
@@ -134,6 +134,7 @@
                 android:background="#555" />
 
             <LinearLayout
+                android:id="@+id/billing_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"

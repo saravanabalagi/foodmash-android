@@ -59,10 +59,10 @@ import in.foodmash.app.utils.NumberUtils;
  */
 public class CheckoutPaymentActivity extends FoodmashActivity implements PaymentRelatedDetailsListener {
 
+    public @Bind(R.id.view_pager) ViewPager viewPager;
     @Bind(R.id.pay) FloatingActionButton pay;
     @Bind(R.id.payable_amount) TextView payableAmount;
     @Bind(R.id.fragment_container) FrameLayout fragmentContainer;
-    @Bind(R.id.view_pager) ViewPager viewPager;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.promo_validate) ImageView promoValidate;
@@ -74,15 +74,20 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     @Bind(R.id.promo_discount) TextView promoDiscount;
     @Bind(R.id.confirmed_promo_mash_cash) TextView confirmedPromoMashCash;
     @Bind(R.id.promo_discount_layout) LinearLayout promoDiscountLayout;
-    @Bind(R.id.promo_code) EditText promoCode;
     @Bind(R.id.promo_code_input_layout) TextInputLayout promoCodeInputLayout;
     @Bind(R.id.delivery_charges) TextView deliveryCharges;
+    public @Bind(R.id.promo_code) EditText promoCode;
 
     private String paymentMethod;
     private String orderId;
     private Cart cart = Cart.getInstance();
     private Cart.Discount discount = Cart.Discount.NIL;
     public boolean mobileSdkObtained = false;
+
+    public @Bind(R.id.promo_code_layout) View promoCodeLayout;
+    public @Bind(R.id.billing_layout) View billingDivider;
+    public @Bind(R.id.billing_divider) View billingLayout;
+    public @Bind(R.id.payment_progress) View paymentProgress;
 
     PayuConfig payuConfig = new PayuConfig();
     PayuResponse payuResponse = new PayuResponse();

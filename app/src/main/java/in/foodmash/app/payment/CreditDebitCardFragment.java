@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -121,6 +122,15 @@ public class CreditDebitCardFragment extends Fragment {
         //else saveCardCheckBox.setVisibility(View.VISIBLE);
         payuUtils = new PayuUtils();
 
+        final View activityRootView = getActivity().getWindow().getDecorView().findViewById(android.R.id.content);
+        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
+                if (heightDiff > 100 ) { hideOnFocus(); }
+                else showOnBlur(); /* 99% of the time the height diff will be due to a keyboard.*/
+            }
+        });
 
         cardNumberEditText.addTextChangedListener(new TextWatcher() {
             String issuer;
@@ -165,5 +175,20 @@ public class CreditDebitCardFragment extends Fragment {
             case PayuConstants.RUPAY: return ContextCompat.getDrawable(getActivity(), R.drawable.png_payment_rupay);
         }
         return null;
+    }
+
+    private void hideOnFocus() {
+        ((CheckoutPaymentActivity) getActivity()).paymentProgress.setVisibility(View.GONE);
+        if(((CheckoutPaymentActivity) getActivity()).promoCode.isFocused()) return;
+        ((CheckoutPaymentActivity) getActivity()).promoCodeLayout.setVisibility(View.GONE);
+        ((CheckoutPaymentActivity) getActivity()).billingDivider.setVisibility(View.GONE);
+        ((CheckoutPaymentActivity) getActivity()).billingLayout.setVisibility(View.GONE);
+    }
+    private void showOnBlur() {
+        ((CheckoutPaymentActivity) getActivity()).viewPager.setVisibility(View.VISIBLE);
+        ((CheckoutPaymentActivity) getActivity()).promoCodeLayout.setVisibility(View.VISIBLE);
+        ((CheckoutPaymentActivity) getActivity()).billingDivider.setVisibility(View.VISIBLE);
+        ((CheckoutPaymentActivity) getActivity()).billingLayout.setVisibility(View.VISIBLE);
+        ((CheckoutPaymentActivity) getActivity()).paymentProgress.setVisibility(View.VISIBLE);
     }
 }
