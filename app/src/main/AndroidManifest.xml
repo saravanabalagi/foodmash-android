@@ -44,7 +44,7 @@
         <activity android:name=".LegaleseActivity" android:launchMode="singleTask" android:parentActivityName=".SignUpActivity" />
         <activity android:name=".OrderDescriptionActivity" android:launchMode="singleTask" android:parentActivityName=".OrderHistoryActivity" />
         <activity android:name=".OrderHistoryActivity" android:launchMode="singleTask" android:parentActivityName=".MainActivity" />
-        <activity android:name=".payment.PaymentsActivity" android:launchMode="singleTask" android:parentActivityName=".CheckoutPaymentActivity" />
+        <activity android:name=".payment.PaymentsActivity" android:parentActivityName=".CheckoutPaymentActivity" />
         <activity android:name=".PinYourLocationActivity" android:launchMode="singleTask" />
         <activity android:name=".ProfileActivity" android:launchMode="singleTask" android:parentActivityName=".MainActivity" />
         <activity android:name=".SignUpActivity" android:launchMode="singleTask" android:parentActivityName=".LoginActivity" />

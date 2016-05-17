@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -119,7 +120,20 @@ public class PaymentsActivity extends AppCompatActivity {
             try { getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.cb_face_out).add(R.id.parent, bank).commit(); }
             catch(Exception e) { e.printStackTrace(); finish(); }
             webView.setWebChromeClient(new PayUWebChromeClient(bank));
-            webView.setWebViewClient(new PayUWebViewClient(bank));
+            webView.setWebViewClient(new PayUWebViewClient(bank){
+                @Override
+                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                    Log.i("Testing", "On page started Called PayuWebClient");
+                    super.onPageStarted(view, url, favicon);
+                    if (url.equals(getString(R.string.routes_api_root_path)+getString(R.string.routes_payment_success))) {
+                        PaymentsActivity.this.setResult(RESULT_OK);
+                        finish();
+                    } else if (url.equals(getString(R.string.routes_api_root_path)+getString(R.string.routes_payment_failure))) {
+                        PaymentsActivity.this.setResult(RESULT_CANCELED);
+                        finish();
+                    }
+                }
+            });
             webView.addJavascriptInterface(new JsInterface(), "PayU");
             webView.postUrl(url, payuConfig.getData().getBytes());
 
@@ -134,7 +148,20 @@ public class PaymentsActivity extends AppCompatActivity {
 
             webView.addJavascriptInterface(new JsInterface(), "PayU");
             webView.setWebChromeClient(new WebChromeClient() );
-            webView.setWebViewClient(new WebViewClient());
+            webView.setWebViewClient(new WebViewClient(){
+                @Override
+                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                    Log.i("Testing", "On page started Called");
+                    super.onPageStarted(view, url, favicon);
+                    if (url.equals(getString(R.string.routes_api_root_path)+getString(R.string.routes_payment_success))) {
+                        PaymentsActivity.this.setResult(RESULT_OK);
+                        finish();
+                    } else if (url.equals(getString(R.string.routes_api_root_path)+getString(R.string.routes_payment_failure))) {
+                        PaymentsActivity.this.setResult(RESULT_CANCELED);
+                        finish();
+                    }
+                }
+            });
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setDomStorageEnabled(true);
             webView.postUrl(url, payuConfig.getData().getBytes());
@@ -180,6 +207,8 @@ public class PaymentsActivity extends AppCompatActivity {
     @Override
     public void onDestroy(){
         super.onDestroy();
+        if(mReceiver!=null) context.unregisterReceiver(mReceiver);
+        context = null;
         // Log.v("#### PAYU", "PAYMENTSACTIVITY: ondestroy");
         /*Debug.stopMethodTracing();*/
     }
@@ -189,8 +218,7 @@ public class PaymentsActivity extends AppCompatActivity {
         @Override
         public void registerBroadcast(BroadcastReceiver broadcastReceiver, IntentFilter filter) {
             ((PaymentsActivity)context).mReceiver = broadcastReceiver;
-            try {context.registerReceiver(broadcastReceiver, filter); }
-            catch (Exception e) { Log.e("Payments", e.getMessage());}
+            context.registerReceiver(broadcastReceiver, filter);
         }
 
         @Override
@@ -217,10 +245,9 @@ public class PaymentsActivity extends AppCompatActivity {
         }
     }
 
-    private class JsInterface {
-
+    public class JsInterface {
         @JavascriptInterface
-        public void onSuccess(final String result, final String orderId) {
+        public void mySuccessFunc(final String result, final String orderId) {
             Log.i("Payments", "On Success triggered");
             runOnUiThread(new Runnable() {
                 @Override
@@ -231,12 +258,10 @@ public class PaymentsActivity extends AppCompatActivity {
                     setResult(RESULT_OK, intent);
                     finish();
                 }
-//                }
             });
         }
-
         @JavascriptInterface
-        public void onFailure(final String result) {
+        public void myFailureFunc(final String result) {
             Log.i("Payments", "On failure triggered");
             runOnUiThread(new Runnable() {
                 @Override

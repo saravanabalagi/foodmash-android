@@ -52,7 +52,7 @@ public class NetbankingFragment extends Fragment {
             payuConfig.setData(postData.getResult());
             Intent intent = new Intent(getActivity(), PaymentsActivity.class);
             intent.putExtra(PayuConstants.PAYU_CONFIG, payuConfig);
-            startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
+            getActivity().startActivityForResult(intent, PayuConstants.PAYU_REQUEST_CODE);
         } else Toast.makeText(getActivity(), postData.getResult(), Toast.LENGTH_LONG).show();
     }
 
