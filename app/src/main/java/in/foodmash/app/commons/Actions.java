@@ -35,7 +35,7 @@ public class Actions {
         editor.putBoolean("mash_cash",mashCash);
         editor.putBoolean("verify_user",verifyUser);
         editor.putBoolean("online_payments",onlinePayments);
-        editor.apply();
+        editor.commit();
     }
 
     public static void cacheUserDetails(Context context,String name, String email, String phone) {
