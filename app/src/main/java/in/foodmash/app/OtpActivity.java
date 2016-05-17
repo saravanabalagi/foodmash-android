@@ -98,7 +98,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
             if(!Info.isLoggedIn(this)) { setResult(RESULT_CANCELED); finish(); }
             setTitle(toolbar,"Verify","Account");
             type = getIntent().getStringExtra("type");
-            otpInfo.setText("We have sent an OTP (One Time Password) to your email '" + Info.getEmail(this) + "' and to your phone " + Info.getPhone(this) + "via a private message, enter it below to verify your account. You can resend the OTP once the timer expires.");
+            otpInfo.setText("We have sent an OTP to your phone " + Info.getPhone(this) + " via a private message, enter it below to verify your account. You can resend the OTP once the timer expires.");
             resendOtpRequest();
         }
         else { setResult(RESULT_CANCELED); finish(); }
