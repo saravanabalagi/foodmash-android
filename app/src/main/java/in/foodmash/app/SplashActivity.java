@@ -102,9 +102,9 @@ public class SplashActivity extends FoodmashActivity {
                             } if(response.getJSONObject("data").has("settings") && !response.getJSONObject("data").isNull("settings")) {
                                 JSONObject settings = response.getJSONObject("data").getJSONObject("settings");
                                 Actions.cacheSettings(SplashActivity.this,
-                                        (settings.has("verify_user") && !settings.isNull("verify_user")) && settings.getBoolean("verify_user"),
-                                        (settings.has("mash_cash") && !settings.isNull("mash_cash")) && settings.getBoolean("mash_cash"),
-                                        (settings.has("online_payments") && !settings.isNull("online_payments")) && settings.getBoolean("online_payments"));
+                                        settings.has("mash_cash") && !settings.isNull("mash_cash") && settings.getBoolean("mash_cash"),
+                                        settings.has("verify_user") && !settings.isNull("verify_user") && settings.getBoolean("verify_user"),
+                                        settings.has("online_payments") && !settings.isNull("online_payments") && settings.getBoolean("online_payments"));
                             }
                             startActivity(intent);
                             finish();
