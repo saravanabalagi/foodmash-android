@@ -21,6 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.NetworkError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -178,18 +180,16 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                 promoCodeInputLayout.setErrorEnabled(false);
             }
         });
-
-        if(Info.isOnlinePaymentsEnabled(this)) {
-            setPaymentParams();
-            getMobileSdkHash();
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if(Info.isOnlinePaymentsEnabled(this) && !mobileSdkObtained) getMobileSdkHash();
+        if(Info.isOnlinePaymentsEnabled(this) && !mobileSdkObtained) {
+            setPaymentParams();
+            getMobileSdkHash();
+        }
         orderId = getIntent().getStringExtra("order_id");
         if (orderId == null) {
             Intent intent = new Intent(CheckoutPaymentActivity.this,CheckoutAddressActivity.class);
@@ -235,7 +235,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         payuConfig.setEnvironment(PayuConstants.MOBILE_STAGING_ENV);
     }
 
-    private void getMobileSdkHash() {
+    public void getMobileSdkHash() {
         JsonObjectRequest makeHashRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_get_mobile_sdk_hash), JsonProvider.getStandardRequestJson(this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -253,6 +253,10 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                         if (postData.getCode() == PayuErrors.NO_ERROR) {
                             payuConfig.setData(postData.getResult());
                             GetPaymentRelatedDetailsTask paymentRelatedDetailsForMobileSdkTask = new GetPaymentRelatedDetailsTask(CheckoutPaymentActivity.this);
+                            fragmentContainer.setVisibility(View.VISIBLE);
+                            pay.setVisibility(View.GONE);
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
+                            getSupportFragmentManager().executePendingTransactions();
                             paymentRelatedDetailsForMobileSdkTask.execute(payuConfig);
                         } else Snackbar.make(mainLayout, postData.getResult(), Snackbar.LENGTH_LONG).show();
                     } else Snackbar.make(mainLayout, "Unable to process your request: " + response.getString("error"), Snackbar.LENGTH_LONG).show();
@@ -458,10 +462,19 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
 
     @Override
     public void onPaymentRelatedDetailsResponse(PayuResponse payuResponse) {
-        Log.i("Payments", "Result: " + payuResponse.getResponseStatus().getResult());
+        Log.i("Payments", payuResponse.getResponseStatus().getResult());
+        if(payuResponse.getResponseStatus().getCode()!=0) {
+            fragmentContainer.setVisibility(View.VISIBLE);
+            NetworkResponse networkResponse = new NetworkResponse(payuResponse.getResponseStatus().getResult().getBytes());
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(new NetworkError(networkResponse), "getMobileSdkHash", pay)).commitAllowingStateLoss();
+            getSupportFragmentManager().executePendingTransactions();
+            return;
+        }
+        fragmentContainer.setVisibility(View.GONE);
+        pay.setVisibility(View.VISIBLE);
+        fragmentContainer.setVisibility(View.GONE);
         this.payuResponse = payuResponse;
         mobileSdkObtained = true;
-        fragmentContainer.setVisibility(View.GONE);
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + viewPager.getCurrentItem());
         if(fragment instanceof NetbankingFragment) { ((NetbankingFragment) fragment).fillLayout(); }
     }
