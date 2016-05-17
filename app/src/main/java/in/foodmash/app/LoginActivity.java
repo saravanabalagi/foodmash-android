@@ -180,7 +180,6 @@ public class LoginActivity extends FoodmashActivity implements View.OnClickListe
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                login.setVisibility(View.VISIBLE);
                 fragmentContainer.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLocationRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();

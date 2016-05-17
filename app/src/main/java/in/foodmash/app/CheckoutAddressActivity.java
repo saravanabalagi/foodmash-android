@@ -191,6 +191,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                confirm.setVisibility(View.VISIBLE);
                 try {
                     if (response.getBoolean("success")) {
                         Log.i("Combos", response.getJSONObject("data").getJSONArray("combos").length() + " combos found");
@@ -207,6 +208,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                                 public void onResponse(JSONObject response) {
                                     Log.i("Json Request", response.toString());
                                     fragmentContainer.setVisibility(View.GONE);
+                                    confirm.setVisibility(View.VISIBLE);
                                     try {
                                         if (response.getBoolean("success")) {
                                             intent = new Intent(CheckoutAddressActivity.this, CheckoutPaymentActivity.class);
@@ -234,6 +236,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                                 }
                             });
                             fragmentContainer.setVisibility(View.VISIBLE);
+                            confirm.setVisibility(View.GONE);
                             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
                             getSupportFragmentManager().executePendingTransactions();
                             Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(confirmOrderRequest);
@@ -250,6 +253,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
+        confirm.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(this).addToRequestQueue(getCombosRequest, 20000, 2, 1.0f);
@@ -272,6 +276,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                confirm.setVisibility(View.VISIBLE);
                 swipeRefreshLayout.setRefreshing(false);
                 try {
                     if(response.getBoolean("success")) {
@@ -293,6 +298,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
+        confirm.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(addressesRequest);

@@ -252,6 +252,7 @@ public class ErrorReportActivity extends FoodmashActivity {
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                send.setVisibility(View.VISIBLE);
                 finish();
             }
         }, new Response.ErrorListener() {
@@ -263,6 +264,7 @@ public class ErrorReportActivity extends FoodmashActivity {
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
+        send.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(this).addToRequestQueue(errorRequestJson);

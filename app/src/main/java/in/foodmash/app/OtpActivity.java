@@ -151,6 +151,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                proceed.setVisibility(View.VISIBLE);
                 try {
                     if(response.getBoolean("success")) {
                         if(type.equals("verify_account")) { setResult(RESULT_OK); finish(); }
@@ -174,6 +175,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
+        proceed.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(OtpActivity.this).addToRequestQueue(checkOtpRequest);
@@ -226,7 +228,6 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                proceed.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLocationRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }

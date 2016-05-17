@@ -249,6 +249,7 @@ public class AddAddressActivity extends FoodmashActivity implements TextWatcher 
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                save.setVisibility(View.VISIBLE);
                 try {
                     if(response.getBoolean("success")) {
                         Intent intent;
@@ -269,6 +270,7 @@ public class AddAddressActivity extends FoodmashActivity implements TextWatcher 
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
+        save.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(AddAddressActivity.this).addToRequestQueue(addAddressRequest);

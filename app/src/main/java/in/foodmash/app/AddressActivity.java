@@ -119,6 +119,7 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                addAddress.setVisibility(View.VISIBLE);
                 swipeRefreshLayout.setRefreshing(false);
                 try {
                     if(response.getBoolean("success")) {
@@ -140,6 +141,7 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
+        addAddress.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(AddressActivity.this).addToRequestQueue(getAddressesRequest);

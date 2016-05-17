@@ -190,6 +190,7 @@ public class ContactUsActivity extends FoodmashActivity implements View.OnClickL
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                call.setVisibility(View.VISIBLE);
                 try {
                     if(response.getBoolean("success")) finish();
                     else Snackbar.make(mainLayout, response.getString("error"), Snackbar.LENGTH_LONG).show();
@@ -204,6 +205,7 @@ public class ContactUsActivity extends FoodmashActivity implements View.OnClickL
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
+        call.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(ContactUsActivity.this).addToRequestQueue(contactUsRequest);

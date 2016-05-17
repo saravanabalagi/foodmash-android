@@ -152,6 +152,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                save.setVisibility(View.VISIBLE);
                 try {
                     if(response.getBoolean("success")) {
                         User user = User.getInstance();
@@ -169,6 +170,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
+        save.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(ProfileActivity.this).addToRequestQueue(profileRequest);
@@ -198,7 +200,6 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                save.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeProfileDetailsRequest")).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }

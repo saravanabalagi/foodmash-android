@@ -110,6 +110,7 @@ public class ForgotPasswordActivity extends FoodmashActivity implements View.OnC
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                forgot.setVisibility(View.VISIBLE);
                 try {
                     if(response.getBoolean("success")) {
                         Log.i("Security",response.getString("otp"));
@@ -130,6 +131,7 @@ public class ForgotPasswordActivity extends FoodmashActivity implements View.OnC
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
+        forgot.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(ForgotPasswordActivity.this).addToRequestQueue(forgotRequest);

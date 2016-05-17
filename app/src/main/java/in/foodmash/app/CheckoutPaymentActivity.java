@@ -239,6 +239,8 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         JsonObjectRequest makeHashRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_get_mobile_sdk_hash), JsonProvider.getStandardRequestJson(this), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                fragmentContainer.setVisibility(View.GONE);
+                pay.setVisibility(View.VISIBLE);
                 try {
                     if (response.getBoolean("success")) {
                         payuHashes.setPaymentRelatedDetailsForMobileSdkHash(response.getJSONObject("data").getString("hash"));
@@ -265,6 +267,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
+        pay.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makeHashRequest);
@@ -275,6 +278,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                pay.setVisibility(View.VISIBLE);
                 try {
                     if (response.getBoolean("success")) {
                         Log.e("Testing", response.toString());
@@ -309,6 +313,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
             }
         });
         fragmentContainer.setVisibility(View.VISIBLE);
+        pay.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makeHashRequest);
@@ -334,6 +339,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                pay.setVisibility(View.VISIBLE);
                 try {
                     if(response.getBoolean("success")) {
                         JSONObject dataJson = response.getJSONObject("data");
@@ -345,7 +351,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                         cart.removeAllOrders();
                         startActivity(intent);
                         finish();
-                    } else Snackbar.make(mainLayout, "Wrong Password", Snackbar.LENGTH_LONG).show();
+                    } else Snackbar.make(mainLayout, "Order was not placed: "+response.getString("error"), Snackbar.LENGTH_LONG).show();
                 } catch (JSONException e) { e.printStackTrace(); }
             }
         }, new Response.ErrorListener() {
@@ -358,6 +364,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         });
 
         fragmentContainer.setVisibility(View.VISIBLE);
+        pay.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makePurchaseRequest);
@@ -395,6 +402,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
             @Override
             public void onResponse(JSONObject response) {
                 fragmentContainer.setVisibility(View.GONE);
+                pay.setVisibility(View.VISIBLE);
                 try {
                     if(response.getBoolean("success")) {
                         Snackbar.make(mainLayout, ((discount== Cart.Discount.MASH_CASH)?"Mash Cash applied successfully":"Promo Code applied successfully"), Snackbar.LENGTH_SHORT).show();
@@ -452,6 +460,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         });
 
         fragmentContainer.setVisibility(View.VISIBLE);
+        pay.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         Swift.getInstance(CheckoutPaymentActivity.this).addToRequestQueue(makePurchaseRequest);

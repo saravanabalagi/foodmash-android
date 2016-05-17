@@ -364,6 +364,7 @@ public class MainActivity extends FoodmashActivity {
             @Override
             public void onResponse(JSONObject response) {
                 swipeRefreshLayout.setRefreshing(false);
+                filterFab.setVisibility(View.VISIBLE);
                 try {
                     if (response.getBoolean("success")) {
                         if (snackbar!=null && snackbar.isShown()) snackbar.dismiss();
@@ -392,7 +393,7 @@ public class MainActivity extends FoodmashActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (snackbar!=null && snackbar.isShown()) snackbar.setText("Update Failed!");
+                if (snackbar!=null && snackbar.isShown()) { filterFab.setVisibility(View.VISIBLE); snackbar.setText("Update Failed!"); }
                 else {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeComboRequest")).commitAllowingStateLoss();
                     getSupportFragmentManager().executePendingTransactions();
@@ -400,6 +401,7 @@ public class MainActivity extends FoodmashActivity {
             }
         });
         swipeRefreshLayout.setRefreshing(true);
+        filterFab.setVisibility(View.GONE);
         Swift.getInstance(this).addToRequestQueue(getCombosRequest, 20000, 2, 1.0f);
     }
 
