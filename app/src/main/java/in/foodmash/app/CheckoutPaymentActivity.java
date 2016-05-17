@@ -462,9 +462,10 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
 
     @Override
     public void onPaymentRelatedDetailsResponse(PayuResponse payuResponse) {
-        Log.i("Payments", payuResponse.getResponseStatus().getResult());
+        Log.i("Payments", "Netbanking Response: "+payuResponse.getResponseStatus().getResult());
         if(payuResponse.getResponseStatus().getCode()!=0) {
             fragmentContainer.setVisibility(View.VISIBLE);
+            pay.setVisibility(View.VISIBLE);
             NetworkResponse networkResponse = new NetworkResponse(payuResponse.getResponseStatus().getResult().getBytes());
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(new NetworkError(networkResponse), "getMobileSdkHash", pay)).commitAllowingStateLoss();
             getSupportFragmentManager().executePendingTransactions();
