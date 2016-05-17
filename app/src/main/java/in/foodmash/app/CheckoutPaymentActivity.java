@@ -189,7 +189,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     protected void onResume() {
         super.onResume();
 
-        if(!mobileSdkObtained) getMobileSdkHash();
+        if(Info.isOnlinePaymentsEnabled(this) && !mobileSdkObtained) getMobileSdkHash();
         orderId = getIntent().getStringExtra("order_id");
         if (orderId == null) {
             Intent intent = new Intent(CheckoutPaymentActivity.this,CheckoutAddressActivity.class);
