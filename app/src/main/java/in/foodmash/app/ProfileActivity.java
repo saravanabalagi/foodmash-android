@@ -165,7 +165,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeProfileRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeProfileRequest", save)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
@@ -200,7 +200,7 @@ public class ProfileActivity extends FoodmashActivity implements View.OnClickLis
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeProfileDetailsRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeProfileDetailsRequest", save)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });

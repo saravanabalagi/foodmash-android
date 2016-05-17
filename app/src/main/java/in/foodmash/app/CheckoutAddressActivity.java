@@ -231,7 +231,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
                                     fragmentContainer.setVisibility(View.VISIBLE);
-                                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeConfirmOrderRequest")).commitAllowingStateLoss();
+                                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeConfirmOrderRequest", confirm)).commitAllowingStateLoss();
                                     getSupportFragmentManager().executePendingTransactions();
                                 }
                             });
@@ -248,7 +248,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeConfirmOrderRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeConfirmOrderRequest", confirm)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
@@ -293,7 +293,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeAddressRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeAddressRequest", confirm)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });

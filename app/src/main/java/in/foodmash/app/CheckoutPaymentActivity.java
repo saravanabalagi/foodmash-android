@@ -262,7 +262,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "getMobileSdkHash")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "getMobileSdkHash", pay)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
@@ -308,7 +308,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "getHashAndDoPayment")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "getHashAndDoPayment", pay)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
@@ -358,7 +358,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeCodPaymentRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeCodPaymentRequest", pay)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
@@ -454,7 +454,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makePromoCodeRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makePromoCodeRequest", pay)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });

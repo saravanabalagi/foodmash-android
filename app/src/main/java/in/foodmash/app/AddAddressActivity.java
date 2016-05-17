@@ -265,7 +265,7 @@ public class AddAddressActivity extends FoodmashActivity implements TextWatcher 
             public void onErrorResponse(VolleyError error) {
                 Log.i("Json Request", error.toString());
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeAddAddressRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeAddAddressRequest", save)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });

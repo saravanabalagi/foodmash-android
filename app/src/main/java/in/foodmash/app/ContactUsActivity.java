@@ -200,7 +200,7 @@ public class ContactUsActivity extends FoodmashActivity implements View.OnClickL
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeContactUsRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeContactUsRequest", call)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });

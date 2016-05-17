@@ -136,7 +136,7 @@ public class AddressActivity extends FoodmashActivity implements View.OnClickLis
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeAddressRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeAddressRequest", addAddress)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });

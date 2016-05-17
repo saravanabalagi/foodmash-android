@@ -186,7 +186,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeSignUpRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeSignUpRequest", create)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });

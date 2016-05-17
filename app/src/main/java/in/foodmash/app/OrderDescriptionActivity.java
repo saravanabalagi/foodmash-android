@@ -219,7 +219,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeOrderDescriptionRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeOrderDescriptionRequest", null)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });

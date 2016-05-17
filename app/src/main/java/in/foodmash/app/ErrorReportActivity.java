@@ -259,7 +259,7 @@ public class ErrorReportActivity extends FoodmashActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeErrorRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeErrorRequest", send)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });

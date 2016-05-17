@@ -126,7 +126,7 @@ public class ForgotPasswordActivity extends FoodmashActivity implements View.OnC
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeForgotRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeForgotRequest", forgot)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });

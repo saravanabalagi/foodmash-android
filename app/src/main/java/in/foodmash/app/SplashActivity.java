@@ -117,7 +117,7 @@ public class SplashActivity extends FoodmashActivity {
             public void onErrorResponse(VolleyError error) {
                 Animations.fadeOutAndFadeIn(loadingLayout,retryButtonLayout,500);
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeCheckConnectionRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeCheckConnectionRequest", null)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
@@ -188,7 +188,7 @@ public class SplashActivity extends FoodmashActivity {
             public void onErrorResponse(VolleyError error) {
                 Animations.fadeOutAndFadeIn(loadingLayout, retryButtonLayout, 500);
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLocationRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLocationRequest", null)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });

@@ -170,7 +170,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeCheckOtpRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeCheckOtpRequest", proceed)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
@@ -228,7 +228,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLocationRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLocationRequest", proceed)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });

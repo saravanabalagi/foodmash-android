@@ -90,7 +90,7 @@ public class LegaleseActivity extends FoodmashActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLegaleseRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeLegaleseRequest", null)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
                 Log.e("Json Request Failed", error.toString());
             }

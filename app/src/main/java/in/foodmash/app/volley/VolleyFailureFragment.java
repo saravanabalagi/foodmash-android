@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -52,11 +53,13 @@ public class VolleyFailureFragment extends Fragment implements View.OnClickListe
     Intent intent;
     VolleyError volleyError;
     String methodName;
+    FloatingActionButton floatingActionButton;
 
-    public static VolleyFailureFragment newInstance(VolleyError volleyError, String methodName) {
+    public static VolleyFailureFragment newInstance(VolleyError volleyError, String methodName, @Nullable FloatingActionButton floatingActionButton) {
         VolleyFailureFragment volleyFailureFragment = new VolleyFailureFragment();
         volleyFailureFragment.volleyError = volleyError;
         volleyFailureFragment.methodName = methodName;
+        volleyFailureFragment.floatingActionButton = floatingActionButton;
         return volleyFailureFragment;
     }
 
@@ -100,7 +103,7 @@ public class VolleyFailureFragment extends Fragment implements View.OnClickListe
         switch (v.getId()) {
             case R.id.settings_mobile_network: startActivityForResult(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS),0); break;
             case R.id.settings_wifi: startActivityForResult(new Intent(Settings.ACTION_WIFI_SETTINGS),0); break;
-            case R.id.back: getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit(); break;
+            case R.id.back: getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit(); if(floatingActionButton !=null) floatingActionButton.setVisibility(View.VISIBLE); break;
             case R.id.logout: Actions.logout(getActivity()); startActivity(new Intent(getActivity(), SplashActivity.class)); getActivity().finish(); break;
             case R.id.exit: getActivity().finish(); System.exit(0); break;
             case R.id.retry: retry(); break;

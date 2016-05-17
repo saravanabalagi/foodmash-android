@@ -395,7 +395,7 @@ public class MainActivity extends FoodmashActivity {
             public void onErrorResponse(VolleyError error) {
                 if (snackbar!=null && snackbar.isShown()) { filterFab.setVisibility(View.VISIBLE); snackbar.setText("Update Failed!"); }
                 else {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeComboRequest")).commitAllowingStateLoss();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeComboRequest", filterFab)).commitAllowingStateLoss();
                     getSupportFragmentManager().executePendingTransactions();
                 }
             }

@@ -220,7 +220,7 @@ public class OrderHistoryActivity extends FoodmashActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 fragmentContainer.setVisibility(View.VISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeOrderHistoryRequest")).commitAllowingStateLoss();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeOrderHistoryRequest", null)).commitAllowingStateLoss();
                 getSupportFragmentManager().executePendingTransactions();
             }
         });
