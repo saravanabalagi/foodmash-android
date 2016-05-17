@@ -232,7 +232,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
         paymentParams.setUdf4("");
         paymentParams.setUdf5("");
         paymentParams.setOfferKey("");
-        payuConfig.setEnvironment(PayuConstants.MOBILE_STAGING_ENV);
+        payuConfig.setEnvironment(PayuConstants.PRODUCTION_ENV);
     }
 
     public void getMobileSdkHash() {
