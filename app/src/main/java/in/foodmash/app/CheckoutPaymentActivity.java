@@ -489,8 +489,9 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                         .setAction("Try again", new View.OnClickListener() { @Override public void onClick(View v) { } })
                         .show();
             } else if (resultCode == RESULT_OK) {
-                if(!data.hasExtra("order_id")) orderId = paymentParams.getTxnId();
-                else orderId = data.getStringExtra("order_id");
+                if(data!=null && data.hasExtra("order_id"))
+                    orderId = data.getStringExtra("order_id");
+                else orderId = paymentParams.getTxnId();
                 Intent intent = new Intent(CheckoutPaymentActivity.this, OrderDescriptionActivity.class);
                 intent.putExtra("cart", true);
                 intent.putExtra("order_id", orderId);
