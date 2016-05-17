@@ -185,7 +185,7 @@ public class PinYourLocationActivity extends FoodmashActivity implements View.On
             @Override public void onProviderEnabled(String provider) {}
             @Override public void onProviderDisabled(String provider) { }
         };
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+        if(locationManager!=null) locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
     }
 
     private void enableGpsAlert() {
