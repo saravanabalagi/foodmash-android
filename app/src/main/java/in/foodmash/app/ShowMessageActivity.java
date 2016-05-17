@@ -12,7 +12,7 @@ import com.android.volley.toolbox.NetworkImageView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import in.foodmash.app.commons.Swift;
+import in.foodmash.app.volley.Swift;
 
 /**
  * Created by Zeke on Mar 22, 2016.

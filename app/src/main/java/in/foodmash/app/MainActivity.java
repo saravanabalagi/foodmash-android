@@ -55,9 +55,6 @@ import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Filters;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
-import in.foodmash.app.commons.Swift;
-import in.foodmash.app.commons.VolleyFailureFragment;
-import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.models.Cart;
 import in.foodmash.app.models.Combo;
 import in.foodmash.app.models.ComboOption;
@@ -67,6 +64,9 @@ import in.foodmash.app.models.Restaurant;
 import in.foodmash.app.models.User;
 import in.foodmash.app.utils.DateUtils;
 import in.foodmash.app.utils.NumberUtils;
+import in.foodmash.app.volley.Swift;
+import in.foodmash.app.volley.VolleyFailureFragment;
+import in.foodmash.app.volley.VolleyProgressFragment;
 
 public class MainActivity extends FoodmashActivity {
 

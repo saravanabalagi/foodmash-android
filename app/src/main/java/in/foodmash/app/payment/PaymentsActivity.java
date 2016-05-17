@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -221,6 +222,7 @@ public class PaymentsActivity extends AppCompatActivity {
 
         @JavascriptInterface
         public void onSuccess(final String result, final String orderId) {
+            Log.i("Payments", "On Success triggered");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -236,6 +238,7 @@ public class PaymentsActivity extends AppCompatActivity {
 
         @JavascriptInterface
         public void onFailure(final String result) {
+            Log.i("Payments", "On failure triggered");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

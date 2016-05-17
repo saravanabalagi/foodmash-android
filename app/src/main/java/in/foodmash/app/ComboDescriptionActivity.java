@@ -37,12 +37,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Info;
-import in.foodmash.app.commons.Swift;
 import in.foodmash.app.models.Cart;
 import in.foodmash.app.models.Combo;
 import in.foodmash.app.models.ComboOption;
 import in.foodmash.app.models.ComboOptionDish;
 import in.foodmash.app.utils.NumberUtils;
+import in.foodmash.app.volley.Swift;
 
 /**
  * Created by Zeke on Sep 30 2015.

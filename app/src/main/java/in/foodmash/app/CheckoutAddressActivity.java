@@ -38,12 +38,12 @@ import butterknife.ButterKnife;
 import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
-import in.foodmash.app.commons.Swift;
-import in.foodmash.app.commons.VolleyFailureFragment;
-import in.foodmash.app.commons.VolleyProgressFragment;
 import in.foodmash.app.models.Address;
 import in.foodmash.app.models.Cart;
 import in.foodmash.app.models.City;
+import in.foodmash.app.volley.Swift;
+import in.foodmash.app.volley.VolleyFailureFragment;
+import in.foodmash.app.volley.VolleyProgressFragment;
 
 /**
  * Created by Zeke on Jul 19 2015.
