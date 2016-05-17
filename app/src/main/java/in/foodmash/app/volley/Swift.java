@@ -1,4 +1,4 @@
-package in.foodmash.app.commons;
+package in.foodmash.app.volley;
 
 import android.content.Context;
 import android.graphics.Bitmap;

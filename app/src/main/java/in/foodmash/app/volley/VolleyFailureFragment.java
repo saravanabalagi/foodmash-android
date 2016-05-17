@@ -1,4 +1,4 @@
-package in.foodmash.app.commons;
+package in.foodmash.app.volley;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -27,6 +27,7 @@ import butterknife.ButterKnife;
 import in.foodmash.app.ErrorReportActivity;
 import in.foodmash.app.R;
 import in.foodmash.app.SplashActivity;
+import in.foodmash.app.commons.Actions;
 
 /**
  * Created by Zeke on Jan 31, 2016.
