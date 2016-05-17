@@ -27,6 +27,7 @@ import in.foodmash.app.commons.Actions;
 import in.foodmash.app.commons.Animations;
 import in.foodmash.app.commons.Info;
 import in.foodmash.app.commons.JsonProvider;
+import in.foodmash.app.models.User;
 import in.foodmash.app.volley.Swift;
 import in.foodmash.app.volley.VolleyFailureFragment;
 import in.foodmash.app.volley.VolleyProgressFragment;
@@ -154,8 +155,11 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
                 proceed.setVisibility(View.VISIBLE);
                 try {
                     if(response.getBoolean("success")) {
-                        if(type.equals("verify_account")) { setResult(RESULT_OK); finish(); }
-                        if(type.equals("forgot_password")) {
+                        if(type.equals("verify_account")) {
+                            User.getInstance().setVerified(true);
+                            setResult(RESULT_OK);
+                            finish();
+                        } else if(type.equals("forgot_password")) {
                             JSONObject dataJson = response.getJSONObject("data");
                             intent = new Intent(OtpActivity.this, ChangePasswordActivity.class);
                             intent.putExtra("otp_token",dataJson.getString("otp_token"));

@@ -41,6 +41,7 @@ import in.foodmash.app.commons.JsonProvider;
 import in.foodmash.app.models.Address;
 import in.foodmash.app.models.Cart;
 import in.foodmash.app.models.City;
+import in.foodmash.app.models.User;
 import in.foodmash.app.volley.Swift;
 import in.foodmash.app.volley.VolleyFailureFragment;
 import in.foodmash.app.volley.VolleyProgressFragment;
@@ -50,6 +51,7 @@ import in.foodmash.app.volley.VolleyProgressFragment;
  */
 public class CheckoutAddressActivity extends FoodmashActivity implements View.OnClickListener {
 
+    public static final int VERIFY_USER_REQUEST_CODE = 101;
     @Bind(R.id.confirm) FloatingActionButton confirm;
     @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.add_address) TextView addAddress;
@@ -211,14 +213,20 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                                     confirm.setVisibility(View.VISIBLE);
                                     try {
                                         if (response.getBoolean("success")) {
-                                            intent = new Intent(CheckoutAddressActivity.this, CheckoutPaymentActivity.class);
-                                            intent.putExtra("grand_total", response.getJSONObject("data").getDouble("grand_total"));
-                                            intent.putExtra("total", response.getJSONObject("data").getDouble("total"));
-                                            intent.putExtra("vat", response.getJSONObject("data").getDouble("vat"));
-                                            intent.putExtra("vat_percentage", response.getJSONObject("data").getString("vat_percentage"));
-                                            intent.putExtra("delivery_charges", response.getJSONObject("data").getDouble("delivery_charges"));
-                                            intent.putExtra("order_id", response.getJSONObject("data").getString("order_id"));
-                                            startActivity(intent);
+                                            if(Info.isVerifyUserEnabled(CheckoutAddressActivity.this) && !User.getInstance().isVerified()) {
+                                                Intent intent = new Intent(CheckoutAddressActivity.this,OtpActivity.class);
+                                                intent.putExtra("type", "verify_user");
+                                                startActivityForResult(intent, VERIFY_USER_REQUEST_CODE);
+                                            } else {
+                                                intent = new Intent(CheckoutAddressActivity.this, CheckoutPaymentActivity.class);
+                                                intent.putExtra("grand_total", response.getJSONObject("data").getDouble("grand_total"));
+                                                intent.putExtra("total", response.getJSONObject("data").getDouble("total"));
+                                                intent.putExtra("vat", response.getJSONObject("data").getDouble("vat"));
+                                                intent.putExtra("vat_percentage", response.getJSONObject("data").getString("vat_percentage"));
+                                                intent.putExtra("delivery_charges", response.getJSONObject("data").getDouble("delivery_charges"));
+                                                intent.putExtra("order_id", response.getJSONObject("data").getString("order_id"));
+                                                startActivity(intent);
+                                            }
                                         } else {
                                             Intent intent = new Intent(CheckoutAddressActivity.this, CartActivity.class);
                                             intent.putExtra("combo_error", true);
@@ -397,5 +405,22 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
             });
         }
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == VERIFY_USER_REQUEST_CODE) {
+            if(resultCode==RESULT_OK)
+                Snackbar.make(mainLayout,"User verified successfully",Snackbar.LENGTH_LONG)
+                        .setAction("Dismiss", new View.OnClickListener() { @Override public void onClick(View v) { } })
+                        .show();
+            else if(resultCode==RESULT_CANCELED)
+                Snackbar.make(mainLayout,"Could not verify user. Try again!",Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Dismiss", new View.OnClickListener() { @Override public void onClick(View v) { } })
+                        .show();
+        }
+    }
+
 
 }
