@@ -37,7 +37,7 @@ public class User {
 
     public void setEmail(String email) { this.email = email; }
     public void setMobileNo(String mobileNo) { this.mobileNo = mobileNo; }
-    public void setDob(String dob) { this.dob = DateUtils.ddmmyyslashDateStringToJavaDate(dob); }
+    public void setDob(String dob) { if(dob==null) this.dob=null; else this.dob = DateUtils.ddmmyyslashDateStringToJavaDate(dob); }
     public void setOffers(boolean offers) { this.offers = offers; }
     public void setVerified(boolean verified) { this.verified = verified; }
     public void setMashCash(double mashCash) { this.mashCash = mashCash; }
