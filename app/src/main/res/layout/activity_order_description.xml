@@ -61,6 +61,29 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:padding="10dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal|center_vertical">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/status_icon"
+                    app:srcCompat="@drawable/svg_android_double_tick"
+                    android:tint="@color/okay_green"
+                    android:layout_marginRight="5dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delivered"
+                    android:id="@+id/status"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/order_description_recycler_view"
                 android:layout_height="0dp"
@@ -163,33 +186,6 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/paid_using"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/payment_method"
-                    android:id="@+id/payment_method"
-                    android:textAllCaps="true"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp" />
-            </LinearLayout>
-
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
@@ -208,7 +204,7 @@
 
                 <LinearLayout
                     android:orientation="vertical"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingTop="15dp"
@@ -222,26 +218,12 @@
                         android:textSize="14sp"
                         android:paddingBottom="5dp" />
 
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:id="@+id/status_icon"
-                            app:srcCompat="@drawable/svg_tick_filled"
-                            android:tint="@color/okay_green"
-                            android:layout_marginRight="5dp" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Delivered"
-                            android:id="@+id/status"
-                            android:textSize="16sp" />
-                    </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/payment_method"
+                        android:id="@+id/payment_method"
+                        android:textAllCaps="true"/>
 
                 </LinearLayout>
 
