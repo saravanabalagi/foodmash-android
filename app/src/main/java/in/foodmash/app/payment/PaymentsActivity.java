@@ -189,15 +189,14 @@ public class PaymentsActivity extends AppCompatActivity {
         @Override
         public void registerBroadcast(BroadcastReceiver broadcastReceiver, IntentFilter filter) {
             ((PaymentsActivity)context).mReceiver = broadcastReceiver;
-            context.registerReceiver(broadcastReceiver, filter);
+            try {context.registerReceiver(broadcastReceiver, filter); }
+            catch (Exception e) { Log.e("Payments", e.getMessage());}
         }
 
         @Override
         public void unregisterBroadcast(BroadcastReceiver broadcastReceiver) {
-            if(((PaymentsActivity)context).mReceiver != null){
-                context.unregisterReceiver(((PaymentsActivity)context).mReceiver);
-                ((PaymentsActivity)context).mReceiver = null;
-            }
+            if(broadcastReceiver!=null) context.unregisterReceiver(broadcastReceiver);
+            ((PaymentsActivity)context).mReceiver = null;
         }
 
         @Override
