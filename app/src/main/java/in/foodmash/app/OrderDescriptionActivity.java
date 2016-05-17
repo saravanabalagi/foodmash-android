@@ -186,7 +186,7 @@ public class OrderDescriptionActivity extends FoodmashActivity {
                         JSONObject orderJson = orderJsonArray.getJSONObject(0);
                         grandTotal.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("grand_total")));
                         paymentMethod.setText(WordUtils.titleize(orderJson.getString("payment_method")));
-                        if(orderJson.has("promo_discount") && !orderJson.isNull("promo_discount")) {
+                        if(orderJson.has("promo_discount") && !orderJson.isNull("promo_discount") && orderJson.getDouble("promo_discount")!=0) {
                             if(orderJson.has("promo_code")) promoCode.setText(orderJson.getString("promo_code"));
                             promoDiscount.setText(NumberUtils.getCurrencyFormat(orderJson.getDouble("promo_discount")));
                             promoDiscountLayout.setVisibility(View.VISIBLE);
