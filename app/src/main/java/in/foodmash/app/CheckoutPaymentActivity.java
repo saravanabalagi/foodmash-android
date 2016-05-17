@@ -247,7 +247,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                         MerchantWebService merchantWebService = new MerchantWebService();
                         merchantWebService.setKey(paymentParams.getKey());
                         merchantWebService.setCommand(PayuConstants.PAYMENT_RELATED_DETAILS_FOR_MOBILE_SDK);
-                        merchantWebService.setVar1("default");
+                        merchantWebService.setVar1(PayuConstants.VAR1);
                         merchantWebService.setHash(payuHashes.getPaymentRelatedDetailsForMobileSdkHash());
                         PostData postData = new MerchantWebServicePostParams(merchantWebService).getMerchantWebServicePostParams();
                         if (postData.getCode() == PayuErrors.NO_ERROR) {
