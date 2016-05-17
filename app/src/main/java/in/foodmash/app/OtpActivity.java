@@ -64,7 +64,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home) {
-            if(type.equals("verify_account")) { setResult(RESULT_CANCELED); finish(); }
+            if(type.equals("verify_user")) { setResult(RESULT_CANCELED); finish(); }
             else if (type.equals("forgot_password")) finish();
             return true;
         }
@@ -94,7 +94,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
             recoveryMode = getIntent().getStringExtra("recovery_mode");
             if (recoveryMode.equals("email")) otpInfo.setText("We have sent an OTP (One Time Password) to your email '" + phoneOrEmailValue + "' and to the mobile no. linked with this account. Enter it below to reset your account password. You can resend the OTP once the timer expires.");
             else if (recoveryMode.equals("phone")) otpInfo.setText("We have sent an OTP (One Time Password) to your phone " + "+91" + phoneOrEmailValue + " via a private message and an email to the email address linked with this account. Enter it below to reset your account password. You can resend the OTP once the timer expires.");
-        } else if(getIntent().getStringExtra("type").equals("verify_account")) {
+        } else if(getIntent().getStringExtra("type").equals("verify_user")) {
             if(!Info.isLoggedIn(this)) { setResult(RESULT_CANCELED); finish(); }
             setTitle(toolbar,"Verify","Account");
             type = getIntent().getStringExtra("type");
@@ -146,7 +146,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
 
     public void makeCheckOtpRequest() {
         String url = "";
-        if(type.equals("verify_account")) url = getString(R.string.routes_verify_profile);
+        if(type.equals("verify_user")) url = getString(R.string.routes_verify_profile);
         else if(type.equals("forgot_password")) url = getString(R.string.routes_check_otp);
         JsonObjectRequest checkOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + url, getRequestJson(), new Response.Listener<JSONObject>() {
             @Override
@@ -155,7 +155,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
                 proceed.setVisibility(View.VISIBLE);
                 try {
                     if(response.getBoolean("success")) {
-                        if(type.equals("verify_account")) {
+                        if(type.equals("verify_user")) {
                             User.getInstance().setVerified(true);
                             setResult(RESULT_OK);
                             finish();
@@ -188,7 +188,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
     private boolean isEverythingValid() { return !otpExpired && otp.getText().toString().trim().length()>=5; }
     private JSONObject getOtpRequestJson() {
         JSONObject requestJson = null;
-        if(type.equals("verify_account")) requestJson = JsonProvider.getStandardRequestJson(OtpActivity.this);
+        if(type.equals("verify_user")) requestJson = JsonProvider.getStandardRequestJson(OtpActivity.this);
         else if(type.equals("forgot_password")) {
             requestJson = JsonProvider.getAnonymousRequestJson(OtpActivity.this);
             try {
@@ -205,7 +205,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
 
     public void resendOtpRequest() {
         String url = "";
-        if(type.equals("verify_account")) url = getString(R.string.routes_get_otp_profile);
+        if(type.equals("verify_user")) url = getString(R.string.routes_get_otp_profile);
         else if(type.equals("forgot_password")) url = getString(R.string.routes_forgot_password);
         JsonObjectRequest resendOtpRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + url, getOtpRequestJson(), new Response.Listener<JSONObject>() {
             @Override
