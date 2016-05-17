@@ -271,7 +271,6 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
     }
 
     public void makeAddressRequest() {
-        Log.e("Testing", "MakeAddressCalled");
         JsonObjectRequest addressesRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_get_delivery_address),getMakeAddressRequestJson(),new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

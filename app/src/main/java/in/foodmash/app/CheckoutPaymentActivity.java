@@ -281,23 +281,9 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                 pay.setVisibility(View.VISIBLE);
                 try {
                     if (response.getBoolean("success")) {
-                        Log.e("Testing", response.toString());
                         payuHashes.setPaymentHash(response.getJSONObject("data").getString("hash"));
-//                        payuHashes.setPaymentRelatedDetailsForMobileSdkHash(response.getJSONObject("data").getString("mobile_sdk_hash"));
                         paymentParams.setTxnId(response.getJSONObject("data").getString("order_id"));
                         paymentParams.setHash(payuHashes.getPaymentHash());
-                        Log.i("Payments", "Key: " + paymentParams.getKey());
-                        Log.i("Payments", "Amount: " + paymentParams.getAmount());
-                        Log.i("Payments", "Product Info: " + paymentParams.getProductInfo());
-                        Log.i("Payments", "Firstname: " + paymentParams.getFirstName());
-                        Log.i("Payments", "Email: " + paymentParams.getEmail());
-                        Log.i("Payments", "TxnId: " + paymentParams.getTxnId());
-                        Log.i("Payments", "Udf1: " + paymentParams.getUdf1());
-                        Log.i("Payments", "Udf2: " + paymentParams.getUdf2());
-                        Log.i("Payments", "Udf3: " + paymentParams.getUdf3());
-                        Log.i("Payments", "Udf4: " + paymentParams.getUdf4());
-                        Log.i("Payments", "Udf5: " + paymentParams.getUdf5());
-                        Log.i("Payments", "Hash: " + payuHashes.getPaymentHash());
                         Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + viewPager.getCurrentItem());
                         if(fragment instanceof NetbankingFragment) { paymentMethod = getString(R.string.payment_netbanking); ((NetbankingFragment) fragment).doPayment(); }
                         else if(fragment instanceof CreditDebitCardFragment) { paymentMethod = getString(R.string.payment_card); ((CreditDebitCardFragment) fragment).doPayment(); }
