@@ -28,11 +28,12 @@ import in.foodmash.app.utils.DateUtils;
  */
 public class Actions {
 
-    public static void cacheSettings(Context context, boolean mashCash, boolean verifyUser) {
+    public static void cacheSettings(Context context, boolean mashCash, boolean verifyUser, boolean onlinePayments) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("settings", 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("mash_cash",mashCash);
         editor.putBoolean("verify_user",verifyUser);
+        editor.putBoolean("online_payments",onlinePayments);
         editor.apply();
     }
 

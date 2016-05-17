@@ -78,4 +78,9 @@ public class Info {
         return sharedPreferences.getBoolean("verify_user",false);
     }
 
+    public static boolean isOnlinePaymentsEnabled(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("settings", 0);
+        return sharedPreferences.getBoolean("online_payments",false);
+    }
+
 }

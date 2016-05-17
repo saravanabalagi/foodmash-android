@@ -126,23 +126,35 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
 
         class PaymentPagerAdapter extends FragmentPagerAdapter {
             public PaymentPagerAdapter(FragmentManager fm) { super(fm); }
-            @Override public int getCount() { return 3; }
+            @Override public int getCount() { return (Info.isOnlinePaymentsEnabled(CheckoutPaymentActivity.this))?3:1; }
             @Override public Fragment getItem(int position) {
-                switch (position) {
-                    case 0: return new NetbankingFragment();
-                    case 1: return new CashOnDeliveryFragment();
-                    case 2: return new CreditDebitCardFragment();
-                    default:
-                        Toast.makeText(CheckoutPaymentActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
-                        return new CashOnDeliveryFragment();
-                }
+                if(Info.isOnlinePaymentsEnabled(CheckoutPaymentActivity.this)) {
+                    switch (position) {
+                        case 0: return new NetbankingFragment();
+                        case 1: return new CashOnDeliveryFragment();
+                        case 2: return new CreditDebitCardFragment();
+                        default:
+                            Toast.makeText(CheckoutPaymentActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                            return new CashOnDeliveryFragment();
+                    }
+                } else switch (position) {
+                        case 0: return new CashOnDeliveryFragment();
+                        default:
+                            Toast.makeText(CheckoutPaymentActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                            return new CashOnDeliveryFragment();
+                    }
             }
             @Override
             public CharSequence getPageTitle(int position) {
-                switch (position) {
-                    case 0: return getResources().getString(R.string.net_banking);
-                    case 1: return getResources().getString(R.string.cash_on_delivery);
-                    case 2: return getResources().getString(R.string.credit_debit_cart);
+                if(Info.isOnlinePaymentsEnabled(CheckoutPaymentActivity.this)) {
+                    switch (position) {
+                        case 0: return getResources().getString(R.string.net_banking);
+                        case 1: return getResources().getString(R.string.cash_on_delivery);
+                        case 2: return getResources().getString(R.string.credit_debit_cart);
+                        default: return getResources().getString(R.string.cash_on_delivery);
+                    }
+                } else switch (position) {
+                    case 0: return getResources().getString(R.string.cash_on_delivery);
                     default: return getResources().getString(R.string.cash_on_delivery);
                 }
             }
@@ -167,8 +179,10 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
             }
         });
 
-        setPaymentParams();
-        getMobileSdkHash();
+        if(Info.isOnlinePaymentsEnabled(this)) {
+            setPaymentParams();
+            getMobileSdkHash();
+        }
     }
 
     @Override
