@@ -152,7 +152,7 @@ public class SplashActivity extends FoodmashActivity {
                             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                 ArrayAdapter areaSpinnerAdapter = new ArrayAdapter<>(
                                         SplashActivity.this,
-                                        R.layout.spinner_item,
+                                        R.layout.spinner_accent_item,
                                         addStringAsFirstItem(cities.get(position).getAreaStringArrayList(), "Area"));
                                 areaSpinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                                 areaSpinner.setAdapter(areaSpinnerAdapter);
@@ -161,7 +161,7 @@ public class SplashActivity extends FoodmashActivity {
 
                         ArrayAdapter areaSpinnerAdapter = new ArrayAdapter<>(
                                 SplashActivity.this,
-                                R.layout.spinner_item,
+                                R.layout.spinner_accent_item,
                                 addStringAsFirstItem(cities.get(0).getAreaStringArrayList(), "Area"));
                         areaSpinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                         areaSpinner.setAdapter(areaSpinnerAdapter);
