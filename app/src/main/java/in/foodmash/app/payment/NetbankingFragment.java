@@ -76,10 +76,11 @@ public class NetbankingFragment extends Fragment {
     public void fillLayout() {
         class PayUNetBankingAdapter extends BaseAdapter {
             Context mContext;
-            ArrayList<PaymentDetails> mNetBankingList = new ArrayList<>();
+            ArrayList<PaymentDetails> mNetBankingList;
             public PayUNetBankingAdapter(Context context, ArrayList<PaymentDetails> netBankingList) {
                 mContext = context;
                 mNetBankingList = netBankingList;
+                if(mNetBankingList==null) mNetBankingList = new ArrayList<>();
             }
             @Override public int getCount() { return mNetBankingList.size(); }
             @Override public Object getItem(int i) { if (null != mNetBankingList) return mNetBankingList.get(i); else return 0; }
