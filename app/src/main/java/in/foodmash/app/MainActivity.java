@@ -105,7 +105,6 @@ public class MainActivity extends FoodmashActivity {
     private Set<Combo.Size> sizeSelected = new HashSet<>();
     private Set<Dish.Label> preferenceSelected = new HashSet<>();
     private boolean sortPriceLowToHigh = true;
-    private boolean notVerified = false;
     private Handler handler = new Handler();
 
     @Override
@@ -326,37 +325,8 @@ public class MainActivity extends FoodmashActivity {
             snackbar = Snackbar.make(mainLayout, "Updating combos...", Snackbar.LENGTH_INDEFINITE);
             snackbar.show();
         }
-        if(!notVerified) makeComboRequest();
+        makeComboRequest();
 
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == VERIFY_USER_REQUEST_CODE) {
-            if(resultCode==RESULT_OK) {
-                Snackbar.make(mainLayout,"User verified successfully",Snackbar.LENGTH_LONG)
-                        .setAction("Dismiss", new View.OnClickListener() { @Override public void onClick(View v) { } })
-                        .show();
-                makeComboRequest();
-            } else if(resultCode==RESULT_CANCELED) {
-                notVerified = true;
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
-                getSupportFragmentManager().executePendingTransactions();
-                ((VolleyProgressFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container))
-                    .setLoadingText("User verification failed...", "Logging out in 5 seconds");
-                fragmentContainer.setVisibility(View.VISIBLE);
-                Snackbar.make(mainLayout,"Could not verify user! You will be logged out in 5 seconds",Snackbar.LENGTH_LONG)
-                        .setAction("Dismiss", new View.OnClickListener() { @Override public void onClick(View v) { } })
-                        .show();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Actions.logout(MainActivity.this);
-                    }
-                },5000);
-            }
-        }
     }
 
     public void makeComboRequest() {
@@ -377,12 +347,6 @@ public class MainActivity extends FoodmashActivity {
                             User.setInstance(objectMapper.readValue(response.getJSONObject("data").getJSONObject("user").toString(), User.class));
                             User user = User.getInstance();
                             Actions.cacheUserDetails(MainActivity.this, user.getName(), user.getEmail(), user.getMobileNo());
-                            if(!user.isVerified() && !notVerified) {
-                                Intent intent = new Intent(MainActivity.this,OtpActivity.class);
-                                intent.putExtra("type", "verify_account");
-                                if (Info.isVerifyUserEnabled(MainActivity.this))
-                                    startActivityForResult(intent, VERIFY_USER_REQUEST_CODE);
-                            }
                             mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(Info.getMashCash(MainActivity.this)));
                             if(Info.isMashCashEnabled(MainActivity.this))
                                 mashCashLayout.setVisibility(View.VISIBLE);
