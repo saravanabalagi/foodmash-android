@@ -70,7 +70,6 @@ import in.foodmash.app.volley.VolleyProgressFragment;
 
 public class MainActivity extends FoodmashActivity {
 
-    public static final int VERIFY_USER_REQUEST_CODE = 100;
     @Bind(R.id.main_layout) LinearLayout mainLayout;
     @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.empty_combo_layout) LinearLayout emptyComboLayout;
