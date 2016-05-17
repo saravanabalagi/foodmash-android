@@ -218,7 +218,7 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
     }
 
     private void setPaymentParams() {
-        paymentParams.setKey("gtKFFx");
+        paymentParams.setKey("i4GjyD");
         paymentParams.setAmount(NumberUtils.getCurrencyFormat(getIntent().getDoubleExtra("grand_total", 0)));
         paymentParams.setProductInfo("a bunch of combos from Foodmash");
         paymentParams.setFirstName(User.getInstance().getName());
