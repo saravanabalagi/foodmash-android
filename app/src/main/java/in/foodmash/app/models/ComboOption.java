@@ -136,6 +136,14 @@ public class ComboOption {
     @JsonProperty public void setComboOptionDishes(ArrayList<ComboOptionDish> comboOptionDishes) {
         this.comboOptionDishes = comboOptionDishes;
         this.selectedComboOptionDishes = new ArrayList<>();
+        if(comboOptionDishes != null && comboOptionDishes.size() != 0) {
+            Collections.sort(comboOptionDishes, new Comparator<ComboOptionDish>() {
+                @Override
+                public int compare(ComboOptionDish lhs, ComboOptionDish rhs) {
+                    return Float.compare(lhs.getDish().getPrice(), rhs.getDish().getPrice());
+                }
+            });
+        }
         if(minCount>0) this.resetSelectedComboOptionDishes();
     }
 

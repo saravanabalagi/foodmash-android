@@ -115,6 +115,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
         termsAndConditions.setOnClickListener(this);
         refundPolicy.setOnClickListener(this);
         privacyPolicy.setOnClickListener(this);
+        snackbar = Snackbar.make(mainLayout, "", Snackbar.LENGTH_SHORT);
     }
 
     public void onClick(View v) {
@@ -207,7 +208,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
             else setOkayOnImageView(nameValidate);
             if(nameValidate.getVisibility()!=View.VISIBLE) Animations.fadeIn(nameValidate, 500);
         }
-        if(s==email.getEditableText()) if(EmailUtils.isValidEmailAddress(s.toString())) makeCheckEmailRequest();
+        if(s==email.getEditableText()) if(EmailUtils.isValidEmailAddress(s.toString())){ makeCheckEmailRequest();}else{ isEmailAvailable = false; setCancelOnImageView(emailValidate); }
         if(s==phone.getEditableText()) if(s.length()==10) makeCheckPhoneRequest();
         if(s==password.getEditableText()) {
             if(password.getText().length()<8) setCancelOnImageView(passwordValidate);
@@ -294,7 +295,7 @@ public class SignUpActivity extends FoodmashActivity implements View.OnClickList
                     } else {
                         isPhoneAvailable = false;
                         setCancelOnImageView(phoneValidate);
-                        snackbar = Snackbar.make(mainLayout, "Mobile no. already registered", Snackbar.LENGTH_INDEFINITE);
+                        snackbar = Snackbar.make(mainLayout, "Mobile number already registered", Snackbar.LENGTH_INDEFINITE);
                         snackbar.setAction("Login", new View.OnClickListener() { @Override public void onClick(View v) { finish(); } });
                         snackbar.show();
                         Animations.fadeOutAndFadeIn(phoneProgressBar,phoneValidate,500);
