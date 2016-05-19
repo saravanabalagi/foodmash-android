@@ -346,7 +346,7 @@ public class MainActivity extends FoodmashActivity {
                             User.setInstance(objectMapper.readValue(response.getJSONObject("data").getJSONObject("user").toString(), User.class));
                             User user = User.getInstance();
                             Actions.cacheUserDetails(MainActivity.this, user.getName(), user.getEmail(), user.getMobileNo());
-                            mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(Info.getMashCash(MainActivity.this)));
+                            mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(User.getInstance().getMashCash()));
                             if(Info.isMashCashEnabled(MainActivity.this))
                                 mashCashLayout.setVisibility(View.VISIBLE);
                         } else mashCashLayout.setVisibility(View.GONE);

@@ -136,6 +136,7 @@ public class OtpActivity extends FoodmashActivity implements View.OnClickListene
 
     private JSONObject getRequestJson() {
         JSONObject requestJson = JsonProvider.getAnonymousRequestJson(OtpActivity.this);
+        requestJson =  (Info.isLoggedIn(OtpActivity.this) == true ? JsonProvider.getStandardRequestJson(OtpActivity.this) : JsonProvider.getAnonymousRequestJson(OtpActivity.this));
         try {
             JSONObject dataJson = new JSONObject();
             dataJson.put("otp",otp.getText().toString().trim());
