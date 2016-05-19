@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Root Path-->
-    <!--<string name="routes_api_root_path">http://10.0.3.2:3000/api/v1</string>-->
+    <string name="routes_api_root_path">http://10.0.3.2:3000/api/v1</string>
     <!--<string name="routes_api_root_path">http://192.168.43.76:3000/api/v1</string>-->
-    <string name="routes_api_root_path">http://www.foodmash.in/api/v1</string>
+    <!--<string name="routes_api_root_path">http://www.foodmash.in/api/v1</string>-->
 
     <!--Splash-->
     <string name="routes_instantiate">/instantiate</string>
@@ -35,7 +35,7 @@
 
     <!--Profile-->
     <string name="routes_get_profile">/profile</string>
-    <string name="routes_get_otp_profile">/profile/getOtp</string>
+    <string name="routes_get_otp_profile">/profile/sendOtp</string>
     <string name="routes_verify_profile">/profile/verifyOtp</string>
     <string name="routes_update_profile">/profile/update</string>
 

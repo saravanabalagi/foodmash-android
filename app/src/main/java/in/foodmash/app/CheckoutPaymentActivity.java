@@ -180,6 +180,11 @@ public class CheckoutPaymentActivity extends FoodmashActivity implements Payment
                 promoCodeInputLayout.setErrorEnabled(false);
             }
         });
+        if(Info.isMashCashEnabled(this)){
+            promoCodeInputLayout.setHint("Promo Code / Mash Cash");
+        }else{
+            promoCodeInputLayout.setHint("Promo Code");
+        }
     }
 
     @Override

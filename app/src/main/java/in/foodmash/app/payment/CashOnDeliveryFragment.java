@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import in.foodmash.app.R;
 import in.foodmash.app.commons.Info;
+import in.foodmash.app.models.User;
 import in.foodmash.app.utils.NumberUtils;
 
 /**
@@ -35,7 +36,7 @@ public class CashOnDeliveryFragment extends Fragment {
 
         email.setText(Info.getEmail(getActivity()));
         phone.setText(Info.getPhone(getActivity()));
-        mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(Info.getMashCash(getActivity())));
+        mashCash.setText(NumberUtils.getCurrencyFormatWithoutDecimals(User.getInstance().getMashCash()));
 
         return rootView;
     }
