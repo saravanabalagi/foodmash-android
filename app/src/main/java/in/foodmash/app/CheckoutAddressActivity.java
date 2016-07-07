@@ -69,6 +69,7 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
     private List<Address> addresses = new ArrayList<>();
     private AddressAdapter addressAdapter;
     private LinearLayoutManager linearLayoutManager;
+    private ObjectMapper objectMapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,9 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (Exception e) { Actions.handleIgnorableException(this,e); }
         setTitle(toolbar,"Select","address");
+
+        objectMapper = new ObjectMapper();
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
         confirm.setOnClickListener(this);
         addAddress.setOnClickListener(this);
@@ -205,19 +209,21 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                             startActivity(intent);
                             finish();
                         } else {
-                            JsonObjectRequest confirmOrderRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_submit_cart), getConfirmRequestJson(), new Response.Listener<JSONObject>() {
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    Log.i("Json Request", response.toString());
-                                    fragmentContainer.setVisibility(View.GONE);
-                                    confirm.setVisibility(View.VISIBLE);
-                                    try {
-                                        if (response.getBoolean("success")) {
-                                            if(Info.isVerifyUserEnabled(CheckoutAddressActivity.this) && !User.getInstance().isVerified()) {
-                                                Intent intent = new Intent(CheckoutAddressActivity.this,OtpActivity.class);
-                                                intent.putExtra("type", "verify_user");
-                                                startActivityForResult(intent, VERIFY_USER_REQUEST_CODE);
-                                            } else {
+                            if (response.getJSONObject("data").has("user") && !response.getJSONObject("data").isNull("user"))
+                                User.setInstance(objectMapper.readValue(response.getJSONObject("data").getJSONObject("user").toString(), User.class));
+                            if(Info.isVerifyUserEnabled(CheckoutAddressActivity.this) && !User.getInstance().isVerified()) {
+                                Intent intent = new Intent(CheckoutAddressActivity.this,OtpActivity.class);
+                                intent.putExtra("type", "verify_user");
+                                startActivityForResult(intent, VERIFY_USER_REQUEST_CODE);
+                            } else {
+                                JsonObjectRequest confirmOrderRequest = new JsonObjectRequest(Request.Method.POST, getString(R.string.routes_api_root_path) + getString(R.string.routes_submit_cart), getConfirmRequestJson(), new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        Log.i("Json Request", response.toString());
+                                        fragmentContainer.setVisibility(View.GONE);
+                                        confirm.setVisibility(View.VISIBLE);
+                                        try {
+                                            if (response.getBoolean("success")) {
                                                 intent = new Intent(CheckoutAddressActivity.this, CheckoutPaymentActivity.class);
                                                 intent.putExtra("grand_total", response.getJSONObject("data").getDouble("grand_total"));
                                                 intent.putExtra("total", response.getJSONObject("data").getDouble("total"));
@@ -226,28 +232,31 @@ public class CheckoutAddressActivity extends FoodmashActivity implements View.On
                                                 intent.putExtra("delivery_charges", response.getJSONObject("data").getDouble("delivery_charges"));
                                                 intent.putExtra("order_id", response.getJSONObject("data").getString("order_id"));
                                                 startActivity(intent);
+                                            } else {
+                                                Intent intent = new Intent(CheckoutAddressActivity.this, CartActivity.class);
+                                                intent.putExtra("combo_error", true);
+                                                startActivity(intent);
+                                                finish();
                                             }
-                                        } else {
-                                            Intent intent = new Intent(CheckoutAddressActivity.this, CartActivity.class);
-                                            intent.putExtra("combo_error", true);
-                                            startActivity(intent);
-                                            finish();
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                            Actions.handleIgnorableException(CheckoutAddressActivity.this, e);
                                         }
-                                    } catch (JSONException e) { e.printStackTrace(); Actions.handleIgnorableException(CheckoutAddressActivity.this, e); }
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    fragmentContainer.setVisibility(View.VISIBLE);
-                                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeConfirmOrderRequest", confirm)).commitAllowingStateLoss();
-                                    getSupportFragmentManager().executePendingTransactions();
-                                }
-                            });
-                            fragmentContainer.setVisibility(View.VISIBLE);
-                            confirm.setVisibility(View.GONE);
-                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
-                            getSupportFragmentManager().executePendingTransactions();
-                            Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(confirmOrderRequest);
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        fragmentContainer.setVisibility(View.VISIBLE);
+                                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, VolleyFailureFragment.newInstance(error, "makeConfirmOrderRequest", confirm)).commitAllowingStateLoss();
+                                        getSupportFragmentManager().executePendingTransactions();
+                                    }
+                                });
+                                fragmentContainer.setVisibility(View.VISIBLE);
+                                confirm.setVisibility(View.GONE);
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VolleyProgressFragment()).commitAllowingStateLoss();
+                                getSupportFragmentManager().executePendingTransactions();
+                                Swift.getInstance(CheckoutAddressActivity.this).addToRequestQueue(confirmOrderRequest);
+                            }
                         }
                     } else Snackbar.make(mainLayout,"Request Failed. Reason: "+response.getString("error"),Snackbar.LENGTH_INDEFINITE).show();
                 } catch (Exception e) { Actions.handleIgnorableException(CheckoutAddressActivity.this,e); }

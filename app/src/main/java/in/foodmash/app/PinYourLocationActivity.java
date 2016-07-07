@@ -57,6 +57,7 @@ public class PinYourLocationActivity extends FoodmashActivity implements View.On
 
     MapFragment mapFragment;
     LatLng initialLocation = new LatLng(13.0220501,80.2437108);
+    LatLng changedLocation;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -173,19 +174,19 @@ public class PinYourLocationActivity extends FoodmashActivity implements View.On
     public void onMapReady(GoogleMap map) {
         if ( ContextCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED )
             map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, (edit)?16:14));
-        locationListener = new LocationListener() {
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom((changedLocation==null)?initialLocation:changedLocation, (edit)?16:14));
+        if(changedLocation==null) locationListener = new LocationListener() {
             @Override public void onLocationChanged(Location location) {
                 if(mapFragment!=null && locationListener!=null) {
-                    initialLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                    mapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 15));
+                    changedLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    mapFragment.getMapAsync(PinYourLocationActivity.this);
                 }
             }
             @Override public void onStatusChanged(String provider, int status, Bundle extras) {  }
             @Override public void onProviderEnabled(String provider) {}
             @Override public void onProviderDisabled(String provider) { }
         };
-        if(locationManager!=null) locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+        if(changedLocation==null && locationManager!=null) locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
     }
 
     private void enableGpsAlert() {
